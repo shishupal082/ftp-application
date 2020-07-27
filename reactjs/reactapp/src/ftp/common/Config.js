@@ -66,7 +66,7 @@ Config.getPageData = function(key, defaultValue) {
     return defaultValue;
 };
 
-var RequestId = $S.getRequestId();
+var RequestId = Config.getPageData("app_version", "");
 Config.apiMapping = {};
 Config.apiMapping["static_file"] = baseapi + "/api/get_static_file?" + RequestId;
 

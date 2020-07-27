@@ -137,6 +137,23 @@ font-size: 0.8rem;
 remove envConfigParameter
     - appViewFtlFileName
 
+Remove api call /api/get_static_file for all page
+    - Call on upload_file page only
+
+Page response time decreases drastically
+    - Improved performance (5 sec to 1.5 sec)
+
+Read heading template from Template.js
+    - page rendering need not to wait for /api/get_static_file
+
+Adding ?appVersion instead of ?RequestId in generating api request call for
+    - /api/get_files_info
+    - /api/get_static_file
+
+Change from serial to parallel call for below two api
+    - /api/get_files_info
+    - /api/get_static_file
+
 Future releases
 -------------------
 add password encryption env config
