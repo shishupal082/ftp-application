@@ -37,7 +37,7 @@ public class UserService {
         return users;
     }
     private User getUserDataByUserName(String username) {
-        if (username == null) {
+        if (username == null || username.isEmpty()) {
             return null;
         }
         User user = null;
@@ -158,7 +158,7 @@ public class UserService {
             logger.info("username required: {}.", username);
             throw new AppException(ErrorCodes.REGISTER_PASSCODE_REQUIRED);
         }
-        User user = this.getUserDataByUserName(username); // It will check for null
+        User user = this.getUserDataByUserName(username); // It will check for null or empty
         if (user == null) {
             logger.info("username: {}, is not found.", username);
             throw new AppException(ErrorCodes.USER_NOT_FOUND);

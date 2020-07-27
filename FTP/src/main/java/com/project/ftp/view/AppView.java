@@ -18,20 +18,21 @@ public class AppView extends View {
     final String pageName;
     final String isLogin;
     final String userName;
-    private String userDisplayName;
+    final String userDisplayName;
     final String isLoginUserAdmin;
     public AppView(HttpServletRequest request, String ftl, String pageName, final UserService userService) {
         super(ftl);
         LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
         this.pageName = pageName;
-        this.isLogin = loginUserDetails.getLogin().toString();
         this.userName = loginUserDetails.getUsername();
-        this.appVersion = AppConstant.AppVersion;
-        this.userDisplayName = userService.getUserDisplayName(this.userName);
-        if (this.userDisplayName == null) {
-            this.userDisplayName = "";
-        }
+        this.isLogin = loginUserDetails.getLogin().toString();
         this.isLoginUserAdmin = loginUserDetails.getLoginUserAdmin().toString();
+        this.appVersion = AppConstant.AppVersion;
+        this.userDisplayName = "";
+//        this.userDisplayName = userService.getUserDisplayName(this.userName);
+//        if (this.userDisplayName == null) {
+//            this.userDisplayName = "";
+//        }
         logger.info("Loading AppView, page: {}, userDetails: {}", pageName, loginUserDetails);
     }
 

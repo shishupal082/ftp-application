@@ -136,6 +136,7 @@ font-size: 0.8rem;
 
 remove envConfigParameter
     - appViewFtlFileName
+    - Removed app_view.ftl file
 
 Remove api call /api/get_static_file for all page
     - Call on upload_file page only
@@ -153,6 +154,13 @@ Adding ?appVersion instead of ?RequestId in generating api request call for
 Change from serial to parallel call for below two api
     - /api/get_files_info
     - /api/get_static_file
+
+1.0.7
+-----------------------
+stop sending userDisplayName in page rendering as it is required file reading and parsing
+    - Also it is not being used till now
+
+
 
 Future releases
 -------------------
