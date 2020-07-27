@@ -117,8 +117,6 @@ public class SessionService {
         } catch (Exception e) {
             logger.info("Error in getting loginUserDetails: {}", e.getMessage());
         }
-        // Data mocking from tempConfig
-        /*
         if (loginUserName == null) {
             HashMap<String, String> tempConfig = appConfig.getFtpConfiguration().getTempConfig();
             if (tempConfig != null) {
@@ -128,7 +126,6 @@ public class SessionService {
                 }
             }
         }
-        */
         return loginUserName;
     }
 }

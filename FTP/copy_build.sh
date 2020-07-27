@@ -32,8 +32,6 @@ copyFiles() {
 
   cp meta-data/config-files/env_config.yml ${configDataDir}
   cp meta-data/config-files/favicon.ico ${configDataDir}
-#  cp meta-data/config-files/user_data.csv ${configDataDir}
-#  cp meta-data/config-files/app_static_data.json ${configDataDir}
 
 
 #  cp meta-data/saved-files/app_static_data.json ${savedFilesDir}

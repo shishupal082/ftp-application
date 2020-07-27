@@ -8,7 +8,7 @@ var FTPHelper = {};
 
 (function($S){
 // var DT = $S.getDT();
-var TextFilter = $S.getTextFilter();
+// var TextFilter = $S.getTextFilter();
 var FTP = function(arg) {
     return new FTP.fn.init(arg);
 };
@@ -30,21 +30,11 @@ FTP.extend({
         field.text = Data.getData("userName", "");
 
         var isAdmin = Data.getData("isUserAdmin", false);
-        field = TemplateHelper(linkTemplate).searchField("link.is-admin");
         if ($S.isBooleanTrue(isAdmin)) {
-            field.className = TextFilter(field.className).removeClass("d-none").className;
+            TemplateHelper.removeClassTemplate(linkTemplate, "link.is-admin", "d-none");
         } else {
-            field.className = TextFilter(field.className).addClass("d-none").className;
+            TemplateHelper.addClassTemplate(linkTemplate, "link.is-admin", "d-none");
         }
-        // field = TemplateHelper(linkTemplate).searchField("link.logout");
-        // field.className = TextFilter(field.className).addClass("d-none").className;
-
-        // field = TemplateHelper(linkTemplate).searchField("link.change_password");
-        // field.className = TextFilter(field.className).addClass("d-none").className;
-
-        field = TemplateHelper(linkTemplate).searchField("link.forgot_password");
-        field.className = TextFilter(field.className).addClass("d-none").className;
-
         Data.setData("linkTemplate", linkTemplate);
         return linkTemplate;
     }
@@ -80,13 +70,13 @@ FTP.extend({
         field = TemplateHelper(template).searchFieldV2("dashboard.fileinfo.filename");
         field.text = fileResponse.filename;
         if (fullFilename === currentPdfLink) {
-            field.className = TextFilter(field.className).addClass("text-danger").className;
+            TemplateHelper.addClassTemplate(field, "dashboard.fileinfo.filename", "text-danger");
         }
         // Changing view parameter
         field = TemplateHelper(template).searchFieldV2("dashboard.fileinfo.view");
         field.value = fullFilename;
         if (fullFilename === currentPdfLink) {
-            field.className = TextFilter(field.className).addClass("disabled").className;
+            TemplateHelper.addClassTemplate(field, "dashboard.fileinfo.view", "disabled");
         }
 
         // Changing open in new tab link parameter
@@ -101,7 +91,8 @@ FTP.extend({
         field = TemplateHelper(template).searchFieldV2("dashboard.fileinfo.delete");
         field.value = fullFilename;
         if (currentUserName !== fileResponse.username) {
-            field.className = TextFilter(field.className).removeClass("text-danger").addClass("disabled").className;
+            TemplateHelper.addClassTemplate(field, "dashboard.fileinfo.delete", "disabled");
+            TemplateHelper.removeClassTemplate(field, "dashboard.fileinfo.delete", "text-danger");
         }
         return template;
     },
@@ -153,10 +144,10 @@ FTP.extend({
             template2Data[parentTemplateName+".username"] = apiData[i]["username"];
 
             template2Data[parentTemplateName+".fileinfo"] = FTP._generateFileinfoField(Data, currentUserName, apiData[i], currentPdfLink);
-            TemplateHelper.setTemplateTextByFormValues(template2, template2Data);
+            TemplateHelper.updateTemplateText(template2, template2Data);
             dashboardTemplateData.dashboardRow.push(template2);
         }
-        TemplateHelper.setTemplateTextByFormValues(dashboardTemplate, dashboardTemplateData);
+        TemplateHelper.updateTemplateText(dashboardTemplate, dashboardTemplateData);
         return dashboardTemplate;
     },
     getDashboardField: function(Data, pageName) {
@@ -182,7 +173,7 @@ FTP.extend({
         for(i=0; i<dashboardData.dashboardRow.length; i++) {
             template2 = Data.getTemplate("dashboardRowHeading", {});
             template2Data = {"rowHeading": dashboardData.dashboardRow[i].rowHeading};
-            TemplateHelper.setTemplateTextByFormValues(template2, template2Data);
+            TemplateHelper.updateTemplateText(template2, template2Data);
             dashboardTemplateData.dashboardRow.push(template2);
 
             template2 = Data.getTemplate("dashboard1stRow", {});
@@ -193,11 +184,11 @@ FTP.extend({
                 template2 = Data.getTemplate("dashboardRowData", {});
                 template2Data = {"s.no": count++};
                 template2Data["fileinfo"] = FTP._generateFileinfoField(Data, currentUserName, dashboardData.dashboardRow[i].dashboardRowData[j], currentPdfLink);
-                TemplateHelper.setTemplateTextByFormValues(template2, template2Data);
+                TemplateHelper.updateTemplateText(template2, template2Data);
                 dashboardTemplateData.dashboardRow.push(template2);
             }
         }
-        TemplateHelper.setTemplateTextByFormValues(dashboardTemplate, dashboardTemplateData);
+        TemplateHelper.updateTemplateText(dashboardTemplate, dashboardTemplateData);
         return dashboardTemplate;
     }
 });
@@ -216,14 +207,14 @@ FTP.extend({
             displayLink = PageData.getCurrentPdfLink();
             if (Config.imgExt.indexOf(ext) >= 0) {
                 field = TemplateHelper(dashboardField).searchFieldV2("dashboard.display.object.div");
-                field.className = TextFilter(field.className).addClass("d-none").className;
+                TemplateHelper.addClassTemplate(field, "dashboard.display.object.div", "d-none");
 
                 field = TemplateHelper(dashboardField).searchFieldV2("dashboard.display.img");
                 field.src = displayLink;
                 field.alt = fileinfo.filename;
             } else {
                 field = TemplateHelper(dashboardField).searchFieldV2("dashboard.display.img.div");
-                field.className = TextFilter(field.className).addClass("d-none").className;
+                TemplateHelper.addClassTemplate(field, "dashboard.display.img.div", "d-none");
                 field = TemplateHelper(dashboardField).searchFieldV2("pdfViewObject");
                 field.data = displayLink;
                 // field.type = "application/" + ext;

@@ -42,13 +42,6 @@ Template["link"] = [
             },
             {
                 "tag": "a",
-                "href": "/forgot_password",
-                "name": "link.forgot_password",
-                "className": "p-10px",
-                "text": "Forgot Password"
-            },
-            {
-                "tag": "a",
                 "href": "/change_password",
                 "name": "link.change_password",
                 "className": "p-10px",

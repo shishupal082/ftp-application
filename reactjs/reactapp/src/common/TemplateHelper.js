@@ -1,7 +1,7 @@
 import $S from '../interface/stack.js';
 var TemplateHelper;
-var TextFilter = $S.getTextFilter();
 (function($S) {
+var TextFilter = $S.getTextFilter();
 var Template = function(template) {
     return new Template.fn.init(template);
 };
@@ -96,6 +96,26 @@ Template.extend({
                 if (field.name === fieldName) {
                     updateField(field, {"setText": formValues[fieldName]});
                 }
+            }
+        }
+        return template;
+    },
+    addClassTemplate: function(template, fieldName, className) {
+        var field = {};
+        if ($S.isString(fieldName)) {
+            field = Template(template).searchField(fieldName);
+            if (field.name === fieldName) {
+                updateField(field, {"addClass": className});
+            }
+        }
+        return template;
+    },
+    removeClassTemplate: function(template, fieldName, className) {
+        var field = {};
+        if ($S.isString(fieldName)) {
+            field = Template(template).searchField(fieldName);
+            if (field.name === fieldName) {
+                updateField(field, {"removeClass": className});
             }
         }
         return template;
