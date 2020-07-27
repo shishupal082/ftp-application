@@ -1,2 +1,11 @@
 reactjs/reactapp/node_modules/
 reactjs/reactapp/build/
+
+FTP/.idea/
+FTP/target/
+FTP/FTP.iml
+FTP/readme.pdf
+FTP/user_guide.pdf
+FTP/user_guide.txt
+FTP/meta-data/FTP-*.jar
+

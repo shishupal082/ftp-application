@@ -14,7 +14,6 @@ addLog() {
   fi
 }
 
-sh sync.sh
 
 addLog "*****Start building application*****"
 
