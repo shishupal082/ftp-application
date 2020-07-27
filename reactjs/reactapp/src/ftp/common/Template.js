@@ -14,7 +14,7 @@ Template["heading"] = [
             },
             {
                 "tag": "td",
-                "className": "text-center pl-10px",
+                "className": "text-center pl-5px",
                 "text": [
                     {
                         "tag": "div",
@@ -23,6 +23,36 @@ Template["heading"] = [
                     {
                         "tag": "div",
                         "text": "Larger Heading Line 2 Row"
+                    }
+                ]
+            }
+        ]
+    }
+];
+Template["heading"] = [
+    {
+        "tag": "div.center.table.tbody.tr",
+        "className": "heading",
+        "text": [
+            {
+                "tag": "td",
+                "text": {
+                    "tag": "img",
+                    "className": "logo",
+                    "src": "/assets/static/img/railwayslogo-128.png"
+                }
+            },
+            {
+                "tag": "td",
+                "className": "text-center pl-5px",
+                "text": [
+                    {
+                        "tag": "div",
+                        "text": "Indian Railways Institute of"
+                    },
+                    {
+                        "tag": "div",
+                        "text": "Signal Engineering and Telecommunications"
                     }
                 ]
             }

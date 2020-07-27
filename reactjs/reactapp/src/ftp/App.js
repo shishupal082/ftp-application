@@ -124,11 +124,14 @@ class App extends React.Component {
         // renderField.push(Data.getTemplate("loading", {}));
         // this.setState({renderField: renderField});
         var self = this;
-        FTPHelper.loadStaticData(Data, function() {
-            self.setRenderField(true);
-             FTPHelper.loadPageData(Data, function() {
+        self.setRenderField(true);
+        if (currentPageName === "upload_file") {
+            FTPHelper.loadStaticData(Data, function() {
                 self.setRenderField();
             });
+        }
+        FTPHelper.loadPageData(Data, function() {
+            self.setRenderField();
         });
     }
     render() {

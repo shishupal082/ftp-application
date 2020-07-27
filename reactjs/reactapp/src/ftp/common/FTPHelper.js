@@ -248,11 +248,11 @@ FTP.extend({
         var url = Config.apiMapping["static_file"];
         $S.loadJsonData(null, [url], function(response, apiName, ajaxDetails) {
             if ($S.isObject(response) && $S.isObject(response.data)) {
-                if ($S.isObject(response.data.template)) {
-                    var oldTemplate = Data.getData("FTPTemplate", {});
-                    Object.assign(oldTemplate, response.data.template);
-                    Data.setData("FTPTemplate", oldTemplate);
-                }
+                // if ($S.isObject(response.data.template)) {
+                //     var oldTemplate = Data.getData("FTPTemplate", {});
+                //     Object.assign(oldTemplate, response.data.template);
+                //     Data.setData("FTPTemplate", oldTemplate);
+                // }
                 if ($S.isObject(response.data.config)) {
                     Config.setApiConfig(response.data.config);
                 }

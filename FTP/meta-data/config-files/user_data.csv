@@ -1,5 +1,8 @@
-U1,U1,U1 User
+username,password,userDisplayName,passcode,method,timestamp
+U0
+U1,U1
 U2,U1,U2 User
 U3,U1,U3 User
+U4,,,1234
 public,public,Public User
 Admin,Admin,Admin User

@@ -134,6 +134,8 @@ font-size: 0.9rem;
 @media (max-width: 360px)
 font-size: 0.8rem;
 
+remove envConfigParameter
+    - appViewFtlFileName
 
 Future releases
 -------------------

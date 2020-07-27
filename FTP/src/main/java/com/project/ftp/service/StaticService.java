@@ -78,15 +78,10 @@ public class StaticService {
         FtpConfiguration ftpConfiguration = appConfig.getFtpConfiguration();
         ConfigService configService = new ConfigService(appConfig);
         configService.setPublicDir();
-        String ftl = ftpConfiguration.getAppViewFtlFileName();
         String indexPageReRoute = ftpConfiguration.getIndexPageReRoute();
-        if (ftl == null) {
-            ftl = AppConstant.APP_VIEW_FTL_FILENAME;
-        }
         if (indexPageReRoute == null) {
             indexPageReRoute = AppConstant.INDEX_PAGE_RE_ROUTE;
         }
-        ftpConfiguration.setAppViewFtlFileName(ftl);
         ftpConfiguration.setIndexPageReRoute(indexPageReRoute);
         TextToPdfService textToPdfService = new TextToPdfService();
         Boolean createReadmePdf = ftpConfiguration.getCreateReadmePdf();

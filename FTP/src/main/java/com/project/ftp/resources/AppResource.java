@@ -1,6 +1,7 @@
 package com.project.ftp.resources;
 
 import com.project.ftp.config.AppConfig;
+import com.project.ftp.config.AppConstant;
 import com.project.ftp.exceptions.AppException;
 import com.project.ftp.obj.PathInfo;
 import com.project.ftp.service.FileServiceV2;
@@ -36,7 +37,7 @@ public class AppResource {
         this.appConfig = appConfig;
         fileServiceV2 = new FileServiceV2(appConfig);
         userService = new UserService(appConfig);
-        appViewFtlFileName = appConfig.getFtpConfiguration().getAppViewFtlFileName();
+        appViewFtlFileName = AppConstant.APP_VIEW_FTL_FILENAME;
     }
     @GET
     public IndexView indexPage(@Context HttpServletRequest request) {

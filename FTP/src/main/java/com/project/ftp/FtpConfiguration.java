@@ -22,7 +22,6 @@ public class FtpConfiguration extends Configuration {
     private ArrayList<String> supportedFileType;
     private Boolean createReadmePdf;
     private String filenameFormat;
-    private String appViewFtlFileName;
     private Boolean permanentlyDeleteFile;
 
     private HashMap<String, String> tempConfig;
@@ -131,13 +130,6 @@ public class FtpConfiguration extends Configuration {
         this.filenameFormat = filenameFormat;
     }
 
-    public String getAppViewFtlFileName() {
-        return appViewFtlFileName;
-    }
-
-    public void setAppViewFtlFileName(String appViewFtlFileName) {
-        this.appViewFtlFileName = appViewFtlFileName;
-    }
 
     public Boolean getPermanentlyDeleteFile() {
         return permanentlyDeleteFile;
@@ -162,7 +154,6 @@ public class FtpConfiguration extends Configuration {
                 ", createReadmePdf=" + createReadmePdf +
                 ", fileSaveDir='" + fileSaveDir + '\'' +
                 ", filenameFormat='" + filenameFormat + '\'' +
-                ", appViewFtlFileName='" + appViewFtlFileName + '\'' +
                 ", permanentlyDeleteFile=" + permanentlyDeleteFile +
                 ", tempConfig=" + tempConfig +
                 '}';
