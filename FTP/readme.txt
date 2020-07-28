@@ -76,13 +76,6 @@ Change config if required
         fileSaveDir: D:/workspace/project/ftp-app/saved-files/
     - Default file save directory will be running directory + "/saved-files/"
 - adminUsersName (arrayList) (Admin)
-- filenameFormat (string)
-    - username, filename, YYYY-MM-dd, HH-mm-ss-SSS
-    for example
-        - "YYYY-MM-dd'-username'"
-        - "YYYY-MM-dd'-filename'"
-        - "YYYY-MM-dd'-username-filename'"
-        - "YYYY-MM-dd-HH-mm-ss-SSS"
 
 Fixed configurations
 ---------------------

@@ -168,6 +168,7 @@ Template["login"] = [
                 {
                     "tag": "button",
                     "className": "btn btn-primary",
+                    "name": "login.submit",
                     "text": "Submit"
                 },
                 {
@@ -334,6 +335,7 @@ Template["register"] = [
                 {
                     "tag": "button",
                     "className": "btn btn-primary",
+                    "name": "register.submit",
                     "text": "Submit"
                 },
                 {
@@ -386,19 +388,14 @@ Template["upload_file"] = [
                 {
                     "tag": "button",
                     "className": "btn btn-primary",
+                    "name": "upload_file.submit",
                     "text": "Submit"
                 },
                 {
-                    "tag": "div",
-                    "className": "form-group",
-                    "text": [
-                        {
-                            "tag": "div",
-                            "className": "text-danger pt-10px",
-                            "name": "upload_file.message",
-                            "text": ""
-                        }
-                    ]
+                    "tag": "span",
+                    "className": "pl-10px text-success",
+                    "name": "upload_file.complete-status",
+                    "text": ""
                 }
             ]
         }
@@ -481,6 +478,7 @@ Template["change_password"] = [
                 {
                     "tag": "button",
                     "className": "btn btn-primary",
+                    "name": "change_password.submit",
                     "text": "Submit"
                 }
             ]

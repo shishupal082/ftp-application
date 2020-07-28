@@ -224,6 +224,34 @@ FTP.extend({
             }
         }
     },
+    uploadSubmitButtonStatus: function(pageName, template) {
+        var formPage = ["login", "change_password", "register", "upload_file"];
+        if (formPage.indexOf(pageName) < 0) {
+            return template;
+        }
+        var submitBtnNames = {"upload_file": "upload_file.submit"};
+        submitBtnNames["login"] = "login.submit";
+        submitBtnNames["change_password"] = "change_password.submit";
+        submitBtnNames["register"] = "register.submit";
+        var formSubmitStatus = PageData.getData("formSubmitStatus", "");
+        if (formSubmitStatus === "in_progress") {
+            TemplateHelper.removeClassTemplate(template, submitBtnNames[pageName], "btn-primary");
+            TemplateHelper.addClassTemplate(template, submitBtnNames[pageName], "btn-link disabled");
+        } else {
+            TemplateHelper.addClassTemplate(template, submitBtnNames[pageName], "btn-primary");
+            TemplateHelper.removeClassTemplate(template, submitBtnNames[pageName], "btn-link disabled");
+        }
+        if (pageName === "upload_file") {
+            if (formSubmitStatus === "in_progress") {
+                var percentComplete = PageData.getData("upload_file.percentComplete", "");
+                percentComplete = "Uploaded "+percentComplete+"%";
+                TemplateHelper.setTemplateAttr(template, "upload_file.complete-status", "text", percentComplete);
+            } else {
+                TemplateHelper.setTemplateAttr(template, "upload_file.complete-status", "text", "");
+            }
+        }
+        return template;
+    },
     getFieldTemplateByPageName: function(Data, pageName) {
         var pageTemplate = [];
         var template = {};
@@ -231,13 +259,16 @@ FTP.extend({
             template = Data.getTemplate(pageName, {});
             var message = Config.getApiConfig("uploadFileInstruction", "");
             TemplateHelper.setTemplateAttr(template, "upload_file.message", "text", message);
+            FTP.uploadSubmitButtonStatus(pageName, template);
             pageTemplate.push(template);
         } else if (pageName === "dashboard") {
             var dashboardField = FTP.getDashboardField(Data, pageName);
             FTP.displayVisibleItem(dashboardField);
             pageTemplate.push(dashboardField);
         } else {
-            pageTemplate.push(Data.getTemplate(pageName, {}));
+            template = Data.getTemplate(pageName, {});
+            FTP.uploadSubmitButtonStatus(pageName, template);
+            pageTemplate.push(template);
         }
         return pageTemplate;
     }

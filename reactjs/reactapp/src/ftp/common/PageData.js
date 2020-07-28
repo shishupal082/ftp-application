@@ -6,6 +6,7 @@ var PageData;
 (function($S){
 var CurrentFormData = $S.getDataObj();
 var keys = ["upload_file.file"];
+keys.push("upload_file.percentComplete");
 keys.push("dashboard.apiResponse"); // []
 keys.push("dashboard.apiResponseByUser");// {}
 keys.push("dashboard.currentPdfLink");
@@ -110,21 +111,28 @@ PageData.extend({
         if ($S.isString(url)) {
             if (pageName === "upload_file") {
                 PageData.setData("formSubmitStatus", "in_progress");
+                $S.callMethod(callBack);
                 var formData = new FormData();
                 formData.append("file", CurrentFormData.getData("upload_file.file", {}, true));
                 $S.uploadFile(Config.JQ, url, formData, function(ajax, status, response) {
+                    PageData.setData("formSubmitStatus", "completed");
                     console.log(response);
                     if (status === "FAILURE") {
                         alert("Error in uploading file, Please Try again.");
                     } else {
                         PageData.handleApiResponse(Data, callBack, pageName, ajax, response);
                     }
+                }, function(percentComplete) {
+                    PageData.setData("upload_file.percentComplete", percentComplete);
+                    $S.callMethod(callBack);
                 });
             } else if (pageName === "login") {
                 PageData.setData("formSubmitStatus", "in_progress");
+                $S.callMethod(callBack);
                 postData["username"] = CurrentFormData.getData("login.username", "");
                 postData["password"] = CurrentFormData.getData("login.password", "");
                 $S.sendPostRequest(Config.JQ, url, postData, function(ajax, status, response) {
+                    PageData.setData("formSubmitStatus", "completed");
                     console.log(response);
                     if (status === "FAILURE") {
                         alert("Error in login, Please Try again.");
@@ -134,10 +142,12 @@ PageData.extend({
                 });
             } else if (pageName === "change_password") {
                 PageData.setData("formSubmitStatus", "in_progress");
+                $S.callMethod(callBack);
                 postData["old_password"] = CurrentFormData.getData("change_password.old_password", "");
                 postData["new_password"] = CurrentFormData.getData("change_password.new_password", "");
                 postData["confirm_password"] = CurrentFormData.getData("change_password.confirm_password", "");
                 $S.sendPostRequest(Config.JQ, url, postData, function(ajax, status, response) {
+                    PageData.setData("formSubmitStatus", "completed");
                     console.log(response);
                     if (status === "FAILURE") {
                         alert("Error in change password, Please Try again.");
@@ -147,11 +157,13 @@ PageData.extend({
                 });
             } else if (pageName === "register") {
                 PageData.setData("formSubmitStatus", "in_progress");
+                $S.callMethod(callBack);
                 postData["username"] = CurrentFormData.getData("register.username", "");
                 postData["passcode"] = CurrentFormData.getData("register.passcode", "");
                 postData["password"] = CurrentFormData.getData("register.password", "");
                 postData["display_name"] = CurrentFormData.getData("register.displayName", "");
                 $S.sendPostRequest(Config.JQ, url, postData, function(ajax, status, response) {
+                    PageData.setData("formSubmitStatus", "completed");
                     console.log(response);
                     if (status === "FAILURE") {
                         alert("Error in register user, Please Try again.");
@@ -169,6 +181,7 @@ PageData.extend({
         if (apiName === "upload_file") {
             if (response.status === "FAILURE") {
                 alert(Config.getAleartMessage(response));
+                $S.callMethod(callBack);
             } else {
                 alert("File saved as: " + response.data.fileName);
                 Config.location.href = "/dashboard";
@@ -176,18 +189,21 @@ PageData.extend({
         } else if (apiName === "login") {
             if (response.status === "FAILURE") {
                 alert(Config.getAleartMessage(response));
+                $S.callMethod(callBack);
             } else {
                 Config.location.href = "/dashboard";
             }
         } else if (apiName === "register") {
             if (response.status === "FAILURE") {
                 alert(Config.getAleartMessage(response));
+                $S.callMethod(callBack);
             } else {
                 Config.location.href = "/dashboard";
             }
         } else if (apiName === "change_password") {
             if (response.status === "FAILURE") {
                 alert(Config.getAleartMessage(response));
+                $S.callMethod(callBack);
             } else {
                 Config.location.href = "/dashboard";
             }

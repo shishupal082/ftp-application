@@ -160,6 +160,7 @@ Change from serial to parallel call for below two api
 stop sending userDisplayName in page rendering as it is required file reading and parsing
     - Also it is not being used till now
 Remove filenameFormat config parameter, put into AppConstant.FILENAME_FORMAT
+    - filenameFormat: "YYYY-MM-dd-HH-mm'-filename'"
 Adding ?v=appVersion instead of ?appVersion in generating api request call for
     - /api/get_files_info
     - /api/get_static_file
@@ -173,10 +174,11 @@ Disable button until previous form submit request completed
         - api/change_password
         - api/login_user
         - api/register
+Display % completed fileUpload
+
 
 Future releases
 -------------------
-Display % completed fileUpload
 
 add password encryption env config
     - by default it will be false
