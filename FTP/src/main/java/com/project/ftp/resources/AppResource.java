@@ -64,9 +64,10 @@ public class AppResource {
     @Path("/view/file/{username}/{filename2}")
     public Object viewFile(@Context HttpServletRequest request,
                            @PathParam("username") String username,
-                           @PathParam("filename2") String filename2,
-                           @QueryParam("name") String filename) {
-        logger.info("Loading viewFile: {}", filename);
+                           @PathParam("filename2") String filename2) {
+        String filename = username+"/"+filename2;
+        logger.info("Loading viewFile: {}, user: {}",
+                filename, userService.getUserDataForLogging(request));
         PathInfo pathInfo = null;
         Response.ResponseBuilder r;
         try {
@@ -97,9 +98,10 @@ public class AppResource {
     @Path("/download/file/{username}/{filename2}")
     public Object downloadFile(@Context HttpServletRequest request,
                                @PathParam("username") String username,
-                               @PathParam("filename2") String filename2,
-                               @QueryParam("name") String filename) {
-        logger.info("Loading viewFile: {}", filename);
+                               @PathParam("filename2") String filename2) {
+        String filename = username+"/"+filename2;
+        logger.info("Loading viewFile: {}, user: {}",
+                filename, userService.getUserDataForLogging(request));
         PathInfo pathInfo = null;
         Response.ResponseBuilder r;
         try {

@@ -68,7 +68,7 @@ Config.getPageData = function(key, defaultValue) {
 
 var RequestId = Config.getPageData("app_version", "");
 Config.apiMapping = {};
-Config.apiMapping["static_file"] = baseapi + "/api/get_static_file?" + RequestId;
+Config.apiMapping["static_file"] = baseapi + "/api/get_static_file?v=" + RequestId;
 
 Config.apiMapping["login"] = baseapi + "/api/login_user";
 Config.apiMapping["register"] = baseapi + "/api/register_user";
@@ -76,7 +76,7 @@ Config.apiMapping["change_password"] = baseapi + "/api/change_password";
 Config.apiMapping["upload_file"] = baseapi + "/api/upload_file";
 
 Config.apiMapping["delete_file"] = baseapi + "/api/delete_file";
-Config.apiMapping["get_files"] = baseapi + "/api/get_files_info?" + RequestId;
+Config.apiMapping["get_files"] = baseapi + "/api/get_files_info?v=" + RequestId;
 
 Config.getAleartMessage = function(errorCode) {
     var messageMap = {};

@@ -19,7 +19,10 @@ keys.push("register.username");
 keys.push("register.passcode");
 keys.push("register.password");
 keys.push("register.displayName");
+keys.push("formSubmitStatus"); // in_progress, completed
 CurrentFormData.setKeys(keys);
+
+CurrentFormData.setData("formSubmitStatus", "not_started");
 
 PageData = function(arg) {
     return new PageData.fn.init(arg);
@@ -44,10 +47,10 @@ PageData.extend({
 });
 PageData.extend({
     getPdfDownloadLink: function(filename) {
-        return Config.baseapi + "/download/file/" + filename + "?name="+filename;
+        return Config.baseapi + "/download/file/" + filename;
     },
     getPdfViewLink: function(filename) {
-        return Config.baseapi + "/view/file/" + filename + "?name="+filename;
+        return Config.baseapi + "/view/file/" + filename;
     },
     getCurrentPdfLink: function(Data) {
         var pdfLink = CurrentFormData.getData("dashboard.currentPdfLink", null);
@@ -106,6 +109,7 @@ PageData.extend({
         var postData = {};
         if ($S.isString(url)) {
             if (pageName === "upload_file") {
+                PageData.setData("formSubmitStatus", "in_progress");
                 var formData = new FormData();
                 formData.append("file", CurrentFormData.getData("upload_file.file", {}, true));
                 $S.uploadFile(Config.JQ, url, formData, function(ajax, status, response) {
@@ -117,6 +121,7 @@ PageData.extend({
                     }
                 });
             } else if (pageName === "login") {
+                PageData.setData("formSubmitStatus", "in_progress");
                 postData["username"] = CurrentFormData.getData("login.username", "");
                 postData["password"] = CurrentFormData.getData("login.password", "");
                 $S.sendPostRequest(Config.JQ, url, postData, function(ajax, status, response) {
@@ -128,6 +133,7 @@ PageData.extend({
                     }
                 });
             } else if (pageName === "change_password") {
+                PageData.setData("formSubmitStatus", "in_progress");
                 postData["old_password"] = CurrentFormData.getData("change_password.old_password", "");
                 postData["new_password"] = CurrentFormData.getData("change_password.new_password", "");
                 postData["confirm_password"] = CurrentFormData.getData("change_password.confirm_password", "");
@@ -140,6 +146,7 @@ PageData.extend({
                     }
                 });
             } else if (pageName === "register") {
+                PageData.setData("formSubmitStatus", "in_progress");
                 postData["username"] = CurrentFormData.getData("register.username", "");
                 postData["passcode"] = CurrentFormData.getData("register.passcode", "");
                 postData["password"] = CurrentFormData.getData("register.password", "");

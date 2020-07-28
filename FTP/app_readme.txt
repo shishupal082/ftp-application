@@ -159,11 +159,25 @@ Change from serial to parallel call for below two api
 -----------------------
 stop sending userDisplayName in page rendering as it is required file reading and parsing
     - Also it is not being used till now
+Remove filenameFormat config parameter, put into AppConstant.FILENAME_FORMAT
+Adding ?v=appVersion instead of ?appVersion in generating api request call for
+    - /api/get_files_info
+    - /api/get_static_file
+Remove query parameter from below 2 api
+    - /view/file/{username}/{filename2}
+    - /download/file/{username}/{filename2}
 
-
+Disable button until previous form submit request completed
+    - Added status of api_call (in_progress, completed)
+        - api/upload_file
+        - api/change_password
+        - api/login_user
+        - api/register
 
 Future releases
 -------------------
+Display % completed fileUpload
+
 add password encryption env config
     - by default it will be false
     - encryption only in java script for password
@@ -172,6 +186,7 @@ Add user agent detection support for /download/file/username/filename
 Add GA for UI tracking
 Display date heading on UI for orderByFilename
 
+Save filename should not contain (<>/\"|*:)
 
 Forgot password
 -----------------

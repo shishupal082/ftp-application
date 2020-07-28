@@ -300,7 +300,7 @@ public class FileServiceV2 {
         values.put("username", loginUserName);
         values.put("filename", pathInfo.getFilenameWithoutExt());
         String uploadingFileName = dir + loginUserName + "/" +
-                StaticService.generateStringFromFormat(appConfig, values) + "." + pathInfo.getExtension();
+                StaticService.generateStringFromFormat(values) + "." + pathInfo.getExtension();
         if (parseUserFileName(uploadingFileName) == null) {
             logger.info("Invalid upload filepath: {}", uploadingFileName);
             throw new AppException(ErrorCodes.INVALID_FILE_SAVE_PATH);

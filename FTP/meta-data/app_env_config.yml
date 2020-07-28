@@ -45,16 +45,17 @@ supportedFileType:
   - jpg
   - png
 
-filenameFormat: "YYYY-MM-dd'-filename'"
+
+permanentlyDeleteFile: false #File will saved in trash folder
 maxFileSize: 10240001 #i.e. #i.e. 2048000 = 2048 kB = 2MB, 10240001 = 10MB
 
 adminUsersName:
   - Admin
 
 
+
 # Optional parameter
 indexPageReRoute: /dashboard
-permanentlyDeleteFile2: true
 
 # Only for development purpose
 createReadmePdf: true

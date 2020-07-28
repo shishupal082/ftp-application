@@ -19,6 +19,7 @@ public class AppConstant {
     public static final String FOLDER = "FOLDER";
     public static final String AppVersion = "1.0.7";
     public static final String server = "server";
+    public static final String FILENAME_FORMAT = "YYYY-MM-dd'-filename'";
     public static final String DateTimeFormat = "YYYYMMdd'T'HHmmssSSS";
     public static final String DateTimeFormat2 = "YYYY-MM-dd-HH-mm-ss-SSS";
     public static final String DateTimeFormat3 = "YYYY-MM-dd' 'HH:mm"; // used for putting date time stamp in readme

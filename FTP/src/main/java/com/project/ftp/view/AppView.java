@@ -29,10 +29,6 @@ public class AppView extends View {
         this.isLoginUserAdmin = loginUserDetails.getLoginUserAdmin().toString();
         this.appVersion = AppConstant.AppVersion;
         this.userDisplayName = "";
-//        this.userDisplayName = userService.getUserDisplayName(this.userName);
-//        if (this.userDisplayName == null) {
-//            this.userDisplayName = "";
-//        }
         logger.info("Loading AppView, page: {}, userDetails: {}", pageName, loginUserDetails);
     }
 
