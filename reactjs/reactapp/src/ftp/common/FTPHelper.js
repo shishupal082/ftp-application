@@ -7,7 +7,7 @@ import PageData from "./PageData";
 var FTPHelper = {};
 
 (function($S){
-// var DT = $S.getDT();
+var DT = $S.getDT();
 // var TextFilter = $S.getTextFilter();
 var FTP = function(arg) {
     return new FTP.fn.init(arg);
@@ -96,70 +96,57 @@ FTP.extend({
         }
         return template;
     },
-    _getDashboardData: function(Data) {
-        var dashboardData = {"dashboardRow": []};
-        var apiData = PageData.getData("dashboard.apiResponseByUser", {});
-        var i, temp;
-        temp = Object.keys(apiData);
-        var displayUserSequense = ["public"];
-        temp = temp.sort();
-        for(i=0; i<temp.length; i++) {
-            if (temp[i] === "public") {
-                continue;
-            }
-            displayUserSequense.push(temp[i]);
-        }
-        var template2Data;
-        for(i=0; i<displayUserSequense.length; i++) {
-            if (apiData[displayUserSequense[i]]) {
-                template2Data = {"rowHeading": displayUserSequense[i],
-                                "dashboardRowData": apiData[displayUserSequense[i]]};
-                dashboardData["dashboardRow"].push(template2Data);
-            }
-        }
-        return dashboardData;
-    },
     getDashboardFieldOrderByDate: function(Data) {
-        var apiData = PageData.getData("dashboard.apiResponse", []);
+        var apiData = PageData.getData("dashboard.apiResponseByDate", []);
         if (apiData.length < 1) {
             return Data.getTemplate("noDataFound", {});
         }
-
         var dashboardTemplate = Data.getTemplate("dashboard", {});
         var dashboardTemplateData = {"dashboardRow": []};
         var template2, template2Data;
         template2 = Data.getTemplate("dashboardOrderByOption", {});
         TemplateHelper.setTemplateAttr(template2, "dashboard.orderbydropdown.td", "colSpan", 3);
         dashboardTemplateData.dashboardRow.push(template2);
-        var i, count=1;
-        template2 = Data.getTemplate("dashboard1stRowByDate", {});
-        dashboardTemplateData.dashboardRow.push(template2);
+        var i, j, count;
         var parentTemplateName = "dashboardRowDataByDate";
         var currentPdfLink = PageData.getData("dashboard.currentPdfLink", "");
         var currentUserName = Data.getData("userName", "");
         for(i=0; i<apiData.length; i++) {
-            template2 = Data.getTemplate(parentTemplateName, {});
-            template2Data = {};
-            template2Data[parentTemplateName+".s.no"] = count++;
-            template2Data[parentTemplateName+".username"] = apiData[i]["username"];
+            if ($S.isArray(apiData[i].fieldData) && apiData[i].fieldData.length > 0) {
+                template2 = Data.getTemplate("dashboardRowHeading", {});
+                TemplateHelper.setTemplateAttr(template2, "dashboardRowHeading.heading", "colSpan", 3);
 
-            template2Data[parentTemplateName+".fileinfo"] = FTP._generateFileinfoField(Data, currentUserName, apiData[i], currentPdfLink);
-            TemplateHelper.updateTemplateText(template2, template2Data);
-            dashboardTemplateData.dashboardRow.push(template2);
+                template2Data = {"rowHeading": apiData[i].heading};
+                TemplateHelper.updateTemplateText(template2, template2Data);
+                dashboardTemplateData.dashboardRow.push(template2);
+
+                template2 = Data.getTemplate("dashboard1stRowByDate", {});
+                dashboardTemplateData.dashboardRow.push(template2);
+                count=1;
+                for (j=0; j<apiData[i].fieldData.length; j++) {
+                    template2 = Data.getTemplate(parentTemplateName, {});
+                    template2Data = {};
+                    template2Data[parentTemplateName+".s.no"] = count++;
+                    template2Data[parentTemplateName+".username"] = apiData[i].fieldData[j]["username"];
+
+                    template2Data[parentTemplateName+".fileinfo"] = FTP._generateFileinfoField(Data, currentUserName, apiData[i].fieldData[j], currentPdfLink);
+                    TemplateHelper.updateTemplateText(template2, template2Data);
+                    dashboardTemplateData.dashboardRow.push(template2);
+                }
+            }
         }
         TemplateHelper.updateTemplateText(dashboardTemplate, dashboardTemplateData);
         return dashboardTemplate;
     },
     getDashboardField: function(Data, pageName) {
         var orderBy = PageData.getData("dashboard.orderBy", null);
-        if (orderBy === "orderByFilename") {
+        if (orderBy === "orderByDate") {
             return FTP.getDashboardFieldOrderByDate(Data);
         }
-        var dashboardData = FTP._getDashboardData(Data);
-        if (dashboardData.dashboardRow.length < 1) {
+        var apiData = PageData.getData("dashboard.apiResponseByUser", []);
+        if (apiData.length < 1) {
             return Data.getTemplate("noDataFound", {});
         }
-
         var currentUserName = Data.getData("userName", "");
         var dashboardTemplate = Data.getTemplate(pageName, {});
         var dashboardTemplateData = {"dashboardRow": []};
@@ -169,23 +156,26 @@ FTP.extend({
         dashboardTemplateData.dashboardRow.push(template2);
 
         var i, j, count;
+        var parentTemplateName = "dashboardRowData";
         var currentPdfLink = PageData.getData("dashboard.currentPdfLink", "");
-        for(i=0; i<dashboardData.dashboardRow.length; i++) {
-            template2 = Data.getTemplate("dashboardRowHeading", {});
-            template2Data = {"rowHeading": dashboardData.dashboardRow[i].rowHeading};
-            TemplateHelper.updateTemplateText(template2, template2Data);
-            dashboardTemplateData.dashboardRow.push(template2);
-
-            template2 = Data.getTemplate("dashboard1stRow", {});
-            dashboardTemplateData.dashboardRow.push(template2);
-
-            count = 1;
-            for(j=0; j<dashboardData.dashboardRow[i].dashboardRowData.length; j++) {
-                template2 = Data.getTemplate("dashboardRowData", {});
-                template2Data = {"s.no": count++};
-                template2Data["fileinfo"] = FTP._generateFileinfoField(Data, currentUserName, dashboardData.dashboardRow[i].dashboardRowData[j], currentPdfLink);
+        for(i=0; i<apiData.length; i++) {
+            if ($S.isArray(apiData[i].fieldData) && apiData[i].fieldData.length > 0) {
+                template2 = Data.getTemplate("dashboardRowHeading", {});
+                template2Data = {"rowHeading": apiData[i].heading};
                 TemplateHelper.updateTemplateText(template2, template2Data);
                 dashboardTemplateData.dashboardRow.push(template2);
+
+                template2 = Data.getTemplate("dashboard1stRow", {});
+                dashboardTemplateData.dashboardRow.push(template2);
+                count=1;
+                for (j=0; j<apiData[i].fieldData.length; j++) {
+                    template2 = Data.getTemplate(parentTemplateName, {});
+                    template2Data = {};
+                    template2Data[parentTemplateName+".s.no"] = count++;
+                    template2Data[parentTemplateName+".fileinfo"] = FTP._generateFileinfoField(Data, currentUserName, apiData[i].fieldData[j], currentPdfLink);
+                    TemplateHelper.updateTemplateText(template2, template2Data);
+                    dashboardTemplateData.dashboardRow.push(template2);
+                }
             }
         }
         TemplateHelper.updateTemplateText(dashboardTemplate, dashboardTemplateData);
@@ -279,11 +269,6 @@ FTP.extend({
         var url = Config.apiMapping["static_file"];
         $S.loadJsonData(null, [url], function(response, apiName, ajaxDetails) {
             if ($S.isObject(response) && $S.isObject(response.data)) {
-                // if ($S.isObject(response.data.template)) {
-                //     var oldTemplate = Data.getData("FTPTemplate", {});
-                //     Object.assign(oldTemplate, response.data.template);
-                //     Data.setData("FTPTemplate", oldTemplate);
-                // }
                 if ($S.isObject(response.data.config)) {
                     Config.setApiConfig(response.data.config);
                 }
@@ -306,16 +291,74 @@ FTP.extend({
                 }
             }
         }
-        return responseByUser;
+        var keys = Object.keys(responseByUser).sort();
+        var finalResponse = [], key;
+        key = "public";
+        if ($S.isArray(responseByUser[key]) && responseByUser[key].length > 0) {
+            finalResponse.push({"heading": key, "fieldData": responseByUser[key]})
+        }
+        for(i=0; i<keys.length; i++) {
+            key = keys[i];
+            if (key === "public") {
+                continue;
+            }
+            finalResponse.push({"heading": key, "fieldData": responseByUser[key]});
+        }
+        return finalResponse;
+    },
+    _generateDashboardResponseByDate: function(dashboardApiResponse) {
+        var responseByDate = {};
+        var i;
+        if ($S.isArray(dashboardApiResponse)) {
+            for(i=0; i<dashboardApiResponse.length; i++) {
+                if ($S.isString(dashboardApiResponse[i]["dateHeading"]) && dashboardApiResponse[i]["dateHeading"].length) {
+                    if (responseByDate[dashboardApiResponse[i]["dateHeading"]]) {
+                        responseByDate[dashboardApiResponse[i]["dateHeading"]].push(dashboardApiResponse[i]);
+                    } else {
+                        responseByDate[dashboardApiResponse[i]["dateHeading"]] = [dashboardApiResponse[i]];
+                    }
+                }
+            }
+        }
+        var keys = Object.keys(responseByDate).sort();
+        var finalResponse = [], key;
+        for(i=keys.length-1; i>=0; i--) {
+            key = keys[i];
+            if (key === "others") {
+                continue;
+            }
+            finalResponse.push({"heading": key, "fieldData": responseByDate[key]});
+        }
+        key = "others";
+        if ($S.isArray(responseByDate[key]) && responseByDate[key].length > 0) {
+            finalResponse.push({"heading": key, "fieldData": responseByDate[key]})
+        }
+        return finalResponse;
     },
     generateFileInfo: function (str) {
         if (!$S.isString(str)) {
             return null;
         }
+        function parseDateHeading(filename) {
+            var dateHeading = "others";
+            var p1 = /[1-9]{1}[0-9]{3}-[0-1][0-9]-[0-3][0-9]/i;
+            var dateObj, temp;
+            if ($S.isString(filename) && filename.length >= 10) {
+                temp = filename.substring(0, 10);
+                dateObj = DT.getDateObj(temp);
+                if (dateObj !== null) {
+                    if (temp.search(p1) >= 0) {
+                        dateHeading = temp;
+                    }
+                }
+            }
+            return dateHeading;
+        }
         var strArr = str.split("/");
         var r = {}, temp;
         if (strArr.length === 2) {
-            r = {"actualFilename": str, "filename": strArr[1], "username": strArr[0], "ext": ""};
+            r = {"actualFilename": str, "filename": strArr[1], "username": strArr[0], "ext": "", "dateHeading": ""};
+            r["dateHeading"] = parseDateHeading(r["filename"]);
             temp = r.filename.split(".");
             if (temp.length > 1) {
                 r["ext"] = temp[temp.length-1];
@@ -374,6 +417,7 @@ FTP.extend({
                     }
                     PageData.setData("dashboard.apiResponse", dashboardApiResponse);
                     PageData.setData("dashboard.apiResponseByUser", FTP._generateDashboardResponseByUser(dashboardApiResponse));
+                    PageData.setData("dashboard.apiResponseByDate", FTP._generateDashboardResponseByDate(dashboardApiResponse));
                 }
             }, function() {
                 $S.callMethod(callBack);

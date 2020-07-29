@@ -189,7 +189,7 @@ Adding back filenameFormat config parameter (optional), along with AppConstant.F
     - filenameFormat: "YYYY-MM-dd-HH-mm'-filename'"
     - Because, it may be requirement in future filename should have information of user
 
-Display % completed fileUpload (Between 1% to 99%)
+Display % completed fileUpload (Between 1% to 99%), sometime 100% also
     - Here, we can not display 100% always because 100% and completed fires parallel
         - So, 100% page rendering will be ignored
         - If, there is slight delay between 100% and completed, then it will be visible
@@ -202,10 +202,11 @@ Display % completed fileUpload (Between 1% to 99%)
             - it will still show 0% as 100% rendering is ignored by completed
                 - Completed rendering will be held by alert
 Add userLogin log parameter in defaultUrl loading
+Display date heading on UI for orderByDate
+
 
 Future releases
 -------------------
-Display date heading on UI for orderByFilename
 
 
 add password encryption env config

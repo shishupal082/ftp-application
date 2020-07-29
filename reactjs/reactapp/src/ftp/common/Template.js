@@ -562,12 +562,12 @@ Template["dashboardOrderByOption"] = [
                         "tag": "select",
                         "name": "dashboard.orderbydropdown",
                         "className": "custom-select",
-                        "value": "orderByFilename",
+                        "value": "orderByDate",
                         "text": [
                             {
                                 "tag": "option",
-                                "value": "orderByFilename",
-                                "text": "Order By Filename"
+                                "value": "orderByDate",
+                                "text": "Order By Date"
                             },
                             {
                                 "tag": "option",
@@ -588,6 +588,7 @@ Template["dashboardRowHeading"] = [
             {
                 "tag": "td",
                 "colSpan": 2,
+                "name": "dashboardRowHeading.heading",
                 "className": "p-0",
                 "text": {
                     "tag": "span",
@@ -644,13 +645,13 @@ Template["dashboardRowData"] = [
         "text": [
             {
                 "tag": "td",
-                "name": "s.no",
+                "name": "dashboardRowData.s.no",
                 "className": "dashboard-s-no",
                 "text": ""
             },
             {
                 "tag": "td",
-                "name": "fileinfo",
+                "name": "dashboardRowData.fileinfo",
                 "text": ""
             }
         ]

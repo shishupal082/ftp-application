@@ -8,7 +8,8 @@ var CurrentFormData = $S.getDataObj();
 var keys = ["upload_file.file"];
 keys.push("upload_file.percentComplete");
 keys.push("dashboard.apiResponse"); // []
-keys.push("dashboard.apiResponseByUser");// {}
+keys.push("dashboard.apiResponseByUser");// []
+keys.push("dashboard.apiResponseByDate");// []
 keys.push("dashboard.currentPdfLink");
 keys.push("dashboard.orderBy"); // date or users
 keys.push("login.username");

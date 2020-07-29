@@ -54,7 +54,7 @@ Data.setData("userDisplayName", userDisplayName);
 if (!isUserAdmin) {
     PageData.setData("dashboard.orderBy", "orderByUsername");
 } else {
-    PageData.setData("dashboard.orderBy", "orderByFilename");
+    PageData.setData("dashboard.orderBy", "orderByDate");
 }
 
 class App extends React.Component {
