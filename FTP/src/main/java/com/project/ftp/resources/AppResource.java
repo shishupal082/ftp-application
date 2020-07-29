@@ -57,7 +57,7 @@ public class AppResource {
     @GET
     @Path("/view/resource")
     public IndexView getViewResource(@Context HttpServletRequest request) {
-        logger.info("Loading indexPage");
+        logger.info("Loading indexPage: {}", userService.getUserDataForLogging(request));
         return new IndexView(request, null);
     }
     @GET
@@ -164,6 +164,6 @@ public class AppResource {
     @Produces(MediaType.TEXT_HTML)
     @Consumes(MediaType.APPLICATION_JSON)
     public Object defaultMethod(@Context HttpServletRequest request) {
-        return fileServiceV2.handleDefaultUrl(request);
+        return fileServiceV2.handleDefaultUrl(request, userService);
     }
 }

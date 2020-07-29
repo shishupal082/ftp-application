@@ -19,11 +19,12 @@ public enum FileMimeType {
     csv("text/plain"),
     txt("text/plain"),
     bat("text/plain"),
+    log("text/plain"),
     sh("text/sh");
 
     /*Not supported by browser
         - doc, docx, xls, xlsx, ppt, pptx
-        - zar, exe, mp3, mp4, mov
+        - zar, exe, mp3, mp4, mov, avi
     */
 
     final static Logger logger = LoggerFactory.getLogger(FileMimeType.class);

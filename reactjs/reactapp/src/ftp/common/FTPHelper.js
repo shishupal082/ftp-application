@@ -242,8 +242,8 @@ FTP.extend({
             TemplateHelper.removeClassTemplate(template, submitBtnNames[pageName], "btn-link disabled");
         }
         if (pageName === "upload_file") {
-            if (formSubmitStatus === "in_progress") {
-                var percentComplete = PageData.getData("upload_file.percentComplete", "");
+            var percentComplete = PageData.getData("upload_file.percentComplete", 0);
+            if (formSubmitStatus === "in_progress" && $S.isNumber(percentComplete) && percentComplete > 0) {
                 percentComplete = "Uploaded "+percentComplete+"%";
                 TemplateHelper.setTemplateAttr(template, "upload_file.complete-status", "text", percentComplete);
             } else {

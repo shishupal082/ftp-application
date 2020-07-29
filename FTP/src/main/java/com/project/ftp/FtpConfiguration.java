@@ -16,6 +16,7 @@ public class FtpConfiguration extends Configuration {
     private String publicDir;
     private String publicPostDir;
     private Integer maxFileSize;
+    private String filenameFormat;
     private ArrayList<String> allowedOrigin;
     private ArrayList<String> adminUsersName;
     private ArrayList<String> devUsersName;
@@ -71,6 +72,14 @@ public class FtpConfiguration extends Configuration {
 
     public void setMaxFileSize(Integer maxFileSize) {
         this.maxFileSize = maxFileSize;
+    }
+
+    public String getFilenameFormat() {
+        return filenameFormat;
+    }
+
+    public void setFilenameFormat(String filenameFormat) {
+        this.filenameFormat = filenameFormat;
     }
 
     public String getFileSaveDir() {
@@ -135,15 +144,16 @@ public class FtpConfiguration extends Configuration {
         return "FtpConfiguration{" +
                 "indexPageReRoute='" + indexPageReRoute + '\'' +
                 ", configDataFilePath='" + configDataFilePath + '\'' +
+                ", fileSaveDir='" + fileSaveDir + '\'' +
                 ", publicDir='" + publicDir + '\'' +
                 ", publicPostDir='" + publicPostDir + '\'' +
                 ", maxFileSize=" + maxFileSize +
+                ", filenameFormat='" + filenameFormat + '\'' +
                 ", allowedOrigin=" + allowedOrigin +
                 ", adminUsersName=" + adminUsersName +
                 ", devUsersName=" + devUsersName +
                 ", supportedFileType=" + supportedFileType +
                 ", createReadmePdf=" + createReadmePdf +
-                ", fileSaveDir='" + fileSaveDir + '\'' +
                 ", permanentlyDeleteFile=" + permanentlyDeleteFile +
                 ", tempConfig=" + tempConfig +
                 '}';

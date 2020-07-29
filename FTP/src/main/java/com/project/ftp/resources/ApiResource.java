@@ -37,12 +37,12 @@ public class ApiResource {
     @GET
     @Produces(MediaType.TEXT_HTML)
     public Object defaultMethodApi(@Context HttpServletRequest request) {
-        return fileServiceV2.handleDefaultUrl(request);
+        return fileServiceV2.handleDefaultUrl(request, userService);
     }
     @GET
     @Path("/get_static_file")
     public ApiResponse getJsonData(@Context HttpServletRequest request) {
-        logger.info("getJsonData : In");
+        logger.info("getJsonData : In, user: {}", userService.getUserDataForLogging(request));
         ApiResponse response;
         try {
             JsonFileParser jsonFileParser = new JsonFileParser(appConfig);
@@ -58,7 +58,7 @@ public class ApiResource {
     @GET
     @Path("/get_users")
     public ApiResponse getTextFileData(@Context HttpServletRequest request) {
-        logger.info("getTextFileData : In");
+        logger.info("getTextFileData : In, {}", userService.getUserDataForLogging(request));
         ApiResponse response;
         try {
             userService.isLoginUserAdmin(request);
@@ -66,7 +66,7 @@ public class ApiResource {
             u.maskPassword();
             response = new ApiResponse(u);
         } catch (AppException ae) {
-            logger.info("Error in reading app static file: {}", ae.getErrorCode().getErrorCode());
+            logger.info("Error in get_users: {}", ae.getErrorCode().getErrorCode());
             response = new ApiResponse(ae.getErrorCode());
         }
         logger.info("getTextFileData : Out");
@@ -75,7 +75,7 @@ public class ApiResource {
     @POST
     @Path("/delete_file")
     public ApiResponse deleteFile(@Context HttpServletRequest request, RequestDeleteFile deleteFile) {
-        logger.info("deleteFile In: {}", deleteFile);
+        logger.info("deleteFile In: {}, user: {}", deleteFile, userService.getUserDataForLogging(request));
         ApiResponse apiResponse;
         try {
             fileServiceV2.deleteRequestFile(request, userService, deleteFile);
@@ -90,8 +90,7 @@ public class ApiResource {
     @GET
     @Path("/get_files_info")
     public ApiResponse getAllV3Data(@Context HttpServletRequest request) {
-        logger.info("getAllV3Data : In");
-        logger.info("loginUserDetails: {}", userService.getUserDataForLogging(request));
+        logger.info("getAllV3Data : In, user: {}", userService.getUserDataForLogging(request));
         ApiResponse response = fileServiceV2.scanUserDirectory(request, userService);
         // Not putting response in log as it may be very large
         logger.info("getAllV3Data : Out");
@@ -100,8 +99,7 @@ public class ApiResource {
     @GET
     @Path("/get_app_config")
     public ApiResponse getAppConfig(@Context HttpServletRequest request) {
-        logger.info("getAppConfig : In");
-        logger.info("loginUserDetails: {}", userService.getUserDataForLogging(request));
+        logger.info("getAppConfig : In, user: {}", userService.getUserDataForLogging(request));
         ApiResponse response;
         if (userService.isLoginUserDev(request)) {
             response = new ApiResponse(appConfig);
@@ -116,8 +114,7 @@ public class ApiResource {
     @GET
     @Path("/get_session_config")
     public ApiResponse getSessionConfig(@Context HttpServletRequest request) throws AppException {
-        logger.info("getSessionConfig : In");
-        logger.info("loginUserDetails: {}", userService.getUserDataForLogging(request));
+        logger.info("getSessionConfig : In, user: {}", userService.getUserDataForLogging(request));
         ApiResponse response;
         if (userService.isLoginUserDev(request)) {
             response = new ApiResponse(appConfig.getSessionData());
@@ -135,8 +132,8 @@ public class ApiResource {
     public Response uploadFile(@Context HttpServletRequest request,
                                 @FormDataParam("file") InputStream uploadedInputStream,
                                @FormDataParam("file") FormDataContentDisposition fileDetail) {
-        logger.info("uploadFile: In, upload fileDetails: {}", fileDetail);
-        logger.info("loginUserDetails: {}", userService.getUserDataForLogging(request));
+        logger.info("uploadFile: In, upload fileDetails: {}, user: {}",
+                fileDetail, userService.getUserDataForLogging(request));
         ApiResponse response;
         try {
             response = fileServiceV2.uploadFile(request, userService, uploadedInputStream, fileDetail.getFileName());
@@ -151,7 +148,8 @@ public class ApiResource {
     @Path("/login_user")
     public ApiResponse loginUser(@Context HttpServletRequest httpServletRequest,
                                  RequestUserLogin userLogin) {
-        logger.info("loginUser : In, {}", userLogin);
+        logger.info("loginUser : In, {}, user: {}",
+                userLogin, userService.getUserDataForLogging(httpServletRequest));
         ApiResponse response;
         try {
             HashMap<String, String> loginUserDetails = userService.loginUser(httpServletRequest, userLogin);
@@ -167,7 +165,8 @@ public class ApiResource {
     @Path("/register_user")
     public ApiResponse registerUser(@Context HttpServletRequest httpServletRequest,
                                  RequestUserRegister userRegister) {
-        logger.info("registerUser : In, {}", userRegister);
+        logger.info("registerUser : In, userRegister: {}, user: {}",
+                userRegister, userService.getUserDataForLogging(httpServletRequest));
         ApiResponse response;
         try {
             userService.userRegister(httpServletRequest, userRegister);
@@ -182,7 +181,8 @@ public class ApiResource {
     @GET
     @Path("/get_login_user_details")
     public ApiResponse getLoginUserDetails(@Context HttpServletRequest request) {
-        logger.info("getLoginUserDetails : In");
+        logger.info("getLoginUserDetails : In, user: {}",
+                userService.getUserDataForLogging(request));
         LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
         ApiResponse response;
         if (loginUserDetails.getLogin()) {
@@ -197,7 +197,8 @@ public class ApiResource {
     @Path("/change_password")
     public ApiResponse changePassword(@Context HttpServletRequest httpServletRequest,
                                  RequestChangePassword request) {
-        logger.info("changePassword : In");
+        logger.info("changePassword : In, user: {}",
+                userService.getUserDataForLogging(httpServletRequest));
         ApiResponse response;
         try {
             userService.changePassword(httpServletRequest, request);
@@ -213,6 +214,6 @@ public class ApiResource {
     @GET
     @Produces(MediaType.TEXT_HTML)
     public Object defaultMethod(@Context HttpServletRequest request) {
-        return fileServiceV2.handleDefaultUrl(request);
+        return fileServiceV2.handleDefaultUrl(request, userService);
     }
 }

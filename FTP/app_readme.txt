@@ -176,9 +176,37 @@ Disable button until previous form submit request completed
         - api/register
 Display % completed fileUpload
 
+1.0.8
+-------------------
+Added mimeType for log (plain/text)
+Bug fix for Error in api call (Enable submit button after failure)
+    - api/upload_file
+    - api/change_password
+    - api/login_user
+    - api/register
+Add username in each api call (In page load call, login details is already there)
+Adding back filenameFormat config parameter (optional), along with AppConstant.FILENAME_FORMAT
+    - filenameFormat: "YYYY-MM-dd-HH-mm'-filename'"
+    - Because, it may be requirement in future filename should have information of user
+
+Display % completed fileUpload (Between 1% to 99%)
+    - Here, we can not display 100% always because 100% and completed fires parallel
+        - So, 100% page rendering will be ignored
+        - If, there is slight delay between 100% and completed, then it will be visible
+        - If we display 100% after completed also,
+            - Then, if file upload is failed
+                - it will display 100%
+    - If we display 0% and network is fast
+        - Then, File will be uploaded in one stroke (i.e. jump from 0% to 100%)
+        - Then, even though file is uploaded
+            - it will still show 0% as 100% rendering is ignored by completed
+                - Completed rendering will be held by alert
+Add userLogin log parameter in defaultUrl loading
 
 Future releases
 -------------------
+Display date heading on UI for orderByFilename
+
 
 add password encryption env config
     - by default it will be false
@@ -186,7 +214,7 @@ add password encryption env config
 
 Add user agent detection support for /download/file/username/filename
 Add GA for UI tracking
-Display date heading on UI for orderByFilename
+
 
 Save filename should not contain (<>/\"|*:)
 

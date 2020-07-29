@@ -84,6 +84,7 @@ public class FileServiceV2 {
             logger.info("scanUserDirectory result size: {}", response.size());
             apiResponse = new ApiResponse(response);
         } else {
+            logger.info("scanUserDirectory user is unauthorised: {}", loginUserDetails);
             apiResponse = new ApiResponse(ErrorCodes.UNAUTHORIZED_USER);
         }
         return apiResponse;
@@ -162,6 +163,7 @@ public class FileServiceV2 {
         String deleteFileReq = deleteFile.getFilename();
         HashMap<String, String> parsedFileStr = this.parseRequestedFileStr(deleteFileReq);
         if (AppConstant.FAILURE.equals(parsedFileStr.get(AppConstant.STATUS))) {
+            logger.info("deleteFile invalid request: {}", deleteFile);
             throw new AppException(ErrorCodes.BAD_REQUEST_ERROR);
         }
         String fileUserName = parsedFileStr.get("fileUserName");
@@ -204,8 +206,9 @@ public class FileServiceV2 {
             throw new AppException(ErrorCodes.FILE_NOT_FOUND);
         }
     }
-    public Object handleDefaultUrl(HttpServletRequest request) {
-        logger.info("Loading defaultMethod: {}", ((Request) request).getUri().toString());
+    public Object handleDefaultUrl(HttpServletRequest request, UserService userService) {
+        logger.info("Loading defaultMethod: {}, user: {}",
+                ((Request) request).getUri().toString(), userService.getUserDataForLogging(request));
         String requestedPath = StaticService.getPathUrl(request);
         PathInfo pathInfo = this.getFileResponse(requestedPath);
         Response.ResponseBuilder r;
@@ -300,7 +303,7 @@ public class FileServiceV2 {
         values.put("username", loginUserName);
         values.put("filename", pathInfo.getFilenameWithoutExt());
         String uploadingFileName = dir + loginUserName + "/" +
-                StaticService.generateStringFromFormat(values) + "." + pathInfo.getExtension();
+                StaticService.generateStringFromFormat(appConfig, values) + "." + pathInfo.getExtension();
         if (parseUserFileName(uploadingFileName) == null) {
             logger.info("Invalid upload filepath: {}", uploadingFileName);
             throw new AppException(ErrorCodes.INVALID_FILE_SAVE_PATH);

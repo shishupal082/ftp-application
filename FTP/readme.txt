@@ -71,6 +71,13 @@ Change config if required
     - used for copy and delete old file
 - supportedFileType (arrayList) (pdf,jpeg,jpg,png)
 - maxFileSize(Integer) (10MB)
+- filenameFormat (string)
+    - username, filename, YYYY-MM-dd, HH-mm-ss-SSS
+    for example
+        - "YYYY-MM-dd'-username'"
+        - "YYYY-MM-dd'-filename'"
+        - "YYYY-MM-dd'-username-filename'"
+        - "YYYY-MM-dd-HH-mm-ss-SSS"
 - fileSaveDir (string)
     - Example:
         fileSaveDir: D:/workspace/project/ftp-app/saved-files/

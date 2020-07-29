@@ -33,8 +33,12 @@ public class StaticService {
     public static String getDateStrFromPattern(String pattern) {
         return dateUtilities.getDateStrFromPattern(pattern);
     }
-    public static String generateStringFromFormat(HashMap<String, String> values) {
+    public static String generateStringFromFormat(AppConfig appConfig, HashMap<String, String> values) {
         String format = AppConstant.FILENAME_FORMAT;
+        String configFilenameFormat = appConfig.getFtpConfiguration().getFilenameFormat();
+        if (configFilenameFormat != null) {
+            format = configFilenameFormat;
+        }
         String result = dateUtilities.getDateStrFromPattern(format);
         String key, value;
         for (Map.Entry<String, String> entry: values.entrySet()) {

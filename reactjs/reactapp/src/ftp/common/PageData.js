@@ -111,11 +111,13 @@ PageData.extend({
         if ($S.isString(url)) {
             if (pageName === "upload_file") {
                 PageData.setData("formSubmitStatus", "in_progress");
+                PageData.setData("upload_file.percentComplete", 0);
                 $S.callMethod(callBack);
                 var formData = new FormData();
                 formData.append("file", CurrentFormData.getData("upload_file.file", {}, true));
                 $S.uploadFile(Config.JQ, url, formData, function(ajax, status, response) {
                     PageData.setData("formSubmitStatus", "completed");
+                    $S.callMethod(callBack);
                     console.log(response);
                     if (status === "FAILURE") {
                         alert("Error in uploading file, Please Try again.");
@@ -133,6 +135,7 @@ PageData.extend({
                 postData["password"] = CurrentFormData.getData("login.password", "");
                 $S.sendPostRequest(Config.JQ, url, postData, function(ajax, status, response) {
                     PageData.setData("formSubmitStatus", "completed");
+                    $S.callMethod(callBack);
                     console.log(response);
                     if (status === "FAILURE") {
                         alert("Error in login, Please Try again.");
@@ -148,6 +151,7 @@ PageData.extend({
                 postData["confirm_password"] = CurrentFormData.getData("change_password.confirm_password", "");
                 $S.sendPostRequest(Config.JQ, url, postData, function(ajax, status, response) {
                     PageData.setData("formSubmitStatus", "completed");
+                    $S.callMethod(callBack);
                     console.log(response);
                     if (status === "FAILURE") {
                         alert("Error in change password, Please Try again.");
@@ -164,6 +168,7 @@ PageData.extend({
                 postData["display_name"] = CurrentFormData.getData("register.displayName", "");
                 $S.sendPostRequest(Config.JQ, url, postData, function(ajax, status, response) {
                     PageData.setData("formSubmitStatus", "completed");
+                    $S.callMethod(callBack);
                     console.log(response);
                     if (status === "FAILURE") {
                         alert("Error in register user, Please Try again.");
@@ -181,7 +186,6 @@ PageData.extend({
         if (apiName === "upload_file") {
             if (response.status === "FAILURE") {
                 alert(Config.getAleartMessage(response));
-                $S.callMethod(callBack);
             } else {
                 alert("File saved as: " + response.data.fileName);
                 Config.location.href = "/dashboard";
@@ -189,21 +193,18 @@ PageData.extend({
         } else if (apiName === "login") {
             if (response.status === "FAILURE") {
                 alert(Config.getAleartMessage(response));
-                $S.callMethod(callBack);
             } else {
                 Config.location.href = "/dashboard";
             }
         } else if (apiName === "register") {
             if (response.status === "FAILURE") {
                 alert(Config.getAleartMessage(response));
-                $S.callMethod(callBack);
             } else {
                 Config.location.href = "/dashboard";
             }
         } else if (apiName === "change_password") {
             if (response.status === "FAILURE") {
                 alert(Config.getAleartMessage(response));
-                $S.callMethod(callBack);
             } else {
                 Config.location.href = "/dashboard";
             }
