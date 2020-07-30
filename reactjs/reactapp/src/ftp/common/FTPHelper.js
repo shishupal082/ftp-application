@@ -412,12 +412,15 @@ FTP.extend({
             $S.loadJsonData(null, [url], function(response, apiName, ajaxDetails) {
                 if ($S.isObject(response) && $S.isArray(response.data)) {
                     var dashboardApiResponse = FTP._generateDashboardResponse(response.data);
-                    if (dashboardApiResponse && dashboardApiResponse.length > 0) {
-                        PageData.setData("dashboard.currentPdfLink", dashboardApiResponse[0].actualFilename);
+                    var apiResponseByDate = FTP._generateDashboardResponseByDate(dashboardApiResponse);
+                    if (apiResponseByDate && apiResponseByDate.length > 0) {
+                        if (apiResponseByDate[0].fieldData && apiResponseByDate[0].fieldData.length > 0) {
+                            PageData.setData("dashboard.currentPdfLink", apiResponseByDate[0].fieldData[0].actualFilename);
+                        }
                     }
                     PageData.setData("dashboard.apiResponse", dashboardApiResponse);
                     PageData.setData("dashboard.apiResponseByUser", FTP._generateDashboardResponseByUser(dashboardApiResponse));
-                    PageData.setData("dashboard.apiResponseByDate", FTP._generateDashboardResponseByDate(dashboardApiResponse));
+                    PageData.setData("dashboard.apiResponseByDate", apiResponseByDate);
                 }
             }, function() {
                 $S.callMethod(callBack);
