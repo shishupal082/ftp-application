@@ -28,8 +28,7 @@ public class AppConstant {
     public static final String DateTimeFormat4 = "YYYY-MM-dd-HH-mm-ss"; // used for log file copy
     public static final String UTF8 = "UTF-8";
     public static final String FAVICON_ICO_PATH = "favicon.ico";
-    public static final String LOGIN_PATH = "/login";
-    public static final String INDEX_PAGE_RE_ROUTE = "/dashboard";
+    public static final String INDEX_PAGE_RE_ROUTE = "/login";
     public static final String APP_STATIC_DATA_FILENAME = "app_static_data.json";
     public static final String USER_DATA_FILENAME = "user_data.csv";
     public static final String APP_VIEW_FTL_FILENAME = "app_view-1.0.0.ftl";

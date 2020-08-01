@@ -59,7 +59,7 @@ adminUsersName:
 
 
 # Optional parameter
-indexPageReRoute: /dashboard
+indexPageReRoute: /login
 filenameFormat: "YYYY-MM-dd-HH-mm'-filename'"
 
 # Only for development purpose

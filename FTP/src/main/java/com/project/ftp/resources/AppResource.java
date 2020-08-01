@@ -45,7 +45,7 @@ public class AppResource {
         /*
          * It will load resource path from app Config
          * */
-        String reRoutePath = AppConstant.LOGIN_PATH;
+        String reRoutePath = appConfig.getFtpConfiguration().getIndexPageReRoute();
         logger.info("indexPage : redirect from / to: {}", reRoutePath);
         return Response.seeOther(new URI(reRoutePath)).build();
     }
