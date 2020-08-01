@@ -34,6 +34,9 @@ public class FtpApplication  extends Application<FtpConfiguration> {
     public void run(FtpConfiguration ftpConfiguration, Environment environment) throws Exception {
         LOGGER.info("commandLineArguments: " + arguments.toString());
         AppConfig appConfig = new AppConfig();
+        appConfig.setConfigPath(arguments.get(0));
+//        ShutdownTask shutdownTask = new ShutdownTask(appConfig);
+//        appConfig.setShutdownTask(shutdownTask);
         appConfig.setFtpConfiguration(ftpConfiguration);
         StaticService.initApplication(appConfig);
         LOGGER.info("appConfig: {}", appConfig);
@@ -45,6 +48,7 @@ public class FtpApplication  extends Application<FtpConfiguration> {
         environment.jersey().register(new FaviconResource(appConfig));
         environment.jersey().register(new ApiResource(appConfig));
         environment.jersey().register(new AppResource(appConfig));
+//        environment.admin().addTask(shutdownTask);
     }
     public static void main(String[] args) throws Exception {
         StaticService.renameOldLogFile(args[0]);

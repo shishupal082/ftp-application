@@ -8,16 +8,17 @@ import com.project.ftp.config.AppConfig;
 import com.project.ftp.config.AppConstant;
 import com.project.ftp.config.FileMimeType;
 import com.project.ftp.obj.PathInfo;
+import com.project.ftp.obj.ScanResult;
 import com.project.ftp.parser.YamlFileParser;
 import com.project.ftp.pdf.TextToPdfService;
 import com.project.ftp.session.SessionService;
-import org.eclipse.jetty.server.Request;
 import org.glassfish.jersey.server.ContainerRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.container.ContainerRequestContext;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -50,29 +51,6 @@ public class StaticService {
         }
         return result;
     }
-    public static void renameOldLogFile(final String relativeConfigFilePath) {
-        if (relativeConfigFilePath == null) {
-            return;
-        }
-        String configFilePath = sysUtils.getProjectWorkingDir() + "/" + relativeConfigFilePath;
-        configFilePath = strUtils.replaceBackSlashToSlash(configFilePath);
-        YamlFileParser ymlFileParser = new YamlFileParser();
-        String logFilePath = ymlFileParser.getLogFilePath(configFilePath);
-        PathInfo pathInfo = fileService.getPathInfo(logFilePath);
-        if (AppConstant.FILE.equals(pathInfo.getType())) {
-            String newLogFilePath = pathInfo.getParentFolder() + "/" + pathInfo.getFilenameWithoutExt() +
-                    "-" + dateUtilities.getDateStrFromPattern(AppConstant.DateTimeFormat4) + "." + pathInfo.getExtension();
-            Boolean copyStatus = fileService.copyFileV2(logFilePath, newLogFilePath);
-            if (copyStatus) {
-                Boolean deleteStatus = fileService.deleteFileV2(logFilePath);
-                if (!deleteStatus) {
-                    sysUtils.printLog("Error in deleting old log file: " + logFilePath);
-                }
-            } else {
-                sysUtils.printLog("Error in copying log file: " + logFilePath);
-            }
-        }
-    }
     public static void initApplication(final AppConfig appConfig) {
         FtpConfiguration ftpConfiguration = appConfig.getFtpConfiguration();
         ConfigService configService = new ConfigService(appConfig);
@@ -87,6 +65,22 @@ public class StaticService {
         if (createReadmePdf != null && createReadmePdf) {
             textToPdfService.convertReadmeTextToPdf();
             textToPdfService.convertUserGuideTextToPdf();
+        }
+        String relativeConfigFilePath = appConfig.getConfigPath();
+        if (relativeConfigFilePath == null || relativeConfigFilePath.isEmpty()) {
+            logger.info("Relative config path is null or empty: {}", relativeConfigFilePath);
+            return;
+        }
+        String configFilePath = sysUtils.getProjectWorkingDir() + "/" + relativeConfigFilePath;
+        configFilePath = strUtils.replaceBackSlashToSlash(configFilePath);
+        YamlFileParser ymlFileParser = new YamlFileParser();
+        String logFilePath = ymlFileParser.getLogFilePath(configFilePath);
+        appConfig.setLogFilePath(logFilePath);
+        PathInfo pathInfo = fileService.getPathInfo(logFilePath);
+        if (AppConstant.FOLDER.equals(pathInfo.getType())) {
+            appConfig.setLogFiles(fileService.getAvailableFiles(logFilePath));
+        } else {
+            logger.info("logFilePath is not a folder: {}", pathInfo);
         }
     }
     public static String getDateStrFromTimeMs(String format, Long timeInMs) {
@@ -113,7 +107,7 @@ public class StaticService {
         return strUtils.replaceBackSlashToSlash(str);
     }
     public static String getPathUrl(final HttpServletRequest request) {
-        String path = ((Request) request).getUri().toString();
+        String path = request.getPathInfo();
         String[] pathArr = path.split("\\?");
         if (pathArr.length > 0) {
             path = pathArr[0];
@@ -142,5 +136,88 @@ public class StaticService {
 //            logger.info("Error in parsing enum ({}): {}", name, e.getMessage());
         }
         return response;
+    }
+    public static void renameOldLogFile(final String relativeConfigFilePath) {
+        if (relativeConfigFilePath == null) {
+            return;
+        }
+        String configFilePath = sysUtils.getProjectWorkingDir() + "/" + relativeConfigFilePath;
+        configFilePath = strUtils.replaceBackSlashToSlash(configFilePath);
+        YamlFileParser ymlFileParser = new YamlFileParser();
+        String logFilePath = ymlFileParser.getLogFilePath(configFilePath) + "application.log";
+        PathInfo pathInfo = fileService.getPathInfo(logFilePath);
+        if (AppConstant.FILE.equals(pathInfo.getType())) {
+            String newLogFilePath = pathInfo.getParentFolder() + "/" + pathInfo.getFilenameWithoutExt() +
+                    "-" + dateUtilities.getDateStrFromPattern(AppConstant.DateTimeFormat4) + "." + pathInfo.getExtension();
+            Boolean copyStatus = fileService.copyFileV2(logFilePath, newLogFilePath);
+            if (copyStatus) {
+                Boolean deleteStatus = fileService.deleteFileV2(logFilePath);
+                if (!deleteStatus) {
+                    sysUtils.printLog("Error in deleting old log file: " + logFilePath);
+                }
+            } else {
+                sysUtils.printLog("Error in copying log file: " + logFilePath);
+            }
+        } else {
+            sysUtils.printLog("logFilePath is not a file: {} " + pathInfo);
+        }
+    }
+    public static void checkForDateChange(final AppConfig appConfig) {
+        String currentDate = StaticService.getDateStrFromPattern(AppConstant.DATE_FORMAT);
+        String configDate = appConfig.getConfigDate();
+        if (currentDate.equals(configDate)) {
+            return;
+        }
+        logger.info("Date change found: from {} to {}", configDate, currentDate);
+        String timeInStr = StaticService.getDateStrFromPattern(AppConstant.TIME_FORMAT);
+        int time = Integer.parseInt(timeInStr);
+        if (time < 100) {
+            logger.info("time is less than 00:01:00, {}, i.e. less than 1 minute.", timeInStr);
+            return;
+        }
+        String logFilePath = appConfig.getLogFilePath();
+        if (logFilePath == null || logFilePath.isEmpty()) {
+            logger.info("logFilePath is null or empty: {}", logFilePath);
+            return;
+        }
+        PathInfo pathInfo = fileService.getPathInfo(logFilePath);
+        if (AppConstant.FOLDER.equals(pathInfo.getType())) {
+            ArrayList<String> nextAvailableLogFiles = new ArrayList<>();
+            ArrayList<String> availableLogFiles = appConfig.getLogFiles();
+            ArrayList<String> logFiles = fileService.getAvailableFiles(logFilePath);
+
+            logger.info("availableLogFiles: {}, logFiles: {}", availableLogFiles, logFiles);
+            String newLogFilePath = logFilePath + "application-" +
+                    dateUtilities.getDateStrFromPattern(AppConstant.DateTimeFormat4);
+            int i = 1;
+            if (availableLogFiles == null) {
+                availableLogFiles = new ArrayList<>();
+            }
+            if (logFiles != null) {
+                for(String str1: logFiles) {
+                    nextAvailableLogFiles.add(str1);
+                    if (str1.equals(logFilePath+"application.log")) {
+                        logger.info("Skipping copy application.log file");
+                        continue;
+                    }
+                    String str2;
+                    if (!availableLogFiles.contains(str1)) {
+                        str2 = newLogFilePath + "-" + (i++) + ".log";
+                        Boolean copyStatus = fileService.copyFileV2(str1, str2);
+                        if (copyStatus) {
+                            nextAvailableLogFiles.add(str2);
+                            logger.info("log file copied from: {}, to: {}", str1, str2);
+                        } else {
+                            logger.info("log file copy failed from: {}, to: {}", str1, str2);
+                        }
+                    }
+                }
+            }
+            logger.info("nextAvailableLogFiles: {}", nextAvailableLogFiles);
+            appConfig.setLogFiles(nextAvailableLogFiles);
+        } else {
+            logger.info("logFilePath is not a folder: {}", pathInfo);
+        }
+        appConfig.setConfigDate(currentDate);
     }
 }

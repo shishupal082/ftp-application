@@ -7,7 +7,6 @@ import com.project.ftp.exceptions.AppException;
 import com.project.ftp.exceptions.ErrorCodes;
 import com.project.ftp.obj.*;
 import com.project.ftp.view.CommonView;
-import org.eclipse.jetty.server.Request;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -207,9 +206,10 @@ public class FileServiceV2 {
         }
     }
     public Object handleDefaultUrl(HttpServletRequest request, UserService userService) {
-        logger.info("Loading defaultMethod: {}, user: {}",
-                ((Request) request).getUri().toString(), userService.getUserDataForLogging(request));
         String requestedPath = StaticService.getPathUrl(request);
+        logger.info("Loading defaultMethod: {}, user: {}",
+                requestedPath, userService.getUserDataForLogging(request));
+
         PathInfo pathInfo = this.getFileResponse(requestedPath);
         Response.ResponseBuilder r;
         if (pathInfo!= null && AppConstant.FILE.equals(pathInfo.getType())) {

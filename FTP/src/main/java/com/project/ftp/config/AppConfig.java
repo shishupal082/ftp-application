@@ -6,16 +6,25 @@ package com.project.ftp.config;
 */
 
 import com.project.ftp.FtpConfiguration;
+import com.project.ftp.service.StaticService;
 import com.project.ftp.session.SessionData;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class AppConfig {
     private String publicDir;
+    private String configDate;
     final String appVersion = AppConstant.AppVersion;
+//    private ShutdownTask shutdownTask;
+    private String configPath;
+    private String logFilePath;
+    private ArrayList<String> logFiles;
     private HashMap<String, SessionData> sessionData;
     private FtpConfiguration ftpConfiguration;
-
+    public AppConfig() {
+        this.configDate = StaticService.getDateStrFromPattern(AppConstant.DATE_FORMAT);
+    }
     public String getPublicDir() {
         return publicDir;
     }
@@ -40,11 +49,59 @@ public class AppConfig {
         this.ftpConfiguration = ftpConfiguration;
     }
 
+//    public ShutdownTask getShutdownTask() {
+//        return shutdownTask;
+//    }
+//
+//    public void setShutdownTask(ShutdownTask shutdownTask) {
+//        this.shutdownTask = shutdownTask;
+//    }
+
+    public String getConfigDate() {
+        return configDate;
+    }
+
+    public void setConfigDate(String configDate) {
+        this.configDate = configDate;
+    }
+
+    public String getAppVersion() {
+        return appVersion;
+    }
+
+    public String getConfigPath() {
+        return configPath;
+    }
+
+    public void setConfigPath(String configPath) {
+        this.configPath = configPath;
+    }
+
+    public String getLogFilePath() {
+        return logFilePath;
+    }
+
+    public void setLogFilePath(String logFilePath) {
+        this.logFilePath = logFilePath;
+    }
+
+    public ArrayList<String> getLogFiles() {
+        return logFiles;
+    }
+
+    public void setLogFiles(ArrayList<String> logFiles) {
+        this.logFiles = logFiles;
+    }
+
     @Override
     public String toString() {
         return "AppConfig{" +
                 "publicDir='" + publicDir + '\'' +
+                ", configDate='" + configDate + '\'' +
                 ", appVersion='" + appVersion + '\'' +
+                ", configPath='" + configPath + '\'' +
+                ", logFilePath='" + logFilePath + '\'' +
+                ", logFiles=" + logFiles +
                 ", sessionData=" + sessionData +
                 ", ftpConfiguration=" + ftpConfiguration +
                 '}';

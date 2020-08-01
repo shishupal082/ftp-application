@@ -17,8 +17,10 @@ public class AppConstant {
     public static final String ALLOWED_HEADERS= "Access-Control-Allow-Headers";
     public static final String FILE = "FILE";
     public static final String FOLDER = "FOLDER";
-    public static final String AppVersion = "1.0.8";
+    public static final String AppVersion = "1.0.9";
     public static final String server = "server";
+    public static final String DATE_FORMAT = "YYYY-MM-dd";
+    public static final String TIME_FORMAT = "HHmmss";
     public static final String FILENAME_FORMAT = "YYYY-MM-dd-HH-mm'-filename'";
     public static final String DateTimeFormat = "YYYYMMdd'T'HHmmssSSS";
     public static final String DateTimeFormat2 = "YYYY-MM-dd-HH-mm-ss-SSS";
@@ -26,10 +28,11 @@ public class AppConstant {
     public static final String DateTimeFormat4 = "YYYY-MM-dd-HH-mm-ss"; // used for log file copy
     public static final String UTF8 = "UTF-8";
     public static final String FAVICON_ICO_PATH = "favicon.ico";
+    public static final String LOGIN_PATH = "/login";
+    public static final String INDEX_PAGE_RE_ROUTE = "/dashboard";
     public static final String APP_STATIC_DATA_FILENAME = "app_static_data.json";
     public static final String USER_DATA_FILENAME = "user_data.csv";
     public static final String APP_VIEW_FTL_FILENAME = "app_view-1.0.0.ftl";
-    public static final String INDEX_PAGE_RE_ROUTE = "/dashboard";
     public static final String ORIGIN = "origin";
     public static final String PUBLIC = "public";
     public static final String PDF_AUTHOR = "Project Author";

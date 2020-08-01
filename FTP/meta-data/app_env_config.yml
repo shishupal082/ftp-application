@@ -10,12 +10,16 @@ logging:
     - type: file
       threshold: ALL
       timeZone: UTC
+      archive: true
       logFormat: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level [%X{X-Session-Id} - %X{X-Request-Id}] - %c{15} - %msg%n%rEx"
+      archivedLogFilenamePattern: F:/ftp-app/log/application-%d{yyyy-MM-dd}.log
       currentLogFilename: F:/ftp-app/log/application.log
-      archivedLogFilenamePattern: F:/ftp-app/log/application-%d{yyyy-MM-dd}-%i.log.gz
-      archivedFileCount: 5
+#      archivedLogFilenamePattern: F:/ftp-app/log/application-%d{yyyy-MM-dd}-%i.log
+#      maxFileSize: 1MB
+      archivedFileCount: 5 #Number of day archived file to be present
 
-logFilePath: "F:/ftp-app/log/application.log"
+
+logFilePath: "F:/ftp-app/log/"
 fileSaveDir: "D:/workspace/project/ftp-app/saved-files/"
 configDataFilePath: "D:/workspace/project/ftp-app/config-files/"
 
@@ -60,6 +64,7 @@ filenameFormat: "YYYY-MM-dd-HH-mm'-filename'"
 
 # Only for development purpose
 createReadmePdf: true
+appRestartCommand: "sh app_run.bat" # not required for now
 appViewFtlFileName: app_view.ftl
 publicDir: "../.."
 publicPostDir:

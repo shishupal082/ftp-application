@@ -10,14 +10,18 @@ logging:
     - type: file
       threshold: ALL
       timeZone: UTC
+      archive: true
       logFormat: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level [%X{X-Session-Id} - %X{X-Request-Id}] - %c{15} - %msg%n%rEx"
       currentLogFilename: F:/ftp-app/log/application.log
-      archivedLogFilenamePattern: F:/ftp-app/log/application-%d{yyyy-MM-dd}-%i.log.gz
-      archivedFileCount: 5
+      archivedLogFilenamePattern: F:/ftp-app/log/application-%d{yyyy-MM-dd}.log
+#      archivedLogFilenamePattern: F:/ftp-app/log/application-%d{yyyy-MM-dd}-%i.log
+#      maxFileSize: 1MB
+      archivedFileCount: 5 #Number of day archived file to be present
 
-logFilePath: "F:/ftp-app/log/application.log"
-configDataFilePath: "F:/ftp-app/config-files/"
+
+logFilePath: "F:/ftp-app/log/"
 fileSaveDir: "F:/ftp-app/saved-files/"
+configDataFilePath: "F:/ftp-app/config-files/"
 
 server:
   type: simple

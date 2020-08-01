@@ -23,6 +23,7 @@ public class FtpConfiguration extends Configuration {
     private ArrayList<String> supportedFileType;
     private Boolean createReadmePdf;
     private Boolean permanentlyDeleteFile;
+    private String appRestartCommand;
 
     private HashMap<String, String> tempConfig;
 
@@ -139,6 +140,14 @@ public class FtpConfiguration extends Configuration {
         this.permanentlyDeleteFile = permanentlyDeleteFile;
     }
 
+    public String getAppRestartCommand() {
+        return appRestartCommand;
+    }
+
+    public void setAppRestartCommand(String appRestartCommand) {
+        this.appRestartCommand = appRestartCommand;
+    }
+
     @Override
     public String toString() {
         return "FtpConfiguration{" +
@@ -155,6 +164,7 @@ public class FtpConfiguration extends Configuration {
                 ", supportedFileType=" + supportedFileType +
                 ", createReadmePdf=" + createReadmePdf +
                 ", permanentlyDeleteFile=" + permanentlyDeleteFile +
+                ", appRestartCommand='" + appRestartCommand + '\'' +
                 ", tempConfig=" + tempConfig +
                 '}';
     }

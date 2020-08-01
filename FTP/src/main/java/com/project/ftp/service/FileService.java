@@ -156,6 +156,7 @@ public class FileService {
         return dirCreateStatus;
     }
     public ScanResult scanDirectory(String folderPath, String staticFolderPath, boolean isRecursive) {
+        //folderPath and staticFolderPath should contain / in the end
         ScanResult finalFileScanResult = new ScanResult(staticFolderPath, folderPath);
         ScanResult fileScanResult = null;
         try {
@@ -173,10 +174,12 @@ public class FileService {
                 finalFileScanResult.setScanResults(new ArrayList<ScanResult>());
                 for (File file : listOfFiles) {
                     if (file.isFile()) {
-                        fileScanResult = scanDirectory(folderPath + file.getName(), staticFolderPath, false);
+                        fileScanResult = scanDirectory(folderPath + file.getName(),
+                                staticFolderPath, false);
                     } else if (file.isDirectory()){
                         if (isRecursive) {
-                            fileScanResult = scanDirectory(folderPath + file.getName() + "/", staticFolderPath, true);
+                            fileScanResult = scanDirectory(folderPath + file.getName() + "/",
+                                    staticFolderPath, true);
                         } else {
                             fileScanResult = new ScanResult(staticFolderPath,
                                     folderPath + file.getName() + "/", PathType.FOLDER);
@@ -195,6 +198,18 @@ public class FileService {
         }
         logger.info("Scan folder result for folder : {}, {}", folderPath, finalFileScanResult);
         return finalFileScanResult;
+    }
+    public ArrayList<String> getAvailableFiles(String directory) {
+        //directory should contain / in the end
+        ArrayList<String> availableFiles = new ArrayList<>();
+        ScanResult scanResult = this.scanDirectory(directory, directory,false);
+        ArrayList<ScanResult> scanResults = scanResult.getScanResults();
+        if (scanResults != null && scanResults.size() > 0) {
+            for(ScanResult scanResult1: scanResults) {
+                availableFiles.add(StaticService.replaceBackSlashToSlash(scanResult1.getPathName()));
+            }
+        }
+        return availableFiles;
     }
     public Boolean renameExistingFile(String dir, String fileName, String renameFilename) {
         String logStr = "File rename request: dir="+ dir+", filename="+fileName;

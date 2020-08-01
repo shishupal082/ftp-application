@@ -204,9 +204,28 @@ Display % completed fileUpload (Between 1% to 99%), sometime 100% also
 Add userLogin log parameter in defaultUrl loading
 Display date heading on UI for orderByDate
 
+1.0.9
+-------------------
+upgraded dropwizard from 0.8.1 to 2.0.0
+Code for executing shell script from java added
+    - env_config added (For executing shell script from java)
+        - appRestartCommand: "sh run_app.bat"
+Code for shutdown program added
+Redirect from / to /login added in backend
+Log file problem fix (not updating file when date change)
+    - Now detect date change and copy log file archived by dropwizard
+    - At the start of the program, renameOldLogFile is also there
+env_config
+    - logFilePath changes from logFilename to logFolder
+
+
+
 
 Future releases
 -------------------
+
+Create a new csv file which contains
+    filename, uploaded_by, subject, heading, uploaded date time stamp
 
 
 add password encryption env config

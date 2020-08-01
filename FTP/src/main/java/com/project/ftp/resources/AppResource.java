@@ -40,13 +40,14 @@ public class AppResource {
         appViewFtlFileName = AppConstant.APP_VIEW_FTL_FILENAME;
     }
     @GET
-    public IndexView indexPage(@Context HttpServletRequest request) {
+    public Response indexPage(@Context HttpServletRequest request) throws URISyntaxException {
         logger.info("Loading indexPage");
         /*
          * It will load resource path from app Config
          * */
-        String reRoutePath = appConfig.getFtpConfiguration().getIndexPageReRoute();
-        return new IndexView(request, reRoutePath);
+        String reRoutePath = AppConstant.LOGIN_PATH;
+        logger.info("indexPage : redirect from / to: {}", reRoutePath);
+        return Response.seeOther(new URI(reRoutePath)).build();
     }
     @GET
     @Path("/index")
