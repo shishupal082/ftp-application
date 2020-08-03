@@ -218,14 +218,69 @@ Log file problem fix (not updating file when date change)
 env_config
     - logFilePath changes from logFilename to logFolder
 
+1.1.0
+-------------------
+Create a new csv file (file_details.csv in config_files folder) which contains following 10 parameter
+    filename,uploadedby (username),deletedby (username),viewer(self|all),subject,heading,date time stamp,entryType(upload|delete|migration),isDeleted (true/false)
+Added in app_static_data.json config
+    "uploadedFileViewer": [
+        {
+            "text": "Self & Admin",
+            "value": "self"
+        },
+        {
+            "text": "All",
+            "value": "all"
+        }
+    ],
+    "uploadedFileDeleteAccess": "self",
+    "defaultFileViewer": "self"
+For every upload and delete file, there will be entry in file_details.csv
+To follow old one, we generate one entry into file_details.csv for further uses
+    - i.e. auto migration (one by one) on delete request, view / download request
 
+Added config parameter:
+    defaultFileViewer: self (self or all)
+    fileDeleteAccess: self (self or admin or self_admin, this parameter will be added to file_details.csv entry)
+    There is no use of this parameter while deleting
+    When delete request received
+        - It will read entry from file_details.csv, if deleteAccess is
+            - self then compare file username and login username
+            - admin then check login user should be admin
+            - self_admin then 1st check whether login user is admin or file user name is same as login username
+
+Maintain backward compatible
+    - /api/delete_file
+        - if fileDetail found, then follow deleteAccess command of fileDetails
+            otherwise put entry into file_details.csv then delete file using new method
+    - /view/file/{username}/{filename2}
+    - /download/file/{username}/{filename2}
+        - if fileDetails found, then follow viewer command of fileDetails
+            otherwise put entry into file_details.csv then follow new method
+    - /api/get_files_info
+        - we have to send more data (till now only filepath was sent)
+        - now we have to send following data
+            - scan user directory data + file_details.csv
+                - We have to also send whether this file is having viewer permission only
+                - or view as well as delete permission
+        - finally data required (ArrayList)
+            - filepath, viewOption(true|false), deleteOption(true|false), subject, heading
 
 
 Future releases
 -------------------
+New api required
+    - file_upload (view)
+    - /api/file_upload [POST]
 
-Create a new csv file which contains
-    filename, uploaded_by, subject, heading, uploaded date time stamp
+public user concept will be deprecated
+
+
+create api
+    - /api/file_upload (older one is /api/upload_file)
+        - post parameter
+            @FormDataParam("file") InputStream uploadedInputStream,
+            @FormDataParam("file") FormDataContentDisposition fileDetail
 
 
 add password encryption env config

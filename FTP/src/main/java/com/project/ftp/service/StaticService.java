@@ -4,11 +4,8 @@ import com.project.ftp.FtpConfiguration;
 import com.project.ftp.common.DateUtilities;
 import com.project.ftp.common.StrUtils;
 import com.project.ftp.common.SysUtils;
-import com.project.ftp.config.AppConfig;
-import com.project.ftp.config.AppConstant;
-import com.project.ftp.config.FileMimeType;
+import com.project.ftp.config.*;
 import com.project.ftp.obj.PathInfo;
-import com.project.ftp.obj.ScanResult;
 import com.project.ftp.parser.YamlFileParser;
 import com.project.ftp.pdf.TextToPdfService;
 import com.project.ftp.session.SessionService;
@@ -136,6 +133,44 @@ public class StaticService {
 //            logger.info("Error in parsing enum ({}): {}", name, e.getMessage());
         }
         return response;
+    }
+    public static FileViewer getFileViewer(String viewer) {
+        if (viewer == null || viewer.isEmpty()) {
+            return null;
+        }
+        viewer = viewer.toUpperCase();
+        FileViewer fileViewer = null;
+        try {
+            fileViewer = FileViewer.valueOf(viewer);
+        } catch (Exception e) {
+            logger.info("Error in parsing FileViewer enum ({}): {}", viewer, e.getMessage());
+        }
+        return fileViewer;
+    }
+    public static FileViewer getFileViewerV2(AppConfig appConfig, String fileUsername) {
+        String defaultFileViewer = appConfig.getFtpConfiguration().getDefaultFileViewer();
+        FileViewer viewer = StaticService.getFileViewer(defaultFileViewer);
+        if (AppConstant.PUBLIC.equals(fileUsername)) {
+            viewer = FileViewer.ALL;
+        }
+        return viewer;
+    }
+    public static FileDeleteAccess getFileDeleteAccess(String fileDeleteAccess) {
+        if (fileDeleteAccess == null || fileDeleteAccess.isEmpty()) {
+            return null;
+        }
+        fileDeleteAccess = fileDeleteAccess.toUpperCase();
+        FileDeleteAccess deleteAccess = null;
+        try {
+            deleteAccess = FileDeleteAccess.valueOf(fileDeleteAccess);
+        } catch (Exception e) {
+            logger.info("Error in parsing FileDeleteAccess enum ({}): {}", fileDeleteAccess, e.getMessage());
+        }
+        return deleteAccess;
+    }
+    public static FileDeleteAccess getFileDeleteAccessV2(AppConfig appConfig) {
+        String fileDeleteAccess = appConfig.getFtpConfiguration().getFileDeleteAccess();
+        return StaticService.getFileDeleteAccess(fileDeleteAccess);
     }
     public static void renameOldLogFile(final String relativeConfigFilePath) {
         if (relativeConfigFilePath == null) {

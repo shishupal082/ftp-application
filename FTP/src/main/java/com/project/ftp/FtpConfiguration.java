@@ -16,6 +16,8 @@ public class FtpConfiguration extends Configuration {
     private String publicDir;
     private String publicPostDir;
     private Integer maxFileSize;
+    private String fileDeleteAccess;
+    private String defaultFileViewer;
     private String filenameFormat;
     private ArrayList<String> allowedOrigin;
     private ArrayList<String> adminUsersName;
@@ -148,6 +150,22 @@ public class FtpConfiguration extends Configuration {
         this.appRestartCommand = appRestartCommand;
     }
 
+    public String getFileDeleteAccess() {
+        return fileDeleteAccess;
+    }
+
+    public void setFileDeleteAccess(String fileDeleteAccess) {
+        this.fileDeleteAccess = fileDeleteAccess;
+    }
+
+    public String getDefaultFileViewer() {
+        return defaultFileViewer;
+    }
+
+    public void setDefaultFileViewer(String defaultFileViewer) {
+        this.defaultFileViewer = defaultFileViewer;
+    }
+
     @Override
     public String toString() {
         return "FtpConfiguration{" +
@@ -157,6 +175,8 @@ public class FtpConfiguration extends Configuration {
                 ", publicDir='" + publicDir + '\'' +
                 ", publicPostDir='" + publicPostDir + '\'' +
                 ", maxFileSize=" + maxFileSize +
+                ", fileDeleteAccess='" + fileDeleteAccess + '\'' +
+                ", defaultFileViewer='" + defaultFileViewer + '\'' +
                 ", filenameFormat='" + filenameFormat + '\'' +
                 ", allowedOrigin=" + allowedOrigin +
                 ", adminUsersName=" + adminUsersName +

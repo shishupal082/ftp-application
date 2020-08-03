@@ -52,8 +52,6 @@ public class Users {
     }
     public void maskPassword() {
         if (userHashMap != null) {
-            String userId;
-            User user;
             for(Map.Entry<String, User> data: userHashMap.entrySet()) {
                 data.getValue().setPassword("*****");
             }

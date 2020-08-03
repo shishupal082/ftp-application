@@ -1,8 +1,6 @@
 package com.project.ftp.service;
 
-import com.project.ftp.config.AppConfig;
-import com.project.ftp.config.AppConstant;
-import com.project.ftp.config.PathType;
+import com.project.ftp.config.*;
 import com.project.ftp.exceptions.AppException;
 import com.project.ftp.exceptions.ErrorCodes;
 import com.project.ftp.obj.*;
@@ -18,14 +16,18 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 public class FileServiceV2 {
     final static Logger logger = LoggerFactory.getLogger(FileServiceV2.class);
     final AppConfig appConfig;
     final FileService fileService;
+    final String savedDataFilepath;
     public FileServiceV2(final AppConfig appConfig) {
         this.appConfig = appConfig;
         this.fileService = new FileService();
+        savedDataFilepath = appConfig.getFtpConfiguration().getConfigDataFilePath()
+                + AppConstant.FILE_DATA_FILENAME;
     }
     private String parseUserFileName(String fileName) {
         String userFilename = null;
@@ -46,8 +48,6 @@ public class FileServiceV2 {
             return;
         }
         String fileName;
-        String[] fileNameArr;
-
         for (ScanResult scanResult: scanResults) {
             if (scanResult != null) {
                 if (PathType.FILE.equals(scanResult.getPathType())) {
@@ -60,6 +60,57 @@ public class FileServiceV2 {
                 }
             }
         }
+    }
+    private boolean isFileExist(String filepath) {
+        if (filepath == null) {
+            return false;
+        }
+        String dir = appConfig.getFtpConfiguration().getFileSaveDir();
+        return fileService.isFile(dir+filepath);
+    }
+    private ArrayList<ResponseFilesInfo> generateFileInfoResponse(ArrayList<String> res,
+                                                                  LoginUserDetails loginUserDetails) {
+        if (res == null || loginUserDetails == null) {
+            return null;
+        }
+        ArrayList<ResponseFilesInfo> finalResponse = new ArrayList<>();
+        FileDetails fileDetails = fileService.getAllFileDetails(savedDataFilepath);
+        if (fileDetails == null) {
+            fileDetails = new FileDetails(null);
+        }
+        HashMap<String, FileDetail> fileDetailHashMap = fileDetails.getFileDetailHashMap();
+        HashMap<String, String> parsedData;
+        FileDetail fileDetail;
+        String fileUsername, filenameStr;
+        for (String filepath: res) {
+            fileDetail = fileDetailHashMap.get(filepath);
+            if (fileDetail == null || fileDetail.isDeletedTrue()) {
+                parsedData = this.parseRequestedFileStr(filepath);
+                if (AppConstant.SUCCESS.equals(parsedData.get(AppConstant.STATUS))) {
+                    fileUsername = parsedData.get(AppConstant.FILE_USERNAME);
+                    filenameStr = parsedData.get(AppConstant.FILE_NAME_STR);
+                    fileDetail = this.generateFileDetailsFromFilepath(fileUsername,
+                            filenameStr,"getFilesInfoMigration");
+                }
+            }
+            finalResponse.add(new ResponseFilesInfo(fileDetail, loginUserDetails));
+        }
+        String filepath;
+        for (Map.Entry<String, FileDetail> entry: fileDetailHashMap.entrySet()) {
+            filepath = entry.getKey();
+            if (res.contains(filepath)) {
+                continue;
+            }
+            if (!this.isFileExist(filepath)) {
+                logger.info("filepath: {}, does not exist.", filepath);
+                continue;
+            }
+            ResponseFilesInfo filesInfoResponse = new ResponseFilesInfo(entry.getValue(), loginUserDetails);
+            if (filesInfoResponse.isViewOption()) {
+                finalResponse.add(filesInfoResponse);
+            }
+        }
+        return finalResponse;
     }
     public ApiResponse scanUserDirectory(HttpServletRequest request, final UserService userService2) {
         ApiResponse apiResponse;
@@ -81,13 +132,16 @@ public class FileServiceV2 {
             ArrayList<String> response = new ArrayList<>();
             generateApiResponse(scanResults, response);
             logger.info("scanUserDirectory result size: {}", response.size());
-            apiResponse = new ApiResponse(response);
+            ArrayList<ResponseFilesInfo> filesInfo = this.generateFileInfoResponse(response, loginUserDetails);
+            logger.info("final result size: {}", filesInfo.size());
+            apiResponse = new ApiResponse(filesInfo);
         } else {
             logger.info("scanUserDirectory user is unauthorised: {}", loginUserDetails);
             apiResponse = new ApiResponse(ErrorCodes.UNAUTHORIZED_USER);
         }
         return apiResponse;
     }
+
     private HashMap<String, String> parseRequestedFileStr(String filename) {
         HashMap<String, String> response = new HashMap<>();
         response.put(AppConstant.STATUS, AppConstant.FAILURE);
@@ -106,11 +160,12 @@ public class FileServiceV2 {
                 return response;
             }
             response.put(AppConstant.STATUS, AppConstant.SUCCESS);
-            response.put("fileUserName", filenameArr[0]);
-            response.put("fileNameStr", filenameArr[1]);
+            response.put(AppConstant.FILE_USERNAME, filenameArr[0]);
+            response.put(AppConstant.FILE_NAME_STR, filenameArr[1]);
         }
         return response;
     }
+    /**
     public PathInfo searchRequestedFile(HttpServletRequest request, final UserService userService,
                                         String filename) throws AppException {
         if (filename == null) {
@@ -121,7 +176,7 @@ public class FileServiceV2 {
         String loginUserName = loginUserDetails.getUsername();
         String[] filenameArr = filename.split("/");
         String filePath = appConfig.getFtpConfiguration().getFileSaveDir();
-        PathInfo pathInfo = null;
+        PathInfo pathInfo;
         if (filenameArr.length == 2) {
             if (loginUserName.isEmpty()) {
                 logger.info("Invalid loginUserName: {}", loginUserName);
@@ -147,6 +202,65 @@ public class FileServiceV2 {
         }
         return pathInfo;
     }
+     **/
+    public PathInfo searchRequestedFileV2(HttpServletRequest request, final UserService userService,
+                                        String filename) throws AppException {
+        if (filename == null) {
+            logger.info("filename can not be null");
+            throw new AppException(ErrorCodes.INVALID_QUERY_PARAMS);
+        }
+        LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
+        if (!loginUserDetails.getLogin()) {
+            logger.info("Invalid loginUser: {}", loginUserDetails);
+            throw new AppException(ErrorCodes.UNAUTHORIZED_USER);
+        }
+        HashMap<String, String> parsedFileStr = this.parseRequestedFileStr(filename);
+        String loginUserName = loginUserDetails.getUsername();
+        String filePath = appConfig.getFtpConfiguration().getFileSaveDir();
+        PathInfo pathInfo;
+        if (AppConstant.SUCCESS.equals(parsedFileStr.get(AppConstant.STATUS))) {
+            filePath += filename;
+            pathInfo = fileService.getPathInfo(filePath);
+            if (!AppConstant.FILE.equals(pathInfo.getType())) {
+                logger.info("file not found: {}", pathInfo);
+                throw new AppException(ErrorCodes.FILE_NOT_FOUND);
+            }
+            // Now file exist, checking for valid permission
+            FileDetail fileDetail = fileService.searchFileDetails(savedDataFilepath, filename);
+            String fileUsername = parsedFileStr.get(AppConstant.FILE_USERNAME);
+            String filenameStr = parsedFileStr.get(AppConstant.FILE_NAME_STR);
+            if (fileDetail == null || !fileDetail.isValid()) {
+                logger.info("Invalid fileDetails: {}", fileDetail);
+                fileDetail = this.generateFileDetailsFromFilepath(fileUsername, filenameStr,"viewMigration");
+            }
+            // i.e. file is deleted by user and again manually copied to server
+            if (fileDetail.isDeletedTrue()) {
+                logger.info("file deleted entry, but file is there: {}", fileDetail);
+                fileDetail.setIsDeleted("false");
+                fileService.saveFileDetailsV2(savedDataFilepath, fileDetail);
+            }
+            FileViewer viewer = fileDetail.getViewer();
+            if (FileViewer.ALL != viewer) {
+                if (FileViewer.SELF != viewer) {
+                    logger.info("Invalid viewer: {}", viewer);
+                    throw new AppException(ErrorCodes.UNAUTHORIZED_USER);
+                }
+                if (!AppConstant.PUBLIC.equals(fileUsername)) {
+                    if (!loginUserDetails.getLoginUserAdmin() && !loginUserName.equals(fileUsername)) {
+                        logger.info("Unauthorised access loginUserName: {}, filename: {}",
+                                loginUserName, filename);
+                        throw new AppException(ErrorCodes.UNAUTHORIZED_USER);
+                    }
+                }
+            }
+            logger.info("Search result: {}", pathInfo);
+        } else {
+            logger.info("Invalid filename:{}", filename);
+            throw new AppException(ErrorCodes.INVALID_QUERY_PARAMS);
+        }
+        return pathInfo;
+    }
+    /**
     public void deleteRequestFile(HttpServletRequest request,
                                          UserService userService,
                                          RequestDeleteFile deleteFile) throws AppException {
@@ -165,7 +279,7 @@ public class FileServiceV2 {
             logger.info("deleteFile invalid request: {}", deleteFile);
             throw new AppException(ErrorCodes.BAD_REQUEST_ERROR);
         }
-        String fileUserName = parsedFileStr.get("fileUserName");
+        String fileUserName = parsedFileStr.get(AppConstant.FILE_USERNAME);
         String userName = loginUserDetails.getUsername();
         if (!fileUserName.equals(userName)) {
             logger.info("UnAuthorised user trying to deleteFile: {}", loginUserDetails);
@@ -174,7 +288,7 @@ public class FileServiceV2 {
         String dir = appConfig.getFtpConfiguration().getFileSaveDir();
         PathInfo pathInfo = fileService.getPathInfo(dir + deleteFileReq);
         Boolean permanentlyDeleteFile = appConfig.getFtpConfiguration().getPermanentlyDeleteFile();
-        Boolean fileDeleteStatus = false;
+        Boolean fileDeleteStatus;
         if (AppConstant.FILE.equals(pathInfo.getType())) {
             if (permanentlyDeleteFile == null || permanentlyDeleteFile) {
                 logger.info("Permanently deleting file: {}", deleteFile);
@@ -198,12 +312,145 @@ public class FileServiceV2 {
                         deleteFileReq, loginUserDetails);
                 throw new AppException(ErrorCodes.RUNTIME_ERROR);
             } else {
-                logger.info("Requested file deleted: {}.", deleteFileReq);
+                logger.info("Requested file deleted: {}", deleteFileReq);
             }
         } else {
             logger.info("Requested deleteFile: {}, does not exist.", deleteFileReq);
             throw new AppException(ErrorCodes.FILE_NOT_FOUND);
         }
+    }
+     **/
+    private HashMap<String, String> verifyDeleteRequestParameters(RequestDeleteFile deleteFile) {
+        if (deleteFile == null) {
+            logger.info("deleteFile request is null.");
+            throw new AppException(ErrorCodes.BAD_REQUEST_ERROR);
+        }
+        String deleteFileReq = deleteFile.getFilename();
+        HashMap<String, String> parsedFileStr = this.parseRequestedFileStr(deleteFileReq);
+        if (AppConstant.FAILURE.equals(parsedFileStr.get(AppConstant.STATUS))) {
+            logger.info("deleteFile invalid request: {}", deleteFile);
+            throw new AppException(ErrorCodes.BAD_REQUEST_ERROR);
+        }
+        return parsedFileStr;
+    }
+    private void addTextInFileDetailForDelete(LoginUserDetails userDetails, FileDetail fileDetail) {
+        String uploadedBy = fileDetail.getUploadedby();
+        String filename = fileDetail.getFilename();
+        String deletedBy = userDetails.getUsername();
+        FileDetail finalFileDetail = new FileDetail(filename, uploadedBy, deletedBy);
+        if (!finalFileDetail.isValid()) {
+            logger.info("Invalid file details: {}", finalFileDetail);
+        } else {
+            finalFileDetail.setSubject(fileDetail.getSubject());
+            finalFileDetail.setHeading(fileDetail.getHeading());
+            finalFileDetail.setViewer(fileDetail.getViewer());
+            finalFileDetail.setDeleteAccess(fileDetail.getDeleteAccess());
+        }
+        if (!fileDetail.isValid()) {
+            logger.info("Invalid file delete data: {}", fileDetail);
+        }
+        fileService.saveFileDetailsV2(savedDataFilepath, finalFileDetail);
+    }
+    private void deleteFileV3(FileDetail fileDetail) throws AppException {
+        String dir = appConfig.getFtpConfiguration().getFileSaveDir();
+        PathInfo pathInfo = fileService.getPathInfo(dir + fileDetail.getFilepath());
+        Boolean permanentlyDeleteFile = appConfig.getFtpConfiguration().getPermanentlyDeleteFile();
+        Boolean fileDeleteStatus;
+        if (AppConstant.FILE.equals(pathInfo.getType())) {
+            if (permanentlyDeleteFile == null || permanentlyDeleteFile) {
+                logger.info("Permanently deleting file: {}", fileDetail);
+                fileDeleteStatus = fileService.deleteFileV2(pathInfo.getPath());
+            } else {
+                ArrayList<String> requiredDirs = new ArrayList<>();
+                requiredDirs.add(dir);
+                requiredDirs.add("trash");
+                requiredDirs.add(fileDetail.getUploadedby());
+                String trashFolder = fileService.createDir(requiredDirs);
+                if (trashFolder == null) {
+                    logger.info("Error in creating trash folder for user: {}", fileDetail.getUploadedby());
+                    throw new AppException(ErrorCodes.RUNTIME_ERROR);
+                }
+                String currentFolder = pathInfo.getParentFolder();
+                fileDeleteStatus = fileService.moveFile(currentFolder, trashFolder,
+                        pathInfo.getFilenameWithoutExt(), pathInfo.getExtension());
+            }
+            if (!fileDeleteStatus) {
+                logger.info("Error in deleting requested file: {}", fileDetail.getFilepath());
+                throw new AppException(ErrorCodes.RUNTIME_ERROR);
+            } else {
+                logger.info("Requested file deleted: {}", fileDetail.getFilepath());
+            }
+        } else {
+            logger.info("Requested deleteFile: {}, does not exist.", fileDetail.getFilepath());
+            throw new AppException(ErrorCodes.FILE_NOT_FOUND);
+        }
+    }
+    private void deleteFileByUser(LoginUserDetails userDetails, FileDetail fileDetail) throws AppException {
+        String fileUserName = fileDetail.getUploadedby();
+        String userName = userDetails.getUsername();
+        if (!fileUserName.equals(userName)) {
+            logger.info("UnAuthorised user trying to deleteFile: {}", userDetails);
+            throw new AppException(ErrorCodes.UNAUTHORIZED_USER);
+        }
+        this.deleteFileV3(fileDetail);
+    }
+    // viewMigration, deleteMigration, getFilesInfoMigration, upload
+    private FileDetail generateFileDetailsFromFilepath(String fileUsername, String filename,
+                                                       String entryType) {
+        FileViewer viewer = StaticService.getFileViewerV2(appConfig, fileUsername);
+        FileDeleteAccess deleteAccess = StaticService.getFileDeleteAccessV2(appConfig);
+        FileDetail fileDetail = new FileDetail(filename, fileUsername, viewer, deleteAccess, entryType);
+        fileService.saveFileDetailsV2(savedDataFilepath, fileDetail);
+        return fileDetail;
+    }
+    public void deleteRequestFileV2(HttpServletRequest request,
+                                    UserService userService,
+                                    RequestDeleteFile deleteFile) throws AppException {
+        HashMap<String, String> parsedFileStr = this.verifyDeleteRequestParameters(deleteFile);
+        LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
+        if (!loginUserDetails.getLogin()) {
+            logger.info("Login required to delete file: {}", deleteFile);
+            throw new AppException(ErrorCodes.UNAUTHORIZED_USER);
+        }
+        String deleteFileReq = deleteFile.getFilename();
+        String filepath = appConfig.getFtpConfiguration().getFileSaveDir() + deleteFileReq;
+        if (!fileService.isFile(filepath)) {
+            logger.info("requested delete file not found: {}", filepath);
+            throw new AppException(ErrorCodes.FILE_NOT_FOUND);
+        }
+        FileDetail fileDetail = fileService.searchFileDetails(savedDataFilepath, deleteFileReq);
+        if (fileDetail == null || !fileDetail.isValid()) {
+            logger.info("Invalid fileDetails: {}", fileDetail);
+            fileDetail = this.generateFileDetailsFromFilepath(parsedFileStr.get(AppConstant.FILE_USERNAME),
+                    parsedFileStr.get(AppConstant.FILE_NAME_STR), "deleteMigration");
+        }
+        if (fileDetail.isDeletedTrue()) {
+            logger.info("file already deleted: {}", fileDetail);
+            throw new AppException(ErrorCodes.FILE_NOT_FOUND);
+        }
+        FileDeleteAccess deleteAccess = fileDetail.getDeleteAccess();
+        if (deleteAccess == null) {
+            logger.info("deleteAccess of file is null: {}", fileDetail);
+            throw new AppException(ErrorCodes.UNAUTHORIZED_USER);
+        }
+        if (deleteAccess == FileDeleteAccess.SELF) {
+            this.deleteFileByUser(loginUserDetails, fileDetail);
+        } else if (deleteAccess == FileDeleteAccess.ADMIN) {
+            if (loginUserDetails.getLoginUserAdmin()) {
+                this.deleteFileV3(fileDetail);
+            } else {
+                logger.info("Only admin is allowed delete this file: {}, currentUser: {}",
+                        fileDetail, loginUserDetails);
+                throw new AppException((ErrorCodes.UNAUTHORIZED_USER));
+            }
+        } else if (deleteAccess == FileDeleteAccess.SELF_ADMIN) {
+            if (loginUserDetails.getLoginUserAdmin()) {
+                this.deleteFileV3(fileDetail);
+            } else {
+                this.deleteFileByUser(loginUserDetails, fileDetail);
+            }
+        }
+        this.addTextInFileDetailForDelete(loginUserDetails, fileDetail);
     }
     public Object handleDefaultUrl(HttpServletRequest request, UserService userService) {
         String requestedPath = StaticService.getPathUrl(request);
@@ -244,12 +491,12 @@ public class FileServiceV2 {
         logger.info("PathDetails: {}", pathInfo);
         return pathInfo;
     }
-    public ApiResponse doUpload(InputStream uploadedInputStream, String fileName) throws AppException {
+    public PathInfo doUpload(InputStream uploadedInputStream, String fileName) throws AppException {
         PathInfo pathInfo = fileService.getPathInfo(fileName);
         if (AppConstant.FILE.equals(pathInfo.getType())) {
             logger.info("Filename: {}, already exist, re-naming it. {}", fileName, pathInfo);
             String ext = pathInfo.getExtension();
-            String parentFolder = pathInfo.getParentFolder();;
+            String parentFolder = pathInfo.getParentFolder();
             String currentFileName = pathInfo.getFileName();
             String newFileName = pathInfo.getFilenameWithoutExt() + "-Copy." + ext;
             Boolean renameStatus = fileService.renameExistingFile(parentFolder, currentFileName, newFileName);
@@ -260,7 +507,6 @@ public class FileServiceV2 {
             }
         }
         Integer maxFileSize = appConfig.getFtpConfiguration().getMaxFileSize();
-        ApiResponse apiResponse;
         pathInfo = fileService.uploadFile(uploadedInputStream, fileName, maxFileSize);
         if (!AppConstant.FILE.equals(pathInfo.getType())) {
             logger.info("Error in uploading file pathInfo: {}", pathInfo);
@@ -274,9 +520,8 @@ public class FileServiceV2 {
             }
             pathInfo.setPath(filePath);
             pathInfo.setParentFolder(null);
-            apiResponse = new ApiResponse(pathInfo);
         }
-        return apiResponse;
+        return pathInfo;
     }
     public ApiResponse uploadFile(HttpServletRequest request, UserService userService,
                                   InputStream uploadedInputStream, String fileName) throws AppException {
@@ -312,13 +557,13 @@ public class FileServiceV2 {
         if (!fileService.isDirectory(dir+loginUserName)) {
             dirStatus = fileService.createFolder(dir, loginUserName);
         }
-        ApiResponse apiResponse;
         if (dirStatus) {
-            apiResponse = doUpload(uploadedInputStream, uploadingFileName);
+            pathInfo = this.doUpload(uploadedInputStream, uploadingFileName);
         } else {
             logger.info("Error in creating directory for username: {}", loginUserName);
             throw new AppException(ErrorCodes.INVALID_FILE_SAVE_PATH);
         }
-        return apiResponse;
+        this.generateFileDetailsFromFilepath(loginUserName, pathInfo.getFileName(), "upload");
+        return new ApiResponse(pathInfo);
     }
 }

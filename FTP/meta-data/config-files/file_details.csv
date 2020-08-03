@@ -1,0 +1,1 @@
+date time stamp,filename,uploadedby (username),deletedby (username),viewAccess(self|all),deleteAccess(self|admin|self_admin),subject,heading,entryType(upload|delete|migration),isDeleted (true/false)

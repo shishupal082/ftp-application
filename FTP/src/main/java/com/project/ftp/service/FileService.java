@@ -5,8 +5,11 @@ import com.project.ftp.config.AppConstant;
 import com.project.ftp.config.PathType;
 import com.project.ftp.exceptions.AppException;
 import com.project.ftp.exceptions.ErrorCodes;
+import com.project.ftp.obj.FileDetail;
+import com.project.ftp.obj.FileDetails;
 import com.project.ftp.obj.PathInfo;
 import com.project.ftp.obj.ScanResult;
+import com.project.ftp.parser.TextFileParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,6 +20,41 @@ public class FileService {
     final static Logger logger = LoggerFactory.getLogger(FileService.class);
     final StrUtils strUtils = new StrUtils();
     public FileService() {}
+    public FileDetails getAllFileDetails(String savedDataFilepath) {
+        TextFileParser textFileParser = new TextFileParser(savedDataFilepath);
+        FileDetails details = null;
+        try {
+            ArrayList<ArrayList<String>> fileData = textFileParser.getTextData();
+            details = new FileDetails(fileData);
+            logger.info("Available file details count: {}", details.getCount());
+        } catch (Exception e) {
+            logger.info("Error in reading file data: {}, {}", savedDataFilepath, e.getMessage());
+        }
+        return details;
+    }
+    public FileDetail searchFileDetails(String savedDataFilepath, String filepath) {
+        FileDetails fileDetails = this.getAllFileDetails(savedDataFilepath);
+        FileDetail detail = null;
+        if (fileDetails != null) {
+            detail = fileDetails.searchFileByFilepath(filepath);
+            logger.info("searched file data for filepath: {}, is: {}", filepath, detail);
+        }
+        return detail;
+    }
+    public void saveFileDetails(String savedDataFilepath, String text) {
+        TextFileParser textFileParser = new TextFileParser(savedDataFilepath);
+        textFileParser.addText(text);
+    }
+    // delete retrieval, delete, migration
+    public void saveFileDetailsV2(String savedDataFilepath, FileDetail fileDetail) {
+        if (fileDetail == null) {
+            return;
+        }
+        TextFileParser textFileParser = new TextFileParser(savedDataFilepath);
+        String savedText = fileDetail.generateResponseToSave();
+        logger.info("Saving file details data: {}", savedText);
+        textFileParser.addText(savedText);
+    }
     public PathInfo getPathInfo(String requestedPath) {
         if (requestedPath == null) {
             requestedPath = "";

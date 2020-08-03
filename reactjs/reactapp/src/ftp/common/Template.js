@@ -500,10 +500,14 @@ Template["dashboard"] = [
                         {
                             "tag": "td",
                             "text": {
-                                "tag": "table.tbody",
-                                "className": "table table-striped",
-                                "name": "dashboardRow",
-                                "text": []
+                                "tag": "div",
+                                "className": "dashboard-info-col",
+                                "text": {
+                                    "tag": "table.tbody",
+                                    "className": "table table-striped",
+                                    "name": "dashboardRow",
+                                    "text": []
+                                }
                             }
                         },
                         {

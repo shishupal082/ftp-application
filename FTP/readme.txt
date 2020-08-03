@@ -83,6 +83,9 @@ Change config if required
         fileSaveDir: D:/workspace/project/ftp-app/saved-files/
     - Default file save directory will be running directory + "/saved-files/"
 - adminUsersName (arrayList) (Admin)
+- defaultFileViewer: "self" #self or all
+- fileDeleteAccess: "self" #self or admin or self_admin
+
 
 Fixed configurations
 ---------------------

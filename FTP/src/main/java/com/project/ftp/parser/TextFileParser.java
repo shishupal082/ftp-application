@@ -1,6 +1,5 @@
 package com.project.ftp.parser;
 
-import com.project.ftp.config.AppConfig;
 import com.project.ftp.config.AppConstant;
 import com.project.ftp.exceptions.AppException;
 import com.project.ftp.exceptions.ErrorCodes;
@@ -11,14 +10,13 @@ import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class TextFileParser {
     final static Logger logger = LoggerFactory.getLogger(TextFileParser.class);
-    final AppConfig appConfig;
     final String filepath;
-    public TextFileParser(final AppConfig appConfig) {
-        this.appConfig = appConfig;
-        filepath = appConfig.getFtpConfiguration().getConfigDataFilePath() + AppConstant.USER_DATA_FILENAME;
+    public TextFileParser(final String filepath) {
+        this.filepath = filepath;
     }
     public ArrayList<ArrayList<String>> getTextData() throws AppException {
         ArrayList<ArrayList<String>> result = new ArrayList<>();
@@ -36,11 +34,8 @@ public class TextFileParser {
             String[] tempArr;
             ArrayList<String> temp;
             while ((str = in.readLine()) != null) {
-                temp = new ArrayList<>();
                 tempArr = str.split(",");
-                for(String tempStr : tempArr) {
-                    temp.add(tempStr);
-                }
+                temp = new ArrayList<>(Arrays.asList(tempArr));
                 result.add(temp);
             }
             in.close();

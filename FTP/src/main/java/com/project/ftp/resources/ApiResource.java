@@ -78,12 +78,13 @@ public class ApiResource {
         logger.info("deleteFile In: {}, user: {}", deleteFile, userService.getUserDataForLogging(request));
         ApiResponse apiResponse;
         try {
-            fileServiceV2.deleteRequestFile(request, userService, deleteFile);
+            fileServiceV2.deleteRequestFileV2(request, userService, deleteFile);
             apiResponse = new ApiResponse();
         } catch (AppException ae) {
             logger.info("Error {}, in deleting requested file.", ae.getErrorCode().getErrorCode());
             apiResponse = new ApiResponse(ae.getErrorCode());
         }
+        logger.info("deleteFile out");
         return apiResponse;
     }
 

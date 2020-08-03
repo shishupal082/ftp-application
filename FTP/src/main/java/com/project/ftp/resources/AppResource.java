@@ -72,7 +72,7 @@ public class AppResource {
         PathInfo pathInfo = null;
         Response.ResponseBuilder r;
         try {
-            pathInfo = fileServiceV2.searchRequestedFile(request, userService, filename);
+            pathInfo = fileServiceV2.searchRequestedFileV2(request, userService, filename);
         } catch (AppException ae) {
             logger.info("Error in searching requested file: {}", ae.getErrorCode().getErrorCode());
         }
@@ -106,7 +106,7 @@ public class AppResource {
         PathInfo pathInfo = null;
         Response.ResponseBuilder r;
         try {
-            pathInfo = fileServiceV2.searchRequestedFile(request, userService, filename);
+            pathInfo = fileServiceV2.searchRequestedFileV2(request, userService, filename);
         } catch (AppException ae) {
             logger.info("Error in searching requested file: {}", ae.getErrorCode().getErrorCode());
         }

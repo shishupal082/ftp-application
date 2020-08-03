@@ -90,7 +90,7 @@ FTP.extend({
         // Changing delete link parameter
         field = TemplateHelper(template).searchFieldV2("dashboard.fileinfo.delete");
         field.value = fullFilename;
-        if (currentUserName !== fileResponse.username) {
+        if (!$S.isBooleanTrue(fileResponse.deleteOption)) {
             TemplateHelper.addClassTemplate(field, "dashboard.fileinfo.delete", "disabled");
             TemplateHelper.removeClassTemplate(field, "dashboard.fileinfo.delete", "text-danger");
         }
@@ -371,15 +371,16 @@ FTP.extend({
         var tempResult = [];
         var finalResult = [];
         var dashboardResult = [];
-        function reverseFileName(str) {
-            if (!$S.isString(str)) {
-                return null;
+        function reverseFileName(obj) {
+            if (!$S.isObject(obj) || !$S.isString(obj.filepath)) {
+                return obj;
             }
+            var str = obj.filepath;
             var strArr = str.split("/");
             if (strArr.length === 2) {
-                return strArr[1] + "/" + strArr[0];
+                obj.filepath = strArr[1] + "/" + strArr[0];
             }
-            return null;
+            return obj;
         }
         if ($S.isArray(response)) {
             var i, fileResponse;
@@ -397,10 +398,9 @@ FTP.extend({
                 }
             }
             for(i=finalResult.length-1; i>=0; i--) {
-                fileResponse = FTP.generateFileInfo(finalResult[i]);
-                if (fileResponse !== null) {
-                    dashboardResult.push(fileResponse);
-                }
+                fileResponse = FTP.generateFileInfo(finalResult[i].filepath);
+                Object.assign(finalResult[i], fileResponse);
+                dashboardResult.push(finalResult[i]);
             }
         }
         return dashboardResult;

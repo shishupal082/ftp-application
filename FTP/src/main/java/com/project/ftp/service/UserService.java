@@ -24,7 +24,8 @@ public class UserService {
     }
     public Users getAllUser() throws AppException {
         Users users = null;
-        TextFileParser textFileParser = new TextFileParser(appConfig);
+        String filepath = appConfig.getFtpConfiguration().getConfigDataFilePath() + AppConstant.USER_DATA_FILENAME;
+        TextFileParser textFileParser = new TextFileParser(filepath);
         ArrayList<ArrayList<String>> fileData;
         try {
             fileData = textFileParser.getTextData();
@@ -196,7 +197,8 @@ public class UserService {
             throw new AppException(ErrorCodes.REGISTER_NAME_REQUIRED);
         }
         logger.info("User register parameter are ok: {}", userRegister);
-        TextFileParser textFileParser = new TextFileParser(appConfig);
+        String filepath = appConfig.getFtpConfiguration().getConfigDataFilePath() + AppConstant.USER_DATA_FILENAME;
+        TextFileParser textFileParser = new TextFileParser(filepath);
         User user = new User(username, password, displayName);
         user.setMethod("register");
         String text = user.getAddTextResponse();
@@ -242,7 +244,8 @@ public class UserService {
         user.setPassword(newPassword);
         user.setMethod("change_password");
         String text = user.getAddTextResponse();
-        TextFileParser textFileParser = new TextFileParser(appConfig);
+        String filepath = appConfig.getFtpConfiguration().getConfigDataFilePath() + AppConstant.USER_DATA_FILENAME;
+        TextFileParser textFileParser = new TextFileParser(filepath);
         Boolean changePasswordStatus = textFileParser.addText(text);
         if (!changePasswordStatus) {
             logger.info("Error in updating password.");
