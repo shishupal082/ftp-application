@@ -206,8 +206,8 @@ public class StaticService {
         logger.info("Date change found: from {} to {}", configDate, currentDate);
         String timeInStr = StaticService.getDateStrFromPattern(AppConstant.TIME_FORMAT);
         int time = Integer.parseInt(timeInStr);
-        if (time < 100) {
-            logger.info("time is less than 00:01:00, {}, i.e. less than 1 minute.", timeInStr);
+        if (time < 1000) {
+            logger.info("time is less than 00:10:00(10 minute), {}", timeInStr);
             return;
         }
         String logFilePath = appConfig.getLogFilePath();
@@ -222,7 +222,7 @@ public class StaticService {
             ArrayList<String> logFiles = fileService.getAvailableFiles(logFilePath);
 
             logger.info("availableLogFiles: {}, logFiles: {}", availableLogFiles, logFiles);
-            String newLogFilePath = logFilePath + "application-" +
+            String newLogFilePath = logFilePath + "application-copy-" +
                     dateUtilities.getDateStrFromPattern(AppConstant.DateTimeFormat4);
             int i = 1;
             if (availableLogFiles == null) {

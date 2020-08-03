@@ -266,6 +266,8 @@ Maintain backward compatible
         - finally data required (ArrayList)
             - filepath, viewOption(true|false), deleteOption(true|false), subject, heading
 
+copy log file generated time limit extend from 1 minute to 10 minute
+
 
 Future releases
 -------------------
