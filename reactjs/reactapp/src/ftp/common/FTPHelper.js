@@ -367,6 +367,20 @@ FTP.extend({
         }
         return null;
     },
+    sortObject: function(arr) {
+        if (!$S.isArray(arr)) {
+            return arr;
+        }
+        function compare(a,b) {
+            if ($S.isObject(a) && $S.isObject(b)) {
+                if ($S.isString(a.filepath)) {
+                    return a.filepath.localeCompare(b.filepath);
+                }
+            }
+            return -1;
+        }
+        return arr.sort(compare);
+    },
     _generateDashboardResponse: function(response) {
         var tempResult = [];
         var finalResult = [];
@@ -390,7 +404,7 @@ FTP.extend({
                     tempResult.push(fileResponse);
                 }
             }
-            tempResult = tempResult.sort();
+            tempResult = FTP.sortObject(tempResult);
             for(i=0; i<tempResult.length; i++) {
                 fileResponse = reverseFileName(tempResult[i]);
                 if (fileResponse !== null) {
