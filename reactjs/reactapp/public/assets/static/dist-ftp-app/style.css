@@ -19,6 +19,9 @@
 .pl-10px {
     padding-left: 10px;
 }
+.w-75px {
+    width: 75px;
+}
 .table th, .table td {
     padding: 0.2rem;
 }

@@ -85,7 +85,7 @@ Change config if required
 - adminUsersName (arrayList) (Admin)
 - defaultFileViewer: "self" #self or all
 - fileDeleteAccess: "self" #self or admin or self_admin
-
+- uploadFileApiVersion: "v1" #v1 or v2
 
 Fixed configurations
 ---------------------

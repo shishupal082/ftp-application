@@ -1,17 +1,5 @@
 {
     "config": {
-        "uploadFileInstruction": "(Supported type: pdf,jpeg,jpg and png, max size < 10MB)",
-        "uploadedFileViewAccess": [
-            {
-                "text": "Self & Admin",
-                "value": "self"
-            },
-            {
-                "text": "All",
-                "value": "all"
-            }
-        ],
-        "uploadedFileDeleteAccess": "self",
-        "defaultFileViewer": "self"
+        "uploadFileInstruction": "(Supported type: pdf,jpeg,jpg and png, max size < 10MB)"
     }
 }

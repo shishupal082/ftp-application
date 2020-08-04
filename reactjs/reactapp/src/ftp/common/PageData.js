@@ -7,6 +7,8 @@ var PageData;
 var CurrentFormData = $S.getDataObj();
 var keys = ["upload_file.file"];
 keys.push("upload_file.percentComplete");
+keys.push("upload_file.subject");
+keys.push("upload_file.heading");
 keys.push("dashboard.apiResponse"); // []
 keys.push("dashboard.apiResponseByUser");// []
 keys.push("dashboard.apiResponseByDate");// []
@@ -70,7 +72,7 @@ PageData.extend({
             var file = currentTarget.files[0];
             CurrentFormData.setData(fieldName, file, true);
         } else {
-            CurrentFormData.setData(fieldName, currentTarget.value);
+            CurrentFormData.setData(fieldName, currentTarget.value.trim());
         }
     },
     handleButtonClick: function(e, Data, callBack) {
@@ -111,10 +113,30 @@ PageData.extend({
         var postData = {};
         if ($S.isString(url)) {
             if (pageName === "upload_file") {
+                var formData = new FormData();
+                var uploadFileApiVersion = Config.getPageData("upload_file_api_version", "v1");
+                if (uploadFileApiVersion === "v2") {
+                    var subject = PageData.getData("upload_file.subject", "");
+                    var heading = PageData.getData("upload_file.heading", "");
+                    if ($S.isString(subject) && $S.isString(heading)) {
+                        if (subject.length < 1) {
+                            alert("Subject required");
+                            return;
+                        }
+                        if (heading.length < 1) {
+                            alert("Heading required");
+                            return
+                        }
+                    } else {
+                        alert("Subject and Heading required");
+                        return;
+                    }
+                    formData.append("subject", subject);
+                    formData.append("heading", heading);
+                }
                 PageData.setData("formSubmitStatus", "in_progress");
                 PageData.setData("upload_file.percentComplete", 0);
                 $S.callMethod(callBack);
-                var formData = new FormData();
                 formData.append("file", CurrentFormData.getData("upload_file.file", {}, true));
                 $S.uploadFile(Config.JQ, url, formData, function(ajax, status, response) {
                     PageData.setData("formSubmitStatus", "completed");

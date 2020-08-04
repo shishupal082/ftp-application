@@ -369,6 +369,42 @@ Template["upload_file"] = [
                 },
                 {
                     "tag": "div",
+                    "className": "form-group d-none",
+                    "name": "upload_file.subject.div",
+                    "text": [
+                        {
+                            "tag": "label",
+                            "text": "Subject"
+                        },
+                        {
+                            "tag": "input",
+                            "className": "form-control",
+                            "name": "upload_file.subject",
+                            "type": "text",
+                            "text": ""
+                        }
+                    ]
+                },
+                {
+                    "tag": "div",
+                    "className": "form-group d-none",
+                    "name": "upload_file.heading.div",
+                    "text": [
+                        {
+                            "tag": "label",
+                            "text": "Heading"
+                        },
+                        {
+                            "tag": "input",
+                            "className": "form-control",
+                            "name": "upload_file.heading",
+                            "type": "text",
+                            "text": ""
+                        }
+                    ]
+                },
+                {
+                    "tag": "div",
                     "className": "form-group",
                     "text": [
                         {
@@ -690,6 +726,46 @@ Template["dashboard.fileinfo"] = [
         "tag": "div",
         "name": "dashboard.fileinfo.filename",
         "text": "Filename"
+    },
+    {
+        "tag": "div",
+        "name": "dashboard.fileinfo.subject_heading",
+        "text": {
+            "tag": "table.tbody",
+            "className": "table table-bordered mb-0",
+            "text": [
+                {
+                    "tag": "tr",
+                    "text": [
+                        {
+                            "tag": "td.b",
+                            "className": "w-75px",
+                            "text": "Subject"
+                        },
+                        {
+                            "tag": "td",
+                            "name": "dashboard.fileinfo.subject",
+                            "text": ""
+                        }
+                    ]
+                },
+                {
+                    "tag": "tr",
+                    "text": [
+                        {
+                            "tag": "td.b",
+                            "className": "w-75px",
+                            "text": "Heading"
+                        },
+                        {
+                            "tag": "td",
+                            "name": "dashboard.fileinfo.heading",
+                            "text": ""
+                        }
+                    ]
+                }
+            ]
+        }
     },
     {
         "tag": "div",

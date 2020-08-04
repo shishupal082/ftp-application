@@ -267,22 +267,60 @@ Maintain backward compatible
             - filepath, viewOption(true|false), deleteOption(true|false), subject, heading
 
 copy log file generated time limit extend from 1 minute to 10 minute
+public user concept will be remain as it is
+    - if file is uploaded from public, it will be visible at single place
+    - if file is uploaded from other users and visible to all
+        - its display on dashboard screen will on different user head (Jumbled)
+
+1.1.1
+-------------------
+Added subject and heading for each file on Dashboard page UI
+    - It is backward compatible (If subject and heading is empty, these fields are not visible)
+config parameter added
+    - uploadFileApiVersion: v2 (v2|v1)
+PageData upload_file_api_version added on ftl view
+for version v2
+    on upload file page two extra fields are visible
+        - subject and heading
+    on /api/upload_file
+        - 1st it will check for uploadFileApiVersion v1 or v2
+            - if v1 --> v1 will be called
+            - if v2 --> v2 will be called
+            - otherwise api version mismatch error will throw
+
+Remove from app_static_data.json config
+    "uploadedFileViewer": [
+        {
+            "text": "Self & Admin",
+            "value": "self"
+        },
+        {
+            "text": "All",
+            "value": "all"
+        }
+    ],
+    "uploadedFileDeleteAccess": "self",
+    "defaultFileViewer": "self"
+
+app_static_data.json config only contains
+    "uploadFileInstruction": "(Supported type: pdf,jpeg,jpg and png, max size < 10MB)"
+
 
 
 Future releases
 -------------------
-New api required
-    - file_upload (view)
-    - /api/file_upload [POST]
+jdbc connection establish
+Table required
+    - users
+    - file_details
 
-public user concept will be deprecated
+Query used
+select * from users where username = {username} and isDeleted = {null}
+select * from file_details where fileUsername = {username} and filename = {filename}
+First scan user directory and public directory then use
+select * from file_details where viewer={all} or fileUsername={username}
 
 
-create api
-    - /api/file_upload (older one is /api/upload_file)
-        - post parameter
-            @FormDataParam("file") InputStream uploadedInputStream,
-            @FormDataParam("file") FormDataContentDisposition fileDetail
 
 
 add password encryption env config

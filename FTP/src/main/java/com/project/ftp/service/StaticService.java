@@ -255,4 +255,11 @@ public class StaticService {
         }
         appConfig.setConfigDate(currentDate);
     }
+    public static String getUploadFileApiVersion(AppConfig appConfig) {
+        String version = appConfig.getFtpConfiguration().getUploadFileApiVersion();
+        if (version == null) {
+            return AppConstant.V1;
+        }
+        return version;
+    }
 }

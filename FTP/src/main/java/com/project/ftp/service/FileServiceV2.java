@@ -21,11 +21,13 @@ import java.util.Map;
 public class FileServiceV2 {
     final static Logger logger = LoggerFactory.getLogger(FileServiceV2.class);
     final AppConfig appConfig;
-    final FileService fileService;
+    private final FileService fileService;
+    private final UserService userService;
     final String savedDataFilepath;
     public FileServiceV2(final AppConfig appConfig) {
         this.appConfig = appConfig;
         this.fileService = new FileService();
+        this.userService = new UserService(appConfig);
         savedDataFilepath = appConfig.getFtpConfiguration().getConfigDataFilePath()
                 + AppConstant.FILE_DATA_FILENAME;
     }
@@ -90,7 +92,7 @@ public class FileServiceV2 {
                     fileUsername = parsedData.get(AppConstant.FILE_USERNAME);
                     filenameStr = parsedData.get(AppConstant.FILE_NAME_STR);
                     fileDetail = this.generateFileDetailsFromFilepath(fileUsername,
-                            filenameStr,"getFilesInfoMigration");
+                            filenameStr,"fileMigration");
                 }
             }
             finalResponse.add(new ResponseFilesInfo(fileDetail, loginUserDetails));
@@ -112,9 +114,9 @@ public class FileServiceV2 {
         }
         return finalResponse;
     }
-    public ApiResponse scanUserDirectory(HttpServletRequest request, final UserService userService2) {
+    public ApiResponse scanUserDirectory(HttpServletRequest request) {
         ApiResponse apiResponse;
-        LoginUserDetails loginUserDetails = userService2.getLoginUserDetails(request);
+        LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
         ArrayList<ScanResult> scanResults = new ArrayList<>();
         String dir = appConfig.getFtpConfiguration().getFileSaveDir();
         String publicDir = dir+AppConstant.PUBLIC+"/";
@@ -203,8 +205,8 @@ public class FileServiceV2 {
         return pathInfo;
     }
      **/
-    public PathInfo searchRequestedFileV2(HttpServletRequest request, final UserService userService,
-                                        String filename) throws AppException {
+    public PathInfo searchRequestedFileV2(HttpServletRequest request,
+                                          String filename) throws AppException {
         if (filename == null) {
             logger.info("filename can not be null");
             throw new AppException(ErrorCodes.INVALID_QUERY_PARAMS);
@@ -394,7 +396,7 @@ public class FileServiceV2 {
         }
         this.deleteFileV3(fileDetail);
     }
-    // viewMigration, deleteMigration, getFilesInfoMigration, upload
+    // viewMigration, deleteMigration, getFilesInfoMigration, uploadFileV1
     private FileDetail generateFileDetailsFromFilepath(String fileUsername, String filename,
                                                        String entryType) {
         FileViewer viewer = StaticService.getFileViewerV2(appConfig, fileUsername);
@@ -403,8 +405,15 @@ public class FileServiceV2 {
         fileService.saveFileDetailsV2(savedDataFilepath, fileDetail);
         return fileDetail;
     }
+    // uploadFileV2
+    private void generateFileDetailsFromFilepathV2(String loginUsername, String filename,
+                                                       String subject, String heading) {
+        FileDeleteAccess deleteAccess = StaticService.getFileDeleteAccessV2(appConfig);
+        FileDetail fileDetail = new FileDetail(filename, loginUsername,
+                                    subject, heading, FileViewer.ALL, deleteAccess);
+        fileService.saveFileDetailsV2(savedDataFilepath, fileDetail);
+    }
     public void deleteRequestFileV2(HttpServletRequest request,
-                                    UserService userService,
                                     RequestDeleteFile deleteFile) throws AppException {
         HashMap<String, String> parsedFileStr = this.verifyDeleteRequestParameters(deleteFile);
         LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
@@ -452,7 +461,7 @@ public class FileServiceV2 {
         }
         this.addTextInFileDetailForDelete(loginUserDetails, fileDetail);
     }
-    public Object handleDefaultUrl(HttpServletRequest request, UserService userService) {
+    public Object handleDefaultUrl(HttpServletRequest request) {
         String requestedPath = StaticService.getPathUrl(request);
         logger.info("Loading defaultMethod: {}, user: {}",
                 requestedPath, userService.getUserDataForLogging(request));
@@ -513,7 +522,7 @@ public class FileServiceV2 {
             throw new AppException(ErrorCodes.INVALID_USER_NAME);
         } else {
             logger.info("uploaded file pathInfo: {}", pathInfo);
-            String filePath = parseUserFileName(pathInfo.getPath());
+            String filePath = this.parseUserFileName(pathInfo.getPath());
             if (filePath == null) {
                 logger.info("File uploaded in wrong directory: {}", pathInfo);
                 throw new AppException(ErrorCodes.FILE_NOT_FOUND);
@@ -523,14 +532,9 @@ public class FileServiceV2 {
         }
         return pathInfo;
     }
-    public ApiResponse uploadFile(HttpServletRequest request, UserService userService,
-                                  InputStream uploadedInputStream, String fileName) throws AppException {
-        LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
-        if (!loginUserDetails.getLogin()) {
-            logger.info("UnAuthorised user trying to upload file: {}", fileName);
-            throw new AppException(ErrorCodes.UNAUTHORIZED_USER);
-        }
-        String loginUserName = loginUserDetails.getUsername();
+
+    private PathInfo uploadFile(String loginUserName,
+                               InputStream uploadedInputStream, String fileName) throws AppException {
         PathInfo pathInfo = fileService.getPathInfoFromFileName(fileName);
         logger.info("PathInfo generated from request filename: {}, {}", fileName, pathInfo);
         String ext = pathInfo.getExtension();
@@ -563,7 +567,43 @@ public class FileServiceV2 {
             logger.info("Error in creating directory for username: {}", loginUserName);
             throw new AppException(ErrorCodes.INVALID_FILE_SAVE_PATH);
         }
-        this.generateFileDetailsFromFilepath(loginUserName, pathInfo.getFileName(), "upload");
+        return pathInfo;
+    }
+    public ApiResponse uploadFileV1(String loginUsername,
+                                  InputStream uploadedInputStream, String fileName) throws AppException {
+        PathInfo pathInfo = this.uploadFile(loginUsername, uploadedInputStream, fileName);
+        this.generateFileDetailsFromFilepath(loginUsername, pathInfo.getFileName(), "upload");
+        return new ApiResponse(pathInfo);
+    }
+    public ApiResponse uploadFileV2(HttpServletRequest request,
+                                  InputStream uploadedInputStream, String fileName,
+                                  String subject, String heading) throws AppException {
+        LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
+        if (!loginUserDetails.getLogin()) {
+            logger.info("UnAuthorised user trying to upload file: {}", fileName);
+            throw new AppException(ErrorCodes.UNAUTHORIZED_USER);
+        }
+        String loginUsername = loginUserDetails.getUsername();
+        String apiVersion = StaticService.getUploadFileApiVersion(appConfig);
+        if (AppConstant.V1.equals(apiVersion)) {
+            logger.info("uploadFileApiVersion is v1");
+            return this.uploadFileV1(loginUsername, uploadedInputStream, fileName);
+        } else if (!AppConstant.V2.equals(apiVersion)) {
+            logger.info("uploadFileApiVersion is not {}: {}", AppConstant.V2, apiVersion);
+            throw new AppException(ErrorCodes.UPLOAD_FILE_VERSION_MISMATCH);
+        }
+        logger.info("uploadFileApiVersion is v2");
+        if (subject == null || subject.isEmpty()) {
+            logger.info("fileUpload subject is invalid: {}", subject);
+            throw new AppException(ErrorCodes.UPLOAD_FILE_SUBJECT_REQUIRED);
+        }
+        if (heading == null || heading.isEmpty()) {
+            logger.info("fileUpload heading is invalid: {}", heading);
+            throw new AppException(ErrorCodes.UPLOAD_FILE_HEADING_REQUIRED);
+        }
+        PathInfo pathInfo = this.uploadFile(loginUsername, uploadedInputStream, fileName);
+        this.generateFileDetailsFromFilepathV2(loginUserDetails.getUsername(),
+                pathInfo.getFileName(), subject, heading);
         return new ApiResponse(pathInfo);
     }
 }

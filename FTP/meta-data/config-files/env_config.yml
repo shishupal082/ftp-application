@@ -45,3 +45,4 @@ fileDeleteAccess: "self" #self or admin or self_admin
 permanentlyDeleteFile: false #File will saved in trash folder
 maxFileSize: 10240001 #i.e. 2048000 = 2048 kB = 2MB, 10240001 = 10MB
 filenameFormat: "YYYY-MM-dd-HH-mm'-filename'"
+uploadFileApiVersion: "v2" #(v1|v2)

@@ -26,6 +26,8 @@ public class FtpConfiguration extends Configuration {
     private Boolean createReadmePdf;
     private Boolean permanentlyDeleteFile;
     private String appRestartCommand;
+    private String uploadFileApiVersion;
+
 
     private HashMap<String, String> tempConfig;
 
@@ -166,6 +168,14 @@ public class FtpConfiguration extends Configuration {
         this.defaultFileViewer = defaultFileViewer;
     }
 
+    public String getUploadFileApiVersion() {
+        return uploadFileApiVersion;
+    }
+
+    public void setUploadFileApiVersion(String uploadFileApiVersion) {
+        this.uploadFileApiVersion = uploadFileApiVersion;
+    }
+
     @Override
     public String toString() {
         return "FtpConfiguration{" +
@@ -185,6 +195,7 @@ public class FtpConfiguration extends Configuration {
                 ", createReadmePdf=" + createReadmePdf +
                 ", permanentlyDeleteFile=" + permanentlyDeleteFile +
                 ", appRestartCommand='" + appRestartCommand + '\'' +
+                ", uploadFileApiVersion='" + uploadFileApiVersion + '\'' +
                 ", tempConfig=" + tempConfig +
                 '}';
     }

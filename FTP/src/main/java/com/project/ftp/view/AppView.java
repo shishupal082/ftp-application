@@ -1,7 +1,9 @@
 package com.project.ftp.view;
 
+import com.project.ftp.config.AppConfig;
 import com.project.ftp.config.AppConstant;
 import com.project.ftp.obj.LoginUserDetails;
+import com.project.ftp.service.StaticService;
 import com.project.ftp.service.UserService;
 import io.dropwizard.views.View;
 import org.slf4j.Logger;
@@ -20,7 +22,9 @@ public class AppView extends View {
     final String userName;
     final String userDisplayName;
     final String isLoginUserAdmin;
-    public AppView(HttpServletRequest request, String ftl, String pageName, final UserService userService) {
+    final String uploadFileApiVersion;
+    public AppView(HttpServletRequest request, String ftl, String pageName,
+                   UserService userService, AppConfig appConfig) {
         super(ftl);
         LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
         this.pageName = pageName;
@@ -29,6 +33,7 @@ public class AppView extends View {
         this.isLoginUserAdmin = loginUserDetails.getLoginUserAdmin().toString();
         this.appVersion = AppConstant.AppVersion;
         this.userDisplayName = "";
+        this.uploadFileApiVersion = StaticService.getUploadFileApiVersion(appConfig);
         logger.info("Loading AppView, page: {}, userDetails: {}", pageName, loginUserDetails);
     }
 
@@ -50,6 +55,10 @@ public class AppView extends View {
 
     public String getUserDisplayName() {
         return userDisplayName;
+    }
+
+    public String getUploadFileApiVersion() {
+        return uploadFileApiVersion;
     }
 
     public String getIsLoginUserAdmin() {

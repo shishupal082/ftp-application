@@ -105,7 +105,7 @@ public class FileDetail {
         this.deleteAccess = deleteAccess;
         this.subject = subject;
         this.heading = heading;
-        this.entryType = "upload";
+        this.entryType = "uploadV2";
         this.isDeleted = "false";
         this.filepath = this.uploadedby + "/" + this.filename;
         // deletedby will be null

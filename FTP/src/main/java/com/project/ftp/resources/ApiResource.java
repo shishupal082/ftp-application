@@ -25,7 +25,6 @@ import java.util.HashMap;
 @Consumes(MediaType.APPLICATION_JSON)
 public class ApiResource {
     final static Logger logger = LoggerFactory.getLogger(ApiResponse.class);
-    private HttpServletRequest httpServletRequest;
     final AppConfig appConfig;
     final FileServiceV2 fileServiceV2;
     final UserService userService;
@@ -37,7 +36,7 @@ public class ApiResource {
     @GET
     @Produces(MediaType.TEXT_HTML)
     public Object defaultMethodApi(@Context HttpServletRequest request) {
-        return fileServiceV2.handleDefaultUrl(request, userService);
+        return fileServiceV2.handleDefaultUrl(request);
     }
     @GET
     @Path("/get_static_file")
@@ -78,7 +77,7 @@ public class ApiResource {
         logger.info("deleteFile In: {}, user: {}", deleteFile, userService.getUserDataForLogging(request));
         ApiResponse apiResponse;
         try {
-            fileServiceV2.deleteRequestFileV2(request, userService, deleteFile);
+            fileServiceV2.deleteRequestFileV2(request, deleteFile);
             apiResponse = new ApiResponse();
         } catch (AppException ae) {
             logger.info("Error {}, in deleting requested file.", ae.getErrorCode().getErrorCode());
@@ -92,7 +91,7 @@ public class ApiResource {
     @Path("/get_files_info")
     public ApiResponse getAllV3Data(@Context HttpServletRequest request) {
         logger.info("getAllV3Data : In, user: {}", userService.getUserDataForLogging(request));
-        ApiResponse response = fileServiceV2.scanUserDirectory(request, userService);
+        ApiResponse response = fileServiceV2.scanUserDirectory(request);
         // Not putting response in log as it may be very large
         logger.info("getAllV3Data : Out");
         return response;
@@ -132,17 +131,21 @@ public class ApiResource {
     @Path("/upload_file")
     public Response uploadFile(@Context HttpServletRequest request,
                                 @FormDataParam("file") InputStream uploadedInputStream,
-                               @FormDataParam("file") FormDataContentDisposition fileDetail) {
+                               @FormDataParam("file") FormDataContentDisposition fileDetail,
+                               @FormDataParam("subject") String subject,
+                               @FormDataParam("heading") String heading) {
         logger.info("uploadFile: In, upload fileDetails: {}, user: {}",
                 fileDetail, userService.getUserDataForLogging(request));
+        logger.info("uploadFile data, subject: {}, heading: {}", subject, heading);
         ApiResponse response;
         try {
-            response = fileServiceV2.uploadFile(request, userService, uploadedInputStream, fileDetail.getFileName());
+            response = fileServiceV2.uploadFileV2(request, uploadedInputStream,
+                    fileDetail.getFileName(), subject, heading);
         } catch (AppException ae) {
             logger.info("Error in uploading file: {}", ae.getErrorCode().getErrorCode());
             response = new ApiResponse(ae.getErrorCode());
         }
-        logger.info("uploadFile : Out");
+        logger.info("uploadFile : Out {}", response);
         return Response.ok(response).build();
     }
     @POST
@@ -215,6 +218,6 @@ public class ApiResource {
     @GET
     @Produces(MediaType.TEXT_HTML)
     public Object defaultMethod(@Context HttpServletRequest request) {
-        return fileServiceV2.handleDefaultUrl(request, userService);
+        return fileServiceV2.handleDefaultUrl(request);
     }
 }

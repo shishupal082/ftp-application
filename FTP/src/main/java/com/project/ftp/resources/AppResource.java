@@ -72,7 +72,7 @@ public class AppResource {
         PathInfo pathInfo = null;
         Response.ResponseBuilder r;
         try {
-            pathInfo = fileServiceV2.searchRequestedFileV2(request, userService, filename);
+            pathInfo = fileServiceV2.searchRequestedFileV2(request, filename);
         } catch (AppException ae) {
             logger.info("Error in searching requested file: {}", ae.getErrorCode().getErrorCode());
         }
@@ -106,7 +106,7 @@ public class AppResource {
         PathInfo pathInfo = null;
         Response.ResponseBuilder r;
         try {
-            pathInfo = fileServiceV2.searchRequestedFileV2(request, userService, filename);
+            pathInfo = fileServiceV2.searchRequestedFileV2(request, filename);
         } catch (AppException ae) {
             logger.info("Error in searching requested file: {}", ae.getErrorCode().getErrorCode());
         }
@@ -127,44 +127,44 @@ public class AppResource {
     @GET
     @Path("/dashboard")
     public AppView dashboard(@Context HttpServletRequest request) {
-        return new AppView(request, appViewFtlFileName,"dashboard", userService);
+        return new AppView(request, appViewFtlFileName,"dashboard", userService, appConfig);
     }
     @GET
     @Path("/login")
     public AppView login(@Context HttpServletRequest request) {
-        return new AppView(request, appViewFtlFileName, "login", userService);
+        return new AppView(request, appViewFtlFileName, "login", userService, appConfig);
     }
     @GET
     @Path("/logout")
     public AppView logout(@Context HttpServletRequest request) {
         userService.logoutUser(request);
-        return new AppView(request, appViewFtlFileName, "logout", userService);
+        return new AppView(request, appViewFtlFileName, "logout", userService, appConfig);
     }
     @GET
     @Path("/register")
     public AppView register(@Context HttpServletRequest request) {
-        return new AppView(request, appViewFtlFileName, "register", userService);
+        return new AppView(request, appViewFtlFileName, "register", userService, appConfig);
     }
     @GET
     @Path("/upload_file")
     public AppView uploadFile(@Context HttpServletRequest request) {
-        return new AppView(request, appViewFtlFileName, "upload_file", userService);
+        return new AppView(request, appViewFtlFileName, "upload_file", userService, appConfig);
     }
     @GET
     @Path("/change_password")
     public AppView changePassword(@Context HttpServletRequest request) {
-        return new AppView(request, appViewFtlFileName, "change_password", userService);
+        return new AppView(request, appViewFtlFileName, "change_password", userService, appConfig);
     }
     @GET
     @Path("/forgot_password")
     public AppView forgotPassword(@Context HttpServletRequest request) {
-        return new AppView(request, appViewFtlFileName, "forgot_password", userService);
+        return new AppView(request, appViewFtlFileName, "forgot_password", userService, appConfig);
     }
     @Path("{default: .*}")
     @GET
     @Produces(MediaType.TEXT_HTML)
     @Consumes(MediaType.APPLICATION_JSON)
     public Object defaultMethod(@Context HttpServletRequest request) {
-        return fileServiceV2.handleDefaultUrl(request, userService);
+        return fileServiceV2.handleDefaultUrl(request);
     }
 }

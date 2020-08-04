@@ -94,6 +94,21 @@ FTP.extend({
             TemplateHelper.addClassTemplate(field, "dashboard.fileinfo.delete", "disabled");
             TemplateHelper.removeClassTemplate(field, "dashboard.fileinfo.delete", "text-danger");
         }
+        //Changing file subject_heading parameter
+        field = TemplateHelper(template).searchFieldV2("dashboard.fileinfo.subject_heading");
+        if ($S.isString(fileResponse.subject) && $S.isString(fileResponse.heading)) {
+            if (fileResponse.subject.length > 0 || fileResponse.heading > 0) {
+                TemplateHelper.removeClassTemplate(field, "dashboard.fileinfo.subject_heading", "d-none");
+                var formValues = {};
+                formValues["dashboard.fileinfo.subject"] = fileResponse.subject;
+                formValues["dashboard.fileinfo.heading"] = fileResponse.heading;
+                TemplateHelper.updateTemplateText(field, formValues);
+            } else {
+                TemplateHelper.addClassTemplate(field, "dashboard.fileinfo.subject_heading", "d-none");
+            }
+        } else {
+            TemplateHelper.addClassTemplate(field, "dashboard.fileinfo.subject_heading", "d-none");
+        }
         return template;
     },
     getDashboardFieldOrderByDate: function(Data) {
@@ -249,6 +264,11 @@ FTP.extend({
             template = Data.getTemplate(pageName, {});
             var message = Config.getApiConfig("uploadFileInstruction", "");
             TemplateHelper.setTemplateAttr(template, "upload_file.message", "text", message);
+            var uploadFileApiVersion = Config.getPageData("upload_file_api_version", "v1");
+            if (uploadFileApiVersion === "v2") {
+                TemplateHelper.removeClassTemplate(template, "upload_file.subject.div", "d-none");
+                TemplateHelper.removeClassTemplate(template, "upload_file.heading.div", "d-none");
+            }
             FTP.uploadSubmitButtonStatus(pageName, template);
             pageTemplate.push(template);
         } else if (pageName === "dashboard") {
@@ -367,20 +387,6 @@ FTP.extend({
         }
         return null;
     },
-    sortObject: function(arr) {
-        if (!$S.isArray(arr)) {
-            return arr;
-        }
-        function compare(a,b) {
-            if ($S.isObject(a) && $S.isObject(b)) {
-                if ($S.isString(a.filepath)) {
-                    return a.filepath.localeCompare(b.filepath);
-                }
-            }
-            return -1;
-        }
-        return arr.sort(compare);
-    },
     _generateDashboardResponse: function(response) {
         var tempResult = [];
         var finalResult = [];
@@ -404,7 +410,14 @@ FTP.extend({
                     tempResult.push(fileResponse);
                 }
             }
-            tempResult = FTP.sortObject(tempResult);
+            tempResult = tempResult.sort(function(a,b) {
+                if ($S.isObject(a) && $S.isObject(b)) {
+                    if ($S.isString(a.filepath)) {
+                        return a.filepath.localeCompare(b.filepath);
+                    }
+                }
+                return -1;
+            });
             for(i=0; i<tempResult.length; i++) {
                 fileResponse = reverseFileName(tempResult[i]);
                 if (fileResponse !== null) {

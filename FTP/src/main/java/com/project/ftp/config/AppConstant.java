@@ -19,7 +19,7 @@ public class AppConstant {
     public static final String ALLOWED_HEADERS= "Access-Control-Allow-Headers";
     public static final String FILE = "FILE";
     public static final String FOLDER = "FOLDER";
-    public static final String AppVersion = "1.1.0";
+    public static final String AppVersion = "1.1.1";
     public static final String server = "server";
     public static final String DATE_FORMAT = "YYYY-MM-dd";
     public static final String TIME_FORMAT = "HHmmss";
@@ -38,6 +38,8 @@ public class AppConstant {
     public static final String APP_VIEW_FTL_FILENAME = "app_view-1.0.0.ftl";
     public static final String ORIGIN = "origin";
     public static final String PUBLIC = "public";
+    public static final String V1 = "v1";
+    public static final String V2 = "v2";
     public static final String PDF_AUTHOR = "Project Author";
     public static final String PDF_CREATOR = "Project Creator";
     public static final String EmptyParagraph = " ";
