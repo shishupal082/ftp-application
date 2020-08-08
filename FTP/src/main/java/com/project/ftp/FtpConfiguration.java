@@ -2,7 +2,9 @@ package com.project.ftp;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.dropwizard.Configuration;
+import io.dropwizard.db.DataSourceFactory;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -27,9 +29,19 @@ public class FtpConfiguration extends Configuration {
     private Boolean permanentlyDeleteFile;
     private String appRestartCommand;
     private String uploadFileApiVersion;
+    private boolean mysqlEnable;
 
+    @JsonProperty("database")
+    private DataSourceFactory dataSourceFactory = new DataSourceFactory();
 
     private HashMap<String, String> tempConfig;
+
+    public DataSourceFactory getDataSourceFactory() {
+        return dataSourceFactory;
+    }
+    public void setDataSourceFactory(DataSourceFactory dataSourceFactory) {
+        this.dataSourceFactory = dataSourceFactory;
+    }
 
     public String getIndexPageReRoute() {
         return indexPageReRoute;
@@ -176,6 +188,14 @@ public class FtpConfiguration extends Configuration {
         this.uploadFileApiVersion = uploadFileApiVersion;
     }
 
+    public boolean getMysqlEnable() {
+        return mysqlEnable;
+    }
+
+    public void setMysqlEnable(boolean mysqlEnable) {
+        this.mysqlEnable = mysqlEnable;
+    }
+
     @Override
     public String toString() {
         return "FtpConfiguration{" +
@@ -196,6 +216,7 @@ public class FtpConfiguration extends Configuration {
                 ", permanentlyDeleteFile=" + permanentlyDeleteFile +
                 ", appRestartCommand='" + appRestartCommand + '\'' +
                 ", uploadFileApiVersion='" + uploadFileApiVersion + '\'' +
+                ", mySqlEnable=" + mysqlEnable +
                 ", tempConfig=" + tempConfig +
                 '}';
     }

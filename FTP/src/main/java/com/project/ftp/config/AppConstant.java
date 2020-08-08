@@ -19,7 +19,7 @@ public class AppConstant {
     public static final String ALLOWED_HEADERS= "Access-Control-Allow-Headers";
     public static final String FILE = "FILE";
     public static final String FOLDER = "FOLDER";
-    public static final String AppVersion = "1.1.1";
+    public static final String AppVersion = "2.0.0";
     public static final String server = "server";
     public static final String DATE_FORMAT = "YYYY-MM-dd";
     public static final String TIME_FORMAT = "HHmmss";
@@ -29,6 +29,7 @@ public class AppConstant {
     public static final String DateTimeFormat3 = "YYYY-MM-dd' 'HH:mm"; // used for putting date time stamp in readme
     public static final String DateTimeFormat4 = "YYYY-MM-dd-HH-mm-ss"; // used for log file copy
     public static final String DateTimeFormat5 = "YYYY-MM-dd-HH:mm"; // used for file_details.csv data generation
+    public static final String DateTimeFormat6 = "YYYY-MM-dd HH:mm:ss"; // used for timestamp in UserFile interface
     public static final String UTF8 = "UTF-8";
     public static final String FAVICON_ICO_PATH = "favicon.ico";
     public static final String INDEX_PAGE_RE_ROUTE = "/login";

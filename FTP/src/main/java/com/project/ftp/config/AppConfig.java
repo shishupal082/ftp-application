@@ -19,6 +19,7 @@ public class AppConfig {
 //    private ShutdownTask shutdownTask;
     private String configPath;
     private String logFilePath;
+    private int requestCount = 0;
     private ArrayList<String> logFiles;
     private HashMap<String, SessionData> sessionData;
     private FtpConfiguration ftpConfiguration;
@@ -39,6 +40,14 @@ public class AppConfig {
 
     public void setSessionData(HashMap<String, SessionData> sessionData) {
         this.sessionData = sessionData;
+    }
+
+    public int getRequestCount() {
+        return requestCount;
+    }
+
+    public void setRequestCount(int requestCount) {
+        this.requestCount = requestCount;
     }
 
     public FtpConfiguration getFtpConfiguration() {
@@ -92,6 +101,9 @@ public class AppConfig {
     public void setLogFiles(ArrayList<String> logFiles) {
         this.logFiles = logFiles;
     }
+    public boolean isMySqlEnable() {
+        return this.ftpConfiguration.getMysqlEnable();
+    }
 
     @Override
     public String toString() {
@@ -101,6 +113,7 @@ public class AppConfig {
                 ", appVersion='" + appVersion + '\'' +
                 ", configPath='" + configPath + '\'' +
                 ", logFilePath='" + logFilePath + '\'' +
+                ", requestCount=" + requestCount +
                 ", logFiles=" + logFiles +
                 ", sessionData=" + sessionData +
                 ", ftpConfiguration=" + ftpConfiguration +

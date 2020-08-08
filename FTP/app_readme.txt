@@ -305,6 +305,24 @@ Remove from app_static_data.json config
 app_static_data.json config only contains
     "uploadFileInstruction": "(Supported type: pdf,jpeg,jpg and png, max size < 10MB)"
 
+2.0.0
+--------------------
+Migration from file system to mysql
+Total 4 query
+1) getAllUsers
+2) getUserByUsername
+3) updatePassword
+4) changePassword
+
+config parameter added
+    - mysqlEnable: true
+database configuration added in env_config
+    - database (dataFactory)
+
+removed log for complete scan directory result
+interface added for UserDb and UserFile
+remove User class and replaced there dependent on MysqlUser
+
 
 
 Future releases

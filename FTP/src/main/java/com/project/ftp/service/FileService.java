@@ -234,7 +234,8 @@ public class FileService {
         } catch (Exception e) {
             logger.info("Error fetching folder from : {}, {}", folderPath, e);
         }
-        logger.info("Scan folder result for folder : {}, {}", folderPath, finalFileScanResult);
+//        logger.info("Scan folder result for folder : {}, {}", folderPath, finalFileScanResult);
+        logger.info("Scan complete for folder : {}", folderPath);
         return finalFileScanResult;
     }
     public ArrayList<String> getAvailableFiles(String directory) {

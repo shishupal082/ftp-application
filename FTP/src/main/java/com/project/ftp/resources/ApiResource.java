@@ -3,10 +3,12 @@ package com.project.ftp.resources;
 import com.project.ftp.config.AppConfig;
 import com.project.ftp.exceptions.AppException;
 import com.project.ftp.exceptions.ErrorCodes;
+import com.project.ftp.mysql.DbDAO;
 import com.project.ftp.obj.*;
 import com.project.ftp.parser.JsonFileParser;
 import com.project.ftp.service.FileServiceV2;
 import com.project.ftp.service.UserService;
+import io.dropwizard.hibernate.UnitOfWork;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataParam;
 import org.slf4j.Logger;
@@ -24,14 +26,14 @@ import java.util.HashMap;
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class ApiResource {
-    final static Logger logger = LoggerFactory.getLogger(ApiResponse.class);
+    final static Logger logger = LoggerFactory.getLogger(ApiResource.class);
     final AppConfig appConfig;
     final FileServiceV2 fileServiceV2;
     final UserService userService;
-    public ApiResource(final AppConfig appConfig) {
+    public ApiResource(final AppConfig appConfig, final DbDAO dbDAO) {
         this.appConfig = appConfig;
-        fileServiceV2 = new FileServiceV2(appConfig);
-        userService = new UserService(appConfig);
+        fileServiceV2 = new FileServiceV2(appConfig, dbDAO);
+        userService = new UserService(appConfig, dbDAO);
     }
     @GET
     @Produces(MediaType.TEXT_HTML)
@@ -56,6 +58,7 @@ public class ApiResource {
     }
     @GET
     @Path("/get_users")
+    @UnitOfWork
     public ApiResponse getTextFileData(@Context HttpServletRequest request) {
         logger.info("getTextFileData : In, {}", userService.getUserDataForLogging(request));
         ApiResponse response;
@@ -67,6 +70,10 @@ public class ApiResource {
         } catch (AppException ae) {
             logger.info("Error in get_users: {}", ae.getErrorCode().getErrorCode());
             response = new ApiResponse(ae.getErrorCode());
+        } catch (Exception e) {
+            e.printStackTrace();
+            logger.info("Error in get_users: {}", e.getMessage());
+            response = new ApiResponse(ErrorCodes.SERVER_ERROR);
         }
         logger.info("getTextFileData : Out");
         return response;
@@ -150,6 +157,7 @@ public class ApiResource {
     }
     @POST
     @Path("/login_user")
+    @UnitOfWork
     public ApiResponse loginUser(@Context HttpServletRequest httpServletRequest,
                                  RequestUserLogin userLogin) {
         logger.info("loginUser : In, {}, user: {}",
@@ -167,6 +175,7 @@ public class ApiResource {
     }
     @POST
     @Path("/register_user")
+    @UnitOfWork
     public ApiResponse registerUser(@Context HttpServletRequest httpServletRequest,
                                  RequestUserRegister userRegister) {
         logger.info("registerUser : In, userRegister: {}, user: {}",
@@ -184,6 +193,7 @@ public class ApiResource {
     }
     @GET
     @Path("/get_login_user_details")
+    @UnitOfWork
     public ApiResponse getLoginUserDetails(@Context HttpServletRequest request) {
         logger.info("getLoginUserDetails : In, user: {}",
                 userService.getUserDataForLogging(request));
@@ -199,6 +209,7 @@ public class ApiResource {
     }
     @POST
     @Path("/change_password")
+    @UnitOfWork
     public ApiResponse changePassword(@Context HttpServletRequest httpServletRequest,
                                  RequestChangePassword request) {
         logger.info("changePassword : In, user: {}",

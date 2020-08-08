@@ -25,6 +25,7 @@ public class StaticService {
     final static StrUtils strUtils = new StrUtils();
     final static DateUtilities dateUtilities = new DateUtilities();
     final static FileService fileService = new FileService();
+    final static YamlFileParser ymlFileParser = new YamlFileParser();
     public static PathInfo getPathInfo(String requestedPath) {
         return fileService.getPathInfo(requestedPath);
     }
@@ -70,7 +71,6 @@ public class StaticService {
         }
         String configFilePath = sysUtils.getProjectWorkingDir() + "/" + relativeConfigFilePath;
         configFilePath = strUtils.replaceBackSlashToSlash(configFilePath);
-        YamlFileParser ymlFileParser = new YamlFileParser();
         String logFilePath = ymlFileParser.getLogFilePath(configFilePath);
         appConfig.setLogFilePath(logFilePath);
         PathInfo pathInfo = fileService.getPathInfo(logFilePath);
@@ -178,7 +178,6 @@ public class StaticService {
         }
         String configFilePath = sysUtils.getProjectWorkingDir() + "/" + relativeConfigFilePath;
         configFilePath = strUtils.replaceBackSlashToSlash(configFilePath);
-        YamlFileParser ymlFileParser = new YamlFileParser();
         String logFilePath = ymlFileParser.getLogFilePath(configFilePath) + "application.log";
         PathInfo pathInfo = fileService.getPathInfo(logFilePath);
         if (AppConstant.FILE.equals(pathInfo.getType())) {
@@ -197,6 +196,11 @@ public class StaticService {
             sysUtils.printLog("logFilePath is not a file: {} " + pathInfo);
         }
     }
+    public static boolean isMysqlEnable(final String relativeConfigPath) {
+        String configFilePath = sysUtils.getProjectWorkingDir() + "/" + relativeConfigPath;
+        configFilePath = strUtils.replaceBackSlashToSlash(configFilePath);
+        return ymlFileParser.isMysqlEnable(configFilePath);
+    }
     public static void checkForDateChange(final AppConfig appConfig) {
         String currentDate = StaticService.getDateStrFromPattern(AppConstant.DATE_FORMAT);
         String configDate = appConfig.getConfigDate();
@@ -204,10 +208,10 @@ public class StaticService {
             return;
         }
         logger.info("Date change found: from {} to {}", configDate, currentDate);
-        String timeInStr = StaticService.getDateStrFromPattern(AppConstant.TIME_FORMAT);
-        int time = Integer.parseInt(timeInStr);
-        if (time < 1000) {
-            logger.info("time is less than 00:10:00(10 minute), {}", timeInStr);
+        int requestCount = appConfig.getRequestCount();
+        if (requestCount < 15) {
+            logger.info("daily requestCount: {}, is less than threshold=15", requestCount);
+            appConfig.setRequestCount(requestCount+1);
             return;
         }
         String logFilePath = appConfig.getLogFilePath();
@@ -253,6 +257,7 @@ public class StaticService {
         } else {
             logger.info("logFilePath is not a folder: {}", pathInfo);
         }
+        appConfig.setRequestCount(0);
         appConfig.setConfigDate(currentDate);
     }
     public static String getUploadFileApiVersion(AppConfig appConfig) {

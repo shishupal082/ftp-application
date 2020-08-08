@@ -3,6 +3,7 @@ package com.project.ftp.resources;
 import com.project.ftp.config.AppConfig;
 import com.project.ftp.config.AppConstant;
 import com.project.ftp.exceptions.AppException;
+import com.project.ftp.mysql.DbDAO;
 import com.project.ftp.obj.PathInfo;
 import com.project.ftp.service.FileServiceV2;
 import com.project.ftp.service.UserService;
@@ -33,10 +34,10 @@ public class AppResource {
     final FileServiceV2 fileServiceV2;
     final UserService userService;
     final String appViewFtlFileName;
-    public AppResource(final AppConfig appConfig) {
+    public AppResource(final AppConfig appConfig, final DbDAO dbDAO) {
         this.appConfig = appConfig;
-        fileServiceV2 = new FileServiceV2(appConfig);
-        userService = new UserService(appConfig);
+        fileServiceV2 = new FileServiceV2(appConfig, dbDAO);
+        userService = new UserService(appConfig, dbDAO);
         appViewFtlFileName = AppConstant.APP_VIEW_FTL_FILENAME;
     }
     @GET

@@ -4,8 +4,9 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 
-public class LogFilePath {
+public class PreRunConfig {
     private String logFilePath;
+    private boolean mysqlEnable;
 
     public String getLogFilePath() {
         return logFilePath;
@@ -15,10 +16,19 @@ public class LogFilePath {
         this.logFilePath = logFilePath;
     }
 
+    public boolean isMysqlEnable() {
+        return mysqlEnable;
+    }
+
+    public void setMysqlEnable(boolean mysqlEnable) {
+        this.mysqlEnable = mysqlEnable;
+    }
+
     @Override
     public String toString() {
-        return "LogFilePath{" +
+        return "PreRunConfig{" +
                 "logFilePath='" + logFilePath + '\'' +
+                ", mysqlEnable=" + mysqlEnable +
                 '}';
     }
 }

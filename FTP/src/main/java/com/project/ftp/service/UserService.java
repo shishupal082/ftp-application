@@ -4,8 +4,12 @@ import com.project.ftp.config.AppConfig;
 import com.project.ftp.config.AppConstant;
 import com.project.ftp.exceptions.AppException;
 import com.project.ftp.exceptions.ErrorCodes;
+import com.project.ftp.intreface.UserDb;
+import com.project.ftp.intreface.UserFile;
+import com.project.ftp.intreface.UserInterface;
+import com.project.ftp.mysql.DbDAO;
+import com.project.ftp.mysql.MysqlUser;
 import com.project.ftp.obj.*;
-import com.project.ftp.parser.TextFileParser;
 import com.project.ftp.session.SessionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,44 +22,47 @@ public class UserService {
     final static Logger logger = LoggerFactory.getLogger(UserService.class);
     final AppConfig appConfig;
     final SessionService sessionService;
-    public UserService(final AppConfig appConfig) {
+    final UserInterface userInterface;
+    public UserService(final AppConfig appConfig, final DbDAO dbDAO) {
         this.appConfig = appConfig;
         this.sessionService = new SessionService(appConfig);
+        boolean isMySqlEnable = appConfig.isMySqlEnable();
+        if (isMySqlEnable) {
+            userInterface = new UserDb(appConfig.getFtpConfiguration().getDataSourceFactory(), dbDAO);
+        } else {
+            userInterface = new UserFile(appConfig);
+        }
+    }
+    private MysqlUser getUserByName(String username) {
+        return userInterface.getUserByName(username);
+    }
+    private boolean updatePassword(MysqlUser user) {
+        if (user == null) {
+            logger.info("Null user can not be updated");
+            return false;
+        }
+        return userInterface.updatePassword(user);
+    }
+    private boolean setPassword(MysqlUser user) {
+        if (user == null) {
+            logger.info("Null user can not be register");
+            return false;
+        }
+        return userInterface.setPassword(user);
     }
     public Users getAllUser() throws AppException {
-        Users users = null;
-        String filepath = appConfig.getFtpConfiguration().getConfigDataFilePath() + AppConstant.USER_DATA_FILENAME;
-        TextFileParser textFileParser = new TextFileParser(filepath);
-        ArrayList<ArrayList<String>> fileData;
-        try {
-            fileData = textFileParser.getTextData();
-            users = new Users(fileData);
-            logger.info("Available user count: {}", users.getUserCount());
-        } catch (AppException ae) {
+        Users users = userInterface.getAllUsers();
+        if (users == null) {
             logger.info("Error in getting all usersData");
             throw new AppException(ErrorCodes.RUNTIME_ERROR);
         }
         return users;
     }
-    private User getUserDataByUserName(String username) {
-        if (username == null || username.isEmpty()) {
-            return null;
-        }
-        User user = null;
-        try {
-            Users users = this.getAllUser();
-            user = users.searchUserByName(username);
-            logger.info("User data for username: {}, is: {}", username, user);
-        } catch (AppException ae) {
-            logger.info("Error in getting all userDataByUserName: {}", username);
-        }
-        return user;
-    }
     public String getUserDisplayName(final String username) {
         String userDisplayName = null;
-        User user = this.getUserDataByUserName(username);
+        MysqlUser user = this.getUserByName(username);
         if (user != null) {
-            userDisplayName = user.getDisplayName();
+            userDisplayName = user.getName();
         }
         return userDisplayName;
     }
@@ -96,10 +103,7 @@ public class UserService {
         return  false;
     }
     private Boolean isUserLogin(String loginUserName) {
-        if (loginUserName != null && !loginUserName.isEmpty()) {
-            return true;
-        }
-        return false;
+        return loginUserName != null && !loginUserName.isEmpty();
     }
     public LoginUserDetails getLoginUserDetails(HttpServletRequest request) {
         LoginUserDetails loginUserDetails = new LoginUserDetails();
@@ -113,14 +117,14 @@ public class UserService {
         return loginUserDetails;
     }
     // Login, Change password
-    private User isUserPasswordMatch(String username, String password,
+    private MysqlUser isUserPasswordMatch(String username, String password,
                                      ErrorCodes emptyPasswordErrorCode,
                                      ErrorCodes passwordMisMatchErrorCode) throws AppException {
         if (username == null || username.isEmpty()) {
             logger.info("username required: {}.", username);
             throw new AppException(ErrorCodes.USER_NAME_REQUIRED);
         }
-        User user = this.getUserDataByUserName(username);
+        MysqlUser user = this.getUserByName(username);
         if (user == null) {
             logger.info("username: {}, is not found.", username);
             throw new AppException(ErrorCodes.USER_NOT_FOUND);
@@ -150,7 +154,7 @@ public class UserService {
         logger.info("Password policy match.");
     }
     // register
-    private void isUserPasscodeMatch(String username, String passcode) throws AppException {
+    private MysqlUser isUserPasscodeMatch(String username, String passcode) throws AppException {
         if (username == null || username.isEmpty()) {
             logger.info("username required: {}.", username);
             throw new AppException(ErrorCodes.USER_NAME_REQUIRED);
@@ -159,7 +163,7 @@ public class UserService {
             logger.info("username required: {}.", username);
             throw new AppException(ErrorCodes.REGISTER_PASSCODE_REQUIRED);
         }
-        User user = this.getUserDataByUserName(username); // It will check for null or empty
+        MysqlUser user = this.getUserByName(username);
         if (user == null) {
             logger.info("username: {}, is not found.", username);
             throw new AppException(ErrorCodes.USER_NOT_FOUND);
@@ -169,6 +173,7 @@ public class UserService {
             throw new AppException(ErrorCodes.REGISTER_PASSCODE_NOT_MATCHING);
         }
         logger.info("passcode: {}, match with user: {}", passcode, user);
+        return user;
     }
     public HashMap<String, String> loginUser(HttpServletRequest request, RequestUserLogin userLogin) throws AppException {
         if (userLogin == null) {
@@ -188,7 +193,7 @@ public class UserService {
             throw new AppException(ErrorCodes.BAD_REQUEST_ERROR);
         }
         String username = userRegister.getUsername();
-        this.isUserPasscodeMatch(username, userRegister.getPasscode());
+        MysqlUser user = this.isUserPasscodeMatch(username, userRegister.getPasscode());
         String password = userRegister.getPassword();
         this.isValidNewPassword(password);
         String displayName = userRegister.getDisplay_name();
@@ -197,13 +202,10 @@ public class UserService {
             throw new AppException(ErrorCodes.REGISTER_NAME_REQUIRED);
         }
         logger.info("User register parameter are ok: {}", userRegister);
-        String filepath = appConfig.getFtpConfiguration().getConfigDataFilePath() + AppConstant.USER_DATA_FILENAME;
-        TextFileParser textFileParser = new TextFileParser(filepath);
-        User user = new User(username, password, displayName);
+        user.setPassword(password);
+        user.setName(displayName);
         user.setMethod("register");
-        String text = user.getAddTextResponse();
-
-        Boolean createUserStatus = textFileParser.addText(text);
+        boolean createUserStatus = this.setPassword(user);
         if (!createUserStatus) {
             logger.info("Create user failed: {}", userRegister);
             throw new AppException(ErrorCodes.RUNTIME_ERROR);
@@ -230,23 +232,19 @@ public class UserService {
             throw new AppException(ErrorCodes.PASSWORD_CHANGE_NOT_MATCHING);
         }
         String oldPassword = changePassword.getOld_password();
-        User user = this.isUserPasswordMatch(loginUserDetails.getUsername(), oldPassword,
+        MysqlUser user = this.isUserPasswordMatch(loginUserDetails.getUsername(), oldPassword,
                 ErrorCodes.PASSWORD_CHANGE_OLD_REQUIRED,
                 ErrorCodes.PASSWORD_CHANGE_OLD_NOT_MATCHING);
 
-        if (user.getUserEntryCount() != null) {
-            int limit = AppConstant.MAX_ENTRY_ALLOWED_IN_USER_DATA_FILE;
-            if (user.getUserEntryCount() >= limit) {
-                logger.info("Password change count limit: {}, exceed: {}", limit, user);
-                throw new AppException(ErrorCodes.PASSWORD_CHANGE_COUNT_EXCEED);
-            }
+        int limit = AppConstant.MAX_ENTRY_ALLOWED_IN_USER_DATA_FILE;
+        if (user.getChangePasswordCount() >= limit) {
+            logger.info("Password change count limit: {}, exceed: {}", limit, user);
+            throw new AppException(ErrorCodes.PASSWORD_CHANGE_COUNT_EXCEED);
         }
+        user.incrementEntryCount();
         user.setPassword(newPassword);
         user.setMethod("change_password");
-        String text = user.getAddTextResponse();
-        String filepath = appConfig.getFtpConfiguration().getConfigDataFilePath() + AppConstant.USER_DATA_FILENAME;
-        TextFileParser textFileParser = new TextFileParser(filepath);
-        Boolean changePasswordStatus = textFileParser.addText(text);
+        boolean changePasswordStatus = this.updatePassword(user);
         if (!changePasswordStatus) {
             logger.info("Error in updating password.");
             throw new AppException(ErrorCodes.RUNTIME_ERROR);

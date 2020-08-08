@@ -1,18 +1,30 @@
 package com.project.ftp.obj;
 
+import com.project.ftp.mysql.MysqlUser;
+
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class Users {
-    private HashMap<String, User> userHashMap;
+    private HashMap<String, MysqlUser> userHashMap;
     private Integer userCount = 0;
+    public Users(List<MysqlUser> userList) {
+        if (userList != null) {
+            userHashMap = new HashMap<>();
+            for(MysqlUser mysqlUser: userList) {
+                userHashMap.put(mysqlUser.getUsername(), mysqlUser);
+                userCount++;
+            }
+        }
+    }
     public Users(ArrayList<ArrayList<String>> filedata) {
         if (filedata != null) {
             userHashMap = new HashMap<>();
-            User user, updatedUser;
+            MysqlUser user, updatedUser;
             for(int i=filedata.size()-1; i>=0; i--) {
-                user = new User(filedata.get(i));
+                user = new MysqlUser(filedata.get(i));
                 if (user.getUsername() != null && !user.getUsername().isEmpty()) {
                     updatedUser = userHashMap.get(user.getUsername());
                     if (updatedUser == null) {
@@ -25,11 +37,11 @@ public class Users {
             }
         }
     }
-    public HashMap<String, User> getUserHashMap() {
+    public HashMap<String, MysqlUser> getUserHashMap() {
         return userHashMap;
     }
 
-    public void setUserHashMap(HashMap<String, User> userHashMap) {
+    public void setUserHashMap(HashMap<String, MysqlUser> userHashMap) {
         this.userHashMap = userHashMap;
     }
 
@@ -41,7 +53,7 @@ public class Users {
         this.userCount = userCount;
     }
 
-    public User searchUserByName(String username) {
+    public MysqlUser searchUserByName(String username) {
         if (username == null) {
             return null;
         }
@@ -52,7 +64,7 @@ public class Users {
     }
     public void maskPassword() {
         if (userHashMap != null) {
-            for(Map.Entry<String, User> data: userHashMap.entrySet()) {
+            for(Map.Entry<String, MysqlUser> data: userHashMap.entrySet()) {
                 data.getValue().setPassword("*****");
             }
         }
