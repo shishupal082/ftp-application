@@ -41,12 +41,8 @@ public class FileService {
         }
         return detail;
     }
-    public void saveFileDetails(String savedDataFilepath, String text) {
-        TextFileParser textFileParser = new TextFileParser(savedDataFilepath);
-        textFileParser.addText(text);
-    }
     // delete retrieval, delete, migration
-    public void saveFileDetailsV2(String savedDataFilepath, FileDetail fileDetail) {
+    public void saveFileDetails(String savedDataFilepath, FileDetail fileDetail) {
         if (fileDetail == null) {
             return;
         }

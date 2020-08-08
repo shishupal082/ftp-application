@@ -240,7 +240,7 @@ public class FileServiceV2 {
             if (fileDetail.isDeletedTrue()) {
                 logger.info("file deleted entry, but file is there: {}", fileDetail);
                 fileDetail.setIsDeleted("false");
-                fileService.saveFileDetailsV2(savedDataFilepath, fileDetail);
+                fileService.saveFileDetails(savedDataFilepath, fileDetail);
             }
             FileViewer viewer = fileDetail.getViewer();
             if (FileViewer.ALL != viewer) {
@@ -352,7 +352,7 @@ public class FileServiceV2 {
         if (!fileDetail.isValid()) {
             logger.info("Invalid file delete data: {}", fileDetail);
         }
-        fileService.saveFileDetailsV2(savedDataFilepath, finalFileDetail);
+        fileService.saveFileDetails(savedDataFilepath, finalFileDetail);
     }
     private void deleteFileV3(FileDetail fileDetail) throws AppException {
         String dir = appConfig.getFtpConfiguration().getFileSaveDir();
@@ -403,7 +403,7 @@ public class FileServiceV2 {
         FileViewer viewer = StaticService.getFileViewerV2(appConfig, fileUsername);
         FileDeleteAccess deleteAccess = StaticService.getFileDeleteAccessV2(appConfig);
         FileDetail fileDetail = new FileDetail(filename, fileUsername, viewer, deleteAccess, entryType);
-        fileService.saveFileDetailsV2(savedDataFilepath, fileDetail);
+        fileService.saveFileDetails(savedDataFilepath, fileDetail);
         return fileDetail;
     }
     // uploadFileV2
@@ -412,7 +412,7 @@ public class FileServiceV2 {
         FileDeleteAccess deleteAccess = StaticService.getFileDeleteAccessV2(appConfig);
         FileDetail fileDetail = new FileDetail(filename, loginUsername,
                                     subject, heading, FileViewer.ALL, deleteAccess);
-        fileService.saveFileDetailsV2(savedDataFilepath, fileDetail);
+        fileService.saveFileDetails(savedDataFilepath, fileDetail);
     }
     public void deleteRequestFileV2(HttpServletRequest request,
                                     RequestDeleteFile deleteFile) throws AppException {
