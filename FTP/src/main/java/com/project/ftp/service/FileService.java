@@ -41,7 +41,7 @@ public class FileService {
         }
         return detail;
     }
-    // delete retrieval, delete, migration
+    // fileUpload v1, fileUpload v2, file delete
     public void saveFileDetails(String savedDataFilepath, FileDetail fileDetail) {
         if (fileDetail == null) {
             return;

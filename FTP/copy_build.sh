@@ -2,7 +2,7 @@
 
 echo [INFO] Copying file to desired location
 
-appVersionDir="../../project/ftp-app/ftp-app-2.0.0/"
+appVersionDir="../../project/ftp-app/ftp-app-2.0.1/"
 configDataDir="../../project/ftp-app/config-files/"
 #savedFilesDir=${appVersionDir}"/saved-files/"
 

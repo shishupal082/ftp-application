@@ -143,8 +143,8 @@ public class FileDetail {
         response += "," + (this.deletedby != null ? this.deletedby : "");
         response += "," + (this.viewer != null ? this.viewer.getViewer() : "");
         response += "," + (this.deleteAccess != null ? this.deleteAccess.getDeleteAccess() : "");
-        response += "," + (this.subject != null ? this.subject : "");
-        response += "," + (this.heading != null ? this.heading : "");
+        response += "," + (this.subject != null ? StaticService.replaceComma(this.subject) : "");
+        response += "," + (this.heading != null ? StaticService.replaceComma(this.heading) : "");
         response += "," + (this.entryType != null ? this.entryType : "");
         response += "," + this.isDeleted;
         return response;

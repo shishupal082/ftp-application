@@ -1,5 +1,7 @@
 package com.project.ftp.obj;
 
+import com.project.ftp.service.StaticService;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 

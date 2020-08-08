@@ -133,7 +133,7 @@ public class UserService {
             logger.info("password mismatch for username: {}", username);
             throw new AppException(emptyPasswordErrorCode);
         }
-        password = StaticService.EncryptPassword(password);
+        password = StaticService.replaceComma(password);
         if (!password.equals(user.getPassword())) {
             logger.info("password mismatch for username: {}", username);
             throw new AppException(passwordMisMatchErrorCode);

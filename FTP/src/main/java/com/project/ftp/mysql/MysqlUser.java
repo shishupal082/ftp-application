@@ -97,12 +97,12 @@ public class MysqlUser implements Serializable {
             text += ",";
         }
         if (password != null) {
-            text += StaticService.EncryptPassword(password) +",";
+            text += StaticService.replaceComma(password) +",";
         } else {
             text += ",";
         }
         if (name != null) {
-            text += name +",";
+            text += StaticService.replaceComma(name) +",";
         } else {
             text += ",";
         }

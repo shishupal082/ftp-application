@@ -323,20 +323,57 @@ removed log for complete scan directory result
 interface added for UserDb and UserFile
 remove User class and replaced there dependent on MysqlUser
 
+2.0.1
+-------------------
+Replace , with ..
+for user data
+    - user display name
+
+for file data
+    - subject
+    - heading
+
+filename
+file related api
+    - api/get_file_info
+    - api/delete_file
+    - api/view/{username}/{filename}
+    - api/download/{username}/{filename}
+    - api/upload_file
+
+1,3,4
+    - no change
+5 api
+    - replace comma in filename in request
+2 api
+    - replace comma in filename after delete success
+
+search file details required
+    - api/get_file_info
+    - api/delete_file
+    - api/view/{username}/{filename}
+    - api/download/{username}/{filename}
+
+In view and download
+    - search in file details is required to check valid permission
+    - if it is not found then go for current config of viewer and delete access
+
+stop file migration and view migration and delete migration
+    - delete migration was used, before actual delete, if file was earlier deleted then there entry were made
+
+Now delete request, file upload v1 and file upload v2 will be saved in the info page
+    - In all 3 api, filename comma will be replaced
 
 
 Future releases
 -------------------
-jdbc connection establish
 Table required
-    - users
     - file_details
 
 Query used
-select * from users where username = {username} and isDeleted = {null}
 select * from file_details where fileUsername = {username} and filename = {filename}
-First scan user directory and public directory then use
-select * from file_details where viewer={all} or fileUsername={username}
+insert into file_details (username,filename,subject,heading,uploadedby) values();
+update table file_details set deletedby="", deleted=true where username="username" and filename="filename";
 
 
 

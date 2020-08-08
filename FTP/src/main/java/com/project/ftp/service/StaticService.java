@@ -94,8 +94,12 @@ public class StaticService {
     public static String replaceChar(String str, String find, String replace) {
         return strUtils.replaceChar(str, find, replace);
     }
-    public static String EncryptPassword(String password) {
-        return strUtils.replaceChar(password,",", "..");
+    public static String replaceComma(String str) {
+        if (str == null) {
+            return null;
+        }
+        str = str.trim();
+        return strUtils.replaceChar(str,",", "..");
     }
     public static void printLog(Object logStr) {
         sysUtils.printLog(logStr);
