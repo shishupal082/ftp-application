@@ -364,6 +364,15 @@ stop file migration and view migration and delete migration
 Now delete request, file upload v1 and file upload v2 will be saved in the info page
     - In all 3 api, filename comma will be replaced
 
+2.0.2
+-------------------
+Separate update query is not required for change_password and register_user
+    - It will be automatically fire after request completion
+Encrypt and Decrypt comma added for user display name using file only
+Encrypt and Decrypt comma added for subject and heading
+MysqlUser copy constructor made for masking password without changing into db
+    - Because after masking, if not copied, mask value will replace actual password
+
 
 Future releases
 -------------------

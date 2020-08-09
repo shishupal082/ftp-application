@@ -91,15 +91,33 @@ public class StaticService {
     public static String replaceLast(String find, String replace, String str) {
         return strUtils.replaceLast(find, replace, str);
     }
-    public static String replaceChar(String str, String find, String replace) {
-        return strUtils.replaceChar(str, find, replace);
-    }
     public static String replaceComma(String str) {
         if (str == null) {
             return null;
         }
         str = str.trim();
         return strUtils.replaceChar(str,",", "..");
+    }
+    public static String encryptPassword(String str) {
+        if (str == null) {
+            return null;
+        }
+        str = str.trim();
+        return strUtils.replaceChar(str,",", "..");
+    }
+    public static String encryptComma(String str) {
+        if (str == null) {
+            return null;
+        }
+        str = str.trim();
+        return strUtils.replaceChar(str,",", "```");
+    }
+    public static String decryptComma(String str) {
+        if (str == null) {
+            return null;
+        }
+        str = str.trim();
+        return strUtils.replaceString(str,"```", ",");
     }
     public static void printLog(Object logStr) {
         sysUtils.printLog(logStr);

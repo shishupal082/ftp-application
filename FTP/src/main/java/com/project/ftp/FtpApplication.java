@@ -62,6 +62,7 @@ public class FtpApplication  extends Application<FtpConfiguration> {
         DbDAO dbDAO = null;
         if (appConfig.isMySqlEnable()) {
             dbDAO = new DbDAO(hibernateBundle.getSessionFactory());
+            LOGGER.info("user interface configured from database");
         } else {
             LOGGER.info("mysql is not enabled, configure user interface from file");
         }

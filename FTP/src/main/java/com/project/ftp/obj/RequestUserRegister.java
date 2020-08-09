@@ -41,7 +41,6 @@ public class RequestUserRegister {
     }
 
     public String getDisplay_name() {
-        display_name = StaticService.replaceChar(display_name, ",", "..");
         return display_name;
     }
 

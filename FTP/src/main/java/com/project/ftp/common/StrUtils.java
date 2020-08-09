@@ -35,4 +35,10 @@ public class StrUtils {
         }
         return result;
     }
+    public String replaceString(String str, String find, String replace) {
+        if (str == null || find == null || replace == null) {
+            return null;
+        }
+        return str.replaceAll(find, replace);
+    }
 }

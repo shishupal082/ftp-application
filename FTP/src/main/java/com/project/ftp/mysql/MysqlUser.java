@@ -1,6 +1,7 @@
 package com.project.ftp.mysql;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.project.ftp.config.AppConstant;
 import com.project.ftp.service.StaticService;
 
@@ -20,6 +21,9 @@ import java.util.Objects;
                         + "where e.username like :name")
 })
 
+// it will automatically fire update query when ever MysqlUser changes
+
+@JsonIgnoreProperties(ignoreUnknown = true)
 
 
 public class MysqlUser implements Serializable {
@@ -60,8 +64,23 @@ public class MysqlUser implements Serializable {
 
     @Column(name = "deleted")
     private boolean deleted;
+
     // Default constructor required for hibernate
     public MysqlUser() {}
+    // copy constructor
+    public MysqlUser(MysqlUser user) {
+        this.id = user.getId();
+        this.username = user.getUsername();
+        this.password = user.getPassword();
+        this.passcode = user.getPasscode();
+        this.name = user.getName();
+        this.email = user.getEmail();
+        this.mobile = user.getMobile();
+        this.method = user.getMethod();
+        this.timestamp = user.getTimestamp();
+        this.deleted = user.isDeleted();
+        this.changePasswordCount = user.getChangePasswordCount();
+    }
     public MysqlUser(ArrayList<String> arrayList) {
         if (arrayList != null) {
             if (arrayList.size() >= 1) {
@@ -72,7 +91,7 @@ public class MysqlUser implements Serializable {
                 password = arrayList.get(1);
             }
             if (arrayList.size() >= 3) {
-                name = arrayList.get(2);
+                name = StaticService.decryptComma(arrayList.get(2));
             }
             if (arrayList.size() >= 4) {
                 passcode = arrayList.get(3);
@@ -89,6 +108,15 @@ public class MysqlUser implements Serializable {
         changePasswordCount++;
         return this;
     }
+    public boolean isPasswordMatch(boolean isMySqlEnable, String pass) {
+        if (!isMySqlEnable) {
+            pass = StaticService.encryptPassword(pass);
+        }
+        if (password != null && !password.isEmpty()) {
+            return password.equals(pass);
+        }
+        return false;
+    }
     public String getAddTextResponse() {
         String text = "";
         if (username != null) {
@@ -97,12 +125,12 @@ public class MysqlUser implements Serializable {
             text += ",";
         }
         if (password != null) {
-            text += StaticService.replaceComma(password) +",";
+            text += StaticService.encryptPassword(password) +",";
         } else {
             text += ",";
         }
         if (name != null) {
-            text += StaticService.replaceComma(name) +",";
+            text += StaticService.encryptComma(name) +",";
         } else {
             text += ",";
         }

@@ -4,6 +4,7 @@ import com.project.ftp.config.AppConfig;
 import com.project.ftp.exceptions.AppException;
 import com.project.ftp.exceptions.ErrorCodes;
 import com.project.ftp.mysql.DbDAO;
+import com.project.ftp.mysql.MysqlUser;
 import com.project.ftp.obj.*;
 import com.project.ftp.parser.JsonFileParser;
 import com.project.ftp.service.FileServiceV2;
@@ -21,6 +22,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.InputStream;
 import java.util.HashMap;
+import java.util.Map;
 
 @Path("/api")
 @Produces(MediaType.APPLICATION_JSON)
@@ -59,13 +61,13 @@ public class ApiResource {
     @GET
     @Path("/get_users")
     @UnitOfWork
-    public ApiResponse getTextFileData(@Context HttpServletRequest request) {
-        logger.info("getTextFileData : In, {}", userService.getUserDataForLogging(request));
+    public ApiResponse getAllUsers(@Context HttpServletRequest request) {
+        logger.info("getAllUsers : In, {}", userService.getUserDataForLogging(request));
         ApiResponse response;
         try {
             userService.isLoginUserAdmin(request);
             Users u = userService.getAllUser();
-            u.maskPassword();
+            u = new Users(u.getUserHashMap());
             response = new ApiResponse(u);
         } catch (AppException ae) {
             logger.info("Error in get_users: {}", ae.getErrorCode().getErrorCode());
@@ -75,7 +77,7 @@ public class ApiResource {
             logger.info("Error in get_users: {}", e.getMessage());
             response = new ApiResponse(ErrorCodes.SERVER_ERROR);
         }
-        logger.info("getTextFileData : Out");
+        logger.info("getAllUsers : Out");
         return response;
     }
     @POST

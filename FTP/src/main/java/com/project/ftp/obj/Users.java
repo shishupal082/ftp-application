@@ -19,6 +19,20 @@ public class Users {
             }
         }
     }
+    // maskPassword
+    public Users(HashMap<String, MysqlUser> userHashMap) {
+        if (userHashMap != null) {
+            this.userHashMap = new HashMap<>();
+            this.userCount = 0;
+            MysqlUser mysqlUser;
+            for(Map.Entry<String, MysqlUser> data: userHashMap.entrySet()) {
+                mysqlUser = new MysqlUser(data.getValue());
+                mysqlUser.setPassword("*****");
+                this.userHashMap.put(data.getKey(), mysqlUser);
+                this.userCount++;
+            }
+        }
+    }
     public Users(ArrayList<ArrayList<String>> filedata) {
         if (filedata != null) {
             userHashMap = new HashMap<>();
@@ -62,14 +76,6 @@ public class Users {
         }
         return null;
     }
-    public void maskPassword() {
-        if (userHashMap != null) {
-            for(Map.Entry<String, MysqlUser> data: userHashMap.entrySet()) {
-                data.getValue().setPassword("*****");
-            }
-        }
-    }
-
     @Override
     public String toString() {
         return "Users{" +

@@ -47,9 +47,10 @@ public class UserDb implements UserInterface {
         return mysqlUser1;
     }
     public boolean updatePassword(MysqlUser user) {
-        return dbDAO.updatePassword(dataSourceFactory, user);
+        return true;
     }
     public boolean setPassword(MysqlUser user) {
-        return dbDAO.setPassword(dataSourceFactory, user);
+        user.setPasscode("");
+        return true;
     }
 }
