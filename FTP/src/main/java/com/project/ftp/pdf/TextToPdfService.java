@@ -4,6 +4,7 @@ import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.pdf.PdfWriter;
+import com.project.ftp.common.StrUtils;
 import com.project.ftp.config.AppConstant;
 import com.project.ftp.service.StaticService;
 import org.slf4j.Logger;
@@ -74,30 +75,30 @@ public class TextToPdfService {
             logger.info("FileNotFoundException error, {}, {}", pdfFileName, e.getMessage());
         }
     }
-    public void convertReadmeTextToPdf() {
-        String textFileName = "readme.txt";
-        String pdfFileName = "readme.pdf";
-        String pdfTitle = "Readme PDF";
-        String pdfSubject = "Help to start application.";
+    public void createPdf(String textFilename, String pdfFilename, String pdfTitle, String pdfSubject) {
+        StrUtils strUtils = new StrUtils();
+        if (!strUtils.isValidString(textFilename)) {
+            logger.info("createPdf, invalid textFilename: '{}'", textFilename);
+            return;
+        }
+        if (!strUtils.isValidString(pdfFilename)) {
+            logger.info("createPdf, invalid pdfFilename: '{}'", pdfFilename);
+            return;
+        }
+        if (!strUtils.isValidString(pdfTitle)) {
+            logger.info("createPdf, invalid pdfTitle: '{}'", pdfTitle);
+            return;
+        }
+        if (!strUtils.isValidString(pdfSubject)) {
+            logger.info("createPdf, invalid pdfSubject: '{}'", pdfSubject);
+            return;
+        }
         TextToPdfService textToPdfService = new TextToPdfService(pdfTitle, pdfSubject);
-        ArrayList<String> fileData = textToPdfService.readTextFile(textFileName);
+        ArrayList<String> fileData = textToPdfService.readTextFile(textFilename);
         fileData.add("");
         fileData.add("AppVersion: " + AppConstant.AppVersion +
                 ", Dated: " + StaticService.getDateStrFromPattern(AppConstant.DateTimeFormat3));
-        textToPdfService.convertTextToPdf(pdfFileName, fileData);
-        logger.info("convertReadmeTextToPdf, request completed. '{}' to '{}'", textFileName, pdfFileName);
-    }
-    public void convertUserGuideTextToPdf() {
-        String textFileName = "user_guide.txt";
-        String pdfFileName = "user_guide.pdf";
-        String pdfTitle = "User Guide PDF";
-        String pdfSubject = "Help to use application.";
-        TextToPdfService textToPdfService = new TextToPdfService(pdfTitle, pdfSubject);
-        ArrayList<String> fileData = textToPdfService.readTextFile(textFileName);
-        fileData.add("");
-        fileData.add("AppVersion: " + AppConstant.AppVersion +
-                ", Dated: " + StaticService.getDateStrFromPattern(AppConstant.DateTimeFormat3));
-        textToPdfService.convertTextToPdf(pdfFileName, fileData);
-        logger.info("convertUserGuideTextToPdf, request completed. '{}' to '{}'", textFileName, pdfFileName);
+        textToPdfService.convertTextToPdf(pdfFilename, fileData);
+        logger.info("convertReadmeTextToPdf, request completed. '{}' to '{}'", textFilename, pdfFilename);
     }
 }

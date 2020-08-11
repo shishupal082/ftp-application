@@ -61,8 +61,22 @@ public class StaticService {
         TextToPdfService textToPdfService = new TextToPdfService();
         Boolean createReadmePdf = ftpConfiguration.getCreateReadmePdf();
         if (createReadmePdf != null && createReadmePdf) {
-            textToPdfService.convertReadmeTextToPdf();
-            textToPdfService.convertUserGuideTextToPdf();
+            String textFilename, pdfFilename, pdfTitle, pdfSubject;
+            textFilename = "readme.txt";
+            pdfFilename = "readme.pdf";
+            pdfTitle = "Readme PDF";
+            pdfSubject = "Help to start application.";
+            textToPdfService.createPdf(textFilename, pdfFilename, pdfTitle, pdfSubject);
+            textFilename = "user_guide.txt";
+            pdfFilename = "user_guide.pdf";
+            pdfTitle = "User Guide PDF";
+            pdfSubject = "Help to use application.";
+            textToPdfService.createPdf(textFilename, pdfFilename, pdfTitle, pdfSubject);
+            textFilename = "user_guide_zonal.txt";
+            pdfFilename = "user_guide_zonal.pdf";
+            pdfTitle = "User Guide PDF";
+            pdfSubject = "Help to use application.";
+            textToPdfService.createPdf(textFilename, pdfFilename, pdfTitle, pdfSubject);
         }
         String relativeConfigFilePath = appConfig.getConfigPath();
         if (relativeConfigFilePath == null || relativeConfigFilePath.isEmpty()) {

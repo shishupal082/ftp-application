@@ -41,4 +41,11 @@ public class StrUtils {
         }
         return str.replaceAll(find, replace);
     }
+    public boolean isValidString(String str) {
+        if (str == null) {
+            return false;
+        }
+        str = str.trim();
+        return !str.isEmpty();
+    }
 }
