@@ -77,19 +77,19 @@ public class TextToPdfService {
     }
     public void createPdf(String textFilename, String pdfFilename, String pdfTitle, String pdfSubject) {
         StrUtils strUtils = new StrUtils();
-        if (!strUtils.isValidString(textFilename)) {
+        if (strUtils.isInValidString(textFilename)) {
             logger.info("createPdf, invalid textFilename: '{}'", textFilename);
             return;
         }
-        if (!strUtils.isValidString(pdfFilename)) {
+        if (strUtils.isInValidString(pdfFilename)) {
             logger.info("createPdf, invalid pdfFilename: '{}'", pdfFilename);
             return;
         }
-        if (!strUtils.isValidString(pdfTitle)) {
+        if (strUtils.isInValidString(pdfTitle)) {
             logger.info("createPdf, invalid pdfTitle: '{}'", pdfTitle);
             return;
         }
-        if (!strUtils.isValidString(pdfSubject)) {
+        if (strUtils.isInValidString(pdfSubject)) {
             logger.info("createPdf, invalid pdfSubject: '{}'", pdfSubject);
             return;
         }
@@ -99,6 +99,6 @@ public class TextToPdfService {
         fileData.add("AppVersion: " + AppConstant.AppVersion +
                 ", Dated: " + StaticService.getDateStrFromPattern(AppConstant.DateTimeFormat3));
         textToPdfService.convertTextToPdf(pdfFilename, fileData);
-        logger.info("convertReadmeTextToPdf, request completed. '{}' to '{}'", textFilename, pdfFilename);
+        logger.info("createPdf, request completed. '{}' to '{}'", textFilename, pdfFilename);
     }
 }
