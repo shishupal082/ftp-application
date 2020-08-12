@@ -4,7 +4,6 @@ import com.project.ftp.config.AppConfig;
 import com.project.ftp.exceptions.AppException;
 import com.project.ftp.exceptions.ErrorCodes;
 import com.project.ftp.mysql.DbDAO;
-import com.project.ftp.mysql.MysqlUser;
 import com.project.ftp.obj.*;
 import com.project.ftp.parser.JsonFileParser;
 import com.project.ftp.service.FileServiceV2;
@@ -22,7 +21,6 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.InputStream;
 import java.util.HashMap;
-import java.util.Map;
 
 @Path("/api")
 @Produces(MediaType.APPLICATION_JSON)

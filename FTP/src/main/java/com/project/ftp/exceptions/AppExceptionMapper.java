@@ -13,8 +13,9 @@ import java.util.concurrent.TimeoutException;
 
 @Provider
 public class AppExceptionMapper implements ExceptionMapper<Exception> {
-    private static Logger logger = LoggerFactory.getLogger(AppExceptionMapper.class);
+    final static Logger logger = LoggerFactory.getLogger(AppExceptionMapper.class);
     public Response toResponse(Exception exception) {
+        exception.printStackTrace();
         if (exception instanceof AppException) {
             Integer statusCode = ((AppException) exception).getErrorCode().getStatusCode();
             String errorMessage;
@@ -31,16 +32,18 @@ public class AppExceptionMapper implements ExceptionMapper<Exception> {
                 errorMessage = new AppError(exception.getMessage()).toString();
                 exceptionLogger = exception;
             }
-            logger.info("WebAppException : {}", exceptionLogger);
+            logger.info("AppException : {}", exceptionLogger);
             return Response.status(statusCode).entity(errorMessage).type(MediaType.APPLICATION_JSON).build();
         } else if (exception instanceof TimeoutException) {
+            logger.info("TimeoutException : {}", exception.getMessage());
             return Response.status(Response.Status.GATEWAY_TIMEOUT).entity("{\"error\":\"Downstream service " +
                     "timeout..\"}").build();
         } else if (exception instanceof ServletException) {
+            logger.info("ServletException : {}", exception.getMessage());
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("{\"error\":\"Something went " +
                     "wrong\"}").type(MediaType.APPLICATION_JSON).build();
         }
-        logger.info("Unknown exception found : {}", exception);
+        logger.info("Unknown exception found : {}", exception.getMessage());
         return Response.status(Response.Status.NOT_FOUND).entity("{\"error\":\"" + exception.getMessage() +
             "\"}").type(MediaType.APPLICATION_JSON).build();
     }
