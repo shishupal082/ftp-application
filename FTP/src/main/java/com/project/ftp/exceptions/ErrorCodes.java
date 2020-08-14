@@ -33,11 +33,12 @@ public enum ErrorCodes {
     PASSWORD_CHANGE_OLD_NOT_MATCHING("PASSWORD_CHANGE_OLD_NOT_MATCHING", "Old password not matching.", 403),
     // Change password, Register
     PASSWORD_LENGTH_MISMATCH("PASSWORD_LENGTH_MISMATCH", "New password length should between 8 to 14.", 403),
+    PASSWORD_ENCRYPTION_ERROR("PASSWORD_ENCRYPTION_ERROR", "Error in password generate, Please try again.", 403),
     // Register
     REGISTER_PASSCODE_REQUIRED("REGISTER_PASSCODE_REQUIRED", "Passcode required.", 403),
     REGISTER_NAME_REQUIRED("REGISTER_NAME_REQUIRED", "Name required.", 403),
     REGISTER_PASSCODE_NOT_MATCHING("REGISTER_PASSCODE_NOT_MATCHING", "Passcode not matching.", 403),
-    REGISTER_ALREADY("REGISTER_ALREADY", "User already register, Please login.", 403),
+    REGISTER_ALREADY("REGISTER_ALREADY", "User passcode expire (Already login), Please try login.", 403),
     INVALID_FILE_DATA("INVALID_FILE_DATA", "Invalid file data", 403),
     INVALID_FILE_SAVE_PATH("INVALID_FILE_SAVE_PATH", "Invalid final save file path", 403),
     INVALID_SERVICE_NAME_EMPTY("Invalid service name Empty", "Invalid service name Empty", 403),

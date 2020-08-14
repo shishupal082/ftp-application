@@ -397,6 +397,18 @@ password    passcode    login (i.e. if password mismatch and password is empty c
 !=""         !=""       (Username and password not matching)
 
 
+3.0.0
+-------------------
+Password encryption(md5WithSalt) added (salt will be passcode)
+
+Generate proper message for register and login as below
+If password found and request for register
+    - Error: User already registered
+If password not found and request for login
+    - Error: User is not registered
+
+i.e. only focus on password
+
 
 
 Future releases

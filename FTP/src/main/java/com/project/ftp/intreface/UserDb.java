@@ -54,7 +54,7 @@ public class UserDb implements UserInterface {
     }
     public boolean setPassword(MysqlUser user) {
         user.setTimestamp(StaticService.getDateStrFromPattern(AppConstant.DateTimeFormat6));
-        user.setPasscode("");
+        user.setChangePasswordCount(0);
         return true;
     }
 }

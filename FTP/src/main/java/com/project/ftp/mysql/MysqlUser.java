@@ -108,15 +108,6 @@ public class MysqlUser implements Serializable {
         changePasswordCount++;
         return this;
     }
-    public boolean isPasswordMatch(boolean isMySqlEnable, String pass) {
-        if (!isMySqlEnable) {
-            pass = StaticService.encryptPassword(pass);
-        }
-        if (password != null && !password.isEmpty()) {
-            return password.equals(pass);
-        }
-        return false;
-    }
     public String getAddTextResponse() {
         String text = "";
         if (username != null) {
@@ -125,7 +116,7 @@ public class MysqlUser implements Serializable {
             text += ",";
         }
         if (password != null) {
-            text += StaticService.encryptPassword(password) +",";
+            text += password +",";
         } else {
             text += ",";
         }
@@ -134,7 +125,11 @@ public class MysqlUser implements Serializable {
         } else {
             text += ",";
         }
-        text += ","; // for passcode
+        if (passcode != null) {
+            text += passcode +",";
+        } else {
+            text += ",";
+        }
         if (method != null) {
             text += method +",";
         } else {
@@ -240,7 +235,7 @@ public class MysqlUser implements Serializable {
         return "MysqlUser{" +
                 "id=" + id +
                 ", username='" + username + '\'' +
-                ", password='" + "*****" + '\'' +
+                ", password='" + password + '\'' +
                 ", mobile='" + mobile + '\'' +
                 ", email='" + email + '\'' +
                 ", name='" + name + '\'' +

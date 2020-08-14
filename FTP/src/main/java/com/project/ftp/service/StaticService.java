@@ -2,6 +2,7 @@ package com.project.ftp.service;
 
 import com.project.ftp.FtpConfiguration;
 import com.project.ftp.common.DateUtilities;
+import com.project.ftp.common.PasswordEncryption;
 import com.project.ftp.common.StrUtils;
 import com.project.ftp.common.SysUtils;
 import com.project.ftp.config.*;
@@ -112,12 +113,14 @@ public class StaticService {
         str = str.trim();
         return strUtils.replaceChar(str,",", "..");
     }
-    public static String encryptPassword(String str) {
-        if (str == null) {
+    public static String encryptPassword(String salt, String password) {
+        if (strUtils.isInValidString(salt) || strUtils.isInValidString(password)) {
             return null;
         }
-        str = str.trim();
-        return strUtils.replaceChar(str,",", "..");
+        salt = salt.trim();
+        password = password.trim();
+        PasswordEncryption passwordEncryption = new PasswordEncryption(salt, password);
+        return passwordEncryption.encryptMD5WithSalt();
     }
     public static String encodeComma(String str) {
         if (str == null) {
