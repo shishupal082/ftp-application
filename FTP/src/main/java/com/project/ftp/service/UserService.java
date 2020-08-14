@@ -36,7 +36,7 @@ public class UserService {
     private MysqlUser getUserByName(String username) {
         return userInterface.getUserByName(username);
     }
-    private boolean updatePassword(MysqlUser user) {
+    public boolean updatePassword(MysqlUser user) {
         if (user == null) {
             logger.info("Null user can not be updated");
             return false;
@@ -210,8 +210,8 @@ public class UserService {
         MysqlUser user = this.isUserPasscodeMatch(username, userRegister.getPasscode());
         String password = userRegister.getPassword();
         this.isValidNewPassword(password);
-        password = StaticService.encryptPassword(user.getPasscode(), password);
-        if (password == null) {
+        String encryptedPassword = StaticService.encryptPassword(user.getPasscode(), password);
+        if (encryptedPassword == null) {
             logger.info("error in password encryption: {}", userRegister);
             throw new AppException(ErrorCodes.PASSWORD_ENCRYPTION_ERROR);
         }
@@ -221,7 +221,7 @@ public class UserService {
             throw new AppException(ErrorCodes.REGISTER_NAME_REQUIRED);
         }
         logger.info("User register parameter are ok: {}", userRegister);
-        user.setPassword(password);
+        user.setPassword(encryptedPassword);
         user.setName(displayName);
         user.setMethod("register");
         boolean createUserStatus = this.setPassword(user);
@@ -230,7 +230,7 @@ public class UserService {
             throw new AppException(ErrorCodes.RUNTIME_ERROR);
         }
         sessionService.loginUser(request, username);
-        logger.info("userRegister success: {}", user);
+        logger.info("userRegister success: {}, {}", password, user);
     }
     public void changePassword(HttpServletRequest request, RequestChangePassword changePassword) throws AppException {
         LoginUserDetails loginUserDetails = this.getLoginUserDetails(request);
@@ -243,21 +243,23 @@ public class UserService {
             throw new AppException(ErrorCodes.BAD_REQUEST_ERROR);
         }
         String newPassword = changePassword.getNew_password();
-        String confirmPassword = changePassword.getConfirm_password();
         this.isValidNewPassword(newPassword);
-        if (!newPassword.equals(confirmPassword)) {
-            logger.info("changePassword request mismatch, new_password: {}, confirm_password{}",
-                    newPassword, confirmPassword);
-            throw new AppException(ErrorCodes.PASSWORD_CHANGE_NOT_MATCHING);
-        }
+
         String oldPassword = changePassword.getOld_password();
         MysqlUser user = this.isUserPasswordMatch(loginUserDetails.getUsername(), oldPassword,
                 ErrorCodes.PASSWORD_CHANGE_OLD_REQUIRED,
                 ErrorCodes.PASSWORD_CHANGE_OLD_NOT_MATCHING, false);
+        String confirmPassword = changePassword.getConfirm_password();
+        if (!newPassword.equals(confirmPassword)) {
+            logger.info("changePassword request mismatch, new_password: {}, confirm_password: {}",
+                    StaticService.encryptPassword(user.getPasscode(), newPassword),
+                    StaticService.encryptPassword(user.getPasscode(), confirmPassword));
+            throw new AppException(ErrorCodes.PASSWORD_CHANGE_NOT_MATCHING);
+        }
 
-        newPassword = StaticService.encryptPassword(user.getPasscode(), newPassword);
-        if (newPassword == null) {
-            logger.info("error in new password encryption: {}", changePassword);
+        String encryptedPassword = StaticService.encryptPassword(user.getPasscode(), newPassword);
+        if (encryptedPassword == null) {
+            logger.info("error in new password encryption: {}, {}", changePassword, user);
             throw new AppException(ErrorCodes.PASSWORD_ENCRYPTION_ERROR);
         }
         int limit = AppConstant.MAX_ENTRY_ALLOWED_IN_USER_DATA_FILE;
@@ -266,14 +268,14 @@ public class UserService {
             throw new AppException(ErrorCodes.PASSWORD_CHANGE_COUNT_EXCEED);
         }
         user.incrementEntryCount();
-        user.setPassword(newPassword);
+        user.setPassword(encryptedPassword);
         user.setMethod("change_password");
         boolean changePasswordStatus = this.updatePassword(user);
         if (!changePasswordStatus) {
             logger.info("Error in updating password.");
             throw new AppException(ErrorCodes.RUNTIME_ERROR);
         }
-        logger.info("change password success: {}", user);
+        logger.info("change password success: {}, {}", newPassword, user);
     }
     public void logoutUser(HttpServletRequest request) {
         LoginUserDetails loginUserDetails = this.getLoginUserDetails(request);
