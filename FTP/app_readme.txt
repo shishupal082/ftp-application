@@ -400,6 +400,36 @@ password    passcode    login (i.e. if password mismatch and password is empty c
 3.0.0
 -------------------
 Password encryption(md5WithSalt) added (salt will be passcode)
+Migration script
+
+
+@GET
+@Path("/migrate")
+@UnitOfWork
+public ApiResponse migrate(@Context HttpServletRequest request) {
+    logger.info("getJsonData : In, user: {}", userService.getUserDataForLogging(request));
+    ApiResponse response;
+    try {
+        Users users = userService.getAllUser();
+        HashMap<String, MysqlUser> u = users.getUserHashMap();
+        MysqlUser mysqlUser;
+        String encryptedPassword, query;
+        for(Map.Entry<String, MysqlUser> entry: u.entrySet()) {
+            mysqlUser = entry.getValue();
+            encryptedPassword = StaticService.encryptPassword(mysqlUser.getPasscode(), mysqlUser.getPassword());
+            query = "UPDATE users SET password='"+encryptedPassword+"' WHERE username='"+mysqlUser.getUsername()+"';";
+            logger.info(query);
+        }
+        Users u1 = new Users(users.getUserHashMap());
+        response = new ApiResponse(users);
+    } catch (AppException ae) {
+        logger.info("Error in reading app static file: {}", ae.getErrorCode().getErrorCode());
+        response = new ApiResponse(ae.getErrorCode());
+    }
+    logger.info("getJsonData : Out");
+    return response;
+}
+
 
 Generate proper message for register and login as below
 If password found and request for register
