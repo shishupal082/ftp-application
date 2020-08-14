@@ -53,7 +53,7 @@ defaultFileViewer: "self" #self or all
 fileDeleteAccess: "self_admin" #self or admin or self_admin
 permanentlyDeleteFile: false #File will saved in trash folder
 maxFileSize: 10240001 #i.e. #i.e. 2048000 = 2048 kB = 2MB, 10240001 = 10MB
-uploadFileApiVersion: v2 #(v1|v2)
+uploadFileApiVersion: v1 #(v1|v2)
 
 adminUsersName:
   - Admin
@@ -85,6 +85,7 @@ allowedOrigin:
   - http://localhost
   - http://localhost:9000
   - http://localhost:8080
+  - chrome-extension://fhbjgbiflinjbdggehcddcbncdddomop
 devUsersName:
   - U1
 tempConfig:

@@ -35,13 +35,8 @@ public class UserFile implements UserInterface {
         if (username == null || username.isEmpty()) {
             return null;
         }
-        MysqlUser user = null;
-        try {
-            Users users = this.getAllUsers();
-            user = users.searchUserByName(username);
-        } catch (AppException ae) {
-            logger.info("Error in getting all userDataByUserName: {}", username);
-        }
+        Users users = this.getAllUsers();
+        MysqlUser user = users.searchUserByName(username);
         logger.info("User data for username: {}, is: {}", username, user);
         return user;
     }

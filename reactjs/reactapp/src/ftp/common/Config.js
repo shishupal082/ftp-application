@@ -78,17 +78,17 @@ Config.apiMapping["upload_file"] = baseapi + "/api/upload_file";
 Config.apiMapping["delete_file"] = baseapi + "/api/delete_file";
 Config.apiMapping["get_files"] = baseapi + "/api/get_files_info?v=" + RequestId;
 
-Config.getAleartMessage = function(errorCode) {
+Config.getAleartMessage = function(response) {
     var messageMap = {};
-    if (!$S.isObject(errorCode)) {
-        return errorCode;
+    if (!$S.isObject(response)) {
+        return response;
     }
-    var messageCode = errorCode.failureCode;
-    var reason = errorCode.reason;
+    var messageCode = response.failureCode;
+    var error = response.error;
     if ($S.isString(messageMap[messageCode])) {
         return messageMap[messageCode];
     }
-    return reason;
+    return error;
 };
 
 export default Config;

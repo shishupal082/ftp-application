@@ -2,6 +2,7 @@ package com.project.ftp.obj;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.project.ftp.service.StaticService;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 
@@ -13,7 +14,10 @@ public class RequestUserLogin {
     private String password;
 
     public String getUsername() {
-        return username;
+        if (StaticService.isInValidString(username)) {
+            return null;
+        }
+        return username.trim();
     }
 
     public void setUsername(String username) {
@@ -21,7 +25,10 @@ public class RequestUserLogin {
     }
 
     public String getPassword() {
-        return password;
+        if (StaticService.isInValidString(password)) {
+            return null;
+        }
+        return password.trim();
     }
 
     public void setPassword(String password) {

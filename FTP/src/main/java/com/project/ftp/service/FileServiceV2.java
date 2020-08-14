@@ -6,6 +6,7 @@ import com.project.ftp.exceptions.ErrorCodes;
 import com.project.ftp.mysql.DbDAO;
 import com.project.ftp.obj.*;
 import com.project.ftp.view.CommonView;
+import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -320,7 +321,7 @@ public class FileServiceV2 {
         }
     }
      **/
-    private HashMap<String, String> verifyDeleteRequestParameters(RequestDeleteFile deleteFile) {
+    private HashMap<String, String> verifyDeleteRequestParameters(RequestDeleteFile deleteFile) throws AppException {
         if (deleteFile == null) {
             logger.info("deleteFile request is null.");
             throw new AppException(ErrorCodes.BAD_REQUEST_ERROR);
@@ -572,9 +573,14 @@ public class FileServiceV2 {
         return new ApiResponse(pathInfo);
     }
     public ApiResponse uploadFileV2(HttpServletRequest request,
-                                  InputStream uploadedInputStream, String fileName,
+                                  InputStream uploadedInputStream, FormDataContentDisposition fileDetails,
                                   String subject, String heading) throws AppException {
         LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
+        if (fileDetails == null) {
+            logger.info("fileDetails is: null");
+            throw new AppException(ErrorCodes.BAD_REQUEST_ERROR);
+        }
+        String fileName = fileDetails.getFileName();
         if (!loginUserDetails.getLogin()) {
             logger.info("UnAuthorised user trying to upload file: {}", fileName);
             throw new AppException(ErrorCodes.UNAUTHORIZED_USER);
@@ -590,14 +596,16 @@ public class FileServiceV2 {
             throw new AppException(ErrorCodes.UPLOAD_FILE_VERSION_MISMATCH);
         }
         logger.info("uploadFileApiVersion is v2");
-        if (subject == null || subject.isEmpty()) {
+        if (StaticService.isInValidString(subject)) {
             logger.info("fileUpload subject is invalid: {}", subject);
             throw new AppException(ErrorCodes.UPLOAD_FILE_SUBJECT_REQUIRED);
         }
-        if (heading == null || heading.isEmpty()) {
+        subject = subject.trim();
+        if (StaticService.isInValidString(heading)) {
             logger.info("fileUpload heading is invalid: {}", heading);
             throw new AppException(ErrorCodes.UPLOAD_FILE_HEADING_REQUIRED);
         }
+        heading = heading.trim();
         PathInfo pathInfo = this.uploadFile(loginUsername, uploadedInputStream, fileName);
         this.generateFileDetailsFromFilepathV2(loginUserDetails.getUsername(),
                 pathInfo.getFileName(), subject, heading);

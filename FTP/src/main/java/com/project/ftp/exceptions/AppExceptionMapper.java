@@ -1,6 +1,7 @@
 package com.project.ftp.exceptions;
 
 
+import com.project.ftp.obj.ApiResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,69 +15,57 @@ import java.util.concurrent.TimeoutException;
 @Provider
 public class AppExceptionMapper implements ExceptionMapper<Exception> {
     final static Logger logger = LoggerFactory.getLogger(AppExceptionMapper.class);
+
+    @Override
     public Response toResponse(Exception exception) {
         exception.printStackTrace();
         if (exception instanceof AppException) {
-            Integer statusCode = ((AppException) exception).getErrorCode().getStatusCode();
-            String errorMessage;
-            Object exceptionLogger = null;
-            if (statusCode >= 200 && statusCode < 300) {
-                errorMessage = new AppError(exception.getMessage(), statusCode).toString();
-                exceptionLogger = exception;
-            } else if (statusCode == 599) {
-                //Run time error, it includes IOE, Exception, ...
-                //Need not to log exception again as it is already logged
-                errorMessage = new AppError(exception.getMessage(), statusCode).toString();
-                exceptionLogger = errorMessage;
-            } else {
-                errorMessage = new AppError(exception.getMessage()).toString();
-                exceptionLogger = exception;
-            }
-            logger.info("AppException : {}", exceptionLogger);
-            return Response.status(statusCode).entity(errorMessage).type(MediaType.APPLICATION_JSON).build();
+            AppException appException = ((AppException) exception);
+            AppError appError = new AppError(appException.getErrorCode());
+            logger.info("AppException found: {}", appError);
+            return Response.status(appException.getStatusCode()).entity(
+                    appError.toString()).type(MediaType.APPLICATION_JSON).build();
         } else if (exception instanceof TimeoutException) {
-            logger.info("TimeoutException : {}", exception.getMessage());
-            return Response.status(Response.Status.GATEWAY_TIMEOUT).entity("{\"error\":\"Downstream service " +
-                    "timeout..\"}").build();
+            AppError appError = new AppError(ErrorCodes.TIME_OUT_EXCEPTION);
+            logger.info("TimeoutException found: {}, {}", appError, exception.getMessage());
+            return Response.status(Response.Status.GATEWAY_TIMEOUT).entity(appError.toString()).build();
         } else if (exception instanceof ServletException) {
-            logger.info("ServletException : {}", exception.getMessage());
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("{\"error\":\"Something went " +
-                    "wrong\"}").type(MediaType.APPLICATION_JSON).build();
+            AppError appError = new AppError(ErrorCodes.SERVLET_EXCEPTION);
+            logger.info("ServletException found: {}, {}", appError, exception.getMessage());
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(appError.toString()).type(MediaType.APPLICATION_JSON).build();
+        } else if (exception instanceof NullPointerException) {
+            AppError appError = new AppError(ErrorCodes.NULL_POINTER_EXCEPTION);
+            logger.info("NullPointerException found: {}, {}", appError, exception.getMessage());
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(
+                    appError.toString()).type(MediaType.APPLICATION_JSON).build();
         }
-        logger.info("Unknown exception found : {}", exception.getMessage());
-        return Response.status(Response.Status.NOT_FOUND).entity("{\"error\":\"" + exception.getMessage() +
-            "\"}").type(MediaType.APPLICATION_JSON).build();
+        AppError appError = new AppError(ErrorCodes.SERVER_ERROR);
+        appError.setError(exception.getMessage());
+        logger.info("UnknownException found: {}, {}", appError, exception.getMessage());
+        return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(
+                appError.toString()).type(MediaType.APPLICATION_JSON).build();
     }
 }
 
 class AppError {
 
-    private String message;
-    private Integer statusCode;
+    final ApiResponse apiResponse;
+    final ErrorCodes errorCodes;
 
-    public AppError(String message) {
-        this.setMessage(message);
+    public AppError(ErrorCodes errorCodes) {
+        this.errorCodes = errorCodes;
+        this.apiResponse = new ApiResponse(errorCodes);
     }
-    public AppError(String message, Integer statusCode) {
-        this.setMessage(message);
-        this.statusCode = statusCode;
+    public void setError(String str) {
+        this.apiResponse.setError(str);
     }
-
-
-    public String getMessage() {
-        return message;
-    }
-
-    public void setMessage(String message) {
-        this.message = message;
-    }
-
     @Override
     public String toString() {
-        if (statusCode != null && statusCode >= 200 && statusCode < 300) {
-            String status = "FAILURE";
-            return "{\"reason\" :" + "\"" + message + "\", \"status\" : \"" + status + "\"}";
-        }
-        return "{\"error\" :" + "\"" + message + "\"}";
+        return  "{"+
+                    "\"code\":\""+errorCodes.getStatusCode()+"\""+
+                    ", \"error\":\""+apiResponse.getError()+"\""+
+                    ", \"status\":\""+apiResponse.getStatus()+"\""+ //It is required for UI
+                    ", \"failureCode\":\""+apiResponse.getFailureCode()+"\""+ //It is required for UI error mapping
+                "}";
     }
 }

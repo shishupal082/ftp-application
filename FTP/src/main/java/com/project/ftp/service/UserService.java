@@ -119,7 +119,8 @@ public class UserService {
     // Login, Change password
     private MysqlUser isUserPasswordMatch(String username, String password,
                                      ErrorCodes emptyPasswordErrorCode,
-                                     ErrorCodes passwordMisMatchErrorCode) throws AppException {
+                                     ErrorCodes passwordMisMatchErrorCode,
+                                     boolean isLoginCheck) throws AppException {
         if (username == null || username.isEmpty()) {
             logger.info("username required: {}.", username);
             throw new AppException(ErrorCodes.USER_NAME_REQUIRED);
@@ -135,6 +136,13 @@ public class UserService {
         }
         if (!user.isPasswordMatch(appConfig.isMySqlEnable(), password)) {
             logger.info("password mismatch for username: {}", username);
+            if (isLoginCheck && StaticService.isInValidString(user.getPassword())) {
+                String systemPasscode = user.getPasscode();
+                if (!StaticService.isInValidString(systemPasscode)) {
+                    logger.info("user not registered yet: {}", user);
+                    throw new AppException(ErrorCodes.USER_NOT_REGISTERED);
+                }
+            }
             throw new AppException(passwordMisMatchErrorCode);
         }
         return user;
@@ -167,6 +175,11 @@ public class UserService {
             logger.info("username: {}, is not found.", username);
             throw new AppException(ErrorCodes.USER_NOT_FOUND);
         }
+        String systemPasscode = user.getPasscode();
+        if (StaticService.isInValidString(systemPasscode)) {
+            logger.info("user already register: {}", user);
+            throw new AppException(ErrorCodes.REGISTER_ALREADY);
+        }
         if (!passcode.equals(user.getPasscode())) {
             logger.info("passcode: {}, mismatch for user: {}", passcode, user);
             throw new AppException(ErrorCodes.REGISTER_PASSCODE_NOT_MATCHING);
@@ -180,7 +193,7 @@ public class UserService {
             throw new AppException(ErrorCodes.BAD_REQUEST_ERROR);
         }
         this.isUserPasswordMatch(userLogin.getUsername(), userLogin.getPassword(),
-                ErrorCodes.PASSWORD_REQUIRED, ErrorCodes.PASSWORD_NOT_MATCHING);
+                ErrorCodes.PASSWORD_REQUIRED, ErrorCodes.PASSWORD_NOT_MATCHING, true);
         sessionService.loginUser(request, userLogin.getUsername());
         HashMap<String, String> loginUserDetails = this.getLoginUserResponse(request);
         logger.info("loginUser success: {}", loginUserDetails);
@@ -233,7 +246,7 @@ public class UserService {
         String oldPassword = changePassword.getOld_password();
         MysqlUser user = this.isUserPasswordMatch(loginUserDetails.getUsername(), oldPassword,
                 ErrorCodes.PASSWORD_CHANGE_OLD_REQUIRED,
-                ErrorCodes.PASSWORD_CHANGE_OLD_NOT_MATCHING);
+                ErrorCodes.PASSWORD_CHANGE_OLD_NOT_MATCHING, false);
 
         int limit = AppConstant.MAX_ENTRY_ALLOWED_IN_USER_DATA_FILE;
         if (user.getChangePasswordCount() >= limit) {

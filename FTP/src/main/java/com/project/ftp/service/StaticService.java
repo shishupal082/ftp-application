@@ -119,19 +119,22 @@ public class StaticService {
         str = str.trim();
         return strUtils.replaceChar(str,",", "..");
     }
-    public static String encryptComma(String str) {
+    public static String encodeComma(String str) {
         if (str == null) {
             return null;
         }
         str = str.trim();
         return strUtils.replaceChar(str,",", "```");
     }
-    public static String decryptComma(String str) {
+    public static String decodeComma(String str) {
         if (str == null) {
             return null;
         }
         str = str.trim();
         return strUtils.replaceString(str,"```", ",");
+    }
+    public static boolean isInValidString(String str) {
+        return strUtils.isInValidString(str);
     }
     public static void printLog(Object logStr) {
         sysUtils.printLog(logStr);

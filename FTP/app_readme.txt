@@ -373,11 +373,40 @@ Encrypt and Decrypt comma added for subject and heading
 MysqlUser copy constructor made for masking password without changing into db
     - Because after masking, if not copied, mask value will replace actual password
 
+2.0.3
+--------------------
+Added pdf create user_guide_zonal.txt
+Add currentTimeStamp in change password and register
+AppExceptionMapper class register in FtpApplication
+Use trim for
+    - subject, heading, username, password, name, passcode, new_password, confirm_password, old_password
+
+Generate proper message for register and login as below
+
+password    passcode    register (i.e. only check passcode)
+=""           =""       (User already register, Please login)
+=""          !=""       (Username and passcode not matching)
+!=""          =""       (User already register, Please login)
+!=""         !=""       (Username and passcode not matching)
+
+
+password    passcode    login (i.e. if password mismatch and password is empty check passcode)
+=""           =""       (Username and password not matching)
+=""          !=""       (User not registered, Please register)
+!=""          =""       (Username and password not matching)
+!=""         !=""       (Username and password not matching)
+
+
+
 
 Future releases
 -------------------
+
+
+
 Table required
     - file_details
+
 
 Query used
 select * from file_details where fileUsername = {username} and filename = {filename}

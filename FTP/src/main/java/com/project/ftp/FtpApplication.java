@@ -2,6 +2,7 @@ package com.project.ftp;
 
 import com.project.ftp.config.AppConfig;
 import com.project.ftp.config.AppConstant;
+import com.project.ftp.exceptions.AppExceptionMapper;
 import com.project.ftp.filters.LogFilter;
 import com.project.ftp.filters.RequestFilter;
 import com.project.ftp.filters.ResponseFilter;
@@ -68,6 +69,7 @@ public class FtpApplication  extends Application<FtpConfiguration> {
         }
         environment.servlets().setSessionHandler(new SessionHandler());
         environment.jersey().register(MultiPartFeature.class);
+        environment.jersey().register(new AppExceptionMapper());
         environment.jersey().register(new LogFilter());
         environment.jersey().register(new RequestFilter(appConfig));
         environment.jersey().register(new ResponseFilter());

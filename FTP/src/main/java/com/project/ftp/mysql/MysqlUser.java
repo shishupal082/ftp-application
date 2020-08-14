@@ -91,7 +91,7 @@ public class MysqlUser implements Serializable {
                 password = arrayList.get(1);
             }
             if (arrayList.size() >= 3) {
-                name = StaticService.decryptComma(arrayList.get(2));
+                name = StaticService.decodeComma(arrayList.get(2));
             }
             if (arrayList.size() >= 4) {
                 passcode = arrayList.get(3);
@@ -130,7 +130,7 @@ public class MysqlUser implements Serializable {
             text += ",";
         }
         if (name != null) {
-            text += StaticService.encryptComma(name) +",";
+            text += StaticService.encodeComma(name) +",";
         } else {
             text += ",";
         }

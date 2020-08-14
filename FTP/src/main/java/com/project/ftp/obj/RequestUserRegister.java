@@ -2,6 +2,7 @@ package com.project.ftp.obj;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.project.ftp.service.StaticService;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 
@@ -16,7 +17,10 @@ public class RequestUserRegister {
     private String display_name;
 
     public String getUsername() {
-        return username;
+        if (StaticService.isInValidString(username)) {
+            return null;
+        }
+        return username.trim();
     }
 
     public void setUsername(String username) {
@@ -24,7 +28,10 @@ public class RequestUserRegister {
     }
 
     public String getPasscode() {
-        return passcode;
+        if (StaticService.isInValidString(passcode)) {
+            return null;
+        }
+        return passcode.trim();
     }
 
     public void setPasscode(String passcode) {
@@ -32,7 +39,10 @@ public class RequestUserRegister {
     }
 
     public String getPassword() {
-        return password;
+        if (StaticService.isInValidString(password)) {
+            return null;
+        }
+        return password.trim();
     }
 
     public void setPassword(String password) {
@@ -40,7 +50,10 @@ public class RequestUserRegister {
     }
 
     public String getDisplay_name() {
-        return display_name;
+        if (StaticService.isInValidString(display_name)) {
+            return null;
+        }
+        return display_name.trim();
     }
 
     public void setDisplay_name(String display_name) {

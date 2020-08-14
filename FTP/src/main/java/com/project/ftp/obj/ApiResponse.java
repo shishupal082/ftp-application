@@ -6,7 +6,7 @@ import com.project.ftp.exceptions.ErrorCodes;
 public class ApiResponse {
     private String status;
     private String failureCode;
-    private String reason;
+    private String error;
     private Object data;
     public ApiResponse() {
         this.status = AppConstant.SUCCESS;
@@ -18,7 +18,7 @@ public class ApiResponse {
     public ApiResponse(ErrorCodes errorCodes) {
         this.status = AppConstant.FAILURE;
         this.failureCode = errorCodes.getErrorCode();
-        this.reason = errorCodes.getErrorString();
+        this.error = errorCodes.getErrorString();
     }
     public String getStatus() {
         return status;
@@ -36,12 +36,12 @@ public class ApiResponse {
         this.failureCode = failureCode;
     }
 
-    public String getReason() {
-        return reason;
+    public String getError() {
+        return error;
     }
 
-    public void setReason(String reason) {
-        this.reason = reason;
+    public void setError(String error) {
+        this.error = error;
     }
 
     public Object getData() {
@@ -57,7 +57,7 @@ public class ApiResponse {
         return "ApiResponse{" +
                 "status='" + status + '\'' +
                 ", failureCode='" + failureCode + '\'' +
-                ", reason='" + reason + '\'' +
+                ", error='" + error + '\'' +
                 ", data=" + data +
                 '}';
     }

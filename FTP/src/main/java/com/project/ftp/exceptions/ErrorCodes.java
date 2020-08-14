@@ -20,6 +20,7 @@ public enum ErrorCodes {
     PASSWORD_NOT_MATCHING("PASSWORD_NOT_MATCHING", "Username password not matching.", 403),
     // Login
     PASSWORD_REQUIRED("PASSWORD_REQUIRED", "Password required.", 403),
+    USER_NOT_REGISTERED("USER_NOT_REGISTERED", "User is not registered, Please register.", 403),
     // Login, Change password, Register
     USER_NOT_FOUND("USER_NOT_FOUND", "User not found.", 403),
     // Change password
@@ -36,6 +37,7 @@ public enum ErrorCodes {
     REGISTER_PASSCODE_REQUIRED("REGISTER_PASSCODE_REQUIRED", "Passcode required.", 403),
     REGISTER_NAME_REQUIRED("REGISTER_NAME_REQUIRED", "Name required.", 403),
     REGISTER_PASSCODE_NOT_MATCHING("REGISTER_PASSCODE_NOT_MATCHING", "Passcode not matching.", 403),
+    REGISTER_ALREADY("REGISTER_ALREADY", "User already register, Please login.", 403),
     INVALID_FILE_DATA("INVALID_FILE_DATA", "Invalid file data", 403),
     INVALID_FILE_SAVE_PATH("INVALID_FILE_SAVE_PATH", "Invalid final save file path", 403),
     INVALID_SERVICE_NAME_EMPTY("Invalid service name Empty", "Invalid service name Empty", 403),
@@ -51,9 +53,12 @@ public enum ErrorCodes {
     UPLOAD_FILE_VERSION_MISMATCH("UPLOAD_FILE_VERSION_MISMATCH", "Upload file api version mismatch", 403),
     UPLOAD_FILE_SUBJECT_REQUIRED("UPLOAD_FILE_SUBJECT_REQUIRED", "Subject required", 403),
     UPLOAD_FILE_HEADING_REQUIRED("UPLOAD_FILE_HEADING_REQUIRED", "Heading required", 403),
-    SERVER_ERROR("SERVER_ERROR", "Server error", 500),
     CONFIG_ERROR("CONFIG_ERROR", "Configuration error", 500),
     FILE_SIZE_EXCEEDED("FILE_SIZE_EXCEEDED", "File size exceeded", 500),
+    SERVER_ERROR("SERVER_ERROR", "Server error", 500),
+    NULL_POINTER_EXCEPTION("NULL_POINTER_EXCEPTION", "Null pointer exception", 500),
+    TIME_OUT_EXCEPTION("TIME_OUT_EXCEPTION", "Down stream service down", 500),
+    SERVLET_EXCEPTION("SERVLET_EXCEPTION", "Something went wrong", 500),
     RUNTIME_ERROR("RUN_TIME_ERROR", "Run time error", 599);
 
     final String errorCode;

@@ -46,8 +46,8 @@ public class FileDetail {
         deletedby = details.get(3);
         viewer = StaticService.getFileViewer(details.get(4));
         deleteAccess = StaticService.getFileDeleteAccess(details.get(5));
-        subject = StaticService.decryptComma(details.get(6));
-        heading = StaticService.decryptComma(details.get(7));
+        subject = StaticService.decodeComma(details.get(6));
+        heading = StaticService.decodeComma(details.get(7));
         entryType = details.get(8);
         isDeleted = details.get(9);
         filepath = uploadedby + "/" +filename;
@@ -143,8 +143,8 @@ public class FileDetail {
         response += "," + (this.deletedby != null ? this.deletedby : "");
         response += "," + (this.viewer != null ? this.viewer.getViewer() : "");
         response += "," + (this.deleteAccess != null ? this.deleteAccess.getDeleteAccess() : "");
-        response += "," + (this.subject != null ? StaticService.encryptComma(this.subject) : "");
-        response += "," + (this.heading != null ? StaticService.encryptComma(this.heading) : "");
+        response += "," + (this.subject != null ? StaticService.encodeComma(this.subject) : "");
+        response += "," + (this.heading != null ? StaticService.encodeComma(this.heading) : "");
         response += "," + (this.entryType != null ? this.entryType : "");
         response += "," + this.isDeleted;
         return response;

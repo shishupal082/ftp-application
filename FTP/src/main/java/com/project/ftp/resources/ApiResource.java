@@ -18,7 +18,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 import java.io.InputStream;
 import java.util.HashMap;
 
@@ -70,10 +69,6 @@ public class ApiResource {
         } catch (AppException ae) {
             logger.info("Error in get_users: {}", ae.getErrorCode().getErrorCode());
             response = new ApiResponse(ae.getErrorCode());
-        } catch (Exception e) {
-            e.printStackTrace();
-            logger.info("Error in get_users: {}", e.getMessage());
-            response = new ApiResponse(ErrorCodes.SERVER_ERROR);
         }
         logger.info("getAllUsers : Out");
         return response;
@@ -136,8 +131,8 @@ public class ApiResource {
     @POST
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     @Path("/upload_file")
-    public Response uploadFile(@Context HttpServletRequest request,
-                                @FormDataParam("file") InputStream uploadedInputStream,
+    public ApiResponse uploadFile(@Context HttpServletRequest request,
+                                  @FormDataParam("file") InputStream uploadedInputStream,
                                @FormDataParam("file") FormDataContentDisposition fileDetail,
                                @FormDataParam("subject") String subject,
                                @FormDataParam("heading") String heading) {
@@ -147,13 +142,13 @@ public class ApiResource {
         ApiResponse response;
         try {
             response = fileServiceV2.uploadFileV2(request, uploadedInputStream,
-                    fileDetail.getFileName(), subject, heading);
+                    fileDetail, subject, heading);
         } catch (AppException ae) {
             logger.info("Error in uploading file: {}", ae.getErrorCode().getErrorCode());
             response = new ApiResponse(ae.getErrorCode());
         }
         logger.info("uploadFile : Out {}", response);
-        return Response.ok(response).build();
+        return response;
     }
     @POST
     @Path("/login_user")

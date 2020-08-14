@@ -1,8 +1,10 @@
 package com.project.ftp.intreface;
 
+import com.project.ftp.config.AppConstant;
 import com.project.ftp.mysql.DbDAO;
 import com.project.ftp.mysql.MysqlUser;
 import com.project.ftp.obj.Users;
+import com.project.ftp.service.StaticService;
 import io.dropwizard.db.DataSourceFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,9 +49,11 @@ public class UserDb implements UserInterface {
         return mysqlUser1;
     }
     public boolean updatePassword(MysqlUser user) {
+        user.setTimestamp(StaticService.getDateStrFromPattern(AppConstant.DateTimeFormat6));
         return true;
     }
     public boolean setPassword(MysqlUser user) {
+        user.setTimestamp(StaticService.getDateStrFromPattern(AppConstant.DateTimeFormat6));
         user.setPasscode("");
         return true;
     }
