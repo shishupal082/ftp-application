@@ -402,7 +402,6 @@ password    passcode    login (i.e. if password mismatch and password is empty c
 Password encryption(md5WithSalt) added (salt will be passcode)
 Migration script
 
-
 @GET
 @Path("/migrate")
 @UnitOfWork
@@ -443,9 +442,6 @@ i.e. only focus on password
 
 Future releases
 -------------------
-
-
-
 Table required
     - file_details
 
@@ -454,13 +450,6 @@ Query used
 select * from file_details where fileUsername = {username} and filename = {filename}
 insert into file_details (username,filename,subject,heading,uploadedby) values();
 update table file_details set deletedby="", deleted=true where username="username" and filename="filename";
-
-
-
-
-add password encryption env config
-    - by default it will be false
-    - encryption only in java script for password
 
 Add user agent detection support for /download/file/username/filename
 Add GA for UI tracking
