@@ -438,6 +438,10 @@ If password not found and request for login
 
 i.e. only focus on password
 
+3.0.1
+-------------------
+
+
 
 
 Future releases
@@ -456,6 +460,31 @@ Add GA for UI tracking
 
 
 Save filename should not contain (<>/\"|*:)
+/**
+Create event table
+field name required as follow
+id, appname, username, event, old_val, new_val, comment (max length 512), timestamp, deleted
+
+event tracking required
+    - register success
+    - login success
+    - change password success
+    - file upload failure
+    - Change password failure (valid username, old password, new password, reason)
+    - register _failure (username, passcode, password, name)
+    - login_failure (username, password)
+    - view file after click, i.e. on new tab and open in new tab
+    - download file filename, subject, heading
+    - delete file, only comment field filename, subject, heading
+    - file upload, old val and new val as null, comment field filename, subject, heading
+    - Forgot password username, put comment field, email and phone number
+    - register (put old password, new password, passcode, name) in comment
+
+**/
+
+Create annotation for event logging
+
+
 
 Forgot password
 -----------------
