@@ -4,10 +4,7 @@ import com.project.ftp.config.AppConfig;
 import com.project.ftp.config.AppConstant;
 import com.project.ftp.exceptions.AppException;
 import com.project.ftp.exceptions.ErrorCodes;
-import com.project.ftp.intreface.UserDb;
-import com.project.ftp.intreface.UserFile;
 import com.project.ftp.intreface.UserInterface;
-import com.project.ftp.mysql.DbDAO;
 import com.project.ftp.mysql.MysqlUser;
 import com.project.ftp.obj.*;
 import com.project.ftp.session.SessionService;
@@ -23,15 +20,10 @@ public class UserService {
     final AppConfig appConfig;
     final SessionService sessionService;
     final UserInterface userInterface;
-    public UserService(final AppConfig appConfig, final DbDAO dbDAO) {
+    public UserService(final AppConfig appConfig, final UserInterface userInterface) {
         this.appConfig = appConfig;
         this.sessionService = new SessionService(appConfig);
-        boolean isMySqlEnable = appConfig.isMySqlEnable();
-        if (isMySqlEnable) {
-            userInterface = new UserDb(appConfig.getFtpConfiguration().getDataSourceFactory(), dbDAO);
-        } else {
-            userInterface = new UserFile(appConfig);
-        }
+        this.userInterface = userInterface;
     }
     private MysqlUser getUserByName(String username) {
         return userInterface.getUserByName(username);

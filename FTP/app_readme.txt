@@ -440,9 +440,11 @@ i.e. only focus on password
 
 3.0.1
 -------------------
-
-
-
+Event tracking not possible for 'log file change' and 'unknown exception'
+    - because: No session currently bound to execution context
+All other event added for tracking, only change on resource file and ftpApplication file
+    - no logical change
+Create table 'event_data' in ftpapp database and file 'event_data.csv' in config-files directory
 
 Future releases
 -------------------

@@ -14,8 +14,10 @@ public class DbDAO extends AbstractDAO<MysqlUser> {
     final static Logger logger = LoggerFactory.getLogger(DbDAO.class);
     private final String FindAllUser;
     private final String FindByUsername;
+    final SessionFactory sessionFactory;
     public DbDAO(SessionFactory sessionFactory) {
         super(sessionFactory);
+        this.sessionFactory = sessionFactory;
         FindAllUser = "MysqlUser.findAll";
         FindByUsername = "MysqlUser.findByUsername";
     }
@@ -61,5 +63,22 @@ public class DbDAO extends AbstractDAO<MysqlUser> {
                 "',passcode='',change_password_count=0"+
                 " WHERE username='"+mysqlUser.getUsername()+"';";
         return mysqlConnection.updateQuery(query);
+    }
+    public void insertEvent(String username, String apiName, String status, String reason, String comment) {
+        String query = "INSERT INTO event_data (username, api_name, status, reason, comment)" +
+                " VALUES(:username,:api_name,:status,:reason,:comment)";
+        try {
+            sessionFactory.getCurrentSession()
+                    .createSQLQuery(query)
+                    .setParameter("username", username)
+                    .setParameter("api_name", apiName)
+                    .setParameter("status", status)
+                    .setParameter("reason", reason)
+                    .setParameter("comment", comment)
+                    .executeUpdate();
+        } catch (Exception e) {
+            logger.info("error in query: {}, {}", query, e.getMessage());
+            e.printStackTrace();
+        }
     }
 }

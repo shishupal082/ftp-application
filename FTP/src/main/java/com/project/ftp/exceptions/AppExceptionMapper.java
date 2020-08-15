@@ -15,7 +15,7 @@ import java.util.concurrent.TimeoutException;
 @Provider
 public class AppExceptionMapper implements ExceptionMapper<Exception> {
     final static Logger logger = LoggerFactory.getLogger(AppExceptionMapper.class);
-
+    public AppExceptionMapper() {}
     @Override
     public Response toResponse(Exception exception) {
         exception.printStackTrace();

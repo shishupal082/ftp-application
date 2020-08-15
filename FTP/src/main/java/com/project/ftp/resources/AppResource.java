@@ -2,14 +2,17 @@ package com.project.ftp.resources;
 
 import com.project.ftp.config.AppConfig;
 import com.project.ftp.config.AppConstant;
+import com.project.ftp.event.EventTracking;
 import com.project.ftp.exceptions.AppException;
-import com.project.ftp.mysql.DbDAO;
+import com.project.ftp.intreface.EventInterface;
+import com.project.ftp.intreface.UserInterface;
 import com.project.ftp.obj.PathInfo;
 import com.project.ftp.service.FileServiceV2;
 import com.project.ftp.service.UserService;
 import com.project.ftp.view.AppView;
 import com.project.ftp.view.CommonView;
 import com.project.ftp.view.IndexView;
+import io.dropwizard.hibernate.UnitOfWork;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,11 +37,13 @@ public class AppResource {
     final FileServiceV2 fileServiceV2;
     final UserService userService;
     final String appViewFtlFileName;
-    public AppResource(final AppConfig appConfig, final DbDAO dbDAO) {
+    final EventTracking eventTracking;
+    public AppResource(final AppConfig appConfig, final UserInterface userInterface, final EventInterface eventInterface) {
         this.appConfig = appConfig;
-        fileServiceV2 = new FileServiceV2(appConfig, dbDAO);
-        userService = new UserService(appConfig, dbDAO);
-        appViewFtlFileName = AppConstant.APP_VIEW_FTL_FILENAME;
+        this.fileServiceV2 = new FileServiceV2(appConfig, userInterface);
+        this.userService = new UserService(appConfig, userInterface);
+        this.appViewFtlFileName = AppConstant.APP_VIEW_FTL_FILENAME;
+        this.eventTracking = new EventTracking(appConfig, userService, eventInterface);
     }
     @GET
     public Response indexPage(@Context HttpServletRequest request) throws URISyntaxException {
@@ -64,6 +69,7 @@ public class AppResource {
     }
     @GET
     @Path("/view/file/{username}/{filename2}")
+    @UnitOfWork
     public Object viewFile(@Context HttpServletRequest request,
                            @PathParam("username") String username,
                            @PathParam("filename2") String filename2) {
@@ -74,8 +80,10 @@ public class AppResource {
         Response.ResponseBuilder r;
         try {
             pathInfo = fileServiceV2.searchRequestedFileV2(request, filename);
+            eventTracking.addSuccessViewFile(request, filename);
         } catch (AppException ae) {
             logger.info("Error in searching requested file: {}", ae.getErrorCode().getErrorCode());
+            eventTracking.trackViewFileFailure(request, filename, ae.getErrorCode());
         }
         if (pathInfo != null) {
             File file = new File(pathInfo.getPath());
@@ -98,18 +106,21 @@ public class AppResource {
     }
     @GET
     @Path("/download/file/{username}/{filename2}")
+    @UnitOfWork
     public Object downloadFile(@Context HttpServletRequest request,
                                @PathParam("username") String username,
                                @PathParam("filename2") String filename2) {
         String filename = username+"/"+filename2;
-        logger.info("Loading viewFile: {}, user: {}",
+        logger.info("Loading downloadFile: {}, user: {}",
                 filename, userService.getUserDataForLogging(request));
         PathInfo pathInfo = null;
         Response.ResponseBuilder r;
         try {
             pathInfo = fileServiceV2.searchRequestedFileV2(request, filename);
+            eventTracking.addSuccessDownloadFile(request, filename);
         } catch (AppException ae) {
             logger.info("Error in searching requested file: {}", ae.getErrorCode().getErrorCode());
+            eventTracking.trackDownloadFileFailure(request, filename, ae.getErrorCode());
         }
         if (pathInfo != null) {
             File file = new File(pathInfo.getPath());
@@ -137,7 +148,9 @@ public class AppResource {
     }
     @GET
     @Path("/logout")
+    @UnitOfWork
     public AppView logout(@Context HttpServletRequest request) {
+        eventTracking.trackLogout(request);
         userService.logoutUser(request);
         return new AppView(request, appViewFtlFileName, "logout", userService, appConfig);
     }
@@ -158,7 +171,9 @@ public class AppResource {
     }
     @GET
     @Path("/forgot_password")
+    @UnitOfWork
     public AppView forgotPassword(@Context HttpServletRequest request) {
+        eventTracking.addForgotPassword();
         return new AppView(request, appViewFtlFileName, "forgot_password", userService, appConfig);
     }
     @Path("{default: .*}")

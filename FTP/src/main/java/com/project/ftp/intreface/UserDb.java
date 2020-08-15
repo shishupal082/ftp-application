@@ -14,10 +14,8 @@ import java.util.List;
 public class UserDb implements UserInterface {
     final static Logger logger = LoggerFactory.getLogger(UserDb.class);
     final DbDAO dbDAO;
-    final DataSourceFactory dataSourceFactory;
     public UserDb(final DataSourceFactory dataSourceFactory, final DbDAO dbDAO) {
         this.dbDAO = dbDAO;
-        this.dataSourceFactory = dataSourceFactory;
     }
     public Users getAllUsers() {
         List<MysqlUser> mysqlUsers = dbDAO.findAll();

@@ -6,6 +6,7 @@ import com.project.ftp.exceptions.AppExceptionMapper;
 import com.project.ftp.filters.LogFilter;
 import com.project.ftp.filters.RequestFilter;
 import com.project.ftp.filters.ResponseFilter;
+import com.project.ftp.intreface.*;
 import com.project.ftp.mysql.DbDAO;
 import com.project.ftp.mysql.MysqlUser;
 import com.project.ftp.resources.ApiResource;
@@ -60,11 +61,17 @@ public class FtpApplication  extends Application<FtpConfiguration> {
         appConfig.setFtpConfiguration(ftpConfiguration);
         StaticService.initApplication(appConfig);
         LOGGER.info("appConfig: {}", appConfig);
-        DbDAO dbDAO = null;
+
+        EventInterface eventInterface;
+        UserInterface userInterface;
         if (appConfig.isMySqlEnable()) {
-            dbDAO = new DbDAO(hibernateBundle.getSessionFactory());
+            DbDAO dbDAO = new DbDAO(hibernateBundle.getSessionFactory());
+            eventInterface = new EventDb(dbDAO);
+            userInterface = new UserDb(appConfig.getFtpConfiguration().getDataSourceFactory(), dbDAO);
             LOGGER.info("user interface configured from database");
         } else {
+            eventInterface = new EventFile(appConfig);
+            userInterface = new UserFile(appConfig);
             LOGGER.info("mysql is not enabled, configure user interface from file");
         }
         environment.servlets().setSessionHandler(new SessionHandler());
@@ -75,8 +82,8 @@ public class FtpApplication  extends Application<FtpConfiguration> {
         environment.jersey().register(new ResponseFilter());
         environment.jersey().register(new FaviconResource(appConfig));
 
-        environment.jersey().register(new ApiResource(appConfig, dbDAO));
-        environment.jersey().register(new AppResource(appConfig, dbDAO));
+        environment.jersey().register(new ApiResource(appConfig, userInterface, eventInterface));
+        environment.jersey().register(new AppResource(appConfig, userInterface, eventInterface));
 //        environment.admin().addTask(shutdownTask);
     }
     public static void main(String[] args) throws Exception {
