@@ -29,8 +29,9 @@ public class EventTracking {
     public void addSuccessRegister(RequestUserRegister userRegister) {
         addEvent.addSuccessRegister(userRegister);
     }
-    public void addForgotPassword() {
-        addEvent.addForgotPassword();
+    public void addForgotPassword(HttpServletRequest request) {
+        LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
+        addEvent.addForgotPassword(loginUserDetails.getUsername());
     }
     public void trackLogout(HttpServletRequest request) {
         LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);

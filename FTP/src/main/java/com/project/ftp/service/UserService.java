@@ -186,10 +186,16 @@ public class UserService {
             logger.info("loginUser request is null.");
             throw new AppException(ErrorCodes.BAD_REQUEST_ERROR);
         }
+        LoginUserDetails loginUserDetail = this.getLoginUserDetails(request);
+        HashMap<String, String> loginUserDetails = this.getLoginUserResponse(request);
+        if (loginUserDetail.getLogin()) {
+            logger.info("userAlready login: {}, requestLogin: {}", loginUserDetails, userLogin);
+            throw new AppException(ErrorCodes.LOGIN_USER_ALREADY);
+        }
         this.isUserPasswordMatch(userLogin.getUsername(), userLogin.getPassword(),
                 ErrorCodes.PASSWORD_REQUIRED, ErrorCodes.PASSWORD_NOT_MATCHING, true);
         sessionService.loginUser(request, userLogin.getUsername());
-        HashMap<String, String> loginUserDetails = this.getLoginUserResponse(request);
+        loginUserDetails = this.getLoginUserResponse(request);
         logger.info("loginUser success: {}", loginUserDetails);
         return loginUserDetails;
     }

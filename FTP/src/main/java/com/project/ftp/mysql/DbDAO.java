@@ -64,14 +64,14 @@ public class DbDAO extends AbstractDAO<MysqlUser> {
                 " WHERE username='"+mysqlUser.getUsername()+"';";
         return mysqlConnection.updateQuery(query);
     }
-    public void insertEvent(String username, String apiName, String status, String reason, String comment) {
-        String query = "INSERT INTO event_data (username, api_name, status, reason, comment)" +
-                " VALUES(:username,:api_name,:status,:reason,:comment)";
+    public void insertEvent(String username, String event, String status, String reason, String comment) {
+        String query = "INSERT INTO event_data (username, event, status, reason, comment)" +
+                " VALUES(:username,:event,:status,:reason,:comment)";
         try {
             sessionFactory.getCurrentSession()
                     .createSQLQuery(query)
                     .setParameter("username", username)
-                    .setParameter("api_name", apiName)
+                    .setParameter("event", event)
                     .setParameter("status", status)
                     .setParameter("reason", reason)
                     .setParameter("comment", comment)

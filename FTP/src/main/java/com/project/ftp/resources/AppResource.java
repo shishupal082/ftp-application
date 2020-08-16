@@ -173,7 +173,7 @@ public class AppResource {
     @Path("/forgot_password")
     @UnitOfWork
     public AppView forgotPassword(@Context HttpServletRequest request) {
-        eventTracking.addForgotPassword();
+        eventTracking.addForgotPassword(request);
         return new AppView(request, appViewFtlFileName, "forgot_password", userService, appConfig);
     }
     @Path("{default: .*}")

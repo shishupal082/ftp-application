@@ -13,13 +13,13 @@ public class EventFile implements EventInterface {
     public EventFile(final AppConfig appConfig) {
         this.eventDataFileName = appConfig.getFtpConfiguration().getConfigDataFilePath() + AppConstant.EVENT_DATA_FILENAME;
     }
-    public void addText(String username, String apiName, String status, String reason, String comment) {
+    public void addText(String username, String event, String status, String reason, String comment) {
         String timestamp = StaticService.getDateStrFromPattern(AppConstant.DateTimeFormat6);
         if (StaticService.isInValidString(username)) {
             username = null;
         }
-        if (StaticService.isInValidString(apiName)) {
-            apiName = null;
+        if (StaticService.isInValidString(event)) {
+            event = null;
         }
         if (StaticService.isInValidString(status)) {
             status = null;
@@ -31,8 +31,8 @@ public class EventFile implements EventInterface {
             comment = null;
         }
         String eventLog = "";
-        eventLog += username;
-        eventLog += "," + apiName;
+        eventLog += StaticService.encodeComma(username);
+        eventLog += "," + event;
         eventLog += "," + status;
         eventLog += "," + timestamp;
         eventLog += "," + StaticService.encodeComma(reason);

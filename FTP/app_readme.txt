@@ -444,7 +444,51 @@ Event tracking not possible for 'log file change' and 'unknown exception'
     - because: No session currently bound to execution context
 All other event added for tracking, only change on resource file and ftpApplication file
     - no logical change
+
 Create table 'event_data' in ftpapp database and file 'event_data.csv' in config-files directory
+
+event tracking required
+    - register success
+    - login success
+    - change password success
+    - forgot_password
+    - upload_file success
+    - delete_file success
+    - view_file success
+    - download_file success
+    - file upload failure
+        - username, FAILURE, errorCode, reason="", comment=filename
+    - Change password failure (valid username, old password, new password, reason)
+    - register _failure (username, passcode, password, name)
+    - login_failure (username, password)
+    - view file after click, i.e. on new tab and open in new tab
+    - download file filename, subject, heading
+    - delete file, only comment field filename, subject, heading
+    - file upload, old val and new val as null, comment field filename, subject, heading
+    - Forgot password username, put comment field, email and phone number
+    - register (passcode, name) in comment
+**/
+
+3.0.2
+-------------------
+encode comma for
+    - username, reason, comment
+    - not required for api_name,
+add username in forgot_password
+    - it is rare case (when user is login and go to forgot password)
+added default value as null in EventDb for all: username, event, status, reason, comment
+
+rename column name api_name to event
+ALTER TABLE event_data RENAME COLUMN api_name TO event;
+
+If user already login
+    - throw 200 exception
+    - in apiResponse, if statusCode is 200 then change response to success
+truncate data before enter into db
+    - users: mobile, email, name, passcode, method, timestamp
+        - but not for username and password
+    - event_data: username, event, status, reason, comment
+
 
 Future releases
 -------------------
@@ -462,30 +506,8 @@ Add GA for UI tracking
 
 
 Save filename should not contain (<>/\"|*:)
-/**
-Create event table
-field name required as follow
-id, appname, username, event, old_val, new_val, comment (max length 512), timestamp, deleted
-
-event tracking required
-    - register success
-    - login success
-    - change password success
-    - file upload failure
-    - Change password failure (valid username, old password, new password, reason)
-    - register _failure (username, passcode, password, name)
-    - login_failure (username, password)
-    - view file after click, i.e. on new tab and open in new tab
-    - download file filename, subject, heading
-    - delete file, only comment field filename, subject, heading
-    - file upload, old val and new val as null, comment field filename, subject, heading
-    - Forgot password username, put comment field, email and phone number
-    - register (put old password, new password, passcode, name) in comment
-
-**/
 
 Create annotation for event logging
-
 
 
 Forgot password

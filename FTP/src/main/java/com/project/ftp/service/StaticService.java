@@ -139,6 +139,17 @@ public class StaticService {
     public static boolean isInValidString(String str) {
         return strUtils.isInValidString(str);
     }
+    public static String truncateString(String str, int maxLength) {
+        if (str == null) {
+            return null;
+        }
+        if (str.length() <= maxLength) {
+            return str;
+        }
+        String truncatedStr = str.substring(0, maxLength);
+        logger.info("string truncated: {}, to {}", str, truncatedStr);
+        return truncatedStr;
+    }
     public static void printLog(Object logStr) {
         sysUtils.printLog(logStr);
     }

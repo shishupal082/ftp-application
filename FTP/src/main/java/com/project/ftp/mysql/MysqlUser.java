@@ -138,6 +138,23 @@ public class MysqlUser implements Serializable {
         text += StaticService.getDateStrFromPattern(AppConstant.DateTimeFormat6) + ",";
         return text;
     }
+    public void truncateString() {
+        int usernameLength = 255;
+        int passwordMaxLength = 63;
+        int mobileMaxLength = 15;
+        int emailMaxLength = 255;
+        int nameMaxLength = 255;
+        int passcodeMaxLength = 15;
+        int methodMaxLength = 255;
+        int timestampMaxLength = 25;
+        // No truncation for password and username
+        mobile = StaticService.truncateString(mobile, methodMaxLength);
+        email = StaticService.truncateString(email, emailMaxLength);
+        name = StaticService.truncateString(name, nameMaxLength);
+        passcode = StaticService.truncateString(passcode, passcodeMaxLength);
+        method = StaticService.truncateString(method, methodMaxLength);
+        timestamp = StaticService.truncateString(timestamp, timestampMaxLength);
+    }
     public long getId() {
         return id;
     }

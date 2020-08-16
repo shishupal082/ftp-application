@@ -19,12 +19,15 @@ public class AddEvent {
         this.appConfig = appConfig;
         this.eventInterface = eventInterface;
     }
-    public void addFailureEvent(String username, EventName eventName, ErrorCodes errorCodes, String comment) {
-        String errorCode = null;
-        if (errorCodes != null) {
-            errorCode = errorCodes.getErrorCode();
+    public void addFailureEvent(String username, EventName eventName, ErrorCodes errorCode, String comment) {
+        String errorCodeString = null;
+        if (errorCode != null) {
+            errorCodeString = errorCode.getErrorCode();
+            if (StaticService.isInValidString(comment)) {
+                comment = errorCode.getErrorString();
+            }
         }
-        eventInterface.addText(username, eventName.getName(), AppConstant.FAILURE, errorCode, comment);
+        eventInterface.addText(username, eventName.getName(), AppConstant.FAILURE, errorCodeString, comment);
     }
     public void addSuccessLogin(RequestUserLogin userLogin) {
         String username = null;
@@ -49,15 +52,20 @@ public class AddEvent {
         eventInterface.addText(username, EventName.CHANGE_PASSWORD.getName(), AppConstant.SUCCESS, "", "");
     }
     public void addLogout(String username) {
-        String status = AppConstant.SUCCESS;
         if (StaticService.isInValidString(username)) {
-            status = AppConstant.FAILURE;
+            this.addFailureEvent(username, EventName.LOGOUT, ErrorCodes.LOGOUT_USER_NOT_LOGIN, null);
+        } else {
+            eventInterface.addText(username, EventName.LOGOUT.getName(), AppConstant.SUCCESS,
+                    "", "");
         }
-        eventInterface.addText(username, EventName.LOGOUT.getName(), status,
-                "", "");
     }
-    public void addForgotPassword() {
-        eventInterface.addText("", EventName.FORGOT_PASSWORD.getName(), "", "", "");
+    public void addForgotPassword(String username) {
+        if (StaticService.isInValidString(username)) {
+            eventInterface.addText(username, EventName.FORGOT_PASSWORD.getName(),
+                    AppConstant.SUCCESS, null, null);
+        } else {
+            this.addFailureEvent(username, EventName.FORGOT_PASSWORD, ErrorCodes.FORGOT_PASSWORD_LOGIN_USER, null);
+        }
     }
 
     public void addSuccessViewFile(String username, String filepath) {

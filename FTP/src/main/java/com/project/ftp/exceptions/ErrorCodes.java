@@ -23,6 +23,7 @@ public enum ErrorCodes {
     USER_NOT_REGISTERED("USER_NOT_REGISTERED", "User is not registered, Please register.", 403),
     // Login, Change password, Register
     USER_NOT_FOUND("USER_NOT_FOUND", "User not found.", 403),
+    LOGIN_USER_ALREADY("USER_ALREADY_LOGIN", "User already login.", 200),
     // Change password
     PASSWORD_CHANGE_OLD_REQUIRED("PASSWORD_CHANGE_OLD_REQUIRED", "Old password required.", 403),
     // Change password, Register
@@ -39,6 +40,8 @@ public enum ErrorCodes {
     REGISTER_NAME_REQUIRED("REGISTER_NAME_REQUIRED", "Name required.", 403),
     REGISTER_PASSCODE_NOT_MATCHING("REGISTER_PASSCODE_NOT_MATCHING", "Passcode not matching.", 403),
     REGISTER_ALREADY("REGISTER_ALREADY", "User passcode expire (Already login), Please try login.", 403),
+    FORGOT_PASSWORD_LOGIN_USER("FORGOT_PASSWORD_LOGIN_USER", "User login, requested forgot password.", 403),
+    LOGOUT_USER_NOT_LOGIN("LOGOUT_USER_NOT_LOGIN", "User not logged in, requested logout.", 403),
     INVALID_FILE_DATA("INVALID_FILE_DATA", "Invalid file data", 403),
     INVALID_FILE_SAVE_PATH("INVALID_FILE_SAVE_PATH", "Invalid final save file path", 403),
     INVALID_SERVICE_NAME_EMPTY("Invalid service name Empty", "Invalid service name Empty", 403),

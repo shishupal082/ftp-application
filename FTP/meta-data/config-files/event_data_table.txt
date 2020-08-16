@@ -2,7 +2,7 @@ create table event_data(
     -- auto-generated primary key
     id bigint primary key not null auto_increment,
     username varchar(255) default null,
-    api_name varchar(127) default null,
+    event varchar(127) default null,
     status varchar(63) default null,
     -- current timestamp
     timestamp TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
