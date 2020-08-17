@@ -489,11 +489,21 @@ truncate data before enter into db
         - but not for username and password
     - event_data: username, event, status, reason, comment
 
+3.0.3
+-------------------
+null,login,FAILURE,2020-08-17 13:38:30,USER_ALREADY_LOGIN,User already login.
+In user login error, put login username (if login username found)
+    - comment = errorCode.errorString() + login username
+
+event added text in db is also put in log
+
 
 Future releases
 -------------------
 Table required
     - file_details
+
+
 
 
 Query used

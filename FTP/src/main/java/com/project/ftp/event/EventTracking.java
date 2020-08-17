@@ -46,12 +46,21 @@ public class EventTracking {
         addEvent.addFailureEvent(loginUserDetails.getUsername(),
                 EventName.CHANGE_PASSWORD, errorCodes, null);
     }
-    public void trackLoginFailure(RequestUserLogin requestUserLogin, ErrorCodes errorCodes) {
+    public void trackLoginFailure(HttpServletRequest request, RequestUserLogin requestUserLogin, ErrorCodes errorCodes) {
         String username = null;
+        String comment = null;
+        LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
+        if (loginUserDetails.getLogin()) {
+            if (errorCodes != null) {
+                comment = errorCodes.getErrorString() + "," + loginUserDetails.getUsername();
+            } else {
+                comment = loginUserDetails.getUsername();
+            }
+        }
         if (requestUserLogin != null) {
             username = requestUserLogin.getUsername();
         }
-        addEvent.addFailureEvent(username, EventName.LOGIN, errorCodes, null);
+        addEvent.addFailureEvent(username, EventName.LOGIN, errorCodes, comment);
     }
 
     public void trackRegisterFailure(RequestUserRegister requestUserRegister, ErrorCodes errorCodes) {

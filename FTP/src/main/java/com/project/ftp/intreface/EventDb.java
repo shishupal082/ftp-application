@@ -39,5 +39,12 @@ public class EventDb implements EventInterface {
         reason = StaticService.truncateString(reason, reasonMaxLength);
         comment = StaticService.truncateString(comment, commentMaxLength);
         dbDAO.insertEvent(username, event, status, reason, comment);
+        String eventLog = "";
+        eventLog += username;
+        eventLog += "," + event;
+        eventLog += "," + status;
+        eventLog += "," + reason;
+        eventLog += "," + comment;
+        logger.info("Event added: {}", eventLog);
     }
 }

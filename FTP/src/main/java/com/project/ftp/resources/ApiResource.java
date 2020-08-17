@@ -174,7 +174,7 @@ public class ApiResource {
             eventTracking.addSuccessLogin(userLogin);
         } catch (AppException ae) {
             logger.info("Error in login user: {}", ae.getErrorCode().getErrorCode());
-            eventTracking.trackLoginFailure(userLogin, ae.getErrorCode());
+            eventTracking.trackLoginFailure(httpServletRequest, userLogin, ae.getErrorCode());
             response = new ApiResponse(ae.getErrorCode());
         }
         logger.info("loginUser : Out: {}", response);
