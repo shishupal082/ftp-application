@@ -495,7 +495,7 @@ null,login,FAILURE,2020-08-17 13:38:30,USER_ALREADY_LOGIN,User already login.
 In user login error, put login username (if login username found)
     - comment = errorCode.errorString() + login username
 
-event added text in db is also put in log
+event added in db is also put in log
 
 
 Future releases
