@@ -501,6 +501,14 @@ event tracking added for (using separate mysql connection)
     - unknown exception
 change many local variable from final to private final
 
+3.0.4
+-------------------
+addTextResponse remove from api/get_users response
+    - method getAddTextResponse move from mySqlUser to userFile interface
+event_data was not logging event as upload_file_v2, fix that
+
+
+
 
 Future releases
 -------------------

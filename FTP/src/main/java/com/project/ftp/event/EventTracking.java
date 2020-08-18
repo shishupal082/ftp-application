@@ -132,7 +132,7 @@ public class EventTracking {
         String apiVersion = StaticService.getUploadFileApiVersion(appConfig);
         if (AppConstant.V1.equals(apiVersion)) {
             eventName = EventName.UPLOAD_FILE_V1;
-        } else if (!AppConstant.V2.equals(apiVersion)) {
+        } else if (AppConstant.V2.equals(apiVersion)) {
             eventName = EventName.UPLOAD_FILE_V2;
         }
         addEvent.addFailureEvent(loginUserDetails.getUsername(), eventName, errorCodes, comment);

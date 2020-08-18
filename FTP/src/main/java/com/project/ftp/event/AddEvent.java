@@ -93,7 +93,7 @@ public class AddEvent {
         String apiVersion = StaticService.getUploadFileApiVersion(appConfig);
         if (AppConstant.V1.equals(apiVersion)) {
             eventName = EventName.UPLOAD_FILE_V1;
-        } else if (!AppConstant.V2.equals(apiVersion)) {
+        } else if (AppConstant.V2.equals(apiVersion)) {
             eventName = EventName.UPLOAD_FILE_V2;
         }
         eventInterface.addText(username, eventName.getName(), AppConstant.SUCCESS,

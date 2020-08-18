@@ -1,4 +1,4 @@
-package com.project.ftp.event;
+package com.project.ftp.obj;
 
 import com.project.ftp.service.StaticService;
 

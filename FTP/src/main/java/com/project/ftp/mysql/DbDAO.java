@@ -1,6 +1,6 @@
 package com.project.ftp.mysql;
 
-import com.project.ftp.event.EventDBParameters;
+import com.project.ftp.obj.EventDBParameters;
 import com.project.ftp.jdbc.MysqlConnection;
 import io.dropwizard.db.DataSourceFactory;
 import io.dropwizard.hibernate.AbstractDAO;

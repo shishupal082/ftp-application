@@ -108,36 +108,7 @@ public class MysqlUser implements Serializable {
         changePasswordCount++;
         return this;
     }
-    public String getAddTextResponse() {
-        String text = "";
-        if (username != null) {
-            text += username + ",";
-        } else {
-            text += ",";
-        }
-        if (password != null) {
-            text += password +",";
-        } else {
-            text += ",";
-        }
-        if (name != null) {
-            text += StaticService.encodeComma(name) +",";
-        } else {
-            text += ",";
-        }
-        if (passcode != null) {
-            text += passcode +",";
-        } else {
-            text += ",";
-        }
-        if (method != null) {
-            text += method +",";
-        } else {
-            text += ",";
-        }
-        text += StaticService.getDateStrFromPattern(AppConstant.DateTimeFormat6) + ",";
-        return text;
-    }
+
     public void truncateString() {
         int usernameLength = 255;
         int passwordMaxLength = 63;
