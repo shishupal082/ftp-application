@@ -507,7 +507,14 @@ addTextResponse remove from api/get_users response
     - method getAddTextResponse move from mySqlUser to userFile interface
 event_data was not logging event as upload_file_v2, fix that
 
-
+3.0.5
+-------------------
+For un handle exception
+    - Add exception message (exception.printTrace()) in log file along with screen
+Page reload for failureCode=UNAUTHORIZED_USER in following api's
+    - delete_file
+    - upload_file
+    - change_password
 
 
 Future releases

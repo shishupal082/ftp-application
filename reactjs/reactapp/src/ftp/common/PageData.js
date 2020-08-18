@@ -1,5 +1,6 @@
 import $S from "../../interface/stack.js";
 import Config from "./Config";
+import FTPHelper from "./FTPHelper";
 
 var PageData;
 
@@ -209,6 +210,9 @@ PageData.extend({
         if (apiName === "upload_file") {
             if (response.status === "FAILURE") {
                 alert(Config.getAleartMessage(response));
+                if (response.failureCode === "UNAUTHORIZED_USER") {
+                    FTPHelper.pageReload();
+                }
             } else {
                 alert("File saved as: " + response.data.fileName);
                 Config.location.href = "/dashboard";
@@ -228,12 +232,18 @@ PageData.extend({
         } else if (apiName === "change_password") {
             if (response.status === "FAILURE") {
                 alert(Config.getAleartMessage(response));
+                if (response.failureCode === "UNAUTHORIZED_USER") {
+                    FTPHelper.pageReload();
+                }
             } else {
                 Config.location.href = "/dashboard";
             }
         } else if (apiName === "delete_file") {
             if (response.status === "FAILURE") {
                 alert(Config.getAleartMessage(response));
+                if (response.failureCode === "UNAUTHORIZED_USER") {
+                    FTPHelper.pageReload();
+                }
             } else {
                 alert("File deleted");
                 Config.location.href = "/dashboard";

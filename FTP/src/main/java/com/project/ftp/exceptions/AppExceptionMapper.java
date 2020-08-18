@@ -22,7 +22,7 @@ public class AppExceptionMapper implements ExceptionMapper<Exception> {
     }
     @Override
     public Response toResponse(Exception exception) {
-        exception.printStackTrace();
+        logger.info("Exception: ", exception);
         if (exception instanceof AppException) {
             AppException appException = ((AppException) exception);
             AppError appError = new AppError(appException.getErrorCode());

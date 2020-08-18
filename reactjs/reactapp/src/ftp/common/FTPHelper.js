@@ -58,6 +58,9 @@ FTP.extend({
             }
         }
         return redirectStatus;
+    },
+    pageReload: function() {
+        Config.location.reload();
     }
 });
 FTP.extend({
