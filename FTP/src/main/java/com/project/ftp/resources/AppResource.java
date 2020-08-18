@@ -4,6 +4,7 @@ import com.project.ftp.config.AppConfig;
 import com.project.ftp.config.AppConstant;
 import com.project.ftp.event.EventTracking;
 import com.project.ftp.exceptions.AppException;
+import com.project.ftp.obj.ApiResponse;
 import com.project.ftp.obj.PathInfo;
 import com.project.ftp.service.FileServiceV2;
 import com.project.ftp.service.UserService;
@@ -68,21 +69,25 @@ public class AppResource {
     @GET
     @Path("/view/file/{username}/{filename2}")
     @UnitOfWork
-    public Object viewFile(@Context HttpServletRequest request,
+    public Response viewFile(@Context HttpServletRequest request,
                            @PathParam("username") String username,
-                           @PathParam("filename2") String filename2) {
+                           @PathParam("filename2") String filename2,
+                           @QueryParam("iframe") String isIframe) {
         String filename = username+"/"+filename2;
-        logger.info("Loading viewFile: {}, user: {}",
-                filename, userService.getUserDataForLogging(request));
+        logger.info("Loading viewFile: {}, isIframe: {}", filename, isIframe);
+        logger.info("user: {}", userService.getUserDataForLogging(request));
         PathInfo pathInfo = null;
         Response.ResponseBuilder r;
+        ApiResponse apiResponse = new ApiResponse();
         try {
             pathInfo = fileServiceV2.searchRequestedFileV2(request, filename);
-            eventTracking.addSuccessViewFile(request, filename);
+            eventTracking.addSuccessViewFile(request, filename, isIframe);
         } catch (AppException ae) {
             logger.info("Error in searching requested file: {}", ae.getErrorCode().getErrorCode());
-            eventTracking.trackViewFileFailure(request, filename, ae.getErrorCode());
+            eventTracking.trackViewFileFailure(request, filename, ae.getErrorCode(), isIframe);
+            apiResponse = new ApiResponse(ae.getErrorCode());
         }
+
         if (pathInfo != null) {
             File file = new File(pathInfo.getPath());
             try {
@@ -100,7 +105,11 @@ public class AppResource {
                 logger.info("Error in loading file: {}", pathInfo);
             }
         }
-        return new CommonView(request, "page_not_found_404.ftl");
+        if (AppConstant.TRUE.equals(isIframe)) {
+            return Response.status(Response.Status.OK).entity(
+                    apiResponse.toJsonString()).type(MediaType.APPLICATION_JSON).build();
+        }
+        return Response.ok(new CommonView(request, "page_not_found_404.ftl")).build();
     }
     @GET
     @Path("/download/file/{username}/{filename2}")

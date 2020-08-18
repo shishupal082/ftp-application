@@ -25,7 +25,7 @@ public class UserService {
         this.sessionService = new SessionService(appConfig);
         this.userInterface = userInterface;
     }
-    private MysqlUser getUserByName(String username) {
+    public MysqlUser getUserByName(String username) {
         return userInterface.getUserByName(username);
     }
     public boolean updatePassword(MysqlUser user) {

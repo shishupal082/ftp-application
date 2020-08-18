@@ -68,9 +68,9 @@ public class AddEvent {
         }
     }
 
-    public void addSuccessViewFile(String username, String filepath) {
+    public void addSuccessViewFile(String username, String filepath, String isIframe) {
         eventInterface.addText(username, EventName.VIEW_FILE.getName(), AppConstant.SUCCESS,
-                "", filepath);
+                "", filepath+",isIframe="+isIframe);
     }
     public void addSuccessDownloadFile(String username, String filepath) {
         eventInterface.addText(username, EventName.DOWNLOAD_FILE.getName(), AppConstant.SUCCESS,

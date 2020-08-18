@@ -57,6 +57,15 @@ public class ApiResponse {
         this.data = data;
     }
 
+    public String toJsonString() {
+        return "{" +
+                "\"status\":\"" + status + "\"" +
+                ", \"failureCode\":\"" + failureCode + "\"" +
+                ", \"error\":\"" + error + "\"" +
+                ", \"data\":" + null +
+                "}";
+    }
+
     @Override
     public String toString() {
         return "ApiResponse{" +

@@ -515,6 +515,10 @@ Page reload for failureCode=UNAUTHORIZED_USER in following api's
     - delete_file
     - upload_file
     - change_password
+For view file error in iframe
+    - return json string instead of 404 html page
+    - iframe request change to request+"?iframe=true"
+
 
 
 Future releases
@@ -522,8 +526,9 @@ Future releases
 Table required
     - file_details
 
-
-
+Improve validation for table
+    - mySqlUser
+    - eventData
 
 Query used
 select * from file_details where fileUsername = {username} and filename = {filename}

@@ -10,6 +10,7 @@ public class AppConstant {
     public static final String STATUS = "STATUS";
     public static final String SUCCESS = "SUCCESS";
     public static final String FAILURE = "FAILURE";
+    public static final String TRUE = "true";
     public static final String FILE_USERNAME = "fileUsername";
     public static final String FILE_NAME_STR = "filenameStr";
 //    public static final String REASON = "REASON";

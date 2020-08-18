@@ -73,9 +73,9 @@ public class EventTracking {
         addEvent.addFailureEvent(username, EventName.REGISTER, errorCodes, comment);
     }
 
-    public void addSuccessViewFile(HttpServletRequest request, String filepath) {
+    public void addSuccessViewFile(HttpServletRequest request, String filepath, String isIframe) {
         LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
-        addEvent.addSuccessViewFile(loginUserDetails.getUsername(), filepath);
+        addEvent.addSuccessViewFile(loginUserDetails.getUsername(), filepath, isIframe);
     }
     public void addSuccessDownloadFile(HttpServletRequest request, String filepath) {
         LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
@@ -85,9 +85,10 @@ public class EventTracking {
         LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
         addEvent.addSuccessDeleteFile(loginUserDetails.getUsername(), deleteFile);
     }
-    public void trackViewFileFailure(HttpServletRequest request, String filepath, ErrorCodes errorCodes) {
+    public void trackViewFileFailure(HttpServletRequest request, String filepath, ErrorCodes errorCodes, String isIframe) {
         LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
-        addEvent.addFailureEvent(loginUserDetails.getUsername(), EventName.VIEW_FILE, errorCodes, filepath);
+        addEvent.addFailureEvent(loginUserDetails.getUsername(), EventName.VIEW_FILE,
+                errorCodes, filepath + ",isIframe=" + isIframe);
     }
 
     public void trackDownloadFileFailure(HttpServletRequest request, String filepath, ErrorCodes errorCodes) {
