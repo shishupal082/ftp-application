@@ -532,6 +532,12 @@ AuthService added to verify
     - isLoginUserDev
 Put username in table for session delete due to session timeout
 
+added more event tracking
+    - api/get_users
+    - api/get_app_config
+    - api/get_session_config
+    - api/get_files_info (only failure)
+
 
 Future releases
 -------------------
