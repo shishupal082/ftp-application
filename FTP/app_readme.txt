@@ -515,6 +515,7 @@ Page reload for failureCode=UNAUTHORIZED_USER in following api's
     - delete_file
     - upload_file
     - change_password
+    It will improve user experience
 For view file error in iframe
     - return json string instead of 404 html page
     - iframe request change to request+"?iframe=true"
