@@ -220,12 +220,18 @@ PageData.extend({
         } else if (apiName === "login") {
             if (response.status === "FAILURE") {
                 alert(Config.getAleartMessage(response));
+                if (response.failureCode === "USER_ALREADY_LOGIN") {
+                    FTPHelper.pageReload();
+                }
             } else {
                 Config.location.href = "/dashboard";
             }
         } else if (apiName === "register") {
             if (response.status === "FAILURE") {
                 alert(Config.getAleartMessage(response));
+                if (response.failureCode === "USER_ALREADY_LOGIN") {
+                    FTPHelper.pageReload();
+                }
             } else {
                 Config.location.href = "/dashboard";
             }

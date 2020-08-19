@@ -16,14 +16,23 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class UserService {
-    final static Logger logger = LoggerFactory.getLogger(UserService.class);
-    final AppConfig appConfig;
-    final SessionService sessionService;
-    final UserInterface userInterface;
+    private final static Logger logger = LoggerFactory.getLogger(UserService.class);
+    private final AppConfig appConfig;
+    private final SessionService sessionService;
+    private final UserInterface userInterface;
     public UserService(final AppConfig appConfig, final UserInterface userInterface) {
         this.appConfig = appConfig;
         this.sessionService = new SessionService(appConfig);
         this.userInterface = userInterface;
+    }
+
+    public Users getAllUser() throws AppException {
+        Users users = userInterface.getAllUsers();
+        if (users == null) {
+            logger.info("Error in getting all usersData");
+            throw new AppException(ErrorCodes.RUNTIME_ERROR);
+        }
+        return users;
     }
     public MysqlUser getUserByName(String username) {
         return userInterface.getUserByName(username);
@@ -42,14 +51,6 @@ public class UserService {
         }
         return userInterface.setPassword(user);
     }
-    public Users getAllUser() throws AppException {
-        Users users = userInterface.getAllUsers();
-        if (users == null) {
-            logger.info("Error in getting all usersData");
-            throw new AppException(ErrorCodes.RUNTIME_ERROR);
-        }
-        return users;
-    }
     public String getUserDisplayName(final String username) {
         String userDisplayName = null;
         MysqlUser user = this.getUserByName(username);
@@ -62,23 +63,12 @@ public class UserService {
         LoginUserDetails loginUserDetails = this.getLoginUserDetails(request);
         return loginUserDetails.getUsername();
     }
-    private HashMap<String, String> getLoginUserResponse(HttpServletRequest request) {
-        LoginUserDetails loginUserDetails = this.getLoginUserDetails(request);
-        HashMap<String, String> result = new HashMap<>();
-        result.put("isLogin", loginUserDetails.getLogin().toString());
-        result.put("loginUserName", loginUserDetails.getUsername());
-        result.put("isLoginUserAdmin", loginUserDetails.getLoginUserAdmin().toString());
-        return result;
-    }
+
     public Object getUserDataForLogging(HttpServletRequest request) {
         HashMap<String, String> result = new HashMap<>();
         LoginUserDetails loginUserDetails = this.getLoginUserDetails(request);
         result.put("loginUserName", loginUserDetails.getUsername());
         return result;
-    }
-    public Boolean isLoginUserDev(HttpServletRequest request) {
-        LoginUserDetails loginUserDetails = this.getLoginUserDetails(request);
-        return loginUserDetails.getLoginUserDev();
     }
     private Boolean isAdminUser(String loginUserName) {
         ArrayList<String> adminUserNames = appConfig.getFtpConfiguration().getAdminUsersName();
@@ -181,21 +171,15 @@ public class UserService {
         logger.info("passcode: {}, match with user: {}", passcode, user);
         return user;
     }
-    public HashMap<String, String> loginUser(HttpServletRequest request, RequestUserLogin userLogin) throws AppException {
+    public LoginUserDetails loginUser(HttpServletRequest request, RequestUserLogin userLogin) throws AppException {
         if (userLogin == null) {
             logger.info("loginUser request is null.");
             throw new AppException(ErrorCodes.BAD_REQUEST_ERROR);
         }
-        LoginUserDetails loginUserDetail = this.getLoginUserDetails(request);
-        HashMap<String, String> loginUserDetails = this.getLoginUserResponse(request);
-        if (loginUserDetail.getLogin()) {
-            logger.info("userAlready login: {}, requestLogin: {}", loginUserDetails, userLogin);
-            throw new AppException(ErrorCodes.LOGIN_USER_ALREADY);
-        }
         this.isUserPasswordMatch(userLogin.getUsername(), userLogin.getPassword(),
                 ErrorCodes.PASSWORD_REQUIRED, ErrorCodes.PASSWORD_NOT_MATCHING, true);
         sessionService.loginUser(request, userLogin.getUsername());
-        loginUserDetails = this.getLoginUserResponse(request);
+        LoginUserDetails loginUserDetails = this.getLoginUserDetails(request);
         logger.info("loginUser success: {}", loginUserDetails);
         return loginUserDetails;
     }
@@ -231,19 +215,14 @@ public class UserService {
         logger.info("userRegister success: {}, {}", password, user);
     }
     public void changePassword(HttpServletRequest request, RequestChangePassword changePassword) throws AppException {
-        LoginUserDetails loginUserDetails = this.getLoginUserDetails(request);
-        if(!loginUserDetails.getLogin()) {
-            logger.info("User not login, requested for change password.");
-            throw new AppException(ErrorCodes.UNAUTHORIZED_USER);
-        }
         if (changePassword == null) {
             logger.info("changePassword request is null.");
             throw new AppException(ErrorCodes.BAD_REQUEST_ERROR);
         }
         String newPassword = changePassword.getNew_password();
         this.isValidNewPassword(newPassword);
-
         String oldPassword = changePassword.getOld_password();
+        LoginUserDetails loginUserDetails = this.getLoginUserDetails(request);
         MysqlUser user = this.isUserPasswordMatch(loginUserDetails.getUsername(), oldPassword,
                 ErrorCodes.PASSWORD_CHANGE_OLD_REQUIRED,
                 ErrorCodes.PASSWORD_CHANGE_OLD_NOT_MATCHING, false);
@@ -279,12 +258,5 @@ public class UserService {
         LoginUserDetails loginUserDetails = this.getLoginUserDetails(request);
         logger.info("logout user: {}", loginUserDetails);
         sessionService.logoutUser(request);
-    }
-    public void isLoginUserAdmin(HttpServletRequest request) throws AppException {
-        LoginUserDetails loginUserDetails = this.getLoginUserDetails(request);
-        if (!loginUserDetails.getLoginUserAdmin()) {
-            logger.info("UnAuthorised user trying to access restricted admin data: {}", loginUserDetails);
-            throw new AppException(ErrorCodes.UNAUTHORIZED_USER);
-        }
     }
 }

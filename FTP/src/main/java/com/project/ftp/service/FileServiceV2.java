@@ -20,8 +20,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class FileServiceV2 {
-    final static Logger logger = LoggerFactory.getLogger(FileServiceV2.class);
-    final AppConfig appConfig;
+    private final static Logger logger = LoggerFactory.getLogger(FileServiceV2.class);
+    private final AppConfig appConfig;
     private final FileService fileService;
     private final UserService userService;
     final String savedDataFilepath;
@@ -121,26 +121,22 @@ public class FileServiceV2 {
         String dir = appConfig.getFtpConfiguration().getFileSaveDir();
         String publicDir = dir+AppConstant.PUBLIC+"/";
         String loginUserName = loginUserDetails.getUsername();
-        if (loginUserDetails.getLogin()) {
-            if (loginUserDetails.getLoginUserAdmin()) {
-                scanResults.add(fileService.scanDirectory(dir, dir, true));
-            } else {
-                dir = dir + loginUserName + "/";
-                scanResults.add(fileService.scanDirectory(dir, dir, false));
-                if (!AppConstant.PUBLIC.equals(loginUserName.toLowerCase())) {
-                    scanResults.add(fileService.scanDirectory(publicDir, publicDir, false));
-                }
-            }
-            ArrayList<String> response = new ArrayList<>();
-            this.generateApiResponse(scanResults, response);
-            logger.info("scanUserDirectory result size: {}", response.size());
-            ArrayList<ResponseFilesInfo> filesInfo = this.generateFileInfoResponse(response, loginUserDetails);
-            logger.info("final result size: {}", filesInfo.size());
-            apiResponse = new ApiResponse(filesInfo);
+        if (loginUserDetails.getLoginUserAdmin()) {
+            scanResults.add(fileService.scanDirectory(dir, dir, true));
         } else {
-            logger.info("scanUserDirectory user is unauthorised: {}", loginUserDetails);
-            apiResponse = new ApiResponse(ErrorCodes.UNAUTHORIZED_USER);
+            dir = dir + loginUserName + "/";
+            scanResults.add(fileService.scanDirectory(dir, dir, false));
+            if (!AppConstant.PUBLIC.equals(loginUserName.toLowerCase())) {
+                scanResults.add(fileService.scanDirectory(publicDir, publicDir, false));
+            }
         }
+        ArrayList<String> response = new ArrayList<>();
+        this.generateApiResponse(scanResults, response);
+        logger.info("scanUserDirectory result size: {}", response.size());
+        ArrayList<ResponseFilesInfo> filesInfo = this.generateFileInfoResponse(response, loginUserDetails);
+        logger.info("final result size: {}", filesInfo.size());
+        apiResponse = new ApiResponse(filesInfo);
+
         return apiResponse;
     }
 
@@ -211,12 +207,8 @@ public class FileServiceV2 {
             logger.info("filename can not be null");
             throw new AppException(ErrorCodes.INVALID_QUERY_PARAMS);
         }
-        LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
-        if (!loginUserDetails.getLogin()) {
-            logger.info("Invalid loginUser: {}", loginUserDetails);
-            throw new AppException(ErrorCodes.UNAUTHORIZED_USER);
-        }
         HashMap<String, String> parsedFileStr = this.parseRequestedFileStr(filename);
+        LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
         String loginUserName = loginUserDetails.getUsername();
         String filePath = appConfig.getFtpConfiguration().getFileSaveDir();
         PathInfo pathInfo;
@@ -412,11 +404,6 @@ public class FileServiceV2 {
     public void deleteRequestFileV2(HttpServletRequest request,
                                     RequestDeleteFile deleteFile) throws AppException {
         HashMap<String, String> parsedFileStr = this.verifyDeleteRequestParameters(deleteFile);
-        LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
-        if (!loginUserDetails.getLogin()) {
-            logger.info("Login required to delete file: {}", deleteFile);
-            throw new AppException(ErrorCodes.UNAUTHORIZED_USER);
-        }
         String deleteFileReq = deleteFile.getFilename();
         String filepath = appConfig.getFtpConfiguration().getFileSaveDir() + deleteFileReq;
         // file not found
@@ -436,6 +423,7 @@ public class FileServiceV2 {
             logger.info("deleteAccess of file is null: {}", fileDetail);
             throw new AppException(ErrorCodes.UNAUTHORIZED_USER);
         }
+        LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
         if (deleteAccess == FileDeleteAccess.SELF) {
             this.deleteFileByUser(loginUserDetails, fileDetail);
         } else if (deleteAccess == FileDeleteAccess.ADMIN) {
@@ -574,17 +562,17 @@ public class FileServiceV2 {
     public ApiResponse uploadFileV2(HttpServletRequest request,
                                   InputStream uploadedInputStream, FormDataContentDisposition fileDetails,
                                   String subject, String heading) throws AppException {
-        LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
         if (fileDetails == null) {
             logger.info("fileDetails is: null");
             throw new AppException(ErrorCodes.BAD_REQUEST_ERROR);
         }
         String fileName = fileDetails.getFileName();
-        if (!loginUserDetails.getLogin()) {
-            logger.info("UnAuthorised user trying to upload file: {}", fileName);
-            throw new AppException(ErrorCodes.UNAUTHORIZED_USER);
+        if (fileName == null) {
+            logger.info("fileName is: null");
+            throw new AppException(ErrorCodes.UPLOAD_FILE_FILENAME_REQUIRED);
         }
         fileName = StaticService.replaceComma(fileName);
+        LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
         String loginUsername = loginUserDetails.getUsername();
         String apiVersion = StaticService.getUploadFileApiVersion(appConfig);
         if (AppConstant.V1.equals(apiVersion)) {

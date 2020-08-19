@@ -13,6 +13,7 @@ import com.project.ftp.mysql.MysqlUser;
 import com.project.ftp.resources.ApiResource;
 import com.project.ftp.resources.AppResource;
 import com.project.ftp.resources.FaviconResource;
+import com.project.ftp.service.AuthService;
 import com.project.ftp.service.StaticService;
 import com.project.ftp.service.UserService;
 import io.dropwizard.Application;
@@ -77,6 +78,7 @@ public class FtpApplication  extends Application<FtpConfiguration> {
             LOGGER.info("mysql is not enabled, configure user interface from file");
         }
         UserService userService = new UserService(appConfig, userInterface);
+        AuthService authService = new AuthService(userService);
         EventTracking eventTracking = new EventTracking(appConfig, userService, eventInterface);
         environment.servlets().setSessionHandler(new SessionHandler());
         environment.jersey().register(MultiPartFeature.class);
@@ -86,8 +88,8 @@ public class FtpApplication  extends Application<FtpConfiguration> {
         environment.jersey().register(new ResponseFilter());
         environment.jersey().register(new FaviconResource(appConfig));
 
-        environment.jersey().register(new ApiResource(appConfig, userService, eventTracking));
-        environment.jersey().register(new AppResource(appConfig, userService, eventTracking));
+        environment.jersey().register(new ApiResource(appConfig, userService, eventTracking, authService));
+        environment.jersey().register(new AppResource(appConfig, userService, eventTracking, authService));
 //        environment.admin().addTask(shutdownTask);
     }
     public static void main(String[] args) throws Exception {

@@ -3,9 +3,9 @@ package com.project.ftp.obj;
 public class LoginUserDetails {
     private String username;
     private String displayName;
-    private Boolean isLogin;
-    private Boolean isLoginUserAdmin;
-    private Boolean isLoginUserDev;
+    private boolean isLogin;
+    private boolean isLoginUserAdmin;
+    private boolean isLoginUserDev;
     /* Why added displayName?
     * It will be required for api/get_login_user_details (Right now it is not used)
     * */
@@ -32,27 +32,27 @@ public class LoginUserDetails {
         this.displayName = displayName;
     }
 
-    public Boolean getLogin() {
+    public boolean getLogin() {
         return isLogin;
     }
 
-    public void setLogin(Boolean login) {
+    public void setLogin(boolean login) {
         isLogin = login;
     }
 
-    public Boolean getLoginUserAdmin() {
+    public boolean getLoginUserAdmin() {
         return isLoginUserAdmin;
     }
 
-    public void setLoginUserAdmin(Boolean loginUserAdmin) {
+    public void setLoginUserAdmin(boolean loginUserAdmin) {
         isLoginUserAdmin = loginUserAdmin;
     }
 
-    public Boolean getLoginUserDev() {
+    public boolean getLoginUserDev() {
         return isLoginUserDev;
     }
 
-    public void setLoginUserDev(Boolean loginUserDev) {
+    public void setLoginUserDev(boolean loginUserDev) {
         isLoginUserDev = loginUserDev;
     }
 

@@ -19,11 +19,6 @@ public class ApiResponse {
         this.status = AppConstant.FAILURE;
         this.failureCode = errorCodes.getErrorCode();
         this.error = errorCodes.getErrorString();
-        if (errorCodes.getStatusCode() == 200) {
-            this.status = AppConstant.SUCCESS;
-            this.failureCode = null;
-            this.error = null;
-        }
     }
     public String getStatus() {
         return status;

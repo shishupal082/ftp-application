@@ -16,6 +16,7 @@ public enum ErrorCodes {
     INVALID_USER_NAME("INVALID_USER_NAME", "Invalid user name", 403),
     // Login, Register
     USER_NAME_REQUIRED("USER_NAME_REQUIRED", "Username required.", 403),
+    USER_ALREADY_LOGIN("USER_ALREADY_LOGIN", "User already login.", 403),
     // Login
     PASSWORD_NOT_MATCHING("PASSWORD_NOT_MATCHING", "Username password not matching.", 403),
     // Login
@@ -23,7 +24,6 @@ public enum ErrorCodes {
     USER_NOT_REGISTERED("USER_NOT_REGISTERED", "User is not registered, Please register.", 403),
     // Login, Change password, Register
     USER_NOT_FOUND("USER_NOT_FOUND", "User not found.", 403),
-    LOGIN_USER_ALREADY("USER_ALREADY_LOGIN", "User already login.", 200),
     // Change password
     PASSWORD_CHANGE_OLD_REQUIRED("PASSWORD_CHANGE_OLD_REQUIRED", "Old password required.", 403),
     // Change password, Register
@@ -55,8 +55,9 @@ public enum ErrorCodes {
     CONFIG_ERROR_INVALID_STORAGE_TYPE("Invalid storage type", "Invalid storage type", 403),
     UNSUPPORTED_FILE_TYPE("UNSUPPORTED_FILE_TYPE", "Unsupported file type", 403),
     UPLOAD_FILE_VERSION_MISMATCH("UPLOAD_FILE_VERSION_MISMATCH", "Upload file api version mismatch", 403),
-    UPLOAD_FILE_SUBJECT_REQUIRED("UPLOAD_FILE_SUBJECT_REQUIRED", "Subject required", 403),
-    UPLOAD_FILE_HEADING_REQUIRED("UPLOAD_FILE_HEADING_REQUIRED", "Heading required", 403),
+    UPLOAD_FILE_SUBJECT_REQUIRED("UPLOAD_FILE_SUBJECT_REQUIRED", "Subject required.", 403),
+    UPLOAD_FILE_HEADING_REQUIRED("UPLOAD_FILE_HEADING_REQUIRED", "Heading required.", 403),
+    UPLOAD_FILE_FILENAME_REQUIRED("UPLOAD_FILE_FILENAME_REQUIRED", "Upload file required", 403),
     CONFIG_ERROR("CONFIG_ERROR", "Configuration error", 500),
     FILE_SIZE_EXCEEDED("FILE_SIZE_EXCEEDED", "File size exceeded", 500),
     SERVER_ERROR("SERVER_ERROR", "Server error", 500),

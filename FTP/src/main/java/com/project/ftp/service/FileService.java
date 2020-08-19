@@ -17,8 +17,8 @@ import java.io.*;
 import java.util.ArrayList;
 
 public class FileService {
-    final static Logger logger = LoggerFactory.getLogger(FileService.class);
-    final StrUtils strUtils = new StrUtils();
+    private final static Logger logger = LoggerFactory.getLogger(FileService.class);
+    private final StrUtils strUtils = new StrUtils();
     public FileService() {}
     public FileDetails getAllFileDetails(String savedDataFilepath) {
         TextFileParser textFileParser = new TextFileParser(savedDataFilepath);

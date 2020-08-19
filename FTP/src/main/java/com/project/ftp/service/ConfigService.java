@@ -8,9 +8,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class ConfigService {
-    final static Logger logger = LoggerFactory.getLogger(ConfigService.class);
-    final AppConfig appConfig;
-    final SysUtils sysUtils = new SysUtils();
+    private final static Logger logger = LoggerFactory.getLogger(ConfigService.class);
+    private final AppConfig appConfig;
+    private final SysUtils sysUtils = new SysUtils();
     public ConfigService(final AppConfig appConfig) {
         this.appConfig = appConfig;
     }

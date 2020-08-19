@@ -6,6 +6,7 @@ import com.project.ftp.exceptions.AppException;
 import com.project.ftp.exceptions.ErrorCodes;
 import com.project.ftp.obj.*;
 import com.project.ftp.parser.JsonFileParser;
+import com.project.ftp.service.AuthService;
 import com.project.ftp.service.FileServiceV2;
 import com.project.ftp.service.UserService;
 import io.dropwizard.hibernate.UnitOfWork;
@@ -19,23 +20,26 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import java.io.InputStream;
-import java.util.HashMap;
 
 @Path("/api")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class ApiResource {
-    final static Logger logger = LoggerFactory.getLogger(ApiResource.class);
-    final AppConfig appConfig;
-    final FileServiceV2 fileServiceV2;
-    final UserService userService;
-    final EventTracking eventTracking;
-    public ApiResource(final AppConfig appConfig, final UserService userService, final EventTracking eventTracking) {
+    private final static Logger logger = LoggerFactory.getLogger(ApiResource.class);
+    private final AppConfig appConfig;
+    private final FileServiceV2 fileServiceV2;
+    private final UserService userService;
+    private final AuthService authService;
+    private final EventTracking eventTracking;
+    public ApiResource(final AppConfig appConfig,
+                       final UserService userService,
+                       final EventTracking eventTracking,
+                       final AuthService authService) {
         this.appConfig = appConfig;
         this.fileServiceV2 = new FileServiceV2(appConfig, userService);
         this.userService = userService;
         this.eventTracking = eventTracking;
-//                new UserService(appConfig, userInterface);
+        this.authService = authService;
     }
     @GET
     @Produces(MediaType.TEXT_HTML)
@@ -65,13 +69,15 @@ public class ApiResource {
         logger.info("getAllUsers : In, {}", userService.getUserDataForLogging(request));
         ApiResponse response;
         try {
-            userService.isLoginUserAdmin(request);
+            authService.isLoginUserAdmin(request);
             Users u = userService.getAllUser();
             u = new Users(u.getUserHashMap());
             response = new ApiResponse(u);
+            eventTracking.addSuccessGetUsers(request);
         } catch (AppException ae) {
             logger.info("Error in get_users: {}", ae.getErrorCode().getErrorCode());
             response = new ApiResponse(ae.getErrorCode());
+            eventTracking.trackGetUsersFailure(request, ae.getErrorCode());
         }
         logger.info("getAllUsers : Out");
         return response;
@@ -83,6 +89,7 @@ public class ApiResource {
         logger.info("deleteFile In: {}, user: {}", deleteFile, userService.getUserDataForLogging(request));
         ApiResponse apiResponse;
         try {
+            authService.isLogin(request);
             fileServiceV2.deleteRequestFileV2(request, deleteFile);
             apiResponse = new ApiResponse();
             eventTracking.addSuccessDeleteFile(request, deleteFile);
@@ -97,39 +104,57 @@ public class ApiResource {
 
     @GET
     @Path("/get_files_info")
+    @UnitOfWork
     public ApiResponse getAllV3Data(@Context HttpServletRequest request) {
         logger.info("getAllV3Data : In, user: {}", userService.getUserDataForLogging(request));
-        ApiResponse response = fileServiceV2.scanUserDirectory(request);
+        ApiResponse response;
+        try {
+            authService.isLogin(request);
+            response = fileServiceV2.scanUserDirectory(request);
+            eventTracking.addSuccessGetFilesInfo(request);
+        } catch (AppException ae) {
+            logger.info("Error in scanning user directory: {}", ae.getErrorCode().getErrorString());
+            response = new ApiResponse(ae.getErrorCode());
+            eventTracking.trackGetFileInfoFailure(request, ae.getErrorCode());
+        }
         // Not putting response in log as it may be very large
         logger.info("getAllV3Data : Out");
         return response;
     }
     @GET
     @Path("/get_app_config")
+    @UnitOfWork
     public ApiResponse getAppConfig(@Context HttpServletRequest request) {
         logger.info("getAppConfig : In, user: {}", userService.getUserDataForLogging(request));
         ApiResponse response;
-        if (userService.isLoginUserDev(request)) {
+        try {
+            authService.isLoginUserDev(request);
             response = new ApiResponse(appConfig);
-        } else {
+            eventTracking.addSuccessGetAppConfig(request);
+        } catch (AppException ae) {
             logger.info("Unauthorised username: {}, trying to access app config.",
                     userService.getLoginUserName(request));
-            response = new ApiResponse(ErrorCodes.UNAUTHORIZED_USER);
+            response = new ApiResponse(ae.getErrorCode());
+            eventTracking.trackGetAppConfigFailure(request, ae.getErrorCode());
         }
         logger.info("getAppConfig : Out: {}", response);
         return response;
     }
     @GET
     @Path("/get_session_config")
+    @UnitOfWork
     public ApiResponse getSessionConfig(@Context HttpServletRequest request) throws AppException {
         logger.info("getSessionConfig : In, user: {}", userService.getUserDataForLogging(request));
         ApiResponse response;
-        if (userService.isLoginUserDev(request)) {
-            response = new ApiResponse(appConfig.getSessionData());
-        } else {
+        try {
+            authService.isLoginUserDev(request);
+            response = new ApiResponse(appConfig);
+            eventTracking.addSuccessGetSessionData(request);
+        } catch (AppException ae) {
             logger.info("Unauthorised username: {}, trying to access session config.",
                     userService.getLoginUserName(request));
-            response = new ApiResponse(ErrorCodes.UNAUTHORIZED_USER);
+            response = new ApiResponse(ae.getErrorCode());
+            eventTracking.trackGetSessionDataFailure(request, ae.getErrorCode());
         }
         logger.info("getSessionConfig : Out: {}", response);
         return response;
@@ -148,6 +173,7 @@ public class ApiResource {
         logger.info("uploadFile data, subject: {}, heading: {}", subject, heading);
         ApiResponse response;
         try {
+            authService.isLogin(request);
             response = fileServiceV2.uploadFileV2(request, uploadedInputStream,
                     fileDetail, subject, heading);
             eventTracking.addSuccessUploadFile(request, fileDetail, subject, heading);
@@ -167,8 +193,13 @@ public class ApiResource {
         logger.info("loginUser : In, {}, user: {}",
                 userLogin, userService.getUserDataForLogging(httpServletRequest));
         ApiResponse response;
+        if (authService.isLoginV2(httpServletRequest)) {
+            eventTracking.trackLoginFailure(httpServletRequest, userLogin, ErrorCodes.USER_ALREADY_LOGIN);
+            logger.info("Error in login, user already login: {}", userService.getLoginUserDetails(httpServletRequest));
+            return new ApiResponse(ErrorCodes.USER_ALREADY_LOGIN);
+        }
         try {
-            HashMap<String, String> loginUserDetails = userService.loginUser(httpServletRequest, userLogin);
+            LoginUserDetails loginUserDetails = userService.loginUser(httpServletRequest, userLogin);
             response = new ApiResponse(loginUserDetails);
             eventTracking.addSuccessLogin(userLogin);
         } catch (AppException ae) {
@@ -187,13 +218,19 @@ public class ApiResource {
         logger.info("registerUser : In, userRegister: {}, user: {}",
                 userRegister, userService.getUserDataForLogging(httpServletRequest));
         ApiResponse response;
+        if (authService.isLoginV2(httpServletRequest)) {
+            eventTracking.trackRegisterFailure(httpServletRequest, userRegister, ErrorCodes.USER_ALREADY_LOGIN);
+            logger.info("Error in register, user already login: {}",
+                    userService.getLoginUserDetails(httpServletRequest));
+            return new ApiResponse(ErrorCodes.USER_ALREADY_LOGIN);
+        }
         try {
             userService.userRegister(httpServletRequest, userRegister);
             response = new ApiResponse();
             eventTracking.addSuccessRegister(userRegister);
         } catch (AppException ae) {
             logger.info("Error in register user: {}", ae.getErrorCode().getErrorCode());
-            eventTracking.trackRegisterFailure(userRegister, ae.getErrorCode());
+            eventTracking.trackRegisterFailure(httpServletRequest, userRegister, ae.getErrorCode());
             response = new ApiResponse(ae.getErrorCode());
         }
         logger.info("registerUser : Out: {}", response);
@@ -224,6 +261,7 @@ public class ApiResource {
                 userService.getUserDataForLogging(httpServletRequest));
         ApiResponse response;
         try {
+            authService.isLogin(httpServletRequest);
             userService.changePassword(httpServletRequest, request);
             response = new ApiResponse();
             eventTracking.trackChangePasswordSuccess(httpServletRequest);

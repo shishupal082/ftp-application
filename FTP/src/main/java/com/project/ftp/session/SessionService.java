@@ -3,6 +3,7 @@ package com.project.ftp.session;
 import com.project.ftp.common.SysUtils;
 import com.project.ftp.config.AppConfig;
 import com.project.ftp.config.AppConstant;
+import com.project.ftp.event.EventTracking;
 import com.project.ftp.exceptions.AppException;
 import com.project.ftp.exceptions.ErrorCodes;
 import org.slf4j.Logger;
@@ -41,7 +42,7 @@ public class SessionService {
         Long currentTime = sysUtils.getTimeInMsLong();
         return new SessionData(sessionId, currentTime);
     }
-    public String updateSessionId(String currentSessionId) {
+    public String updateSessionId(String currentSessionId, EventTracking eventTracking) {
         String newSessionId = UUID.randomUUID().toString();
         if (currentSessionId.length() > 40 || currentSessionId.length() < 30) {
             logger.info("Invalid currentSessionId length(30 to 40): {}, created new: {}", currentSessionId, newSessionId);
@@ -57,6 +58,7 @@ public class SessionService {
                 sessionId = sessionDataMap.getKey();
                 sessionData = sessionDataMap.getValue();
                 if (currentTime - sessionData.getUpdatedTime() >= AppConstant.SESSION_TTL) {
+                    eventTracking.trackExpiredUserSession(sessionData);
                     deletedSessionIds.add(sessionId);
                 }
                 if (currentSessionId.equals(sessionId)) {

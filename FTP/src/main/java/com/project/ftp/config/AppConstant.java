@@ -46,4 +46,5 @@ public class AppConstant {
     public static final String PDF_AUTHOR = "Project Author";
     public static final String PDF_CREATOR = "Project Creator";
     public static final String EmptyParagraph = " ";
+    public static final String EXPIRED_USER_SESSION = "EXPIRED_USER_SESSION";
 }

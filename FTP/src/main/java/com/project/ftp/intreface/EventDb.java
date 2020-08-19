@@ -1,7 +1,7 @@
 package com.project.ftp.intreface;
 
-import com.project.ftp.obj.EventDBParameters;
 import com.project.ftp.mysql.DbDAO;
+import com.project.ftp.obj.EventDBParameters;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

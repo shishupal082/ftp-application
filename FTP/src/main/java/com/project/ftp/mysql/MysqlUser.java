@@ -2,7 +2,6 @@ package com.project.ftp.mysql;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.project.ftp.config.AppConstant;
 import com.project.ftp.service.StaticService;
 
 import javax.persistence.*;

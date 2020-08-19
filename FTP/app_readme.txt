@@ -511,25 +511,45 @@ event_data was not logging event as upload_file_v2, fix that
 -------------------
 For un handle exception
     - Add exception message (exception.printTrace()) in log file along with screen
-Page reload for failureCode=UNAUTHORIZED_USER in following api's
+To improve user experience
+    Page reload for failureCode=UNAUTHORIZED_USER in following api's
     - delete_file
     - upload_file
     - change_password
-    It will improve user experience
+    Page reload for failureCode=USER_ALREADY_LOGIN in following api's
+    - login
+    - register
+    On upload file, if filename is null
+    - throw FILE_REQUIRED_IN_UPLOAD instead of UNSUPPORTED_FILE_TYPE
+
 For view file error in iframe
     - return json string instead of 404 html page
     - iframe request change to request+"?iframe=true"
 
+AuthService added to verify
+    - isLogin
+    - isLoginUserAdmin
+    - isLoginUserDev
+Put username in table for session delete due to session timeout
 
 
 Future releases
 -------------------
-Table required
-    - file_details
+create user_role.yaml file in config-files dir
+Define role
+    username(Admin)
+        - role(Admin)
+    username(SuperAdmin)
+        - role(All)
+
+
 
 Improve validation for table
     - mySqlUser
     - eventData
+
+Table required
+    - file_details
 
 Query used
 select * from file_details where fileUsername = {username} and filename = {filename}

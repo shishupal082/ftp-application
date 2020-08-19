@@ -29,8 +29,8 @@ public class AppView extends View {
         LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
         this.pageName = pageName;
         this.userName = loginUserDetails.getUsername();
-        this.isLogin = loginUserDetails.getLogin().toString();
-        this.isLoginUserAdmin = loginUserDetails.getLoginUserAdmin().toString();
+        this.isLogin = Boolean.toString(loginUserDetails.getLogin());
+        this.isLoginUserAdmin = Boolean.toString(loginUserDetails.getLoginUserAdmin());
         this.appVersion = AppConstant.AppVersion;
         this.userDisplayName = "";
         this.uploadFileApiVersion = StaticService.getUploadFileApiVersion(appConfig);

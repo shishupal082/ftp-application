@@ -13,7 +13,12 @@ public enum EventName {
     DOWNLOAD_FILE("download_file"),
     DELETE_FILE("delete_file"),
     LOG_FILE_COPIED("log_file_copied"),
-    UN_HANDLE_EXCEPTION("un_handle_exception");
+    UN_HANDLE_EXCEPTION("un_handle_exception"),
+    EXPIRED_USER_SESSION("expired_user_session"),
+    GET_USERS("get_users"),
+    GET_APP_CONFIG("get_app_config"),
+    GET_SESSION_DATA("get_session_data"),
+    GET_FILES_INFO("get_files_info");
 
     private final String name;
     EventName(String name) {

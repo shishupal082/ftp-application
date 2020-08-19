@@ -22,12 +22,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class StaticService {
-    final static Logger logger = LoggerFactory.getLogger(StaticService.class);
-    final static SysUtils sysUtils = new SysUtils();
-    final static StrUtils strUtils = new StrUtils();
-    final static DateUtilities dateUtilities = new DateUtilities();
-    final static FileService fileService = new FileService();
-    final static YamlFileParser ymlFileParser = new YamlFileParser();
+    private final static Logger logger = LoggerFactory.getLogger(StaticService.class);
+    private final static SysUtils sysUtils = new SysUtils();
+    private final static StrUtils strUtils = new StrUtils();
+    private final static DateUtilities dateUtilities = new DateUtilities();
+    private final static FileService fileService = new FileService();
+    private final static YamlFileParser ymlFileParser = new YamlFileParser();
     public static PathInfo getPathInfo(String requestedPath) {
         return fileService.getPathInfo(requestedPath);
     }
@@ -100,9 +100,9 @@ public class StaticService {
         DateUtilities dateUtilities = new DateUtilities();
         return dateUtilities.getDateStrFromTimeMs(format, timeInMs);
     }
-    public static String updateSessionId(AppConfig appConfig, String cookieData) {
+    public static String updateSessionId(AppConfig appConfig, String cookieData, EventTracking eventTracking) {
         SessionService sessionService = new SessionService(appConfig);
-        return sessionService.updateSessionId(cookieData);
+        return sessionService.updateSessionId(cookieData, eventTracking);
     }
     public static String replaceLast(String find, String replace, String str) {
         return strUtils.replaceLast(find, replace, str);
@@ -139,6 +139,9 @@ public class StaticService {
     }
     public static boolean isInValidString(String str) {
         return strUtils.isInValidString(str);
+    }
+    public static boolean isValidString(String str) {
+        return !strUtils.isInValidString(str);
     }
     public static String truncateString(String str, int maxLength) {
         if (str == null) {

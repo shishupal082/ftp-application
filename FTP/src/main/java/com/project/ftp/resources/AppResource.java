@@ -6,6 +6,7 @@ import com.project.ftp.event.EventTracking;
 import com.project.ftp.exceptions.AppException;
 import com.project.ftp.obj.ApiResponse;
 import com.project.ftp.obj.PathInfo;
+import com.project.ftp.service.AuthService;
 import com.project.ftp.service.FileServiceV2;
 import com.project.ftp.service.UserService;
 import com.project.ftp.view.AppView;
@@ -31,18 +32,23 @@ import java.net.URISyntaxException;
 @Produces(MediaType.TEXT_HTML)
 @Consumes(MediaType.APPLICATION_JSON)
 public class AppResource {
-    final static Logger logger = LoggerFactory.getLogger(AppResource.class);
-    final AppConfig appConfig;
-    final FileServiceV2 fileServiceV2;
-    final UserService userService;
-    final String appViewFtlFileName;
-    final EventTracking eventTracking;
-    public AppResource(final AppConfig appConfig, final UserService userService, final EventTracking eventTracking) {
+    private final static Logger logger = LoggerFactory.getLogger(AppResource.class);
+    private final AppConfig appConfig;
+    private final FileServiceV2 fileServiceV2;
+    private final UserService userService;
+    private final AuthService authService;
+    private final String appViewFtlFileName;
+    private final EventTracking eventTracking;
+    public AppResource(final AppConfig appConfig,
+                       final UserService userService,
+                       final EventTracking eventTracking,
+                       final AuthService authService) {
         this.appConfig = appConfig;
         this.fileServiceV2 = new FileServiceV2(appConfig, userService);
         this.userService = userService;
         this.appViewFtlFileName = AppConstant.APP_VIEW_FTL_FILENAME;
         this.eventTracking = eventTracking;
+        this.authService = authService;
     }
     @GET
     public Response indexPage(@Context HttpServletRequest request) throws URISyntaxException {
@@ -80,6 +86,7 @@ public class AppResource {
         Response.ResponseBuilder r;
         ApiResponse apiResponse = new ApiResponse();
         try {
+            authService.isLogin(request);
             pathInfo = fileServiceV2.searchRequestedFileV2(request, filename);
             eventTracking.addSuccessViewFile(request, filename, isIframe);
         } catch (AppException ae) {
@@ -123,6 +130,7 @@ public class AppResource {
         PathInfo pathInfo = null;
         Response.ResponseBuilder r;
         try {
+            authService.isLogin(request);
             pathInfo = fileServiceV2.searchRequestedFileV2(request, filename);
             eventTracking.addSuccessDownloadFile(request, filename);
         } catch (AppException ae) {

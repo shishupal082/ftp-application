@@ -71,7 +71,7 @@ public class RequestFilter implements ContainerRequestFilter {
             logger.info("Invalid session cookieData : {}, Created new : {}", cookieData, newCookieData);
             cookieData = newCookieData;
         }
-        cookieData = StaticService.updateSessionId(appConfig, cookieData);
+        cookieData = StaticService.updateSessionId(appConfig, cookieData, eventTracking);
         LogFilter.addSessionIdInLog(cookieData);
         httpSession.setAttribute(AppConstant.SESSION_COOKIE_DATA, cookieData);
         String requestedPath = StaticService.getPathUrlV2(requestContext);
