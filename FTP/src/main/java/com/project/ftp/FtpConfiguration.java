@@ -26,6 +26,7 @@ public class FtpConfiguration extends Configuration {
     private ArrayList<String> devUsersName;
     private ArrayList<String> supportedFileType;
     private Boolean createReadmePdf;
+    private String instance;
     private Boolean permanentlyDeleteFile;
     private String appRestartCommand;
     private String uploadFileApiVersion;
@@ -196,6 +197,14 @@ public class FtpConfiguration extends Configuration {
         this.mysqlEnable = mysqlEnable;
     }
 
+    public String getInstance() {
+        return instance;
+    }
+
+    public void setInstance(String instance) {
+        this.instance = instance;
+    }
+
     @Override
     public String toString() {
         return "FtpConfiguration{" +
@@ -213,10 +222,12 @@ public class FtpConfiguration extends Configuration {
                 ", devUsersName=" + devUsersName +
                 ", supportedFileType=" + supportedFileType +
                 ", createReadmePdf=" + createReadmePdf +
+                ", instance='" + instance + '\'' +
                 ", permanentlyDeleteFile=" + permanentlyDeleteFile +
                 ", appRestartCommand='" + appRestartCommand + '\'' +
                 ", uploadFileApiVersion='" + uploadFileApiVersion + '\'' +
-                ", mySqlEnable=" + mysqlEnable +
+                ", mysqlEnable=" + mysqlEnable +
+                ", dataSourceFactory=" + "*****" +
                 ", tempConfig=" + tempConfig +
                 '}';
     }

@@ -91,6 +91,7 @@ public class FtpApplication  extends Application<FtpConfiguration> {
         environment.jersey().register(new ApiResource(appConfig, userService, eventTracking, authService));
         environment.jersey().register(new AppResource(appConfig, userService, eventTracking, authService));
 //        environment.admin().addTask(shutdownTask);
+        eventTracking.trackApplicationStart(ftpConfiguration.getInstance());
     }
     public static void main(String[] args) throws Exception {
         StaticService.renameOldLogFile(args[0]);

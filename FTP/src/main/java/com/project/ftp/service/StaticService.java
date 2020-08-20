@@ -266,8 +266,8 @@ public class StaticService {
         }
         logger.info("Date change found: from {} to {}", configDate, currentDate);
         int requestCount = appConfig.getRequestCount();
-        if (requestCount < 15) {
-            logger.info("daily requestCount: {}, is less than threshold=15", requestCount);
+        if (requestCount < 5) {
+            logger.info("daily requestCount: {}, is less than threshold=5", requestCount);
             appConfig.setRequestCount(requestCount+1);
             return;
         }

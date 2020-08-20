@@ -538,6 +538,13 @@ added more event tracking
     - api/get_session_config
     - api/get_files_info (only failure)
 
+3.0.5.1
+-------------------
+Added event tracking
+    - application_start
+    Added optional env_config parameter
+        - instance: DevComputer
+Threshold limit change from 15 to 5 for log file copy date change event
 
 Future releases
 -------------------

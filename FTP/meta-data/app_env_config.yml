@@ -74,6 +74,7 @@ database:
 # Optional parameter
 indexPageReRoute: /login
 filenameFormat: "YYYY-MM-dd-HH-mm'-filename'"
+instance: DevComputer
 
 # Only for development purpose
 createReadmePdf: true

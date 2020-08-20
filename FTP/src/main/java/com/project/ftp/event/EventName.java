@@ -13,6 +13,7 @@ public enum EventName {
     DOWNLOAD_FILE("download_file"),
     DELETE_FILE("delete_file"),
     LOG_FILE_COPIED("log_file_copied"),
+    APPLICATION_START("application_start"),
     UN_HANDLE_EXCEPTION("un_handle_exception"),
     EXPIRED_USER_SESSION("expired_user_session"),
     GET_USERS("get_users"),

@@ -10,10 +10,13 @@ import com.project.ftp.service.StaticService;
 import com.project.ftp.service.UserService;
 import com.project.ftp.session.SessionData;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
 
 public class EventTracking {
+    final static private Logger logger = LoggerFactory.getLogger(EventTracking.class);
     private final UserService userService;
     private final AppConfig appConfig;
     private final AddEvent addEvent;
@@ -212,31 +215,7 @@ public class EventTracking {
         }
         addEvent.addFailureEvent(loginUserDetails.getUsername(), eventName, errorCodes, comment);
     }
-    public void trackLogFileChange(String status, String newlyGeneratedFilename, String copiedFilename) {
-        FileService fileService = new FileService();
-        PathInfo pathInfo = fileService.getPathInfoFromFileName(newlyGeneratedFilename);
-        PathInfo pathInfo1 = fileService.getPathInfoFromFileName(copiedFilename);
-        String reason = null;
-        String comment = "log file copied from " + pathInfo.getFileName() + " to " + pathInfo1.getFileName();
-        if (AppConstant.FAILURE.equals(status)) {
-            reason = "log file copy failed";
-        }
-        addEvent.addEventTextV2(null, EventName.LOG_FILE_COPIED, status, reason, comment);
-    }
-    public void trackUnknownException(String errorCode, String errorString) {
-        addEvent.addEventTextV2(null, EventName.UN_HANDLE_EXCEPTION,
-                AppConstant.FAILURE, errorCode, errorString);
-    }
-    public void trackExpiredUserSession(SessionData sessionData) {
-        if (sessionData == null) {
-            return;
-        }
-        if (StaticService.isInValidString(sessionData.getUsername())) {
-            return;
-        }
-        addEvent.addEventTextV2(sessionData.getUsername(), EventName.EXPIRED_USER_SESSION,
-                AppConstant.FAILURE, AppConstant.EXPIRED_USER_SESSION, sessionData.toString());
-    }
+
     public void trackGetUsersFailure(HttpServletRequest request, ErrorCodes errorCodes) {
         LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
         addEvent.addFailureEvent(loginUserDetails.getUsername(), EventName.GET_USERS, errorCodes, null);
@@ -253,5 +232,39 @@ public class EventTracking {
     public void trackGetFileInfoFailure(HttpServletRequest request, ErrorCodes errorCodes) {
         LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
         addEvent.addFailureEvent(loginUserDetails.getUsername(), EventName.GET_FILES_INFO, errorCodes, null);
+    }
+
+    public void trackLogFileChange(String status, String newlyGeneratedFilename, String copiedFilename) {
+        FileService fileService = new FileService();
+        PathInfo pathInfo = fileService.getPathInfoFromFileName(newlyGeneratedFilename);
+        PathInfo pathInfo1 = fileService.getPathInfoFromFileName(copiedFilename);
+        String reason = null;
+        String comment = "log file copied from " + pathInfo.getFileName() + " to " + pathInfo1.getFileName();
+        if (AppConstant.FAILURE.equals(status)) {
+            reason = "log file copy failed";
+        }
+        addEvent.addEventTextV2(null, EventName.LOG_FILE_COPIED, status, reason, comment);
+    }
+
+    public void trackUnknownException(String errorCode, String errorString) {
+        addEvent.addEventTextV2(null, EventName.UN_HANDLE_EXCEPTION,
+                AppConstant.FAILURE, errorCode, errorString);
+    }
+
+    public void trackExpiredUserSession(SessionData sessionData) {
+        if (sessionData == null) {
+            return;
+        }
+        if (StaticService.isInValidString(sessionData.getUsername())) {
+            return;
+        }
+        addEvent.addEventTextV2(sessionData.getUsername(), EventName.EXPIRED_USER_SESSION,
+                AppConstant.FAILURE, AppConstant.EXPIRED_USER_SESSION, sessionData.toString());
+    }
+
+    public void trackApplicationStart(String instance) {
+        String comment = "appVersion=" + AppConstant.AppVersion + ",instance="+instance;
+        addEvent.addEventTextV2(null, EventName.APPLICATION_START,
+                AppConstant.SUCCESS, null, comment);
     }
 }

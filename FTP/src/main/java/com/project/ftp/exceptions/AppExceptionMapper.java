@@ -34,24 +34,24 @@ public class AppExceptionMapper implements ExceptionMapper<Exception> {
         } else if (exception instanceof TimeoutException) {
             AppError appError = new AppError(ErrorCodes.TIME_OUT_EXCEPTION);
             logger.info("TimeoutException found: {}, {}", appError, exception.getMessage());
-            eventTracking.trackUnknownException("TimeoutException", appError.toString());
+            eventTracking.trackUnknownException("TIMEOUT_EXCEPTION", appError.toString());
             return Response.status(Response.Status.GATEWAY_TIMEOUT).entity(appError.toString()).build();
         } else if (exception instanceof ServletException) {
             AppError appError = new AppError(ErrorCodes.SERVLET_EXCEPTION);
             logger.info("ServletException found: {}, {}", appError, exception.getMessage());
-            eventTracking.trackUnknownException("ServletException", appError.toString());
+            eventTracking.trackUnknownException("SERVLET_EXCEPTION", appError.toString());
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(appError.toString()).type(MediaType.APPLICATION_JSON).build();
         } else if (exception instanceof NullPointerException) {
             AppError appError = new AppError(ErrorCodes.NULL_POINTER_EXCEPTION);
             logger.info("NullPointerException found: {}, {}", appError, exception.getMessage());
-            eventTracking.trackUnknownException("NullPointerException", appError.toString());
+            eventTracking.trackUnknownException("NULL_POINTER_EXCEPTION", appError.toString());
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(
                     appError.toString()).type(MediaType.APPLICATION_JSON).build();
         }
         AppError appError = new AppError(ErrorCodes.SERVER_ERROR);
         appError.setError(exception.getMessage());
         logger.info("UnknownException found: {}, {}", appError, exception.getMessage());
-        eventTracking.trackUnknownException("UnknownException", appError.toString());
+        eventTracking.trackUnknownException("UN_KNOWN_EXCEPTION", appError.toString());
         return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(
                 appError.toString()).type(MediaType.APPLICATION_JSON).build();
     }
