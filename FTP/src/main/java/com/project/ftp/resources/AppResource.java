@@ -79,7 +79,7 @@ public class AppResource {
                            @PathParam("username") String username,
                            @PathParam("filename2") String filename2,
                            @QueryParam("iframe") String isIframe,
-                           @QueryParam("username") String uiUsername) {
+                           @QueryParam("u") String uiUsername) {
         String filename = username+"/"+filename2;
         logger.info("Loading viewFile: {}, isIframe: {}", filename, isIframe);
         logger.info("user: {}", userService.getUserDataForLogging(request));
@@ -125,7 +125,7 @@ public class AppResource {
     public Object downloadFile(@Context HttpServletRequest request,
                                @PathParam("username") String username,
                                @PathParam("filename2") String filename2,
-                               @QueryParam("username") String uiUsername) {
+                               @QueryParam("u") String uiUsername) {
         String filename = username+"/"+filename2;
         logger.info("Loading downloadFile: {}, user: {}",
                 filename, userService.getUserDataForLogging(request));

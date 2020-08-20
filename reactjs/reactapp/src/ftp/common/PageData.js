@@ -52,10 +52,10 @@ PageData.extend({
 });
 PageData.extend({
     getPdfDownloadLink: function(filename) {
-        return Config.baseapi + "/download/file/" + filename + "?username=" + Config.getPageData("username", "");
+        return Config.baseapi + "/download/file/" + filename + "?u=" + Config.getPageData("username", "");
     },
     getPdfViewLink: function(filename) {
-        return Config.baseapi + "/view/file/" + filename + "?username=" + Config.getPageData("username", "");
+        return Config.baseapi + "/view/file/" + filename + "?u=" + Config.getPageData("username", "");
     },
     getCurrentPdfLink: function(Data) {
         var pdfLink = CurrentFormData.getData("dashboard.currentPdfLink", null);

@@ -94,10 +94,10 @@ public class EventTracking {
         } else {
             comment = uiUsername;
         }
-        addEvent.addFailureEvent(loginUserDetails.getUsername(),
-                EventName.CHANGE_PASSWORD, errorCodes, comment);
+        addEvent.addFailureEvent(loginUserDetails.getUsername(), EventName.CHANGE_PASSWORD, errorCodes, comment);
     }
-    public void trackLoginFailure(HttpServletRequest request, RequestUserLogin requestUserLogin, ErrorCodes errorCodes) {
+    public void trackLoginFailure(HttpServletRequest request,
+                                  RequestUserLogin requestUserLogin, ErrorCodes errorCodes) {
         String username = null;
         String comment = null;
         LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
@@ -148,7 +148,7 @@ public class EventTracking {
     public void addSuccessDownloadFile(HttpServletRequest request, String filepath, String uiUsername) {
         LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
         String comment = "filepath="+filepath + ",uiUsername="+uiUsername;
-        addEvent.addSuccessEvent(loginUserDetails.getUsername(), EventName.VIEW_FILE, comment);
+        addEvent.addSuccessEvent(loginUserDetails.getUsername(), EventName.DOWNLOAD_FILE, comment);
     }
     public void addSuccessDeleteFile(HttpServletRequest request, RequestDeleteFile deleteFile, String uiUsername) {
         LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);

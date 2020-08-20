@@ -570,6 +570,15 @@ request query parameter name change from ui_username to username
     - upload_file
     - delete_file
     - change_password
+3.0.6.2
+-------------------
+Correct event name in tracking for download_success
+request query parameter name change from ui_username to u
+    - view_file
+    - download_file
+    - upload_file
+    - delete_file
+    - change_password
 
 Future releases
 -------------------
