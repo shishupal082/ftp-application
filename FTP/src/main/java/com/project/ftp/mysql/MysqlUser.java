@@ -222,7 +222,7 @@ public class MysqlUser implements Serializable {
         return "MysqlUser{" +
                 "id=" + id +
                 ", username='" + username + '\'' +
-                ", password='" + password + '\'' +
+                ", password='" + "*****" + '\'' +
                 ", mobile='" + mobile + '\'' +
                 ", email='" + email + '\'' +
                 ", name='" + name + '\'' +

@@ -44,7 +44,7 @@ public class EventTracking {
     }
 
     public void addSuccessGetFilesInfo(HttpServletRequest request) {
-        LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
+//        LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
 //        addEvent.addSuccessEventV2(loginUserDetails.getUsername(), EventName.GET_FILES_INFO);
     }
     public void addSuccessLogin(RequestUserLogin userLogin) {
@@ -82,14 +82,20 @@ public class EventTracking {
             addEvent.addFailureEventV2(EventName.LOGOUT, ErrorCodes.LOGOUT_USER_NOT_LOGIN);
         }
     }
-    public void trackChangePasswordSuccess(HttpServletRequest request) {
+    public void trackChangePasswordSuccess(HttpServletRequest request, String uiUsername) {
         LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
-        addEvent.addSuccessEventV2(loginUserDetails.getUsername(), EventName.CHANGE_PASSWORD);
+        addEvent.addSuccessEvent(loginUserDetails.getUsername(), EventName.CHANGE_PASSWORD, uiUsername);
     }
-    public void trackChangePasswordFailure(HttpServletRequest request, ErrorCodes errorCodes) {
+    public void trackChangePasswordFailure(HttpServletRequest request, ErrorCodes errorCodes, String uiUsername) {
         LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
+        String comment = "";
+        if (errorCodes != null) {
+            comment = uiUsername + "," + errorCodes.getErrorString();
+        } else {
+            comment = uiUsername;
+        }
         addEvent.addFailureEvent(loginUserDetails.getUsername(),
-                EventName.CHANGE_PASSWORD, errorCodes, null);
+                EventName.CHANGE_PASSWORD, errorCodes, comment);
     }
     public void trackLoginFailure(HttpServletRequest request, RequestUserLogin requestUserLogin, ErrorCodes errorCodes) {
         String username = null;
@@ -102,8 +108,11 @@ public class EventTracking {
                 comment = loginUserDetails.getUsername();
             }
         }
+
         if (requestUserLogin != null) {
             username = requestUserLogin.getUsername();
+            String encryptedPassword = StaticService.encryptAesPassword(appConfig, requestUserLogin.getPassword());
+            logger.info("Encrypted password: {}", encryptedPassword);
         }
         addEvent.addFailureEvent(username, EventName.LOGIN, errorCodes, comment);
     }
@@ -130,48 +139,56 @@ public class EventTracking {
         addEvent.addFailureEvent(username, EventName.REGISTER, errorCodes, comment);
     }
 
-    public void addSuccessViewFile(HttpServletRequest request, String filepath, String isIframe) {
+    public void addSuccessViewFile(HttpServletRequest request,
+                                   String filepath, String isIframe, String uiUsername) {
         LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
-        addEvent.addSuccessEvent(loginUserDetails.getUsername(), EventName.VIEW_FILE,
-                filepath+",isIframe="+isIframe);
+        String comment = "filepath=" + filepath + ",isIframe=" + isIframe + ",uiUsername=" + uiUsername;
+        addEvent.addSuccessEvent(loginUserDetails.getUsername(), EventName.VIEW_FILE, comment);
     }
-    public void addSuccessDownloadFile(HttpServletRequest request, String filepath) {
+    public void addSuccessDownloadFile(HttpServletRequest request, String filepath, String uiUsername) {
         LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
-        addEvent.addSuccessEvent(loginUserDetails.getUsername(), EventName.VIEW_FILE, filepath);
+        String comment = "filepath="+filepath + ",uiUsername="+uiUsername;
+        addEvent.addSuccessEvent(loginUserDetails.getUsername(), EventName.VIEW_FILE, comment);
     }
-    public void addSuccessDeleteFile(HttpServletRequest request, RequestDeleteFile deleteFile) {
+    public void addSuccessDeleteFile(HttpServletRequest request, RequestDeleteFile deleteFile, String uiUsername) {
         LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
         String deleteFilePath = null;
         if (deleteFile != null) {
             deleteFilePath = deleteFile.getFilename();
         }
-        addEvent.addSuccessEvent(loginUserDetails.getUsername(), EventName.DELETE_FILE, deleteFilePath);
+        String comment = "filepath="+deleteFilePath + ",uiUsername="+uiUsername;
+        addEvent.addSuccessEvent(loginUserDetails.getUsername(), EventName.DELETE_FILE, comment);
     }
-    public void trackViewFileFailure(HttpServletRequest request, String filepath, ErrorCodes errorCodes, String isIframe) {
+    public void trackViewFileFailure(HttpServletRequest request, String filepath,
+                                     ErrorCodes errorCodes, String isIframe, String uiUsername) {
         LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
-        addEvent.addFailureEvent(loginUserDetails.getUsername(), EventName.VIEW_FILE,
-                errorCodes, filepath + ",isIframe=" + isIframe);
+        String comment = "filepath=" + filepath + ",isIframe=" + isIframe + ",uiUsername=" + uiUsername;
+        addEvent.addFailureEvent(loginUserDetails.getUsername(), EventName.VIEW_FILE, errorCodes, comment);
     }
 
-    public void trackDownloadFileFailure(HttpServletRequest request, String filepath, ErrorCodes errorCodes) {
+    public void trackDownloadFileFailure(HttpServletRequest request, String filepath,
+                                         ErrorCodes errorCodes, String uiUsername) {
         LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
-        addEvent.addFailureEvent(loginUserDetails.getUsername(), EventName.DOWNLOAD_FILE, errorCodes, filepath);
+        String comment = "filepath="+filepath + ",uiUsername="+uiUsername;
+        addEvent.addFailureEvent(loginUserDetails.getUsername(), EventName.DOWNLOAD_FILE, errorCodes, comment);
     }
 
     public void trackDeleteFileFailure(HttpServletRequest request,
                                        RequestDeleteFile deleteFile,
-                                       ErrorCodes errorCodes) {
+                                       ErrorCodes errorCodes,
+                                       String uiUsername) {
         LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
         String filepath = null;
         if (deleteFile != null) {
             filepath = deleteFile.getFilename();
         }
-        addEvent.addFailureEvent(loginUserDetails.getUsername(), EventName.DELETE_FILE, errorCodes, filepath);
+        String comment = "filepath="+filepath + ",uiUsername="+uiUsername;
+        addEvent.addFailureEvent(loginUserDetails.getUsername(), EventName.DELETE_FILE, errorCodes, comment);
     }
 
     public void addSuccessUploadFile(HttpServletRequest request,
                                      FormDataContentDisposition fileDetail,
-                                     String subject, String heading) {
+                                     String subject, String heading, String uiUsername) {
         LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
         String filename = null;
         if (fileDetail != null) {
@@ -181,6 +198,7 @@ public class EventTracking {
         comment += "filepath=" + filename;
         comment += ",subject=" + subject;
         comment += ",heading=" + heading;
+        comment += ",uiUsername=" + uiUsername;
         EventName eventName = EventName.UPLOAD_FILE;
         String apiVersion = StaticService.getUploadFileApiVersion(appConfig);
         if (AppConstant.V1.equals(apiVersion)) {
@@ -193,7 +211,8 @@ public class EventTracking {
 
     public void addFailureUploadFile(HttpServletRequest request,
                                      ErrorCodes errorCodes,
-                                     FormDataContentDisposition fileDetail, String subject, String heading) {
+                                     FormDataContentDisposition fileDetail,
+                                     String subject, String heading, String uiUsername) {
         LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
         String filename = null;
         if (fileDetail != null) {
@@ -203,6 +222,7 @@ public class EventTracking {
         comment += "filepath=" + filename;
         comment += ",subject=" + subject;
         comment += ",heading=" + heading;
+        comment += ",uiUsername=" + uiUsername;
         EventName eventName = EventName.UPLOAD_FILE;
         String apiVersion = StaticService.getUploadFileApiVersion(appConfig);
         if (AppConstant.V1.equals(apiVersion)) {

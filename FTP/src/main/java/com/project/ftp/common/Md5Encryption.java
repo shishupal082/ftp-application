@@ -7,18 +7,18 @@ import org.slf4j.LoggerFactory;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
-public class PasswordEncryption {
-    private final static Logger logger = LoggerFactory.getLogger(PasswordEncryption.class);
+public class Md5Encryption {
+    private final static Logger logger = LoggerFactory.getLogger(Md5Encryption.class);
     private final String salt;
-    private final String password;
-    public PasswordEncryption(final String salt, final String password) {
+    private final String str;
+    public Md5Encryption(final String salt, final String str) {
         this.salt = salt;
-        this.password = password;
+        this.str = str;
     }
 
     public String encryptMD5() {
-        if (StaticService.isInValidString(password)) {
-            logger.info("encrypted password MD5: input is invalid: {}", password);
+        if (StaticService.isInValidString(str)) {
+            logger.info("encrypted password MD5: input is invalid: {}", str);
             return null;
         }
         String generatedPassword = null;
@@ -26,7 +26,7 @@ public class PasswordEncryption {
             // Create MessageDigest instance for MD5
             MessageDigest md = MessageDigest.getInstance("MD5");
             //Add password bytes to digest
-            md.update(this.password.getBytes());
+            md.update(this.str.getBytes());
             //Get the hash's bytes
             byte[] bytes = md.digest();
             //This bytes[] has bytes in decimal format;
@@ -49,8 +49,8 @@ public class PasswordEncryption {
             logger.info("encrypted password MD5: salt is invalid: {}", salt);
             return null;
         }
-        if (StaticService.isInValidString(password)) {
-            logger.info("encrypted password MD5: password is invalid: {}", password);
+        if (StaticService.isInValidString(str)) {
+            logger.info("encrypted password MD5: password is invalid: {}", str);
             return null;
         }
         String generatedPassword = null;
@@ -60,7 +60,7 @@ public class PasswordEncryption {
             //Add password bytes to digest
             md.update(this.salt.getBytes());
             //Get the hash's bytes
-            byte[] bytes = md.digest(password.getBytes());
+            byte[] bytes = md.digest(str.getBytes());
             //This bytes[] has bytes in decimal format;
             //Convert it to hexadecimal format
             StringBuilder sb = new StringBuilder();

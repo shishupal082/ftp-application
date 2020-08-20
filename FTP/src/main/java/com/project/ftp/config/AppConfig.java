@@ -102,7 +102,7 @@ public class AppConfig {
         this.logFiles = logFiles;
     }
     public boolean isMySqlEnable() {
-        return this.ftpConfiguration.getMysqlEnable();
+        return this.ftpConfiguration.isMysqlEnable();
     }
 
     @Override

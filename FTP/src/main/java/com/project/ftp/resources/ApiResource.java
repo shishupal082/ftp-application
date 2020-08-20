@@ -85,18 +85,20 @@ public class ApiResource {
     @POST
     @Path("/delete_file")
     @UnitOfWork
-    public ApiResponse deleteFile(@Context HttpServletRequest request, RequestDeleteFile deleteFile) {
+    public ApiResponse deleteFile(@Context HttpServletRequest request,
+                                  RequestDeleteFile deleteFile,
+                                  @QueryParam("ui_username") String uiUsername) {
         logger.info("deleteFile In: {}, user: {}", deleteFile, userService.getUserDataForLogging(request));
         ApiResponse apiResponse;
         try {
             authService.isLogin(request);
             fileServiceV2.deleteRequestFileV2(request, deleteFile);
             apiResponse = new ApiResponse();
-            eventTracking.addSuccessDeleteFile(request, deleteFile);
+            eventTracking.addSuccessDeleteFile(request, deleteFile, uiUsername);
         } catch (AppException ae) {
             logger.info("Error {}, in deleting requested file.", ae.getErrorCode().getErrorCode());
             apiResponse = new ApiResponse(ae.getErrorCode());
-            eventTracking.trackDeleteFileFailure(request, deleteFile, ae.getErrorCode());
+            eventTracking.trackDeleteFileFailure(request, deleteFile, ae.getErrorCode(), uiUsername);
         }
         logger.info("deleteFile out");
         return apiResponse;
@@ -167,7 +169,8 @@ public class ApiResource {
                                   @FormDataParam("file") InputStream uploadedInputStream,
                                @FormDataParam("file") FormDataContentDisposition fileDetail,
                                @FormDataParam("subject") String subject,
-                               @FormDataParam("heading") String heading) {
+                               @FormDataParam("heading") String heading,
+                               @QueryParam("ui_username") String uiUsername) {
         logger.info("uploadFile: In, upload fileDetails: {}, user: {}",
                 fileDetail, userService.getUserDataForLogging(request));
         logger.info("uploadFile data, subject: {}, heading: {}", subject, heading);
@@ -176,11 +179,11 @@ public class ApiResource {
             authService.isLogin(request);
             response = fileServiceV2.uploadFileV2(request, uploadedInputStream,
                     fileDetail, subject, heading);
-            eventTracking.addSuccessUploadFile(request, fileDetail, subject, heading);
+            eventTracking.addSuccessUploadFile(request, fileDetail, subject, heading, uiUsername);
         } catch (AppException ae) {
             logger.info("Error in uploading file: {}", ae.getErrorCode().getErrorCode());
             response = new ApiResponse(ae.getErrorCode());
-            eventTracking.addFailureUploadFile(request, ae.getErrorCode(), fileDetail, subject, heading);
+            eventTracking.addFailureUploadFile(request, ae.getErrorCode(), fileDetail, subject, heading, uiUsername);
         }
         logger.info("uploadFile : Out {}", response);
         return response;
@@ -256,7 +259,8 @@ public class ApiResource {
     @Path("/change_password")
     @UnitOfWork
     public ApiResponse changePassword(@Context HttpServletRequest httpServletRequest,
-                                 RequestChangePassword request) {
+                                 RequestChangePassword request,
+                                 @QueryParam("ui_username") String uiUsername) {
         logger.info("changePassword : In, user: {}",
                 userService.getUserDataForLogging(httpServletRequest));
         ApiResponse response;
@@ -264,10 +268,10 @@ public class ApiResource {
             authService.isLogin(httpServletRequest);
             userService.changePassword(httpServletRequest, request);
             response = new ApiResponse();
-            eventTracking.trackChangePasswordSuccess(httpServletRequest);
+            eventTracking.trackChangePasswordSuccess(httpServletRequest, uiUsername);
         } catch (AppException ae) {
             logger.info("Error in change password: {}", ae.getErrorCode().getErrorCode());
-            eventTracking.trackChangePasswordFailure(httpServletRequest, ae.getErrorCode());
+            eventTracking.trackChangePasswordFailure(httpServletRequest, ae.getErrorCode(), uiUsername);
             response = new ApiResponse(ae.getErrorCode());
         }
         logger.info("changePassword : Out: {}", response);

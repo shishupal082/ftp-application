@@ -99,43 +99,34 @@ public class UserService {
         return loginUserDetails;
     }
     // Login, Change password
-    private MysqlUser isUserPasswordMatch(String username, String password,
+    private void isUserPasswordMatch(String userInputPassword, String encryptedInputPassword, String dbPassword,
                                      ErrorCodes emptyPasswordErrorCode,
                                      ErrorCodes passwordMisMatchErrorCode,
                                      boolean isLoginCheck) throws AppException {
-        if (username == null || username.isEmpty()) {
-            logger.info("username required: {}.", username);
-            throw new AppException(ErrorCodes.USER_NAME_REQUIRED);
-        }
-        MysqlUser user = this.getUserByName(username);
-        if (user == null) {
-            logger.info("username: {}, is not found.", username);
-            throw new AppException(ErrorCodes.USER_NOT_FOUND);
-        }
-        if (StaticService.isInValidString(password)) {
-            logger.info("invalid password for username: {}", username);
+        if (StaticService.isInValidString(userInputPassword)) {
+            logger.info("invalid input password: {}", userInputPassword);
             throw new AppException(emptyPasswordErrorCode);
         }
-        password = StaticService.encryptPassword(user.getPasscode(), password);
-        if (password == null) {
-            logger.info("encryptedPassword for input is null, for username: {}", username);
+
+        if (StaticService.isInValidString(encryptedInputPassword)) {
+            logger.info("password encryption error: {}", encryptedInputPassword);
             throw new AppException(ErrorCodes.PASSWORD_ENCRYPTION_ERROR);
         }
-        if (!password.equals(user.getPassword())) {
-            logger.info("password mismatch for user: {}, requestedPassword: {}", user, password);
-            if (isLoginCheck && StaticService.isInValidString(user.getPassword())) {
-                logger.info("user not registered yet: {}", user);
+
+        if (!encryptedInputPassword.equals(dbPassword)) {
+            logger.info("password mismatch for inputPassword: {}, dbPassword: {}", encryptedInputPassword, dbPassword);
+            if (isLoginCheck && StaticService.isInValidString(dbPassword)) {
+                logger.info("user not registered yet.");
                 throw new AppException(ErrorCodes.USER_NOT_REGISTERED);
             }
             throw new AppException(passwordMisMatchErrorCode);
         }
-        return user;
     }
-    // register, change password
-    private void isValidNewPassword(String password) throws AppException {
+    // register, change_password
+    private void isValidNewPassword(String password, ErrorCodes emptyPasswordErrorCode) throws AppException {
         if (password == null || password.isEmpty()) {
             logger.info("Password should not be null or empty: {}", password);
-            throw new AppException(ErrorCodes.PASSWORD_NEW_REQUIRED);
+            throw new AppException(emptyPasswordErrorCode);
         }
         int passwordLength = password.length();
         if (passwordLength > 14 || passwordLength < 8) {
@@ -145,30 +136,55 @@ public class UserService {
         logger.info("Password policy match.");
     }
     // register
-    private MysqlUser isUserPasscodeMatch(String username, String passcode) throws AppException {
-        if (username == null || username.isEmpty()) {
+    private MysqlUser isValidRegisterRequest(RequestUserRegister userRegister) throws AppException {
+        if (userRegister == null) {
+            logger.info("userRegister request is null.");
+            throw new AppException(ErrorCodes.BAD_REQUEST_ERROR);
+        }
+        String username = userRegister.getUsername();
+        String passcode = userRegister.getPasscode();
+        String inputPassword = userRegister.getPassword();
+        String displayName = userRegister.getDisplay_name();
+        if (StaticService.isInValidString(username)) {
             logger.info("username required: {}.", username);
             throw new AppException(ErrorCodes.USER_NAME_REQUIRED);
         }
-        if (passcode == null || passcode.isEmpty()) {
-            logger.info("username required: {}.", username);
+
+        if (StaticService.isInValidString(passcode)) {
+            logger.info("passcode required: {}.", passcode);
             throw new AppException(ErrorCodes.REGISTER_PASSCODE_REQUIRED);
         }
+
+        if (StaticService.isInValidString(displayName)) {
+            logger.info("displayName is empty: {}", displayName);
+            throw new AppException(ErrorCodes.REGISTER_NAME_REQUIRED);
+        }
+
+        this.isValidNewPassword(inputPassword, ErrorCodes.PASSWORD_REQUIRED);
         MysqlUser user = this.getUserByName(username);
+
         if (user == null) {
-            logger.info("username: {}, is not found.", username);
+            logger.info("user: {}, not found.", username);
             throw new AppException(ErrorCodes.USER_NOT_FOUND);
         }
-        String systemPassword = user.getPassword();
-        if (!StaticService.isInValidString(systemPassword)) {
-            logger.info("user already register: {}", user);
+
+        String encryptedPassword = StaticService.encryptPassword(user.getPasscode(), inputPassword);
+        String dbPassword = user.getPassword();
+        logger.info("userRegister request inputPassword: {}, dbPassword: {}",
+                encryptedPassword, dbPassword);
+
+        if (StaticService.isValidString(dbPassword)) {
+            logger.info("user already register: {}, dBPassword={}", user, dbPassword);
             throw new AppException(ErrorCodes.REGISTER_ALREADY);
         }
+
         if (!passcode.equals(user.getPasscode())) {
             logger.info("passcode: {}, mismatch for user: {}", passcode, user);
             throw new AppException(ErrorCodes.REGISTER_PASSCODE_NOT_MATCHING);
         }
-        logger.info("passcode: {}, match with user: {}", passcode, user);
+        logger.info("userRegister request is valid");
+        user.setPassword(encryptedPassword);
+        user.setName(displayName);
         return user;
     }
     public LoginUserDetails loginUser(HttpServletRequest request, RequestUserLogin userLogin) throws AppException {
@@ -176,7 +192,21 @@ public class UserService {
             logger.info("loginUser request is null.");
             throw new AppException(ErrorCodes.BAD_REQUEST_ERROR);
         }
-        this.isUserPasswordMatch(userLogin.getUsername(), userLogin.getPassword(),
+        String username = userLogin.getUsername();
+        String password = userLogin.getPassword();
+        if (StaticService.isInValidString(username)) {
+            logger.info("loginUser request invalid username: {}", username);
+            throw new AppException(ErrorCodes.USER_NAME_REQUIRED);
+        }
+        MysqlUser user = this.getUserByName(username);
+        if (user == null) {
+            logger.info("user: {}, not found", username);
+            throw new AppException(ErrorCodes.USER_NOT_FOUND);
+        }
+        String encryptedPassword = StaticService.encryptPassword(user.getPasscode(), password);
+        logger.info("loginUser encrypted password: {}", encryptedPassword);
+
+        this.isUserPasswordMatch(password, encryptedPassword, user.getPassword(),
                 ErrorCodes.PASSWORD_REQUIRED, ErrorCodes.PASSWORD_NOT_MATCHING, true);
         sessionService.loginUser(request, userLogin.getUsername());
         LoginUserDetails loginUserDetails = this.getLoginUserDetails(request);
@@ -184,35 +214,19 @@ public class UserService {
         return loginUserDetails;
     }
     public void userRegister(HttpServletRequest request, RequestUserRegister userRegister) throws AppException {
-        if (userRegister == null) {
-            logger.info("userRegister request is null.");
-            throw new AppException(ErrorCodes.BAD_REQUEST_ERROR);
-        }
-        String username = userRegister.getUsername();
-        MysqlUser user = this.isUserPasscodeMatch(username, userRegister.getPasscode());
-        String password = userRegister.getPassword();
-        this.isValidNewPassword(password);
-        String encryptedPassword = StaticService.encryptPassword(user.getPasscode(), password);
-        if (encryptedPassword == null) {
-            logger.info("error in password encryption: {}", userRegister);
-            throw new AppException(ErrorCodes.PASSWORD_ENCRYPTION_ERROR);
-        }
-        String displayName = userRegister.getDisplay_name();
-        if (displayName == null || displayName.isEmpty()) {
-            logger.info("displayName is empty: {}", userRegister);
-            throw new AppException(ErrorCodes.REGISTER_NAME_REQUIRED);
-        }
+
+        MysqlUser user = this.isValidRegisterRequest(userRegister);
+
         logger.info("User register parameter are ok: {}", userRegister);
-        user.setPassword(encryptedPassword);
-        user.setName(displayName);
         user.setMethod("register");
         boolean createUserStatus = this.setPassword(user);
         if (!createUserStatus) {
             logger.info("Create user failed: {}", userRegister);
             throw new AppException(ErrorCodes.RUNTIME_ERROR);
         }
-        sessionService.loginUser(request, username);
-        logger.info("userRegister success: {}, {}", password, user);
+        sessionService.loginUser(request, user.getUsername());
+        logger.info("register success:{}, {}",
+                StaticService.encryptAesPassword(appConfig, userRegister.getPassword()), user);
     }
     public void changePassword(HttpServletRequest request, RequestChangePassword changePassword) throws AppException {
         if (changePassword == null) {
@@ -220,23 +234,35 @@ public class UserService {
             throw new AppException(ErrorCodes.BAD_REQUEST_ERROR);
         }
         String newPassword = changePassword.getNew_password();
-        this.isValidNewPassword(newPassword);
         String oldPassword = changePassword.getOld_password();
+        String confirmPassword = changePassword.getConfirm_password();
+
         LoginUserDetails loginUserDetails = this.getLoginUserDetails(request);
-        MysqlUser user = this.isUserPasswordMatch(loginUserDetails.getUsername(), oldPassword,
+        MysqlUser user = this.getUserByName(loginUserDetails.getUsername());
+        if (user == null) {
+            logger.info("username: {}, is not found.", loginUserDetails.getUsername());
+            throw new AppException(ErrorCodes.USER_NOT_FOUND);
+        }
+        String encryptedNewPassword = StaticService.encryptPassword(user.getPasscode(), newPassword);
+        String encryptedOldPassword = StaticService.encryptPassword(user.getPasscode(), oldPassword);
+        String encryptedConfirmPassword = StaticService.encryptPassword(user.getPasscode(), confirmPassword);
+        logger.info("changePassword request: oldEncryptedPassword={}, newEncryptedPassword={}",
+                encryptedOldPassword, encryptedNewPassword);
+
+        this.isUserPasswordMatch(oldPassword, encryptedOldPassword, user.getPassword(),
                 ErrorCodes.PASSWORD_CHANGE_OLD_REQUIRED,
                 ErrorCodes.PASSWORD_CHANGE_OLD_NOT_MATCHING, false);
-        String confirmPassword = changePassword.getConfirm_password();
-        if (!newPassword.equals(confirmPassword)) {
+
+        this.isValidNewPassword(newPassword, ErrorCodes.PASSWORD_NEW_REQUIRED);
+
+        if (encryptedConfirmPassword == null || !encryptedConfirmPassword.equals(encryptedNewPassword)) {
             logger.info("changePassword request mismatch, new_password: {}, confirm_password: {}",
-                    StaticService.encryptPassword(user.getPasscode(), newPassword),
-                    StaticService.encryptPassword(user.getPasscode(), confirmPassword));
+                    encryptedNewPassword, encryptedConfirmPassword);
             throw new AppException(ErrorCodes.PASSWORD_CHANGE_NOT_MATCHING);
         }
 
-        String encryptedPassword = StaticService.encryptPassword(user.getPasscode(), newPassword);
-        if (encryptedPassword == null) {
-            logger.info("error in new password encryption: {}, {}", changePassword, user);
+        if (StaticService.isInValidString(encryptedNewPassword)) {
+            logger.info("encryptedPassword newPassword is null");
             throw new AppException(ErrorCodes.PASSWORD_ENCRYPTION_ERROR);
         }
         int limit = AppConstant.MAX_ENTRY_ALLOWED_IN_USER_DATA_FILE;
@@ -245,14 +271,15 @@ public class UserService {
             throw new AppException(ErrorCodes.PASSWORD_CHANGE_COUNT_EXCEED);
         }
         user.incrementEntryCount();
-        user.setPassword(encryptedPassword);
+        user.setPassword(encryptedNewPassword);
         user.setMethod("change_password");
         boolean changePasswordStatus = this.updatePassword(user);
         if (!changePasswordStatus) {
             logger.info("Error in updating password.");
             throw new AppException(ErrorCodes.RUNTIME_ERROR);
         }
-        logger.info("change password success: {}, {}", newPassword, user);
+        logger.info("change password success:{}, {}",
+                StaticService.encryptAesPassword(appConfig, newPassword), user);
     }
     public void logoutUser(HttpServletRequest request) {
         LoginUserDetails loginUserDetails = this.getLoginUserDetails(request);

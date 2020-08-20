@@ -1,10 +1,7 @@
 package com.project.ftp.service;
 
 import com.project.ftp.FtpConfiguration;
-import com.project.ftp.common.DateUtilities;
-import com.project.ftp.common.PasswordEncryption;
-import com.project.ftp.common.StrUtils;
-import com.project.ftp.common.SysUtils;
+import com.project.ftp.common.*;
 import com.project.ftp.config.*;
 import com.project.ftp.event.EventTracking;
 import com.project.ftp.obj.PathInfo;
@@ -120,8 +117,28 @@ public class StaticService {
         }
         salt = salt.trim();
         password = password.trim();
-        PasswordEncryption passwordEncryption = new PasswordEncryption(salt, password);
-        return passwordEncryption.encryptMD5WithSalt();
+        Md5Encryption md5Encryption = new Md5Encryption(salt, password);
+        return md5Encryption.encryptMD5WithSalt();
+    }
+    public static String encryptAesPassword(AppConfig appConfig, String password) {
+        String salt = appConfig.getFtpConfiguration().getAesEncryptionPassword();
+        if (strUtils.isInValidString(salt) || strUtils.isInValidString(password)) {
+            return null;
+        }
+        salt = salt.trim();
+        password = password.trim();
+        AesEncryption aesEncryption = new AesEncryption(salt);
+        return aesEncryption.encrypt(password.getBytes());
+    }
+    public static String decryptAesPassword(AppConfig appConfig, String encryptedPassword) {
+        String salt = appConfig.getFtpConfiguration().getAesEncryptionPassword();
+        if (strUtils.isInValidString(salt) || strUtils.isInValidString(encryptedPassword)) {
+            return null;
+        }
+        salt = salt.trim();
+        encryptedPassword = encryptedPassword.trim();
+        AesEncryption aesEncryption = new AesEncryption(salt);
+        return aesEncryption.decrypt(encryptedPassword);
     }
     public static String encodeComma(String str) {
         if (str == null) {

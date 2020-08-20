@@ -212,7 +212,7 @@ FTP.extend({
         TemplateHelper.setTemplateAttr(dashboardField, "dashboard.orderbydropdown", "value", dashboardOrderBy);
         if (fileinfo && $S.isString(fileinfo.ext)) {
             ext = fileinfo.ext.toLowerCase();
-            displayLink = PageData.getCurrentPdfLink() + "?iframe=true";
+            displayLink = PageData.getCurrentPdfLink();
             if (Config.imgExt.indexOf(ext) >= 0) {
                 field = TemplateHelper(dashboardField).searchFieldV2("dashboard.display.object.div");
                 TemplateHelper.addClassTemplate(field, "dashboard.display.object.div", "d-none");

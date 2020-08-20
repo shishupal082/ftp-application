@@ -546,8 +546,26 @@ Added event tracking
         - instance: DevComputer
 Threshold limit change from 15 to 5 for log file copy date change request count
 
+3.0.6
+-------------------
+Track username request for (put this uiUsername in comment area)
+uploadFile, deleteFile, viewFile, downloadFile, changePassword
+    - in both success and failure
+
+
+Add method to encrypt and decrypt string (AES encryption)
+    - encrypt
+    - decrypt
+    Add env_config
+        - aesEncryptionPassword: "aesEncryptionPassword"
+Added encrypted password on login failure
+Add file size in file_details.csv
+    - Not required as same can be get in real time
+
 Future releases
 -------------------
+
+
 create user_role.yaml file in config-files dir
 Define role
     username(Admin)

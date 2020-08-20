@@ -78,7 +78,8 @@ public class AppResource {
     public Response viewFile(@Context HttpServletRequest request,
                            @PathParam("username") String username,
                            @PathParam("filename2") String filename2,
-                           @QueryParam("iframe") String isIframe) {
+                           @QueryParam("iframe") String isIframe,
+                           @QueryParam("ui_username") String uiUsername) {
         String filename = username+"/"+filename2;
         logger.info("Loading viewFile: {}, isIframe: {}", filename, isIframe);
         logger.info("user: {}", userService.getUserDataForLogging(request));
@@ -88,10 +89,10 @@ public class AppResource {
         try {
             authService.isLogin(request);
             pathInfo = fileServiceV2.searchRequestedFileV2(request, filename);
-            eventTracking.addSuccessViewFile(request, filename, isIframe);
+            eventTracking.addSuccessViewFile(request, filename, isIframe, uiUsername);
         } catch (AppException ae) {
             logger.info("Error in searching requested file: {}", ae.getErrorCode().getErrorCode());
-            eventTracking.trackViewFileFailure(request, filename, ae.getErrorCode(), isIframe);
+            eventTracking.trackViewFileFailure(request, filename, ae.getErrorCode(), isIframe, uiUsername);
             apiResponse = new ApiResponse(ae.getErrorCode());
         }
 
@@ -123,7 +124,8 @@ public class AppResource {
     @UnitOfWork
     public Object downloadFile(@Context HttpServletRequest request,
                                @PathParam("username") String username,
-                               @PathParam("filename2") String filename2) {
+                               @PathParam("filename2") String filename2,
+                               @QueryParam("ui_username") String uiUsername) {
         String filename = username+"/"+filename2;
         logger.info("Loading downloadFile: {}, user: {}",
                 filename, userService.getUserDataForLogging(request));
@@ -132,10 +134,10 @@ public class AppResource {
         try {
             authService.isLogin(request);
             pathInfo = fileServiceV2.searchRequestedFileV2(request, filename);
-            eventTracking.addSuccessDownloadFile(request, filename);
+            eventTracking.addSuccessDownloadFile(request, filename, uiUsername);
         } catch (AppException ae) {
             logger.info("Error in searching requested file: {}", ae.getErrorCode().getErrorCode());
-            eventTracking.trackDownloadFileFailure(request, filename, ae.getErrorCode());
+            eventTracking.trackDownloadFileFailure(request, filename, ae.getErrorCode(), uiUsername);
         }
         if (pathInfo != null) {
             File file = new File(pathInfo.getPath());

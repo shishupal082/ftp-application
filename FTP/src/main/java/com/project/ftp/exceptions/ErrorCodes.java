@@ -19,14 +19,14 @@ public enum ErrorCodes {
     USER_ALREADY_LOGIN("USER_ALREADY_LOGIN", "User already login.", 403),
     // Login
     PASSWORD_NOT_MATCHING("PASSWORD_NOT_MATCHING", "Username password not matching.", 403),
-    // Login
+    // Login, Register
     PASSWORD_REQUIRED("PASSWORD_REQUIRED", "Password required.", 403),
     USER_NOT_REGISTERED("USER_NOT_REGISTERED", "User is not registered, Please register.", 403),
     // Login, Change password, Register
     USER_NOT_FOUND("USER_NOT_FOUND", "User not found.", 403),
     // Change password
     PASSWORD_CHANGE_OLD_REQUIRED("PASSWORD_CHANGE_OLD_REQUIRED", "Old password required.", 403),
-    // Change password, Register
+    // Change password
     PASSWORD_NEW_REQUIRED("PASSWORD_CHANGE_NEW_REQUIRED", "New password required.", 403),
     // Change password
     PASSWORD_CHANGE_NOT_MATCHING("PASSWORD_CHANGE_NOT_MATCHING", "New password and confirm password are not matching.", 403),

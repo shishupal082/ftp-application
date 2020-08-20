@@ -52,15 +52,15 @@ PageData.extend({
 });
 PageData.extend({
     getPdfDownloadLink: function(filename) {
-        return Config.baseapi + "/download/file/" + filename;
+        return Config.baseapi + "/download/file/" + filename + "?ui_username=" + Config.getPageData("username", "");
     },
     getPdfViewLink: function(filename) {
-        return Config.baseapi + "/view/file/" + filename;
+        return Config.baseapi + "/view/file/" + filename + "?ui_username=" + Config.getPageData("username", "");
     },
     getCurrentPdfLink: function(Data) {
         var pdfLink = CurrentFormData.getData("dashboard.currentPdfLink", null);
         if (pdfLink !== null) {
-            return PageData.getPdfViewLink(pdfLink);
+            pdfLink = PageData.getPdfViewLink(pdfLink)+"&iframe=true";
         }
         return pdfLink;
     }

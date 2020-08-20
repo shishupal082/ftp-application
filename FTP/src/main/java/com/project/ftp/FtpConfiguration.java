@@ -30,6 +30,7 @@ public class FtpConfiguration extends Configuration {
     private Boolean permanentlyDeleteFile;
     private String appRestartCommand;
     private String uploadFileApiVersion;
+    private String aesEncryptionPassword;
     private boolean mysqlEnable;
 
     @JsonProperty("database")
@@ -189,20 +190,28 @@ public class FtpConfiguration extends Configuration {
         this.uploadFileApiVersion = uploadFileApiVersion;
     }
 
-    public boolean getMysqlEnable() {
-        return mysqlEnable;
-    }
-
-    public void setMysqlEnable(boolean mysqlEnable) {
-        this.mysqlEnable = mysqlEnable;
-    }
-
     public String getInstance() {
         return instance;
     }
 
     public void setInstance(String instance) {
         this.instance = instance;
+    }
+
+    public String getAesEncryptionPassword() {
+        return aesEncryptionPassword;
+    }
+
+    public void setAesEncryptionPassword(String aesEncryptionPassword) {
+        this.aesEncryptionPassword = aesEncryptionPassword;
+    }
+
+    public void setMysqlEnable(boolean mysqlEnable) {
+        this.mysqlEnable = mysqlEnable;
+    }
+
+    public boolean isMysqlEnable() {
+        return mysqlEnable;
     }
 
     @Override
@@ -226,8 +235,9 @@ public class FtpConfiguration extends Configuration {
                 ", permanentlyDeleteFile=" + permanentlyDeleteFile +
                 ", appRestartCommand='" + appRestartCommand + '\'' +
                 ", uploadFileApiVersion='" + uploadFileApiVersion + '\'' +
+                ", aesEncryptionPassword='" + "*****" + '\'' +
                 ", mysqlEnable=" + mysqlEnable +
-                ", dataSourceFactory=" + "*****" +
+                ", dataSourceFactory=" + "*****"  + '\''+
                 ", tempConfig=" + tempConfig +
                 '}';
     }
