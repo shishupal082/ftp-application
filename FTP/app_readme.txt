@@ -542,9 +542,9 @@ added more event tracking
 -------------------
 Added event tracking
     - application_start
-    Added optional env_config parameter
+    Added optional env_config parameter (used in application_start event)
         - instance: DevComputer
-Threshold limit change from 15 to 5 for log file copy date change event
+Threshold limit change from 15 to 5 for log file copy date change request count
 
 Future releases
 -------------------
