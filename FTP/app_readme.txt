@@ -562,6 +562,15 @@ Added encrypted password on login failure
 Add file size in file_details.csv
     - Not required as same can be get in real time
 
+3.0.6.1
+-------------------
+request query parameter name change from ui_username to username
+    - view_file
+    - download_file
+    - upload_file
+    - delete_file
+    - change_password
+
 Future releases
 -------------------
 

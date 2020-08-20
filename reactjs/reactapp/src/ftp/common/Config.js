@@ -73,10 +73,10 @@ Config.apiMapping["static_file"] = baseapi + "/api/get_static_file?v=" + Request
 
 Config.apiMapping["login"] = baseapi + "/api/login_user";
 Config.apiMapping["register"] = baseapi + "/api/register_user";
-Config.apiMapping["change_password"] = baseapi + "/api/change_password?ui_username="+uiUsername;
+Config.apiMapping["change_password"] = baseapi + "/api/change_password?username="+uiUsername;
 
-Config.apiMapping["upload_file"] = baseapi + "/api/upload_file?ui_username="+uiUsername;
-Config.apiMapping["delete_file"] = baseapi + "/api/delete_file?ui_username="+uiUsername;
+Config.apiMapping["upload_file"] = baseapi + "/api/upload_file?username="+uiUsername;
+Config.apiMapping["delete_file"] = baseapi + "/api/delete_file?username="+uiUsername;
 
 Config.apiMapping["get_files"] = baseapi + "/api/get_files_info?v=" + RequestId;
 

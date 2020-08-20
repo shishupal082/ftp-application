@@ -87,7 +87,7 @@ public class ApiResource {
     @UnitOfWork
     public ApiResponse deleteFile(@Context HttpServletRequest request,
                                   RequestDeleteFile deleteFile,
-                                  @QueryParam("ui_username") String uiUsername) {
+                                  @QueryParam("username") String uiUsername) {
         logger.info("deleteFile In: {}, user: {}", deleteFile, userService.getUserDataForLogging(request));
         ApiResponse apiResponse;
         try {
@@ -170,7 +170,7 @@ public class ApiResource {
                                @FormDataParam("file") FormDataContentDisposition fileDetail,
                                @FormDataParam("subject") String subject,
                                @FormDataParam("heading") String heading,
-                               @QueryParam("ui_username") String uiUsername) {
+                               @QueryParam("username") String uiUsername) {
         logger.info("uploadFile: In, upload fileDetails: {}, user: {}",
                 fileDetail, userService.getUserDataForLogging(request));
         logger.info("uploadFile data, subject: {}, heading: {}", subject, heading);
@@ -260,7 +260,7 @@ public class ApiResource {
     @UnitOfWork
     public ApiResponse changePassword(@Context HttpServletRequest httpServletRequest,
                                  RequestChangePassword request,
-                                 @QueryParam("ui_username") String uiUsername) {
+                                 @QueryParam("username") String uiUsername) {
         logger.info("changePassword : In, user: {}",
                 userService.getUserDataForLogging(httpServletRequest));
         ApiResponse response;
