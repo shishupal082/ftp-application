@@ -160,7 +160,7 @@ public class UserService {
             throw new AppException(ErrorCodes.REGISTER_NAME_REQUIRED);
         }
 
-        this.isValidNewPassword(inputPassword, ErrorCodes.PASSWORD_REQUIRED);
+        this.isValidNewPassword(inputPassword, ErrorCodes.PASSWORD_NEW_REQUIRED);
         MysqlUser user = this.getUserByName(username);
 
         if (user == null) {
