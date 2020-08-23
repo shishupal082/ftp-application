@@ -14,6 +14,7 @@ public enum ErrorCodes {
     INVALID_QUERY_PARAMS("Invalid query params", "Invalid query params", 403),
     INVALID_SESSION("INVALID_SESSION", "Invalid session", 403),
     INVALID_USER_NAME("INVALID_USER_NAME", "Invalid user name", 403),
+    INVALID_INPUT("INVALID_INPUT", "Invalid request input", 403),
     // Login, Register
     USER_NAME_REQUIRED("USER_NAME_REQUIRED", "Username required.", 403),
     USER_ALREADY_LOGIN("USER_ALREADY_LOGIN", "User already login.", 403),

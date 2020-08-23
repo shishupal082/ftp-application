@@ -19,7 +19,10 @@ public enum EventName {
     GET_USERS("get_users"),
     GET_APP_CONFIG("get_app_config"),
     GET_SESSION_DATA("get_session_data"),
-    GET_FILES_INFO("get_files_info");
+    GET_FILES_INFO("get_files_info"),
+    AES_ENCRYPTION("aes_encryption"),
+    AES_DECRYPTION("aes_decryption"),
+    MD5_ENCRYPTION("md5_encryption");
 
     private final String name;
     EventName(String name) {

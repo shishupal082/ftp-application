@@ -580,6 +580,15 @@ request query parameter name change from ui_username to u
     - delete_file
     - change_password
 
+3.0.6.3
+-------------------
+api added (authentication = isLoginUserDev)
+    - /api/aes_encrypt
+    - /api/aes_decrypt
+    - /api/md5_encrypt
+
+sync /view/resource data
+
 Future releases
 -------------------
 

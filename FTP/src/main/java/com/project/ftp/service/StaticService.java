@@ -128,7 +128,7 @@ public class StaticService {
         salt = salt.trim();
         password = password.trim();
         AesEncryption aesEncryption = new AesEncryption(salt);
-        return aesEncryption.encrypt(password.getBytes());
+        return aesEncryption.encrypt(password);
     }
     public static String decryptAesPassword(AppConfig appConfig, String encryptedPassword) {
         String salt = appConfig.getFtpConfiguration().getAesEncryptionPassword();

@@ -54,7 +54,7 @@ fileDeleteAccess: "self_admin" #self or admin or self_admin
 permanentlyDeleteFile: false #File will saved in trash folder
 maxFileSize: 10240001 #i.e. #i.e. 2048000 = 2048 kB = 2MB, 10240001 = 10MB
 uploadFileApiVersion: v1 #(v1|v2)
-aesEncryptionPassword: "aesEncryptionPassword"
+aesEncryptionPassword: "1234"
 
 adminUsersName:
   - Admin

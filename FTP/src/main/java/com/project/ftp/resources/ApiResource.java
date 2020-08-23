@@ -1,6 +1,7 @@
 package com.project.ftp.resources;
 
 import com.project.ftp.config.AppConfig;
+import com.project.ftp.event.EventName;
 import com.project.ftp.event.EventTracking;
 import com.project.ftp.exceptions.AppException;
 import com.project.ftp.exceptions.ErrorCodes;
@@ -8,6 +9,7 @@ import com.project.ftp.obj.*;
 import com.project.ftp.parser.JsonFileParser;
 import com.project.ftp.service.AuthService;
 import com.project.ftp.service.FileServiceV2;
+import com.project.ftp.service.SecurityService;
 import com.project.ftp.service.UserService;
 import io.dropwizard.hibernate.UnitOfWork;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
@@ -30,6 +32,7 @@ public class ApiResource {
     private final FileServiceV2 fileServiceV2;
     private final UserService userService;
     private final AuthService authService;
+    private final SecurityService securityService;
     private final EventTracking eventTracking;
     public ApiResource(final AppConfig appConfig,
                        final UserService userService,
@@ -40,6 +43,7 @@ public class ApiResource {
         this.userService = userService;
         this.eventTracking = eventTracking;
         this.authService = authService;
+        this.securityService = new SecurityService();
     }
     @GET
     @Produces(MediaType.TEXT_HTML)
@@ -73,11 +77,11 @@ public class ApiResource {
             Users u = userService.getAllUser();
             u = new Users(u.getUserHashMap());
             response = new ApiResponse(u);
-            eventTracking.addSuccessGetUsers(request);
+            eventTracking.trackSuccessEvent(request, EventName.GET_USERS);
         } catch (AppException ae) {
             logger.info("Error in get_users: {}", ae.getErrorCode().getErrorCode());
             response = new ApiResponse(ae.getErrorCode());
-            eventTracking.trackGetUsersFailure(request, ae.getErrorCode());
+            eventTracking.trackFailureEvent(request, EventName.GET_USERS, ae.getErrorCode());
         }
         logger.info("getAllUsers : Out");
         return response;
@@ -113,11 +117,11 @@ public class ApiResource {
         try {
             authService.isLogin(request);
             response = fileServiceV2.scanUserDirectory(request);
-            eventTracking.addSuccessGetFilesInfo(request);
+//            eventTracking.trackSuccessEvent(request, EventName.GET_FILES_INFO);
         } catch (AppException ae) {
             logger.info("Error in scanning user directory: {}", ae.getErrorCode().getErrorString());
             response = new ApiResponse(ae.getErrorCode());
-            eventTracking.trackGetFileInfoFailure(request, ae.getErrorCode());
+            eventTracking.trackFailureEvent(request, EventName.GET_FILES_INFO, ae.getErrorCode());
         }
         // Not putting response in log as it may be very large
         logger.info("getAllV3Data : Out");
@@ -132,12 +136,12 @@ public class ApiResource {
         try {
             authService.isLoginUserDev(request);
             response = new ApiResponse(appConfig);
-            eventTracking.addSuccessGetAppConfig(request);
+            eventTracking.trackSuccessEvent(request, EventName.GET_APP_CONFIG);
         } catch (AppException ae) {
             logger.info("Unauthorised username: {}, trying to access app config.",
                     userService.getLoginUserName(request));
             response = new ApiResponse(ae.getErrorCode());
-            eventTracking.trackGetAppConfigFailure(request, ae.getErrorCode());
+            eventTracking.trackFailureEvent(request, EventName.GET_APP_CONFIG, ae.getErrorCode());
         }
         logger.info("getAppConfig : Out: {}", response);
         return response;
@@ -151,12 +155,12 @@ public class ApiResource {
         try {
             authService.isLoginUserDev(request);
             response = new ApiResponse(appConfig);
-            eventTracking.addSuccessGetSessionData(request);
+            eventTracking.trackSuccessEvent(request, EventName.GET_SESSION_DATA);
         } catch (AppException ae) {
             logger.info("Unauthorised username: {}, trying to access session config.",
                     userService.getLoginUserName(request));
             response = new ApiResponse(ae.getErrorCode());
-            eventTracking.trackGetSessionDataFailure(request, ae.getErrorCode());
+            eventTracking.trackFailureEvent(request, EventName.GET_SESSION_DATA, ae.getErrorCode());
         }
         logger.info("getSessionConfig : Out: {}", response);
         return response;
@@ -275,6 +279,66 @@ public class ApiResource {
             response = new ApiResponse(ae.getErrorCode());
         }
         logger.info("changePassword : Out: {}", response);
+        return response;
+    }
+    @POST
+    @Path("/aes_encrypt")
+    @UnitOfWork
+    public ApiResponse aesEncrypt(@Context HttpServletRequest request,
+                                  RequestSecurity requestSecurity) {
+        logger.info("aesEncrypt : In, user: {}",
+                userService.getUserDataForLogging(request));
+        ApiResponse response;
+        try {
+            authService.isLoginUserDev(request);
+            response = securityService.aesEncrypt(requestSecurity);;
+            eventTracking.trackSuccessEvent(request, EventName.AES_ENCRYPTION);
+        } catch (AppException ae) {
+            logger.info("Error in aesEncrypt: {}", ae.getErrorCode().getErrorCode());
+            eventTracking.trackFailureEvent(request, EventName.AES_ENCRYPTION, ae.getErrorCode());
+            response = new ApiResponse(ae.getErrorCode());
+        }
+        logger.info("aesEncrypt : Out");
+        return response;
+    }
+    @POST
+    @Path("/aes_decrypt")
+    @UnitOfWork
+    public ApiResponse aesDecrypt(@Context HttpServletRequest request,
+                                  RequestSecurity requestSecurity) {
+        logger.info("aesDecrypt : In, user: {}",
+                userService.getUserDataForLogging(request));
+        ApiResponse response;
+        try {
+            authService.isLoginUserDev(request);
+            response = securityService.aesDecrypt(requestSecurity);;
+            eventTracking.trackSuccessEvent(request, EventName.AES_DECRYPTION);
+        } catch (AppException ae) {
+            logger.info("Error in aesDecrypt: {}", ae.getErrorCode().getErrorCode());
+            eventTracking.trackFailureEvent(request, EventName.AES_DECRYPTION, ae.getErrorCode());
+            response = new ApiResponse(ae.getErrorCode());
+        }
+        logger.info("aesDecrypt : Out");
+        return response;
+    }
+    @POST
+    @Path("/md5_encrypt")
+    @UnitOfWork
+    public ApiResponse md5Encrypt(@Context HttpServletRequest request,
+                                  RequestSecurity requestSecurity) {
+        logger.info("md5Encrypt : In, user: {}",
+                userService.getUserDataForLogging(request));
+        ApiResponse response;
+        try {
+            authService.isLoginUserDev(request);
+            response = securityService.md5Encrypt(requestSecurity);;
+            eventTracking.trackSuccessEvent(request, EventName.MD5_ENCRYPTION);
+        } catch (AppException ae) {
+            logger.info("Error in md5Encrypt: {}", ae.getErrorCode().getErrorCode());
+            eventTracking.trackFailureEvent(request, EventName.MD5_ENCRYPTION, ae.getErrorCode());
+            response = new ApiResponse(ae.getErrorCode());
+        }
+        logger.info("md5Encrypt : Out");
         return response;
     }
     @Path("{default: .*}")

@@ -28,24 +28,19 @@ public class EventTracking {
         this.addEvent = new AddEvent(eventInterface);
     }
 
-    public void addSuccessGetUsers(HttpServletRequest request) {
+    public void trackSuccessEvent(HttpServletRequest request, EventName eventName) {
         LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
-        addEvent.addSuccessEventV2(loginUserDetails.getUsername(), EventName.GET_USERS);
+        addEvent.addSuccessEventV2(loginUserDetails.getUsername(), eventName);
     }
 
-    public void addSuccessGetAppConfig(HttpServletRequest request) {
+    public void trackFailureEvent(HttpServletRequest request, EventName eventName, ErrorCodes errorCodes) {
         LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
-        addEvent.addSuccessEventV2(loginUserDetails.getUsername(), EventName.GET_APP_CONFIG);
+        addEvent.addFailureEvent(loginUserDetails.getUsername(), eventName, errorCodes, null);
     }
 
-    public void addSuccessGetSessionData(HttpServletRequest request) {
+    public void trackChangePasswordSuccess(HttpServletRequest request, String uiUsername) {
         LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
-        addEvent.addSuccessEventV2(loginUserDetails.getUsername(), EventName.GET_SESSION_DATA);
-    }
-
-    public void addSuccessGetFilesInfo(HttpServletRequest request) {
-//        LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
-//        addEvent.addSuccessEventV2(loginUserDetails.getUsername(), EventName.GET_FILES_INFO);
+        addEvent.addSuccessEvent(loginUserDetails.getUsername(), EventName.CHANGE_PASSWORD, uiUsername);
     }
     public void addSuccessLogin(RequestUserLogin userLogin) {
         String username = null;
@@ -81,10 +76,6 @@ public class EventTracking {
         } else {
             addEvent.addFailureEventV2(EventName.LOGOUT, ErrorCodes.LOGOUT_USER_NOT_LOGIN);
         }
-    }
-    public void trackChangePasswordSuccess(HttpServletRequest request, String uiUsername) {
-        LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
-        addEvent.addSuccessEvent(loginUserDetails.getUsername(), EventName.CHANGE_PASSWORD, uiUsername);
     }
     public void trackChangePasswordFailure(HttpServletRequest request, ErrorCodes errorCodes, String uiUsername) {
         LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
@@ -236,24 +227,6 @@ public class EventTracking {
         addEvent.addFailureEvent(loginUserDetails.getUsername(), eventName, errorCodes, comment);
     }
 
-    public void trackGetUsersFailure(HttpServletRequest request, ErrorCodes errorCodes) {
-        LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
-        addEvent.addFailureEvent(loginUserDetails.getUsername(), EventName.GET_USERS, errorCodes, null);
-    }
-    public void trackGetAppConfigFailure(HttpServletRequest request, ErrorCodes errorCodes) {
-        LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
-        addEvent.addFailureEvent(loginUserDetails.getUsername(), EventName.GET_APP_CONFIG, errorCodes, null);
-    }
-    public void trackGetSessionDataFailure(HttpServletRequest request, ErrorCodes errorCodes) {
-        LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
-        addEvent.addFailureEvent(loginUserDetails.getUsername(), EventName.GET_SESSION_DATA, errorCodes, null);
-    }
-
-    public void trackGetFileInfoFailure(HttpServletRequest request, ErrorCodes errorCodes) {
-        LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
-        addEvent.addFailureEvent(loginUserDetails.getUsername(), EventName.GET_FILES_INFO, errorCodes, null);
-    }
-
     public void trackLogFileChange(String status, String newlyGeneratedFilename, String copiedFilename) {
         FileService fileService = new FileService();
         PathInfo pathInfo = fileService.getPathInfoFromFileName(newlyGeneratedFilename);
@@ -264,11 +237,6 @@ public class EventTracking {
             reason = "log file copy failed";
         }
         addEvent.addEventTextV2(null, EventName.LOG_FILE_COPIED, status, reason, comment);
-    }
-
-    public void trackUnknownException(String errorCode, String errorString) {
-        addEvent.addEventTextV2(null, EventName.UN_HANDLE_EXCEPTION,
-                AppConstant.FAILURE, errorCode, errorString);
     }
 
     public void trackExpiredUserSession(SessionData sessionData) {
@@ -286,5 +254,10 @@ public class EventTracking {
         String comment = "appVersion=" + AppConstant.AppVersion + ",instance="+instance;
         addEvent.addEventTextV2(null, EventName.APPLICATION_START,
                 AppConstant.SUCCESS, null, comment);
+    }
+
+    public void trackUnknownException(String errorCode, String errorString) {
+        addEvent.addEventTextV2(null, EventName.UN_HANDLE_EXCEPTION,
+                AppConstant.FAILURE, errorCode, errorString);
     }
 }

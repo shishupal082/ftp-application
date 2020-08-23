@@ -94,11 +94,12 @@ public class AesEncryption {
         return result.toString();
     }
 
-    public String encrypt(byte[] pText) {
+    public String encrypt(String text) {
         String encryptedString = null;
-        if (this.encryptionPassword == null) {
+        if (this.encryptionPassword == null || text == null) {
             return null;
         }
+        byte[] pText = text.getBytes();
         try {
             // 16 bytes salt
             byte[] salt = this.getRandomNonce(SALT_LENGTH_BYTE);

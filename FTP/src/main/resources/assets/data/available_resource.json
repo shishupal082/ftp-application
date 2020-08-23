@@ -1,11 +1,11 @@
 [
   [
     "/",
-    "IndexView"
+    "IndexView (Redirect)"
   ],
   [
     "/index",
-    "IndexView"
+    "IndexView (Redirect)"
   ],
   [
     "/view/resource",
@@ -40,12 +40,12 @@
     "Upload File View"
   ],
   [
-    "/view/file?name=filename",
-    "view/file?name=U1/filename"
+    "/view/file/{username}/{filename}?u=requested_username&iframe=true",
+    "/view/file/{username}/{filename}?u=requested_username&iframe=true"
   ],
   [
-    "/download/file?name=filename",
-    "download/file?name=U1/filename"
+    "/download/file/{username}/{filename}?u=requested_username",
+    "/download/file/{username}/{filename}?u=requested_username"
   ],
   [
     "/api/get_files_info",
@@ -58,10 +58,6 @@
   [
     "/api/get_session_config",
     "Session config data"
-  ],
-  [
-    "/api/get_login_user_details",
-    "Login User Details Data"
   ],
   [
     "/api/get_users",
@@ -80,11 +76,27 @@
     "Login User [POST]"
   ],
   [
-    "/api/upload_file",
+    "/api/change_password?u=requested_username",
+    "Change Password [POST]"
+  ],
+  [
+    "/api/upload_file?u=requested_username",
     "Upload File [POST]"
   ],
   [
-    "/api/delete_file",
+    "/api/delete_file?u=requested_username",
     "Delete File [POST]"
+  ],
+  [
+    "/api/aes_encrypt",
+    "AES Encryption [POST]"
+  ],
+  [
+    "/api/aes_decrypt",
+    "AES Decryption [POST]"
+  ],
+  [
+    "/api/md5_encrypt",
+    "MD5 Encryption [POST]"
   ]
 ]
