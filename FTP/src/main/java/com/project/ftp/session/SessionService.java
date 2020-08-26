@@ -23,8 +23,7 @@ public class SessionService {
     public SessionService(final AppConfig appConfig) {
         this.appConfig = appConfig;
     }
-    private SessionData getCurrentSessionData(AppConfig appConfig,
-                                                    HttpServletRequest request) throws AppException {
+    private SessionData getCurrentSessionData(HttpServletRequest request) throws AppException {
         String sessionId = getSessionId(request);
         HashMap<String, SessionData> sessionData = appConfig.getSessionData();
         SessionData currentSessionData = sessionData.get(sessionId);
@@ -33,6 +32,14 @@ public class SessionService {
             throw new AppException(ErrorCodes.INVALID_SESSION);
         }
         return currentSessionData;
+    }
+    public String getCurrentSessionDataV2(HttpServletRequest request) {
+        String sessionDataStr = "";
+        try {
+            SessionData sessionData = this.getCurrentSessionData(request);
+            sessionDataStr = sessionData.toString();
+        } catch (AppException ignored) {}
+        return sessionDataStr;
     }
     private String getSessionId(HttpServletRequest request) {
         HttpSession httpSession = request.getSession();
@@ -111,7 +118,7 @@ public class SessionService {
     public String getLoginUserName(HttpServletRequest request) {
         String loginUserName = null;
         try {
-            SessionData sessionData = this.getCurrentSessionData(appConfig, request);
+            SessionData sessionData = this.getCurrentSessionData(request);
             loginUserName = sessionData.getUsername();
             if (loginUserName == null || loginUserName.isEmpty()) {
                 loginUserName = null;

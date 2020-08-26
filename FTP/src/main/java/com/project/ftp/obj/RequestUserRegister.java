@@ -15,6 +15,8 @@ public class RequestUserRegister {
     private String password;
     @JsonProperty("display_name")
     private String display_name;
+    @JsonProperty("user_agent")
+    private String user_agent;
 
     public String getUsername() {
         if (StaticService.isInValidString(username)) {
@@ -60,6 +62,14 @@ public class RequestUserRegister {
         this.display_name = display_name;
     }
 
+    public String getUser_agent() {
+        return user_agent;
+    }
+
+    public void setUser_agent(String user_agent) {
+        this.user_agent = user_agent;
+    }
+
     @Override
     public String toString() {
         return "RequestUserRegister{" +
@@ -67,6 +77,7 @@ public class RequestUserRegister {
                 ", passcode='" + passcode + '\'' +
                 ", password='" + "*****" + '\'' +
                 ", display_name='" + display_name + '\'' +
+                ", user_agent='" + user_agent + '\'' +
                 '}';
     }
 }

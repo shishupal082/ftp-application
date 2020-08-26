@@ -1,3 +1,4 @@
+import $$$ from '../../interface/global';
 import $S from "../../interface/stack.js";
 import Config from "./Config";
 import FTPHelper from "./FTPHelper";
@@ -63,6 +64,26 @@ PageData.extend({
             pdfLink = PageData.getPdfViewLink(pdfLink)+"&iframe=true";
         }
         return pdfLink;
+    },
+    getUserAgentTrackingData: function() {
+        var uiNavigator = $$$.navigator;
+        function getNavigatorData(key) {
+            var result = "";
+            try {
+                if ($S.isString(uiNavigator[key])) {
+                    result = uiNavigator[key];
+                }
+            } catch(err) {
+                result = "error in " + key;
+            }
+            return result;
+        }
+        var trackingData = [];
+        var trackingKey = ["platform","appCodeName","appVersion","appName"];
+        for(var i=0; i<trackingKey.length; i++) {
+            trackingData.push(getNavigatorData(trackingKey[i]));
+        }
+        return trackingData.join(";");
     }
 });
 PageData.extend({
@@ -86,7 +107,10 @@ PageData.extend({
             var deleting = window.confirm("Are you sure? You want to delete file: " + currentTarget.value);
             if (deleting) {
                PageData.deleteFile(Data, callBack, currentTarget.value); 
-           }
+            }
+        } else if (currentTarget.name === "login.submit-guest") {
+            CurrentFormData.setData("login.username", "Guest");
+            CurrentFormData.setData("login.password", "Guest");
         }
     },
     handleDropDownChange: function(e, Data, callBack) {
@@ -157,6 +181,7 @@ PageData.extend({
                 $S.callMethod(callBack);
                 postData["username"] = CurrentFormData.getData("login.username", "");
                 postData["password"] = CurrentFormData.getData("login.password", "");
+                postData["user_agent"] = PageData.getUserAgentTrackingData();
                 $S.sendPostRequest(Config.JQ, url, postData, function(ajax, status, response) {
                     PageData.setData("formSubmitStatus", "completed");
                     $S.callMethod(callBack);
@@ -190,6 +215,7 @@ PageData.extend({
                 postData["passcode"] = CurrentFormData.getData("register.passcode", "");
                 postData["password"] = CurrentFormData.getData("register.password", "");
                 postData["display_name"] = CurrentFormData.getData("register.displayName", "");
+                postData["user_agent"] = PageData.getUserAgentTrackingData();
                 $S.sendPostRequest(Config.JQ, url, postData, function(ajax, status, response) {
                     PageData.setData("formSubmitStatus", "completed");
                     $S.callMethod(callBack);
@@ -205,6 +231,12 @@ PageData.extend({
     }
 });
 PageData.extend({
+    trackLogin: function(status, reason, username) {
+        var postData = {"event": "user_agent", "status": status, "reason": reason};
+        postData["comment"] = this.getUserAgentTrackingData();
+        var url = Config.apiMapping["track_event"];
+        $S.sendPostRequest(Config.JQ, url, postData);
+    },
     handleApiResponse: function(Data, callBack, apiName, ajax, response) {
         // var template;
         if (apiName === "upload_file") {

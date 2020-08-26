@@ -12,6 +12,8 @@ public class RequestUserLogin {
     private String username;
     @JsonProperty("password")
     private String password;
+    @JsonProperty("user_agent")
+    private String user_agent;
 
     public String getUsername() {
         if (StaticService.isInValidString(username)) {
@@ -35,11 +37,20 @@ public class RequestUserLogin {
         this.password = password;
     }
 
+    public String getUser_agent() {
+        return user_agent;
+    }
+
+    public void setUser_agent(String user_agent) {
+        this.user_agent = user_agent;
+    }
+
     @Override
     public String toString() {
         return "RequestUserLogin{" +
                 "username='" + username + '\'' +
                 ", password='" + "*****" + '\'' +
+                ", user_agent='" + user_agent + '\'' +
                 '}';
     }
 }

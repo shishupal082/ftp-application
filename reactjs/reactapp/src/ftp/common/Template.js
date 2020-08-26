@@ -166,22 +166,40 @@ Template["login"] = [
                     ]
                 },
                 {
-                    "tag": "button",
-                    "className": "btn btn-primary",
-                    "name": "login.submit",
-                    "text": "Submit"
+                    "tag": "div",
+                    "text": [
+                        {
+                            "tag": "button",
+                            "className": "btn btn-primary",
+                            "name": "login.submit",
+                            "text": "Submit"
+                        },
+                        {
+                            "tag": "a",
+                            "href": "/forgot_password",
+                            "className": "p-10px",
+                            "text": "Forgot Password"
+                        },
+                        {
+                            "tag": "a",
+                            "href": "/register",
+                            "className": "p-10px",
+                            "text": "Register"
+                        }
+                    ]
                 },
                 {
-                    "tag": "a",
-                    "href": "/forgot_password",
-                    "className": "p-10px",
-                    "text": "Forgot Password"
-                },
-                {
-                    "tag": "a",
-                    "href": "/register",
-                    "className": "p-10px",
-                    "text": "Register"
+                    "tag": "div",
+                    "className": "text-center",
+                    "name": "login.guest-login-link",
+                    "text": [
+                        {
+                            "tag": "button",
+                            "className": "btn btn-link",
+                            "name": "login.submit-guest",
+                            "text": "Don't have account?, Continue as Guest."
+                        }
+                    ]
                 }
             ]
         }

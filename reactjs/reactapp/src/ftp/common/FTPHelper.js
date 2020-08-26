@@ -278,6 +278,13 @@ FTP.extend({
             var dashboardField = FTP.getDashboardField(Data, pageName);
             FTP.displayVisibleItem(dashboardField);
             pageTemplate.push(dashboardField);
+        } else if (pageName === "login") {
+            template = Data.getTemplate(pageName, {});
+            var isGuestLinkEnable = Config.getPageData("is_guest_enable", "false");
+            if (isGuestLinkEnable !== "true") {
+                TemplateHelper.addClassTemplate(template, "login.guest-login-link", "d-none");
+            }
+            pageTemplate.push(template);
         } else {
             template = Data.getTemplate(pageName, {});
             FTP.uploadSubmitButtonStatus(pageName, template);

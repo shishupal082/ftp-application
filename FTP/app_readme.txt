@@ -589,8 +589,22 @@ api added (authentication = isLoginUserDev)
 
 sync /view/resource data
 
+3.0.6.4
+-------------------
+Guest user login UI work completed
+    - Display guest login if page data is_guest_enable=true is available
+    - Add username (Guest) and password (Guest) if button.name click is login.submit-guest
+
+Added new api /api/track_event
+Added one more parameter in login and register request
+    - user_agent and session data put in comment field
+
+
 Future releases
 -------------------
+
+on expired user session entry, also put current session data along with old session data
+create string Upload File in such a way that it always come together
 
 
 create user_role.yaml file in config-files dir

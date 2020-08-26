@@ -98,5 +98,9 @@
   [
     "/api/md5_encrypt",
     "MD5 Encryption [POST]"
+  ],
+  [
+    "/api/track_event",
+    "Track event [POST]"
   ]
 ]

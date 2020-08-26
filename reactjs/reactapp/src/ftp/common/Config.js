@@ -77,8 +77,10 @@ Config.apiMapping["change_password"] = baseapi + "/api/change_password?u="+uiUse
 
 Config.apiMapping["upload_file"] = baseapi + "/api/upload_file?u="+uiUsername;
 Config.apiMapping["delete_file"] = baseapi + "/api/delete_file?u="+uiUsername;
+Config.apiMapping["track_event"] = baseapi + "/api/track_event?u="+uiUsername;
 
 Config.apiMapping["get_files"] = baseapi + "/api/get_files_info?v=" + RequestId;
+
 
 Config.getAleartMessage = function(response) {
     var messageMap = {};

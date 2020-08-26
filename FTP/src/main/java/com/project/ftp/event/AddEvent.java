@@ -10,6 +10,9 @@ public class AddEvent {
     public AddEvent(final EventInterface eventInterface) {
         this.eventInterface = eventInterface;
     }
+    public void addCommonEvent(String username, String eventNameStr, String status, String reason, String comment) {
+        eventInterface.addText(username, eventNameStr, status, reason, comment);
+    }
     public void addFailureEvent(String username, EventName eventName,
                                 ErrorCodes errorCode, String comment) {
         String errorCodeString = null;
@@ -23,7 +26,7 @@ public class AddEvent {
         if (eventName != null) {
             eventNameStr = eventName.getName();
         }
-        eventInterface.addText(username, eventNameStr, AppConstant.FAILURE, errorCodeString, comment);
+        this.addCommonEvent(username, eventNameStr, AppConstant.FAILURE, errorCodeString, comment);
     }
     public void addFailureEventV2(EventName eventName, ErrorCodes errorCode) {
         this.addFailureEvent(null, eventName, errorCode, null);
@@ -33,11 +36,12 @@ public class AddEvent {
         if (eventName != null) {
             eventNameStr = eventName.getName();
         }
-        eventInterface.addText(username, eventNameStr, AppConstant.SUCCESS, null, comment);
+        this.addCommonEvent(username, eventNameStr, AppConstant.SUCCESS, null, comment);
     }
     public void addSuccessEventV2(String username, EventName eventName) {
         this.addSuccessEvent(username, eventName, null);
     }
+
     public void addEventTextV2(String username, EventName eventName, String status, String reason, String comment) {
         String eventNameStr = null;
         if (eventName != null) {

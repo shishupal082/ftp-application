@@ -86,6 +86,20 @@ public class ApiResource {
         logger.info("getAllUsers : Out");
         return response;
     }
+
+    @POST
+    @Path("/track_event")
+    @UnitOfWork
+    public ApiResponse trackEvent(@Context HttpServletRequest request,
+                                  RequestEventTracking requestEventTracking) {
+        logger.info("trackEvent : In, user: {}, eventTracking: {}",
+                userService.getUserDataForLogging(request), requestEventTracking);
+//        eventTracking.trackUIEvent(request, requestEventTracking);
+        ApiResponse response = new ApiResponse();
+        logger.info("trackEvent : Out");
+        return response;
+    }
+
     @POST
     @Path("/delete_file")
     @UnitOfWork
@@ -208,7 +222,7 @@ public class ApiResource {
         try {
             LoginUserDetails loginUserDetails = userService.loginUser(httpServletRequest, userLogin);
             response = new ApiResponse(loginUserDetails);
-            eventTracking.addSuccessLogin(userLogin);
+            eventTracking.addSuccessLogin(httpServletRequest, userLogin);
         } catch (AppException ae) {
             logger.info("Error in login user: {}", ae.getErrorCode().getErrorCode());
             eventTracking.trackLoginFailure(httpServletRequest, userLogin, ae.getErrorCode());
@@ -234,7 +248,7 @@ public class ApiResource {
         try {
             userService.userRegister(httpServletRequest, userRegister);
             response = new ApiResponse();
-            eventTracking.addSuccessRegister(userRegister);
+            eventTracking.addSuccessRegister(httpServletRequest, userRegister);
         } catch (AppException ae) {
             logger.info("Error in register user: {}", ae.getErrorCode().getErrorCode());
             eventTracking.trackRegisterFailure(httpServletRequest, userRegister, ae.getErrorCode());
