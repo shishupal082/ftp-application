@@ -68,7 +68,7 @@ PageData.extend({
     getUserAgentTrackingData: function() {
         var uiNavigator = $$$.navigator;
         function getNavigatorData(key) {
-            var result = "";
+            var result = key;
             try {
                 if ($S.isString(uiNavigator[key])) {
                     result = uiNavigator[key];
