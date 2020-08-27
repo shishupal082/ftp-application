@@ -343,4 +343,28 @@ public class StaticService {
         }
         return version;
     }
+
+    public static String getRequestUserAgent(HttpServletRequest request) {
+        String userAgent = null;
+        if (request != null) {
+            userAgent = request.getHeader(AppConstant.REQUEST_USER_AGENT);
+        }
+        return userAgent;
+    }
+
+    public static String joinWithComma(String str1, String str2) {
+        if (StaticService.isInValidString(str2)) {
+            return str1;
+        }
+        if (StaticService.isValidString(str1)) {
+            str1 += "," + str2;
+        } else {
+            str1 = str2;
+        }
+        return str1;
+    }
+    public static String joinWithCommaV2(String str1, String str2, String str3) {
+        str1 = StaticService.joinWithComma(str1, str2);
+        return StaticService.joinWithComma(str1, str3);
+    }
 }

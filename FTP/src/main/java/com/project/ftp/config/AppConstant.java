@@ -20,7 +20,7 @@ public class AppConstant {
     public static final String ALLOWED_HEADERS= "Access-Control-Allow-Headers";
     public static final String FILE = "FILE";
     public static final String FOLDER = "FOLDER";
-    public static final String AppVersion = "3.0.6.4";
+    public static final String AppVersion = "3.0.6.5";
     public static final String server = "server";
     public static final String DATE_FORMAT = "YYYY-MM-dd";
     public static final String TIME_FORMAT = "HHmmss";
@@ -39,7 +39,6 @@ public class AppConstant {
     public static final String EVENT_DATA_FILENAME = "event_data.csv";
     public static final String FILE_DATA_FILENAME = "file_details.csv";
     public static final String APP_VIEW_FTL_FILENAME = "app_view-1.0.0.ftl";
-    public static final String ORIGIN = "origin";
     public static final String PUBLIC = "public";
     public static final String V1 = "v1";
     public static final String V2 = "v2";
@@ -47,4 +46,6 @@ public class AppConstant {
     public static final String PDF_CREATOR = "Project Creator";
     public static final String EmptyParagraph = " ";
     public static final String EXPIRED_USER_SESSION = "EXPIRED_USER_SESSION";
+    public static final String REQUEST_USER_AGENT = "User-Agent";
+    public static final String ORIGIN = "origin";
 }

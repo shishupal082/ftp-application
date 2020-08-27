@@ -77,7 +77,7 @@ public class RequestFilter implements ContainerRequestFilter {
         String requestedPath = StaticService.getPathUrlV2(requestContext);
         if (!AppConstant.FAVICON_ICO_PATH.equals(requestedPath)) {
             logger.info("RequestFilter executed, cookieData : {}", cookieData);
-            StaticService.checkForDateChange(appConfig, eventTracking);
         }
+        StaticService.checkForDateChange(appConfig, eventTracking);
     }
 }

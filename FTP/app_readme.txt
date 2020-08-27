@@ -598,6 +598,12 @@ Guest user login UI work completed
 Added new api /api/track_event
 Added one more parameter in login and register request
     - user_agent and session data put in comment field
+        - user_agent data: platform,appCodeName,appVersion,appName
+
+3.0.6.5
+--------------------
+Along with front end user_agent also put backend user agent in event_data
+checkForDateChange is also call for favicon path in request filter
 
 
 Future releases

@@ -51,14 +51,10 @@ public class EventTracking {
             username = userLogin.getUsername();
             comment = userLogin.getUser_agent();
         }
+        String requestUserAgent = StaticService.getRequestUserAgent(request);
         String sessionDataStr = sessionService.getCurrentSessionDataV2(request);
-        if (StaticService.isValidString(sessionDataStr)) {
-            if (StaticService.isValidString(comment)) {
-                comment += "," + sessionDataStr;
-            } else {
-                comment = sessionDataStr;
-            }
-        }
+
+        comment = StaticService.joinWithCommaV2(comment, requestUserAgent, sessionDataStr);
         addEvent.addSuccessEvent(username, EventName.LOGIN, comment);
     }
     public void addSuccessRegister(HttpServletRequest request, RequestUserRegister userRegister) {
@@ -69,12 +65,10 @@ public class EventTracking {
             comment += ",user_agent=" + userRegister.getUser_agent();
             username = userRegister.getUsername();
         }
+        String requestUserAgent = StaticService.getRequestUserAgent(request);
         String sessionDataStr = sessionService.getCurrentSessionDataV2(request);
-        if (StaticService.isValidString(sessionDataStr)) {
-            comment += "," + sessionDataStr;
-        } else {
-            comment = sessionDataStr;
-        }
+
+        comment = StaticService.joinWithCommaV2(comment, requestUserAgent, sessionDataStr);
         addEvent.addSuccessEvent(username, EventName.REGISTER, comment);
     }
     public void addForgotPassword(HttpServletRequest request) {
@@ -130,14 +124,10 @@ public class EventTracking {
             String encryptedPassword = StaticService.encryptAesPassword(appConfig, requestUserLogin.getPassword());
             logger.info("Encrypted password: {}", encryptedPassword);
         }
+        String requestUserAgent = StaticService.getRequestUserAgent(request);
         String sessionDataStr = sessionService.getCurrentSessionDataV2(request);
-        if (StaticService.isValidString(sessionDataStr)) {
-            if (StaticService.isValidString(comment)) {
-                comment += ";" + sessionDataStr;
-            } else {
-                comment = sessionDataStr;
-            }
-        }
+
+        comment = StaticService.joinWithCommaV2(comment, requestUserAgent, sessionDataStr);
         addEvent.addFailureEvent(username, EventName.LOGIN, errorCodes, comment);
     }
 
@@ -161,12 +151,11 @@ public class EventTracking {
         if (errorCodes != null && StaticService.isValidString(comment)) {
             comment += "," + errorCodes.getErrorString();
         }
+
+        String requestUserAgent = StaticService.getRequestUserAgent(request);
         String sessionDataStr = sessionService.getCurrentSessionDataV2(request);
-        if (StaticService.isValidString(comment)) {
-            comment += "," + sessionDataStr;
-        } else {
-            comment = sessionDataStr;
-        }
+
+        comment = StaticService.joinWithCommaV2(comment, requestUserAgent, sessionDataStr);
         addEvent.addFailureEvent(username, EventName.REGISTER, errorCodes, comment);
     }
 
@@ -275,12 +264,11 @@ public class EventTracking {
             reason = eventTracking.getReason();
             comment = eventTracking.getComment();
         }
+
+        String requestUserAgent = StaticService.getRequestUserAgent(request);
         String sessionDataStr = sessionService.getCurrentSessionDataV2(request);
-        if (StaticService.isInValidString(comment)) {
-            comment = sessionDataStr;
-        } else {
-            comment += "," + sessionDataStr;
-        }
+
+        comment = StaticService.joinWithCommaV2(comment, requestUserAgent, sessionDataStr);
         addEvent.addCommonEvent(loginUserDetails.getUsername(), eventNameStr, status, reason, comment);
     }
     public void trackLogFileChange(String status, String newlyGeneratedFilename, String copiedFilename) {

@@ -83,7 +83,7 @@ PageData.extend({
         for(var i=0; i<trackingKey.length; i++) {
             trackingData.push(getNavigatorData(trackingKey[i]));
         }
-        return trackingData.join(";");
+        return trackingData.join(",");
     }
 });
 PageData.extend({
