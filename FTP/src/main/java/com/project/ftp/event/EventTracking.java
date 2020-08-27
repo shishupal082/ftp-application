@@ -71,6 +71,55 @@ public class EventTracking {
         comment = StaticService.joinWithCommaV2(comment, requestUserAgent, sessionDataStr);
         addEvent.addSuccessEvent(username, EventName.REGISTER, comment);
     }
+    public void trackLoginFailure(HttpServletRequest request,
+                                  RequestUserLogin requestUserLogin, ErrorCodes errorCodes) {
+        String username = null;
+        String comment = null;
+        LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
+        if (errorCodes != null) {
+            comment = errorCodes.getErrorString();
+        }
+        if (loginUserDetails.getLogin()) {
+            comment = StaticService.joinWithComma(comment, "loginUsername="+loginUserDetails.getUsername());
+        }
+        if (requestUserLogin != null) {
+            username = requestUserLogin.getUsername();
+            comment = StaticService.joinWithComma(comment, requestUserLogin.getUser_agent());
+            String encryptedPassword = StaticService.encryptAesPassword(appConfig, requestUserLogin.getPassword());
+            logger.info("Encrypted password: {}", encryptedPassword);
+        }
+        String requestUserAgent = StaticService.getRequestUserAgent(request);
+        String sessionDataStr = sessionService.getCurrentSessionDataV2(request);
+
+        comment = StaticService.joinWithCommaV2(comment, requestUserAgent, sessionDataStr);
+        addEvent.addFailureEvent(username, EventName.LOGIN, errorCodes, comment);
+    }
+    public void trackRegisterFailure(HttpServletRequest request,
+                                     RequestUserRegister requestUserRegister,
+                                     ErrorCodes errorCodes) {
+        String username = null, comment = "";
+        if (requestUserRegister != null) {
+            username = requestUserRegister.getUsername();
+            comment += "passcode=" + requestUserRegister.getPasscode();
+            comment += ",name=" + requestUserRegister.getDisplay_name();
+        }
+        LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
+        if (loginUserDetails.getLogin()) {
+            comment = StaticService.joinWithComma(comment, "loginUsername=" + loginUserDetails.getUsername());
+        }
+        if (errorCodes != null) {
+            comment = StaticService.joinWithComma(comment, errorCodes.getErrorString());
+        }
+        if (requestUserRegister != null) {
+            comment = StaticService.joinWithComma(comment, "user_agent=" + requestUserRegister.getUser_agent());
+        }
+        String requestUserAgent = StaticService.getRequestUserAgent(request);
+        String sessionDataStr = sessionService.getCurrentSessionDataV2(request);
+
+        comment = StaticService.joinWithCommaV2(comment, requestUserAgent, sessionDataStr);
+        addEvent.addFailureEvent(username, EventName.REGISTER, errorCodes, comment);
+    }
+
     public void addForgotPassword(HttpServletRequest request) {
         LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
         String username = loginUserDetails.getUsername();
@@ -99,64 +148,6 @@ public class EventTracking {
             comment = uiUsername;
         }
         addEvent.addFailureEvent(loginUserDetails.getUsername(), EventName.CHANGE_PASSWORD, errorCodes, comment);
-    }
-    public void trackLoginFailure(HttpServletRequest request,
-                                  RequestUserLogin requestUserLogin, ErrorCodes errorCodes) {
-        String username = null;
-        String comment = null;
-        LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
-        if (loginUserDetails.getLogin()) {
-            if (errorCodes != null) {
-                comment = errorCodes.getErrorString() + "," + loginUserDetails.getUsername();
-            } else {
-                comment = loginUserDetails.getUsername();
-            }
-        } else if (errorCodes != null) {
-            comment = errorCodes.getErrorString();
-        }
-        if (requestUserLogin != null) {
-            username = requestUserLogin.getUsername();
-            if (StaticService.isValidString(comment)) {
-                comment += ";" + requestUserLogin.getUser_agent();
-            } else {
-                comment = requestUserLogin.getUser_agent();
-            }
-            String encryptedPassword = StaticService.encryptAesPassword(appConfig, requestUserLogin.getPassword());
-            logger.info("Encrypted password: {}", encryptedPassword);
-        }
-        String requestUserAgent = StaticService.getRequestUserAgent(request);
-        String sessionDataStr = sessionService.getCurrentSessionDataV2(request);
-
-        comment = StaticService.joinWithCommaV2(comment, requestUserAgent, sessionDataStr);
-        addEvent.addFailureEvent(username, EventName.LOGIN, errorCodes, comment);
-    }
-
-    public void trackRegisterFailure(HttpServletRequest request,
-                                     RequestUserRegister requestUserRegister,
-                                     ErrorCodes errorCodes) {
-        String username = null, comment = "";
-        if (requestUserRegister != null) {
-            username = requestUserRegister.getUsername();
-            comment += "passcode=" + requestUserRegister.getPasscode();
-            comment += ",name=" + requestUserRegister.getDisplay_name();
-            comment += ",user_agent=" + requestUserRegister.getUser_agent();
-        }
-        LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
-        if (loginUserDetails.getLogin()) {
-            if (StaticService.isValidString(comment)) {
-                comment  += ",";
-            }
-            comment += "loginUsername=" + loginUserDetails.getUsername();
-        }
-        if (errorCodes != null && StaticService.isValidString(comment)) {
-            comment += "," + errorCodes.getErrorString();
-        }
-
-        String requestUserAgent = StaticService.getRequestUserAgent(request);
-        String sessionDataStr = sessionService.getCurrentSessionDataV2(request);
-
-        comment = StaticService.joinWithCommaV2(comment, requestUserAgent, sessionDataStr);
-        addEvent.addFailureEvent(username, EventName.REGISTER, errorCodes, comment);
     }
 
     public void addSuccessViewFile(HttpServletRequest request,
