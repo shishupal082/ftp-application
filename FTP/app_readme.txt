@@ -622,10 +622,6 @@ Define role
 
 
 
-Improve validation for table
-    - mySqlUser
-    - eventData
-
 Table required
     - file_details
 
