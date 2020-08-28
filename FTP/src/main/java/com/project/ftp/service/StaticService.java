@@ -367,4 +367,22 @@ public class StaticService {
         str1 = StaticService.joinWithComma(str1, str2);
         return StaticService.joinWithComma(str1, str3);
     }
+    public static String join(String joinDelimiter, String str1, String str2) {
+        if (StaticService.isInValidString(str2)) {
+            return str1;
+        }
+        if (StaticService.isInValidString(joinDelimiter)) {
+            joinDelimiter = "";
+        }
+        if (StaticService.isValidString(str1)) {
+            str1 += joinDelimiter + str2;
+        } else {
+            str1 = str2;
+        }
+        return str1;
+    }
+    public static String joinV2(String joinDelimiter, String str1, String str2, String str3) {
+        str1 = StaticService.join(joinDelimiter, str1, str2);
+        return StaticService.join(joinDelimiter, str1, str3);
+    }
 }

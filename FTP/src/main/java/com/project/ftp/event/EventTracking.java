@@ -255,11 +255,7 @@ public class EventTracking {
             reason = eventTracking.getReason();
             comment = eventTracking.getComment();
         }
-
-        String requestUserAgent = StaticService.getRequestUserAgent(request);
-        String sessionDataStr = sessionService.getCurrentSessionDataV2(request);
-
-        comment = StaticService.joinWithCommaV2(comment, requestUserAgent, sessionDataStr);
+        eventNameStr = StaticService.join("_", "ui", eventNameStr);
         addEvent.addCommonEvent(loginUserDetails.getUsername(), eventNameStr, status, reason, comment);
     }
     public void trackLogFileChange(String status, String newlyGeneratedFilename, String copiedFilename) {

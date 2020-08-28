@@ -608,6 +608,7 @@ checkForDateChange is also call for favicon path in request filter
 
 Future releases
 -------------------
+put eventname as "ui_" in pre of track event request
 
 on expired user session entry, also put current session data along with old session data
 create string Upload File in such a way that it always come together
