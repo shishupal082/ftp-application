@@ -12,6 +12,7 @@ import org.glassfish.jersey.server.ContainerRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.container.ContainerRequestContext;
 import java.util.ArrayList;
@@ -47,6 +48,9 @@ public class StaticService {
             }
         }
         return result;
+    }
+    public static String createUUIDNumber() {
+        return sysUtils.createUUIDNumber();
     }
     public static void initApplication(final AppConfig appConfig) {
         FtpConfiguration ftpConfiguration = appConfig.getFtpConfiguration();
@@ -97,9 +101,9 @@ public class StaticService {
         DateUtilities dateUtilities = new DateUtilities();
         return dateUtilities.getDateStrFromTimeMs(format, timeInMs);
     }
-    public static String updateSessionId(AppConfig appConfig, String cookieData, EventTracking eventTracking) {
+    public static String updateSessionId(HttpServletRequest request, AppConfig appConfig, String cookieData, EventTracking eventTracking) {
         SessionService sessionService = new SessionService(appConfig);
-        return sessionService.updateSessionId(cookieData, eventTracking);
+        return sessionService.updateSessionId(request, cookieData, eventTracking);
     }
     public static String replaceLast(String find, String replace, String str) {
         return strUtils.replaceLast(find, replace, str);
@@ -384,5 +388,20 @@ public class StaticService {
     public static String joinV2(String joinDelimiter, String str1, String str2, String str3) {
         str1 = StaticService.join(joinDelimiter, str1, str2);
         return StaticService.join(joinDelimiter, str1, str3);
+    }
+    public static String getCookieData(HttpServletRequest request) {
+        String cookieName = AppConstant.COOKIE_NAME;
+        Cookie[] cookies = request.getCookies();
+        if (cookies == null){
+            return null;
+        }
+        String cookieData = null;
+        for (Cookie cookie : cookies) {
+            if (cookie.getName().equalsIgnoreCase(cookieName)) {
+                cookieData = cookie.getValue();
+                break;
+            }
+        }
+        return cookieData;
     }
 }

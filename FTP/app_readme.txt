@@ -605,11 +605,14 @@ Added one more parameter in login and register request
 Along with front end user_agent also put backend user agent in event_data
 checkForDateChange is also call for favicon path in request filter
 
+3.0.6.6
+--------------------
+put event name as "ui_" in pre of /api/track_event request
+Add sessionData in comment for login, register and logout success
+Handle properly for each request id and session id change in log
 
 Future releases
 -------------------
-put eventname as "ui_" in pre of track event request
-
 on expired user session entry, also put current session data along with old session data
 create string Upload File in such a way that it always come together
 

@@ -17,7 +17,6 @@ import javax.ws.rs.container.ContainerRequestFilter;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.ext.Provider;
 import java.io.IOException;
-import java.util.UUID;
 
 
 @Priority(500) // Highest priority filter
@@ -28,13 +27,17 @@ public class LogFilter implements ContainerRequestFilter {
     private HttpServletRequest httpServletReq;
 
     public void filter(ContainerRequestContext requestContext) throws IOException {
-        String requestId = String.valueOf(UUID.randomUUID());
+        String requestId = StaticService.createUUIDNumber();
+        String sessionId = StaticService.getCookieData(httpServletReq);
         String requestedPath = StaticService.getPathUrlV2(requestContext);
         if (!AppConstant.FAVICON_ICO_PATH.equals(requestedPath)) {
-            LOGGER.info("Logger requestId generated : {}", requestId);
+            LOGGER.info("Logger sessionId: {}, requestId: {}", sessionId, requestId);
         }
         MDC.remove(AppConstant.X_REQUEST_ID);
         MDC.put(AppConstant.X_REQUEST_ID, requestId);
+        if (sessionId != null) {
+            addSessionIdInLog(sessionId);
+        }
     }
     public static void addSessionIdInLog(String sessionId)  {
         MDC.remove(AppConstant.X_SESSION_ID);

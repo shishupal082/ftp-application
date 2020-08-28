@@ -6,6 +6,8 @@ import com.project.ftp.config.AppConstant;
 import com.project.ftp.event.EventTracking;
 import com.project.ftp.exceptions.AppException;
 import com.project.ftp.exceptions.ErrorCodes;
+import com.project.ftp.filters.LogFilter;
+import com.project.ftp.service.StaticService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,7 +16,6 @@ import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 
 public class SessionService {
     final static Logger logger = LoggerFactory.getLogger(SessionService.class);
@@ -45,12 +46,29 @@ public class SessionService {
         HttpSession httpSession = request.getSession();
         return (String) httpSession.getAttribute(AppConstant.SESSION_COOKIE_DATA);
     }
+    public void setSessionId(HttpServletRequest request, String newSessionId) {
+        String oldSessionId = this.getSessionId(request);
+        if (oldSessionId != null && !oldSessionId.equals(newSessionId)) {
+            logger.info("sessionId change from: {} to {}", oldSessionId, newSessionId);
+            LogFilter.addSessionIdInLog(newSessionId);
+        }
+        HttpSession httpSession = request.getSession();
+        httpSession.setAttribute(AppConstant.SESSION_COOKIE_DATA, newSessionId);
+    }
+
     private SessionData getNewSession(String sessionId) {
         Long currentTime = sysUtils.getTimeInMsLong();
         return new SessionData(sessionId, currentTime);
     }
-    public String updateSessionId(String currentSessionId, EventTracking eventTracking) {
-        String newSessionId = UUID.randomUUID().toString();
+
+    private SessionData getNewSessionV2(String sessionId, String username) {
+        SessionData sessionData = this.getNewSession(sessionId);
+        sessionData.setUsername(username);
+        return sessionData;
+    }
+
+    public String updateSessionId(HttpServletRequest request, String currentSessionId, EventTracking eventTracking) {
+        String newSessionId = StaticService.createUUIDNumber();
         if (currentSessionId.length() > 40 || currentSessionId.length() < 30) {
             logger.info("Invalid currentSessionId length(30 to 40): {}, created new: {}", currentSessionId, newSessionId);
             currentSessionId = newSessionId;
@@ -90,22 +108,20 @@ public class SessionService {
             }
         }
         appConfig.setSessionData(sessionDataHashMap);
+        this.setSessionId(request, currentSessionId);
         return currentSessionId;
     }
     public void loginUser(HttpServletRequest request, String username) throws AppException {
-        HashMap<String, SessionData> sessionData = appConfig.getSessionData();
-        String sessionId = this.getSessionId(request);
-        SessionData currentSessionData = sessionData.get(sessionId);
-        if (currentSessionData != null) {
-            if (username == null || username.isEmpty()) {
-                logger.info("userLogin request username is incorrect: {}", username);
-                throw new AppException(ErrorCodes.BAD_REQUEST_ERROR);
-            }
-            currentSessionData.setUsername(username);
-        } else {
-            logger.info("Current session not found, sessionId: {}", sessionId);
-            throw new AppException(ErrorCodes.INVALID_SESSION);
+        if (username == null || username.isEmpty()) {
+            logger.info("userLogin request username is incorrect: {}", username);
+            throw new AppException(ErrorCodes.BAD_REQUEST_ERROR);
         }
+        HashMap<String, SessionData> sessionData = appConfig.getSessionData();
+        String oldSessionId = this.getSessionId(request);
+        String newSessionId = StaticService.createUUIDNumber();
+        sessionData.remove(oldSessionId);
+        sessionData.put(newSessionId, this.getNewSessionV2(newSessionId, username));
+        this.setSessionId(request, newSessionId);
     }
     public void logoutUser(HttpServletRequest request) {
         HashMap<String, SessionData> sessionData = appConfig.getSessionData();
@@ -113,6 +129,7 @@ public class SessionService {
         SessionData currentSessionData = sessionData.get(sessionId);
         if (currentSessionData != null) {
             sessionData.remove(sessionId);
+            this.setSessionId(request, StaticService.createUUIDNumber());
         }
     }
     public String getLoginUserName(HttpServletRequest request) {

@@ -30,7 +30,7 @@ public class ResponseFilter implements ContainerResponseFilter {
     public void filter(ContainerRequestContext requestContext,
                        ContainerResponseContext responseContext) throws IOException {
         HttpSession httpSession = httpServletRequest.getSession();
-        String  responseCookieData = (String) httpSession.getAttribute(AppConstant.SESSION_COOKIE_DATA);
+        String responseCookieData = (String) httpSession.getAttribute(AppConstant.SESSION_COOKIE_DATA);
         Cookie sessionCookie = new Cookie(AppConstant.COOKIE_NAME, responseCookieData);
         sessionCookie.setPath("/");
         httpServletResponse.addCookie(sessionCookie);

@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.PrintWriter;
+import java.util.UUID;
 
 
 public class SysUtils {
@@ -27,5 +28,8 @@ public class SysUtils {
             LOGGER.info("Error in deleting file content: filePath= '{}', {}", filePath, e);
         }
         return deleteFileContentStatus;
+    }
+    public String createUUIDNumber() {
+        return UUID.randomUUID().toString();
     }
 }

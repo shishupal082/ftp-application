@@ -46,29 +46,27 @@ public class EventTracking {
         addEvent.addSuccessEvent(loginUserDetails.getUsername(), EventName.CHANGE_PASSWORD, uiUsername);
     }
     public void addSuccessLogin(HttpServletRequest request, RequestUserLogin userLogin) {
-        String username = null, comment = "";
+        String username = null, comment = sessionService.getCurrentSessionDataV2(request);
+        String uiUserAgent = null;
         if (userLogin != null) {
             username = userLogin.getUsername();
-            comment = userLogin.getUser_agent();
+            uiUserAgent = userLogin.getUser_agent();
         }
         String requestUserAgent = StaticService.getRequestUserAgent(request);
-        String sessionDataStr = sessionService.getCurrentSessionDataV2(request);
-
-        comment = StaticService.joinWithCommaV2(comment, requestUserAgent, sessionDataStr);
+        comment = StaticService.joinWithCommaV2(comment, uiUserAgent, requestUserAgent);
         addEvent.addSuccessEvent(username, EventName.LOGIN, comment);
     }
     public void addSuccessRegister(HttpServletRequest request, RequestUserRegister userRegister) {
-        String comment = "", username = null;
+        String comment = sessionService.getCurrentSessionDataV2(request), username = null;
+        String uiUserAgent = null;
         if (userRegister != null) {
             comment += "passcode="+ userRegister.getPasscode();
             comment += ",name=" + userRegister.getDisplay_name();
-            comment += ",user_agent=" + userRegister.getUser_agent();
+            uiUserAgent = "user_agent=" + userRegister.getUser_agent();
             username = userRegister.getUsername();
         }
         String requestUserAgent = StaticService.getRequestUserAgent(request);
-        String sessionDataStr = sessionService.getCurrentSessionDataV2(request);
-
-        comment = StaticService.joinWithCommaV2(comment, requestUserAgent, sessionDataStr);
+        comment = StaticService.joinWithCommaV2(comment, uiUserAgent, requestUserAgent);
         addEvent.addSuccessEvent(username, EventName.REGISTER, comment);
     }
     public void trackLoginFailure(HttpServletRequest request,
@@ -134,7 +132,8 @@ public class EventTracking {
     public void trackLogout(HttpServletRequest request) {
         LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
         if (loginUserDetails.getLogin()) {
-            addEvent.addSuccessEventV2(loginUserDetails.getUsername(), EventName.LOGOUT);
+            String sessionDataStr = sessionService.getCurrentSessionDataV2(request);
+            addEvent.addSuccessEvent(loginUserDetails.getUsername(), EventName.LOGOUT, sessionDataStr);
         } else {
             addEvent.addFailureEventV2(EventName.LOGOUT, ErrorCodes.LOGOUT_USER_NOT_LOGIN);
         }
