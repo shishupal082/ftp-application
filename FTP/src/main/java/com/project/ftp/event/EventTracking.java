@@ -46,27 +46,29 @@ public class EventTracking {
         addEvent.addSuccessEvent(loginUserDetails.getUsername(), EventName.CHANGE_PASSWORD, uiUsername);
     }
     public void addSuccessLogin(HttpServletRequest request, RequestUserLogin userLogin) {
-        String username = null, comment = sessionService.getCurrentSessionDataV2(request);
-        String uiUserAgent = null;
+        String username = null, uiUserAgent = null;
         if (userLogin != null) {
             username = userLogin.getUsername();
             uiUserAgent = userLogin.getUser_agent();
         }
+        String sessionDataStr = sessionService.getCurrentSessionDataV2(request);
         String requestUserAgent = StaticService.getRequestUserAgent(request);
-        comment = StaticService.joinWithCommaV2(comment, uiUserAgent, requestUserAgent);
+        String comment = StaticService.joinWithCommaV2(uiUserAgent, sessionDataStr, requestUserAgent);
         addEvent.addSuccessEvent(username, EventName.LOGIN, comment);
     }
     public void addSuccessRegister(HttpServletRequest request, RequestUserRegister userRegister) {
-        String comment = sessionService.getCurrentSessionDataV2(request), username = null;
+        String username = null, passcode = null, name = null;
         String uiUserAgent = null;
         if (userRegister != null) {
-            comment += "passcode="+ userRegister.getPasscode();
-            comment += ",name=" + userRegister.getDisplay_name();
-            uiUserAgent = "user_agent=" + userRegister.getUser_agent();
+            passcode = "passcode="+ userRegister.getPasscode();
+            name = "name=" + userRegister.getDisplay_name();
+            uiUserAgent = userRegister.getUser_agent();
             username = userRegister.getUsername();
         }
+        String comment = StaticService.joinWithCommaV2(passcode, name, uiUserAgent);
+        String sessionDataStr = sessionService.getCurrentSessionDataV2(request);
         String requestUserAgent = StaticService.getRequestUserAgent(request);
-        comment = StaticService.joinWithCommaV2(comment, uiUserAgent, requestUserAgent);
+        comment = StaticService.joinWithCommaV2(comment, sessionDataStr, requestUserAgent);
         addEvent.addSuccessEvent(username, EventName.REGISTER, comment);
     }
     public void trackLoginFailure(HttpServletRequest request,
@@ -109,7 +111,7 @@ public class EventTracking {
             comment = StaticService.joinWithComma(comment, errorCodes.getErrorString());
         }
         if (requestUserRegister != null) {
-            comment = StaticService.joinWithComma(comment, "user_agent=" + requestUserRegister.getUser_agent());
+            comment = StaticService.joinWithComma(comment, requestUserRegister.getUser_agent());
         }
         String requestUserAgent = StaticService.getRequestUserAgent(request);
         String sessionDataStr = sessionService.getCurrentSessionDataV2(request);
