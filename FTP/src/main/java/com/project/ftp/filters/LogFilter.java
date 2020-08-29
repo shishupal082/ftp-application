@@ -23,7 +23,7 @@ import java.util.UUID;
 @Priority(500) // Highest priority filter
 @Provider
 public class LogFilter implements ContainerRequestFilter {
-    final static Logger LOGGER = LoggerFactory.getLogger(LogFilter.class);
+    final static private Logger LOGGER = LoggerFactory.getLogger(LogFilter.class);
     @Context
     private HttpServletRequest httpServletReq;
 

@@ -4,10 +4,8 @@ import io.dropwizard.db.DataSourceFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.Statement;
+import java.sql.*;
+import java.util.ArrayList;
 
 public class MysqlConnection {
     private static final Logger logger = LoggerFactory.getLogger(MysqlConnection.class);
@@ -63,6 +61,24 @@ public class MysqlConnection {
         try {
             Statement stmt = con.createStatement();
             stmt.executeUpdate(query);
+            status = true;
+            logger.info("query executed");
+        } catch (Exception e) {
+            logger.info("error in query execution: {}", query);
+            e.printStackTrace();
+        }
+        this.close();
+        return status;
+    }
+    public boolean updateQueryV2(String query, ArrayList<String> parameters) {
+        boolean status = false;
+        this.Connect();
+        try {
+            PreparedStatement preparedStatement = con.prepareStatement(query);
+            for(int i=0; i<parameters.size(); i++) {
+                preparedStatement.setString(i+1, parameters.get(i));
+            }
+            preparedStatement.executeUpdate();
             status = true;
             logger.info("query executed");
         } catch (Exception e) {

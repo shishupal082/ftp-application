@@ -4,7 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class StrUtils {
-    final static Logger logger = LoggerFactory.getLogger(StrUtils.class);
+    private final static Logger logger = LoggerFactory.getLogger(StrUtils.class);
     public StrUtils() {}
     public String replaceLast(String find, String replace, String string) {
         int lastIndex = string.lastIndexOf(find);

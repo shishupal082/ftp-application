@@ -12,8 +12,8 @@ import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
 
 public class UserFile implements UserInterface {
-    final static Logger logger = LoggerFactory.getLogger(UserFile.class);
-    final AppConfig appConfig;
+    private final static Logger logger = LoggerFactory.getLogger(UserFile.class);
+    private final AppConfig appConfig;
     public UserFile(final AppConfig appConfig) {
         this.appConfig = appConfig;
     }

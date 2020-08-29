@@ -27,9 +27,9 @@ public enum FileMimeType {
         - zar, exe, mp3, mp4, mov, avi
     */
 
-    final static Logger logger = LoggerFactory.getLogger(FileMimeType.class);
+    private final static Logger logger = LoggerFactory.getLogger(FileMimeType.class);
 
-    private String fileMimeType;
+    private final String fileMimeType;
     FileMimeType(String fileMimeType) {
         this.fileMimeType = fileMimeType;
     }
@@ -38,7 +38,7 @@ public enum FileMimeType {
         return fileMimeType;
     }
 
-    public void setFileMimeType(String fileMimeType) {
-        this.fileMimeType = fileMimeType;
-    }
+//    public void setFileMimeType(String fileMimeType) {
+//        this.fileMimeType = fileMimeType;
+//    }
 }

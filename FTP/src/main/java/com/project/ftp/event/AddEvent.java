@@ -12,9 +12,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class AddEvent {
-    final static Logger logger = LoggerFactory.getLogger(AddEvent.class);
-    final AppConfig appConfig;
-    final EventInterface eventInterface;
+    private final static Logger logger = LoggerFactory.getLogger(AddEvent.class);
+    private final AppConfig appConfig;
+    private final EventInterface eventInterface;
     public AddEvent(final AppConfig appConfig, final EventInterface eventInterface) {
         this.appConfig = appConfig;
         this.eventInterface = eventInterface;
@@ -98,5 +98,18 @@ public class AddEvent {
         }
         eventInterface.addText(username, eventName.getName(), AppConstant.SUCCESS,
                 "", comment);
+    }
+    public void trackLogFileChange(String status, String newlyGeneratedFilename, String copiedFilename) {
+        String reason = null;
+        String comment = "log file copied from " + newlyGeneratedFilename + " to " + copiedFilename;
+        if (AppConstant.FAILURE.equals(status)) {
+            reason = "log file copy failed";
+        }
+        eventInterface.addTextV2(null, EventName.LOG_FILE_COPIED.getName(),
+                status, reason, comment);
+    }
+    public void trackUnknownException(String errorCode, String errorString) {
+        eventInterface.addTextV2(null, EventName.UN_HANDLE_EXCEPTION.getName(),
+                AppConstant.FAILURE, errorCode, errorString);
     }
 }

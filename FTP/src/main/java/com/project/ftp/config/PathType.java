@@ -7,7 +7,7 @@ public enum PathType {
     FILE("file"),
     FOLDER("folder");
 
-    private String pathType;
+    private final String pathType;
 
     PathType(String pathType) {
         this.pathType = pathType;
@@ -17,7 +17,7 @@ public enum PathType {
         return pathType;
     }
 
-    public void setPathType(String pathType) {
-        this.pathType = pathType;
-    }
+//    public void setPathType(String pathType) {
+//        this.pathType = pathType;
+//    }
 }

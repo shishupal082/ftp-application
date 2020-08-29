@@ -4,8 +4,6 @@ import com.project.ftp.config.AppConfig;
 import com.project.ftp.event.EventTracking;
 import com.project.ftp.exceptions.AppException;
 import com.project.ftp.exceptions.ErrorCodes;
-import com.project.ftp.intreface.EventInterface;
-import com.project.ftp.intreface.UserInterface;
 import com.project.ftp.obj.*;
 import com.project.ftp.parser.JsonFileParser;
 import com.project.ftp.service.FileServiceV2;
@@ -32,11 +30,12 @@ public class ApiResource {
     final FileServiceV2 fileServiceV2;
     final UserService userService;
     final EventTracking eventTracking;
-    public ApiResource(final AppConfig appConfig, final UserInterface userInterface, final EventInterface eventInterface) {
+    public ApiResource(final AppConfig appConfig, final UserService userService, final EventTracking eventTracking) {
         this.appConfig = appConfig;
-        this.fileServiceV2 = new FileServiceV2(appConfig, userInterface);
-        this.userService = new UserService(appConfig, userInterface);
-        this.eventTracking = new EventTracking(appConfig, userService, eventInterface);
+        this.fileServiceV2 = new FileServiceV2(appConfig, userService);
+        this.userService = userService;
+        this.eventTracking = eventTracking;
+//                new UserService(appConfig, userInterface);
     }
     @GET
     @Produces(MediaType.TEXT_HTML)

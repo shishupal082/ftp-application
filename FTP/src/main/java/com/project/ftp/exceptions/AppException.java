@@ -6,7 +6,7 @@ package com.project.ftp.exceptions;
  * Created by shishupalkumar on 10/02/17.
  */
 public class AppException extends RuntimeException {
-    final ErrorCodes errorCode;
+    private final ErrorCodes errorCode;
 
     public AppException(final ErrorCodes errorCode) {
         super(errorCode.getErrorString());

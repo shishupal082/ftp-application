@@ -65,9 +65,9 @@ public enum ErrorCodes {
     SERVLET_EXCEPTION("SERVLET_EXCEPTION", "Something went wrong", 500),
     RUNTIME_ERROR("RUN_TIME_ERROR", "Run time error", 599);
 
-    final String errorCode;
-    final String errorString;
-    final Integer statusCode;
+    private final String errorCode;
+    private final String errorString;
+    private final Integer statusCode;
 
     ErrorCodes(String errorCode, String errorString, Integer statusCode) {
         this.errorCode = errorCode;

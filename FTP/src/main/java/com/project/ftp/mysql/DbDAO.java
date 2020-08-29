@@ -1,5 +1,6 @@
 package com.project.ftp.mysql;
 
+import com.project.ftp.event.EventDBParameters;
 import com.project.ftp.jdbc.MysqlConnection;
 import io.dropwizard.db.DataSourceFactory;
 import io.dropwizard.hibernate.AbstractDAO;
@@ -14,10 +15,12 @@ public class DbDAO extends AbstractDAO<MysqlUser> {
     final static Logger logger = LoggerFactory.getLogger(DbDAO.class);
     private final String FindAllUser;
     private final String FindByUsername;
-    final SessionFactory sessionFactory;
-    public DbDAO(SessionFactory sessionFactory) {
+    private final SessionFactory sessionFactory;
+    private final MysqlConnection mysqlConnection;
+    public DbDAO(final SessionFactory sessionFactory, final DataSourceFactory dataSourceFactory) {
         super(sessionFactory);
         this.sessionFactory = sessionFactory;
+        this.mysqlConnection = new MysqlConnection(dataSourceFactory);
         FindAllUser = "MysqlUser.findAll";
         FindByUsername = "MysqlUser.findByUsername";
     }
@@ -64,18 +67,34 @@ public class DbDAO extends AbstractDAO<MysqlUser> {
                 " WHERE username='"+mysqlUser.getUsername()+"';";
         return mysqlConnection.updateQuery(query);
     }
-    public void insertEvent(String username, String event, String status, String reason, String comment) {
+    public void insertEvent(EventDBParameters eventDBParameters) {
         String query = "INSERT INTO event_data (username, event, status, reason, comment)" +
                 " VALUES(:username,:event,:status,:reason,:comment)";
         try {
             sessionFactory.getCurrentSession()
                     .createSQLQuery(query)
-                    .setParameter("username", username)
-                    .setParameter("event", event)
-                    .setParameter("status", status)
-                    .setParameter("reason", reason)
-                    .setParameter("comment", comment)
+                    .setParameter("username", eventDBParameters.getUsername())
+                    .setParameter("event", eventDBParameters.getEvent())
+                    .setParameter("status", eventDBParameters.getStatus())
+                    .setParameter("reason", eventDBParameters.getReason())
+                    .setParameter("comment", eventDBParameters.getComment())
                     .executeUpdate();
+        } catch (Exception e) {
+            logger.info("error in query: {}, {}", query, e.getMessage());
+            e.printStackTrace();
+        }
+    }
+    public void insertEventV2(EventDBParameters eventDBParameters) {
+        String query = "INSERT INTO event_data (username, event, status, reason, comment)" +
+                " VALUES(?,?,?,?,?)";
+        ArrayList<String> parameters = new ArrayList<>();
+        parameters.add(eventDBParameters.getUsername());
+        parameters.add(eventDBParameters.getEvent());
+        parameters.add(eventDBParameters.getStatus());
+        parameters.add(eventDBParameters.getReason());
+        parameters.add(eventDBParameters.getComment());
+        try {
+            mysqlConnection.updateQueryV2(query, parameters);
         } catch (Exception e) {
             logger.info("error in query: {}, {}", query, e.getMessage());
             e.printStackTrace();

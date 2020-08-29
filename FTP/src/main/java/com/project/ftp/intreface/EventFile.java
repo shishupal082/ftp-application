@@ -8,8 +8,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class EventFile implements EventInterface {
-    final static Logger logger = LoggerFactory.getLogger(EventFile.class);
-    final String eventDataFileName;
+    private final static Logger logger = LoggerFactory.getLogger(EventFile.class);
+    private final String eventDataFileName;
     public EventFile(final AppConfig appConfig) {
         this.eventDataFileName = appConfig.getFtpConfiguration().getConfigDataFilePath() + AppConstant.EVENT_DATA_FILENAME;
     }
@@ -40,5 +40,9 @@ public class EventFile implements EventInterface {
         TextFileParser textFileParser = new TextFileParser(eventDataFileName);
         textFileParser.addText(eventLog);
         logger.info("Event added: {}", eventLog);
+    }
+
+    public void addTextV2(String username, String event, String status, String reason, String comment) {
+        this.addText(username, event, status, reason, comment);
     }
 }

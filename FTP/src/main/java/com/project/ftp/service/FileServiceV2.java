@@ -3,7 +3,6 @@ package com.project.ftp.service;
 import com.project.ftp.config.*;
 import com.project.ftp.exceptions.AppException;
 import com.project.ftp.exceptions.ErrorCodes;
-import com.project.ftp.intreface.UserInterface;
 import com.project.ftp.obj.*;
 import com.project.ftp.view.CommonView;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
@@ -26,10 +25,10 @@ public class FileServiceV2 {
     private final FileService fileService;
     private final UserService userService;
     final String savedDataFilepath;
-    public FileServiceV2(final AppConfig appConfig, final UserInterface userInterface) {
+    public FileServiceV2(final AppConfig appConfig, final UserService userService) {
         this.appConfig = appConfig;
         this.fileService = new FileService();
-        this.userService = new UserService(appConfig, userInterface);
+        this.userService = userService;
         savedDataFilepath = appConfig.getFtpConfiguration().getConfigDataFilePath()
                 + AppConstant.FILE_DATA_FILENAME;
     }

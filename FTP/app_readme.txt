@@ -496,6 +496,10 @@ In user login error, put login username (if login username found)
     - comment = errorCode.errorString() + login username
 
 event added in db is also put in log
+event tracking added for (using separate mysql connection)
+    - log file copy
+    - unknown exception
+change many local variable from final to private final
 
 
 Future releases

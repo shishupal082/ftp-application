@@ -168,6 +168,21 @@ public class FileService {
         pathInfo.setFileName(fileName);
         pathInfo.findExtension();
         pathInfo.findMimeType();
+        if (fileName != null) {
+            String[] strArr = fileName.split("/");
+            String parentFolder = "";
+            if (strArr.length > 1) {
+                pathInfo.setFileName(strArr[strArr.length-1]);
+                for(int i=0; i<strArr.length-1; i++) {
+                    if (i!=0) {
+                        parentFolder += "/" + strArr[i];
+                    } else {
+                        parentFolder = strArr[i];
+                    }
+                }
+                pathInfo.setParentFolder(parentFolder); // it does not contain / in the end
+            }
+        }
         return pathInfo;
     }
     public boolean createFolder(String existingFolder, String currentFolderName) {

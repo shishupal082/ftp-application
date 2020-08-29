@@ -7,7 +7,7 @@ import java.io.PrintWriter;
 
 
 public class SysUtils {
-    final static Logger LOGGER = LoggerFactory.getLogger(SysUtils.class);
+    private final static Logger LOGGER = LoggerFactory.getLogger(SysUtils.class);
     public Long getTimeInMsLong() {
         return System.currentTimeMillis();
     }

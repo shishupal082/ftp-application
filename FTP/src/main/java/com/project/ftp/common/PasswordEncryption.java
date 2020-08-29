@@ -8,9 +8,9 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 public class PasswordEncryption {
-    final static Logger logger = LoggerFactory.getLogger(PasswordEncryption.class);
-    final String salt;
-    final String password;
+    private final static Logger logger = LoggerFactory.getLogger(PasswordEncryption.class);
+    private final String salt;
+    private final String password;
     public PasswordEncryption(final String salt, final String password) {
         this.salt = salt;
         this.password = password;

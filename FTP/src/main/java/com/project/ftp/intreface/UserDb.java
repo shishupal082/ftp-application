@@ -5,16 +5,15 @@ import com.project.ftp.mysql.DbDAO;
 import com.project.ftp.mysql.MysqlUser;
 import com.project.ftp.obj.Users;
 import com.project.ftp.service.StaticService;
-import io.dropwizard.db.DataSourceFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
 public class UserDb implements UserInterface {
-    final static Logger logger = LoggerFactory.getLogger(UserDb.class);
-    final DbDAO dbDAO;
-    public UserDb(final DataSourceFactory dataSourceFactory, final DbDAO dbDAO) {
+    private final static Logger logger = LoggerFactory.getLogger(UserDb.class);
+    private final DbDAO dbDAO;
+    public UserDb(final DbDAO dbDAO) {
         this.dbDAO = dbDAO;
     }
     public Users getAllUsers() {

@@ -11,9 +11,11 @@ public enum EventName {
     UPLOAD_FILE_V2("upload_file_v2"),
     VIEW_FILE("view_file"),
     DOWNLOAD_FILE("download_file"),
-    DELETE_FILE("delete_file");
+    DELETE_FILE("delete_file"),
+    LOG_FILE_COPIED("log_file_copied"),
+    UN_HANDLE_EXCEPTION("un_handle_exception");
 
-    final String name;
+    private final String name;
     EventName(String name) {
         this.name = name;
     }

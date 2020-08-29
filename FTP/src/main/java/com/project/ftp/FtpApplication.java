@@ -2,6 +2,7 @@ package com.project.ftp;
 
 import com.project.ftp.config.AppConfig;
 import com.project.ftp.config.AppConstant;
+import com.project.ftp.event.EventTracking;
 import com.project.ftp.exceptions.AppExceptionMapper;
 import com.project.ftp.filters.LogFilter;
 import com.project.ftp.filters.RequestFilter;
@@ -13,6 +14,7 @@ import com.project.ftp.resources.ApiResource;
 import com.project.ftp.resources.AppResource;
 import com.project.ftp.resources.FaviconResource;
 import com.project.ftp.service.StaticService;
+import com.project.ftp.service.UserService;
 import io.dropwizard.Application;
 import io.dropwizard.assets.AssetsBundle;
 import io.dropwizard.db.DataSourceFactory;
@@ -65,25 +67,27 @@ public class FtpApplication  extends Application<FtpConfiguration> {
         EventInterface eventInterface;
         UserInterface userInterface;
         if (appConfig.isMySqlEnable()) {
-            DbDAO dbDAO = new DbDAO(hibernateBundle.getSessionFactory());
+            DbDAO dbDAO = new DbDAO(hibernateBundle.getSessionFactory(), ftpConfiguration.getDataSourceFactory());
             eventInterface = new EventDb(dbDAO);
-            userInterface = new UserDb(appConfig.getFtpConfiguration().getDataSourceFactory(), dbDAO);
+            userInterface = new UserDb(dbDAO);
             LOGGER.info("user interface configured from database");
         } else {
             eventInterface = new EventFile(appConfig);
             userInterface = new UserFile(appConfig);
             LOGGER.info("mysql is not enabled, configure user interface from file");
         }
+        UserService userService = new UserService(appConfig, userInterface);
+        EventTracking eventTracking = new EventTracking(appConfig, userService, eventInterface);
         environment.servlets().setSessionHandler(new SessionHandler());
         environment.jersey().register(MultiPartFeature.class);
-        environment.jersey().register(new AppExceptionMapper());
+        environment.jersey().register(new AppExceptionMapper(eventTracking));
         environment.jersey().register(new LogFilter());
-        environment.jersey().register(new RequestFilter(appConfig));
+        environment.jersey().register(new RequestFilter(appConfig, eventTracking));
         environment.jersey().register(new ResponseFilter());
         environment.jersey().register(new FaviconResource(appConfig));
 
-        environment.jersey().register(new ApiResource(appConfig, userInterface, eventInterface));
-        environment.jersey().register(new AppResource(appConfig, userInterface, eventInterface));
+        environment.jersey().register(new ApiResource(appConfig, userService, eventTracking));
+        environment.jersey().register(new AppResource(appConfig, userService, eventTracking));
 //        environment.admin().addTask(shutdownTask);
     }
     public static void main(String[] args) throws Exception {

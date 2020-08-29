@@ -4,8 +4,6 @@ import com.project.ftp.config.AppConfig;
 import com.project.ftp.config.AppConstant;
 import com.project.ftp.event.EventTracking;
 import com.project.ftp.exceptions.AppException;
-import com.project.ftp.intreface.EventInterface;
-import com.project.ftp.intreface.UserInterface;
 import com.project.ftp.obj.PathInfo;
 import com.project.ftp.service.FileServiceV2;
 import com.project.ftp.service.UserService;
@@ -38,12 +36,12 @@ public class AppResource {
     final UserService userService;
     final String appViewFtlFileName;
     final EventTracking eventTracking;
-    public AppResource(final AppConfig appConfig, final UserInterface userInterface, final EventInterface eventInterface) {
+    public AppResource(final AppConfig appConfig, final UserService userService, final EventTracking eventTracking) {
         this.appConfig = appConfig;
-        this.fileServiceV2 = new FileServiceV2(appConfig, userInterface);
-        this.userService = new UserService(appConfig, userInterface);
+        this.fileServiceV2 = new FileServiceV2(appConfig, userService);
+        this.userService = userService;
         this.appViewFtlFileName = AppConstant.APP_VIEW_FTL_FILENAME;
-        this.eventTracking = new EventTracking(appConfig, userService, eventInterface);
+        this.eventTracking = eventTracking;
     }
     @GET
     public Response indexPage(@Context HttpServletRequest request) throws URISyntaxException {

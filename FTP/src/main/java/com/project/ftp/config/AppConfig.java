@@ -15,7 +15,7 @@ import java.util.HashMap;
 public class AppConfig {
     private String publicDir;
     private String configDate;
-    final String appVersion = AppConstant.AppVersion;
+    private final String appVersion = AppConstant.AppVersion;
 //    private ShutdownTask shutdownTask;
     private String configPath;
     private String logFilePath;

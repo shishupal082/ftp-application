@@ -6,6 +6,7 @@ import com.project.ftp.common.PasswordEncryption;
 import com.project.ftp.common.StrUtils;
 import com.project.ftp.common.SysUtils;
 import com.project.ftp.config.*;
+import com.project.ftp.event.EventTracking;
 import com.project.ftp.obj.PathInfo;
 import com.project.ftp.parser.YamlFileParser;
 import com.project.ftp.pdf.TextToPdfService;
@@ -254,7 +255,7 @@ public class StaticService {
         configFilePath = strUtils.replaceBackSlashToSlash(configFilePath);
         return ymlFileParser.isMysqlEnable(configFilePath);
     }
-    public static void checkForDateChange(final AppConfig appConfig) {
+    public static void checkForDateChange(final AppConfig appConfig, final EventTracking eventTracking) {
         String currentDate = StaticService.getDateStrFromPattern(AppConstant.DATE_FORMAT);
         String configDate = appConfig.getConfigDate();
         if (currentDate.equals(configDate)) {
@@ -298,8 +299,10 @@ public class StaticService {
                         Boolean copyStatus = fileService.copyFileV2(str1, str2);
                         if (copyStatus) {
                             nextAvailableLogFiles.add(str2);
+                            eventTracking.trackLogFileChange(AppConstant.SUCCESS, str1, str2);
                             logger.info("log file copied from: {}, to: {}", str1, str2);
                         } else {
+                            eventTracking.trackLogFileChange(AppConstant.FAILURE, str1, str2);
                             logger.info("log file copy failed from: {}, to: {}", str1, str2);
                         }
                     }

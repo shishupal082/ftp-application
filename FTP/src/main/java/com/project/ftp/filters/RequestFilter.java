@@ -2,6 +2,7 @@ package com.project.ftp.filters;
 
 import com.project.ftp.config.AppConfig;
 import com.project.ftp.config.AppConstant;
+import com.project.ftp.event.EventTracking;
 import com.project.ftp.exceptions.AppException;
 import com.project.ftp.exceptions.ErrorCodes;
 import com.project.ftp.service.StaticService;
@@ -23,12 +24,14 @@ import java.util.UUID;
  */
 @Priority(501)
 public class RequestFilter implements ContainerRequestFilter {
-    final static Logger logger = LoggerFactory.getLogger(RequestFilter.class);
+    final static private Logger logger = LoggerFactory.getLogger(RequestFilter.class);
     @Context
     private HttpServletRequest httpServletRequest;
-    final AppConfig appConfig;
-    public RequestFilter(final AppConfig appConfig) {
+    private final AppConfig appConfig;
+    private final EventTracking eventTracking;
+    public RequestFilter(final AppConfig appConfig, EventTracking eventTracking) {
         this.appConfig = appConfig;
+        this.eventTracking = eventTracking;
     }
     private String getCookieData() {
         String cookieName = AppConstant.COOKIE_NAME;
@@ -74,7 +77,7 @@ public class RequestFilter implements ContainerRequestFilter {
         String requestedPath = StaticService.getPathUrlV2(requestContext);
         if (!AppConstant.FAVICON_ICO_PATH.equals(requestedPath)) {
             logger.info("RequestFilter executed, cookieData : {}", cookieData);
-            StaticService.checkForDateChange(appConfig);
+            StaticService.checkForDateChange(appConfig, eventTracking);
         }
     }
 }
