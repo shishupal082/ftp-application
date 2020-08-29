@@ -623,6 +623,11 @@ Define role
         - role(Admin)
     username(SuperAdmin)
         - role(All)
+    username(public)
+        - role(?)
+    username(Guest)
+        - role(?)
+
 
 
 
@@ -641,6 +646,69 @@ Add GA for UI tracking
 Save filename should not contain (<>/\"|*:)
 
 Create annotation for event logging
+
+event_tracking comment field
+-----------------------------------
+success event
+    - null
+        - get_users
+        - get_app_config
+        - get_session_data
+        - aes_encrypt
+        - aes_decrypt
+        - md5_encrypt
+        - forgot_password
+    - ui_username
+        - change_password
+    - filepath,is_iframe,ui_username
+        - view_file
+    - filepath,ui_username
+        - download_file
+        - delete_file
+    - app_version,instance
+        - application_start
+    - log_file_change (for both success and failure)
+        - file copied from filename to new filename
+    - track_ui_event
+        - comment, status and reason as send by ui, add "ui_" pre in event_name_str
+    - filepath,subject,heading,ui_username
+        - file_upload
+    - ui_user_agent,session_data_str,request_user_agent
+        - login_user
+    - passcode,name,ui_user_agent,session_data_str,request_user_agent
+        - register_user
+    - session_data_str
+        - logout
+
+
+failure event
+    - error_code_string,login_username,ui_user_agent,request_user_agent,session_data_str
+        - login_user
+    - passcode,name,error_code_string,login_username,ui_user_agent,request_user_agent,session_data_str
+        - register_user
+    - error_code_string,session_data_str
+        - - logout
+    - error_code_string
+        - get_users
+        - get_app_config
+        - get_session_data
+        - aes_encrypt
+        - aes_decrypt
+        - md5_encrypt
+        - forgot_password
+    - ui_username,error_code_string
+        - change_password
+    - filepath,is_iframe,ui_username
+        - view_file
+    - filepath,ui_username
+        - download_file
+        - delete_file
+    - unknown_exception
+        - errorResponseString
+    - expired_user_session
+        - expired_session_data
+    - filepath,subject,heading,ui_username,error_code_str
+        - file_upload
 
 
 Forgot password

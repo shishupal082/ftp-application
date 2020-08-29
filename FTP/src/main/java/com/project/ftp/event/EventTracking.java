@@ -15,6 +15,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 public class EventTracking {
     final static private Logger logger = LoggerFactory.getLogger(EventTracking.class);
@@ -22,6 +24,16 @@ public class EventTracking {
     private final SessionService sessionService;
     private final AppConfig appConfig;
     private final AddEvent addEvent;
+    private final String uiUserAgent = "uiUserAgent";
+    private final String uiUserName = "uiUserName";
+    private final String requestUserAgent = "requestUserAgent";
+    private final String sessionDataStr = "sessionDataStr";
+    private final String errorCodeStr = "errorCodeStr";
+    private final String loginUsername = "loginUsername";
+    private final String passcode = "passcode";
+    private final String name = "name";
+    private final String filepath = "filepath";
+
     public EventTracking(final AppConfig appConfig,
                          final UserService userService,
                          final EventInterface eventInterface) {
@@ -30,7 +42,15 @@ public class EventTracking {
         this.sessionService = new SessionService(appConfig);
         this.addEvent = new AddEvent(eventInterface);
     }
-
+    private String generateCommentString(HashMap<String, String> commentData, ArrayList<String> sequence) {
+        String comment = null;
+        if (sequence != null && commentData != null) {
+            for(String str: sequence) {
+                comment = StaticService.joinWithComma(comment, commentData.get(str));
+            }
+        }
+        return comment;
+    }
     public void trackSuccessEvent(HttpServletRequest request, EventName eventName) {
         LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
         addEvent.addSuccessEventV2(loginUserDetails.getUsername(), eventName);
@@ -46,77 +66,100 @@ public class EventTracking {
         addEvent.addSuccessEvent(loginUserDetails.getUsername(), EventName.CHANGE_PASSWORD, uiUsername);
     }
     public void addSuccessLogin(HttpServletRequest request, RequestUserLogin userLogin) {
-        String username = null, uiUserAgent = null;
+        String username = null;
+        HashMap<String, String> commentData = new HashMap<>();
+        ArrayList<String> sequence = new ArrayList<>();
+        sequence.add(uiUserAgent);
+        sequence.add(sessionDataStr);
+        sequence.add(requestUserAgent);
+
         if (userLogin != null) {
             username = userLogin.getUsername();
-            uiUserAgent = userLogin.getUser_agent();
+            commentData.put(uiUserAgent, userLogin.getUser_agent());
         }
-        String sessionDataStr = sessionService.getCurrentSessionDataV2(request);
-        String requestUserAgent = StaticService.getRequestUserAgent(request);
-        String comment = StaticService.joinWithCommaV2(uiUserAgent, sessionDataStr, requestUserAgent);
+        commentData.put(sessionDataStr, sessionService.getCurrentSessionDataV2(request));
+        commentData.put(requestUserAgent, StaticService.getRequestUserAgent(request));
+        String comment = this.generateCommentString(commentData, sequence);
         addEvent.addSuccessEvent(username, EventName.LOGIN, comment);
     }
     public void addSuccessRegister(HttpServletRequest request, RequestUserRegister userRegister) {
-        String username = null, passcode = null, name = null;
-        String uiUserAgent = null;
+        String username = null;
+        HashMap<String, String> commentData = new HashMap<>();
+        ArrayList<String> sequence = new ArrayList<>();
+        sequence.add(passcode);
+        sequence.add(name);
+        sequence.add(uiUserAgent);
+        sequence.add(sessionDataStr);
+        sequence.add(requestUserAgent);
+
         if (userRegister != null) {
-            passcode = "passcode="+ userRegister.getPasscode();
-            name = "name=" + userRegister.getDisplay_name();
-            uiUserAgent = userRegister.getUser_agent();
+            commentData.put(passcode, "passcode="+ userRegister.getPasscode());
+            commentData.put(name, "name=" + userRegister.getDisplay_name());
+            commentData.put(uiUserAgent, userRegister.getUser_agent());
             username = userRegister.getUsername();
         }
-        String comment = StaticService.joinWithCommaV2(passcode, name, uiUserAgent);
-        String sessionDataStr = sessionService.getCurrentSessionDataV2(request);
-        String requestUserAgent = StaticService.getRequestUserAgent(request);
-        comment = StaticService.joinWithCommaV2(comment, sessionDataStr, requestUserAgent);
+        commentData.put(sessionDataStr, sessionService.getCurrentSessionDataV2(request));
+        commentData.put(requestUserAgent, StaticService.getRequestUserAgent(request));
+        String comment = this.generateCommentString(commentData, sequence);
         addEvent.addSuccessEvent(username, EventName.REGISTER, comment);
     }
     public void trackLoginFailure(HttpServletRequest request,
                                   RequestUserLogin requestUserLogin, ErrorCodes errorCodes) {
         String username = null;
-        String comment = null;
+        HashMap<String, String> commentData = new HashMap<>();
+        ArrayList<String> sequence = new ArrayList<>();
+        sequence.add(errorCodeStr);
+        sequence.add(loginUsername);
+        sequence.add(uiUserAgent);
+        sequence.add(requestUserAgent);
+        sequence.add(sessionDataStr);
         LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
         if (errorCodes != null) {
-            comment = errorCodes.getErrorString();
+            commentData.put(errorCodeStr, errorCodes.getErrorString());
         }
         if (loginUserDetails.getLogin()) {
-            comment = StaticService.joinWithComma(comment, "loginUsername="+loginUserDetails.getUsername());
+            commentData.put(loginUsername, "loginUsername="+loginUserDetails.getUsername());
         }
         if (requestUserLogin != null) {
             username = requestUserLogin.getUsername();
-            comment = StaticService.joinWithComma(comment, requestUserLogin.getUser_agent());
+            commentData.put(uiUserAgent, requestUserLogin.getUser_agent());
             String encryptedPassword = StaticService.encryptAesPassword(appConfig, requestUserLogin.getPassword());
             logger.info("Encrypted password: {}", encryptedPassword);
         }
-        String requestUserAgent = StaticService.getRequestUserAgent(request);
-        String sessionDataStr = sessionService.getCurrentSessionDataV2(request);
-
-        comment = StaticService.joinWithCommaV2(comment, requestUserAgent, sessionDataStr);
+        commentData.put(requestUserAgent, StaticService.getRequestUserAgent(request));
+        commentData.put(sessionDataStr, sessionService.getCurrentSessionDataV2(request));
+        String comment = this.generateCommentString(commentData, sequence);
         addEvent.addFailureEvent(username, EventName.LOGIN, errorCodes, comment);
     }
     public void trackRegisterFailure(HttpServletRequest request,
                                      RequestUserRegister requestUserRegister,
                                      ErrorCodes errorCodes) {
-        String username = null, comment = "";
+        String username = null;
+        HashMap<String, String> commentData = new HashMap<>();
+        ArrayList<String> sequence = new ArrayList<>();
+        sequence.add(passcode);
+        sequence.add(name);
+        sequence.add(errorCodeStr);
+        sequence.add(loginUsername);
+        sequence.add(uiUserAgent);
+        sequence.add(requestUserAgent);
+        sequence.add(sessionDataStr);
         if (requestUserRegister != null) {
             username = requestUserRegister.getUsername();
-            comment += "passcode=" + requestUserRegister.getPasscode();
-            comment += ",name=" + requestUserRegister.getDisplay_name();
+            commentData.put(passcode, "passcode="+requestUserRegister.getPasscode());
+            commentData.put(name, "name=" + requestUserRegister.getDisplay_name());
+            commentData.put(uiUserAgent, requestUserRegister.getUser_agent());
         }
         LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
         if (loginUserDetails.getLogin()) {
-            comment = StaticService.joinWithComma(comment, "loginUsername=" + loginUserDetails.getUsername());
+            commentData.put(loginUsername, "loginUsername=" + loginUserDetails.getUsername());
         }
         if (errorCodes != null) {
-            comment = StaticService.joinWithComma(comment, errorCodes.getErrorString());
+            commentData.put(errorCodeStr, errorCodes.getErrorString());
         }
-        if (requestUserRegister != null) {
-            comment = StaticService.joinWithComma(comment, requestUserRegister.getUser_agent());
-        }
-        String requestUserAgent = StaticService.getRequestUserAgent(request);
-        String sessionDataStr = sessionService.getCurrentSessionDataV2(request);
-
-        comment = StaticService.joinWithCommaV2(comment, requestUserAgent, sessionDataStr);
+        commentData.put(requestUserAgent, StaticService.getRequestUserAgent(request));
+        commentData.put(sessionDataStr, sessionService.getCurrentSessionDataV2(request));
+        String comment = this.generateCommentString(commentData, sequence);
         addEvent.addFailureEvent(username, EventName.REGISTER, errorCodes, comment);
     }
 
@@ -133,21 +176,32 @@ public class EventTracking {
     }
     public void trackLogout(HttpServletRequest request) {
         LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
+        String comment;
+        HashMap<String, String> commentData = new HashMap<>();
+        ArrayList<String> sequence = new ArrayList<>();
+        sequence.add(errorCodeStr);
+        sequence.add(sessionDataStr);
+        commentData.put(sessionDataStr, sessionService.getCurrentSessionDataV2(request));
         if (loginUserDetails.getLogin()) {
-            String sessionDataStr = sessionService.getCurrentSessionDataV2(request);
-            addEvent.addSuccessEvent(loginUserDetails.getUsername(), EventName.LOGOUT, sessionDataStr);
+            comment = this.generateCommentString(commentData, sequence);
+            addEvent.addSuccessEvent(loginUserDetails.getUsername(), EventName.LOGOUT, comment);
         } else {
-            addEvent.addFailureEventV2(EventName.LOGOUT, ErrorCodes.LOGOUT_USER_NOT_LOGIN);
+            commentData.put(errorCodeStr, ErrorCodes.LOGOUT_USER_NOT_LOGIN.getErrorString());
+            comment = this.generateCommentString(commentData, sequence);
+            addEvent.addFailureEventV2(EventName.LOGOUT, ErrorCodes.LOGOUT_USER_NOT_LOGIN, comment);
         }
     }
-    public void trackChangePasswordFailure(HttpServletRequest request, ErrorCodes errorCodes, String uiUsername) {
+    public void trackChangePasswordFailure(HttpServletRequest request, ErrorCodes errorCodes, String uiUsernameStr) {
         LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
-        String comment = "";
+        HashMap<String, String> commentData = new HashMap<>();
+        ArrayList<String> sequence = new ArrayList<>();
+        sequence.add(uiUserName);
+        sequence.add(errorCodeStr);
+        commentData.put(uiUserName, uiUsernameStr);
         if (errorCodes != null) {
-            comment = uiUsername + "," + errorCodes.getErrorString();
-        } else {
-            comment = uiUsername;
+            commentData.put(errorCodeStr, errorCodes.getErrorString());
         }
+        String comment = this.generateCommentString(commentData, sequence);
         addEvent.addFailureEvent(loginUserDetails.getUsername(), EventName.CHANGE_PASSWORD, errorCodes, comment);
     }
 
@@ -162,13 +216,17 @@ public class EventTracking {
         String comment = "filepath="+filepath + ",uiUsername="+uiUsername;
         addEvent.addSuccessEvent(loginUserDetails.getUsername(), EventName.DOWNLOAD_FILE, comment);
     }
-    public void addSuccessDeleteFile(HttpServletRequest request, RequestDeleteFile deleteFile, String uiUsername) {
+    public void addSuccessDeleteFile(HttpServletRequest request, RequestDeleteFile deleteFile, String uiUsernameStr) {
         LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
-        String deleteFilePath = null;
+        HashMap<String, String> commentData = new HashMap<>();
+        ArrayList<String> sequence = new ArrayList<>();
+        sequence.add(filepath);
+        sequence.add(uiUserName);
+        commentData.put(uiUserName, uiUsernameStr);
         if (deleteFile != null) {
-            deleteFilePath = deleteFile.getFilename();
+            commentData.put(filepath, deleteFile.getFilename());
         }
-        String comment = "filepath="+deleteFilePath + ",uiUsername="+uiUsername;
+        String comment = this.generateCommentString(commentData, sequence);
         addEvent.addSuccessEvent(loginUserDetails.getUsername(), EventName.DELETE_FILE, comment);
     }
     public void trackViewFileFailure(HttpServletRequest request, String filepath,
@@ -188,13 +246,17 @@ public class EventTracking {
     public void trackDeleteFileFailure(HttpServletRequest request,
                                        RequestDeleteFile deleteFile,
                                        ErrorCodes errorCodes,
-                                       String uiUsername) {
+                                       String uiUsernameStr) {
         LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
-        String filepath = null;
+        HashMap<String, String> commentData = new HashMap<>();
+        ArrayList<String> sequence = new ArrayList<>();
+        sequence.add(filepath);
+        sequence.add(uiUserName);
+        commentData.put(uiUserName, uiUsernameStr);
         if (deleteFile != null) {
-            filepath = deleteFile.getFilename();
+            commentData.put(filepath, deleteFile.getFilename());
         }
-        String comment = "filepath="+filepath + ",uiUsername="+uiUsername;
+        String comment = this.generateCommentString(commentData, sequence);
         addEvent.addFailureEvent(loginUserDetails.getUsername(), EventName.DELETE_FILE, errorCodes, comment);
     }
 
@@ -292,5 +354,4 @@ public class EventTracking {
         addEvent.addEventTextV2(null, EventName.UN_HANDLE_EXCEPTION,
                 AppConstant.FAILURE, errorCode, errorString);
     }
-
 }

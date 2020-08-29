@@ -168,7 +168,7 @@ public class ApiResource {
         ApiResponse response;
         try {
             authService.isLoginUserDev(request);
-            response = new ApiResponse(appConfig);
+            response = new ApiResponse(appConfig.getSessionData());
             eventTracking.trackSuccessEvent(request, EventName.GET_SESSION_DATA);
         } catch (AppException ae) {
             logger.info("Unauthorised username: {}, trying to access session config.",

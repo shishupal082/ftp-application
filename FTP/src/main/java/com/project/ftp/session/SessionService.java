@@ -29,7 +29,7 @@ public class SessionService {
         HashMap<String, SessionData> sessionData = appConfig.getSessionData();
         SessionData currentSessionData = sessionData.get(sessionId);
         if (currentSessionData == null) {
-            logger.info("CurrentSessionId: {}, not found in: {}", sessionId, appConfig.getSessionData());
+            logger.info("CurrentSessionId: {}, not found in: {}", sessionId, sessionData);
             throw new AppException(ErrorCodes.INVALID_SESSION);
         }
         return currentSessionData;

@@ -28,8 +28,8 @@ public class AddEvent {
         }
         this.addCommonEvent(username, eventNameStr, AppConstant.FAILURE, errorCodeString, comment);
     }
-    public void addFailureEventV2(EventName eventName, ErrorCodes errorCode) {
-        this.addFailureEvent(null, eventName, errorCode, null);
+    public void addFailureEventV2(EventName eventName, ErrorCodes errorCode, String comment) {
+        this.addFailureEvent(null, eventName, errorCode, comment);
     }
     public void addSuccessEvent(String username, EventName eventName, String comment) {
         String eventNameStr = null;
