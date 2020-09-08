@@ -174,6 +174,7 @@ public class AppResource {
     }
     @GET
     @Path("/register")
+    @UnitOfWork
     public AppView register(@Context HttpServletRequest request) {
         eventTracking.trackLandingPage(request, EventName.REGISTER);
         return new AppView(request, appViewFtlFileName, "register", userService, appConfig);
