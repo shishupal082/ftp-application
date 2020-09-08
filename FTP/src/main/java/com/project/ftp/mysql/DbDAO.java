@@ -49,24 +49,24 @@ public class DbDAO extends AbstractDAO<MysqlUser> {
         }
         return list;
     }
-    public boolean updatePassword(DataSourceFactory dataSourceFactory,
-                                  MysqlUser mysqlUser) {
-        MysqlConnection mysqlConnection = new MysqlConnection(dataSourceFactory);
-        String query = "UPDATE users SET password='"+mysqlUser.getPassword();
-        query += "',method='change_password',change_password_count='"+
-                mysqlUser.getChangePasswordCount()+
-                "' WHERE username='"+mysqlUser.getUsername()+"';";
-        return mysqlConnection.updateQuery(query);
-    }
-    public boolean setPassword(DataSourceFactory dataSourceFactory,
-                               MysqlUser mysqlUser) {
-        MysqlConnection mysqlConnection = new MysqlConnection(dataSourceFactory);
-        String query = "UPDATE users SET password='"+mysqlUser.getPassword();
-        query += "',method='register',name='"+ mysqlUser.getName()+
-                "',passcode='',change_password_count=0"+
-                " WHERE username='"+mysqlUser.getUsername()+"';";
-        return mysqlConnection.updateQuery(query);
-    }
+//    public boolean updatePassword(DataSourceFactory dataSourceFactory,
+//                                  MysqlUser mysqlUser) {
+//        MysqlConnection mysqlConnection = new MysqlConnection(dataSourceFactory);
+//        String query = "UPDATE users SET password='"+mysqlUser.getPassword();
+//        query += "',method='change_password',change_password_count='"+
+//                mysqlUser.getChangePasswordCount()+
+//                "' WHERE username='"+mysqlUser.getUsername()+"';";
+//        return mysqlConnection.updateQuery(query);
+//    }
+//    public boolean setPassword(DataSourceFactory dataSourceFactory,
+//                               MysqlUser mysqlUser) {
+//        MysqlConnection mysqlConnection = new MysqlConnection(dataSourceFactory);
+//        String query = "UPDATE users SET password='"+mysqlUser.getPassword();
+//        query += "',method='register',name='"+ mysqlUser.getName()+
+//                "',passcode='',change_password_count=0"+
+//                " WHERE username='"+mysqlUser.getUsername()+"';";
+//        return mysqlConnection.updateQuery(query);
+//    }
     public void insertEvent(EventDBParameters eventDBParameters) {
         String query = "INSERT INTO event_data (username, event, status, reason, comment)" +
                 " VALUES(:username,:event,:status,:reason,:comment)";

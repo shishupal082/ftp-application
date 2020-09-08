@@ -45,6 +45,7 @@ if ($S.isBooleanTrue($$$.isReactEnv)) {
     hrefPathMapping[basepathname + "/logout"] = "logout";
     hrefPathMapping[basepathname + "/register"] = "register";
     hrefPathMapping[basepathname + "/forgot_password"] = "forgot_password";
+    hrefPathMapping[basepathname + "/create_password"] = "create_password";
     hrefPathMapping[basepathname + "/upload_file"] = "upload_file";
     hrefPathMapping[basepathname + "/change_password"] = "change_password";
 
@@ -73,6 +74,8 @@ Config.apiMapping["static_file"] = baseapi + "/api/get_static_file?v=" + Request
 
 Config.apiMapping["login"] = baseapi + "/api/login_user";
 Config.apiMapping["register"] = baseapi + "/api/register_user";
+Config.apiMapping["forgot_password"] = baseapi + "/api/forgot_password";
+Config.apiMapping["create_password"] = baseapi + "/api/create_password";
 Config.apiMapping["change_password"] = baseapi + "/api/change_password?u="+uiUsername;
 
 Config.apiMapping["upload_file"] = baseapi + "/api/upload_file?u="+uiUsername;
@@ -93,6 +96,13 @@ Config.getAleartMessage = function(response) {
         return messageMap[messageCode];
     }
     return error;
+};
+
+Config.getSuccessMessage = function(response) {
+    if ($S.isString(response.data)) {
+        return response.data;
+    }
+    return "SUCCESS";
 };
 
 export default Config;

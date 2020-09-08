@@ -15,34 +15,54 @@ public enum ErrorCodes {
     INVALID_SESSION("INVALID_SESSION", "Invalid session", 403),
     INVALID_USER_NAME("INVALID_USER_NAME", "Invalid user name", 403),
     INVALID_INPUT("INVALID_INPUT", "Invalid request input", 403),
-    // Login, Register
+    // Login, forgot_password, change_password, create_password, register
+    USER_BLOCKED("USER_BLOCKED", "User blocked, Please contact admin.", 403),
+    // Login, Register, Forgot password, Create password
     USER_NAME_REQUIRED("USER_NAME_REQUIRED", "Username required.", 403),
     USER_ALREADY_LOGIN("USER_ALREADY_LOGIN", "User already login.", 403),
     // Login
     PASSWORD_NOT_MATCHING("PASSWORD_NOT_MATCHING", "Username password not matching.", 403),
-    // Login
     PASSWORD_REQUIRED("PASSWORD_REQUIRED", "Password required.", 403),
+    // Login, Forgot password, Create password
     USER_NOT_REGISTERED("USER_NOT_REGISTERED", "User is not registered, Please register.", 403),
-    // Login, Change password, Register
+    // Login, Change password, Register, Forgot password, Create password
     USER_NOT_FOUND("USER_NOT_FOUND", "User not found.", 403),
     // Change password
     PASSWORD_CHANGE_OLD_REQUIRED("PASSWORD_CHANGE_OLD_REQUIRED", "Old password required.", 403),
-    // Register, Change password
-    PASSWORD_NEW_REQUIRED("PASSWORD_CHANGE_NEW_REQUIRED", "New password required.", 403),
+    // Register, Change password, Create password
+    NEW_PASSWORD_REQUIRED("NEW_PASSWORD_REQUIRED", "New password required.", 403),
+    // Change password, Create password
+    CONFIRM_PASSWORD_REQUIRED("CONFIRM_PASSWORD_REQUIRED", "Confirm password required.", 403),
     // Change password
-    PASSWORD_CHANGE_NOT_MATCHING("PASSWORD_CHANGE_NOT_MATCHING", "New password and confirm password are not matching.", 403),
     PASSWORD_CHANGE_COUNT_EXCEED("PASSWORD_CHANGE_COUNT_EXCEED", "Password change count exceed limit.", 403),
     PASSWORD_CHANGE_OLD_NOT_MATCHING("PASSWORD_CHANGE_OLD_NOT_MATCHING", "Old password not matching.", 403),
-    // Change password, Register
+    // Change password, Register, Create password
     PASSWORD_LENGTH_MISMATCH("PASSWORD_LENGTH_MISMATCH", "New password length should between 8 to 14.", 403),
     PASSWORD_ENCRYPTION_ERROR("PASSWORD_ENCRYPTION_ERROR", "Error in password generate, Please try again.", 403),
     // Register
     REGISTER_PASSCODE_REQUIRED("REGISTER_PASSCODE_REQUIRED", "Passcode required.", 403),
     REGISTER_NAME_REQUIRED("REGISTER_NAME_REQUIRED", "Name required.", 403),
     REGISTER_PASSCODE_NOT_MATCHING("REGISTER_PASSCODE_NOT_MATCHING", "Passcode not matching.", 403),
-    REGISTER_ALREADY("REGISTER_ALREADY", "User passcode expire (Already login), Please try login.", 403),
+    REGISTER_ALREADY("REGISTER_ALREADY", "User already registered, Try login.", 403),
+    // Register, Forgot password
+    MOBILE_REQUIRED("MOBILE_REQUIRED", "Mobile number required.", 403),
+    EMAIL_REQUIRED("EMAIL_REQUIRED", "Email required.", 403),
+    MOBILE_INVALID("MOBILE_INVALID", "Please enter valid mobile number.", 403),
+    EMAIL_INVALID("EMAIL_INVALID", "Please enter valid email.", 403),
+    MOBILE_INVALID_LENGTH("MOBILE_INVALID_LENGTH", "Mobile number should be 10 digit.", 403),
+    EMAIL_INVALID_LENGTH("EMAIL_INVALID_LENGTH", "Email length should be less than 63.", 403),
     FORGOT_PASSWORD_LOGIN_USER("FORGOT_PASSWORD_LOGIN_USER", "User login, requested forgot password.", 403),
     LOGOUT_USER_NOT_LOGIN("LOGOUT_USER_NOT_LOGIN", "User not logged in, requested logout.", 403),
+    // create password
+    CREATE_PASSWORD_OTP_REQUIRED("CREATE_PASSWORD_OTP_REQUIRED", "Create password otp required.", 403),
+    CREATE_PASSWORD_OTP_MISMATCH("CREATE_PASSWORD_OTP_MISMATCH", "Create password otp not matching.", 403),
+    CREATE_PASSWORD_NOT_REQUESTED_FORGOT("CREATE_PASSWORD_NOT_REQUESTED_FORGOT", "Forgot password request not found.", 403),
+    // create password, change password
+    NEW_AND_CONFIRM_PASSWORD_NOT_MATCHING("NEW_AND_CONFIRM_PASSWORD_NOT_MATCHING", "New password and confirm password are not matching.", 403),
+    // forgot password
+    FORGOT_PASSWORD_MOBILE_MISMATCH("FORGOT_PASSWORD_MOBILE_MISMATCH", "Username and mobile number not matching.", 403),
+    FORGOT_PASSWORD_EMAIL_MISMATCH("FORGOT_PASSWORD_EMAIL_MISMATCH", "Username and email not matching.", 403),
+    FORGOT_PASSWORD_REPEAT_REQUEST("FORGOT_PASSWORD_REPEAT_REQUEST", "Forgot password request submitted, Please create password.", 403),
     INVALID_FILE_DATA("INVALID_FILE_DATA", "Invalid file data", 403),
     INVALID_FILE_SAVE_PATH("INVALID_FILE_SAVE_PATH", "Invalid final save file path", 403),
     INVALID_SERVICE_NAME_EMPTY("Invalid service name Empty", "Invalid service name Empty", 403),

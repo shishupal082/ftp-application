@@ -24,6 +24,9 @@ public class UserFile implements UserInterface {
         String password = user.getPassword();
         String name = user.getName();
         String passcode = user.getPasscode();
+        String mobile = user.getMobile();
+        String email = user.getEmail();
+        String createPasswordOtp = user.getCreatePasswordOtp();
         String method = user.getMethod();
         if (username != null) {
             text += username + ",";
@@ -42,6 +45,21 @@ public class UserFile implements UserInterface {
         }
         if (passcode != null) {
             text += passcode +",";
+        } else {
+            text += ",";
+        }
+        if (mobile != null) {
+            text += mobile +",";
+        } else {
+            text += ",";
+        }
+        if (email != null) {
+            text += email +",";
+        } else {
+            text += ",";
+        }
+        if (createPasswordOtp != null) {
+            text += createPasswordOtp +",";
         } else {
             text += ",";
         }
@@ -76,13 +94,19 @@ public class UserFile implements UserInterface {
         logger.info("User data for username: {}, is: {}", username, user);
         return user;
     }
-    public boolean updatePassword(MysqlUser user) {
-        return this.setPassword(user);
+    public boolean changePassword(MysqlUser user) {
+        return this.register(user);
     }
-    public boolean setPassword(MysqlUser user) {
+    public boolean register(MysqlUser user) {
         String filepath = appConfig.getFtpConfiguration().getConfigDataFilePath() + AppConstant.USER_DATA_FILENAME;
         TextFileParser textFileParser = new TextFileParser(filepath);
         String text = this.getAddTextResponse(user);
         return textFileParser.addText(text);
+    }
+    public boolean forgotPassword(MysqlUser user) {
+        return this.register(user);
+    }
+    public boolean createPassword(MysqlUser user) {
+        return this.register(user);
     }
 }

@@ -94,7 +94,7 @@ public class ApiResource {
                                   RequestEventTracking requestEventTracking) {
         logger.info("trackEvent : In, user: {}, eventTracking: {}",
                 userService.getUserDataForLogging(request), requestEventTracking);
-//        eventTracking.trackUIEvent(request, requestEventTracking);
+        eventTracking.trackUIEvent(request, requestEventTracking);
         ApiResponse response = new ApiResponse();
         logger.info("trackEvent : Out");
         return response;
@@ -293,6 +293,56 @@ public class ApiResource {
             response = new ApiResponse(ae.getErrorCode());
         }
         logger.info("changePassword : Out: {}", response);
+        return response;
+    }
+    @POST
+    @Path("/forgot_password")
+    @UnitOfWork
+    public ApiResponse forgotPassword(@Context HttpServletRequest request,
+                                      RequestForgotPassword requestForgotPassword) {
+        logger.info("forgotPassword : In, {}", requestForgotPassword);
+        ApiResponse response;
+        if (authService.isLoginV2(request)) {
+            eventTracking.trackForgotPasswordFailure(request, requestForgotPassword, ErrorCodes.USER_ALREADY_LOGIN);
+            logger.info("Error in forgotPassword, user already login: {}",
+                    userService.getLoginUserDetails(request));
+            return new ApiResponse(ErrorCodes.USER_ALREADY_LOGIN);
+        }
+        try {
+            userService.forgotPassword(request, requestForgotPassword);
+            response = new ApiResponse(ErrorCodes.FORGOT_PASSWORD_REPEAT_REQUEST.getErrorString());
+            eventTracking.trackForgotPasswordSuccess(request, requestForgotPassword);
+        } catch (AppException ae) {
+            logger.info("Error in forgotPassword: {}", ae.getErrorCode().getErrorCode());
+            eventTracking.trackForgotPasswordFailure(request, requestForgotPassword, ae.getErrorCode());
+            response = new ApiResponse(ae.getErrorCode());
+        }
+        logger.info("forgotPassword : Out");
+        return response;
+    }
+    @POST
+    @Path("/create_password")
+    @UnitOfWork
+    public ApiResponse createPassword(@Context HttpServletRequest request,
+                                      RequestCreatePassword requestCreatePassword) {
+        logger.info("createPassword : In, {}", requestCreatePassword);
+        ApiResponse response;
+        if (authService.isLoginV2(request)) {
+            eventTracking.trackCreatePasswordFailure(request, requestCreatePassword, ErrorCodes.USER_ALREADY_LOGIN);
+            logger.info("Error in createPassword, user already login: {}",
+                    userService.getLoginUserDetails(request));
+            return new ApiResponse(ErrorCodes.USER_ALREADY_LOGIN);
+        }
+        try {
+            userService.createPassword(request, requestCreatePassword);
+            response = new ApiResponse();
+            eventTracking.trackCreatePasswordSuccess(request, requestCreatePassword);
+        } catch (AppException ae) {
+            logger.info("Error in change password: {}", ae.getErrorCode().getErrorCode());
+            eventTracking.trackCreatePasswordFailure(request, requestCreatePassword, ae.getErrorCode());
+            response = new ApiResponse(ae.getErrorCode());
+        }
+        logger.info("createPassword : Out");
         return response;
     }
     @POST

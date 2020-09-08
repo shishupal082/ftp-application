@@ -2,6 +2,7 @@ package com.project.ftp.mysql;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.project.ftp.config.UserMethod;
 import com.project.ftp.service.StaticService;
 
 import javax.persistence.*;
@@ -52,6 +53,9 @@ public class MysqlUser implements Serializable {
     @Column(name = "passcode")
     private String passcode;
 
+    @Column(name = "create_password_otp")
+    private String createPasswordOtp;
+
     @Column(name = "change_password_count")
     private int changePasswordCount;
 
@@ -71,11 +75,15 @@ public class MysqlUser implements Serializable {
         this.id = user.getId();
         this.username = user.getUsername();
         this.password = user.getPassword();
+        this.createPasswordOtp = user.getCreatePasswordOtp();
         this.passcode = user.getPasscode();
         this.name = user.getName();
         this.email = user.getEmail();
         this.mobile = user.getMobile();
-        this.method = user.getMethod();
+        UserMethod userMethod = StaticService.getUserMethodValue(user.getMethod());
+        if (userMethod != null) {
+            this.method = userMethod.getUserMethod();
+        }
         this.timestamp = user.getTimestamp();
         this.deleted = user.isDeleted();
         this.changePasswordCount = user.getChangePasswordCount();
@@ -95,11 +103,26 @@ public class MysqlUser implements Serializable {
             if (arrayList.size() >= 4) {
                 passcode = arrayList.get(3);
             }
+
             if (arrayList.size() >= 5) {
-                method = arrayList.get(4);
+                mobile = arrayList.get(4);
             }
+
             if (arrayList.size() >= 6) {
-                timestamp = arrayList.get(5);
+                email = arrayList.get(5);
+            }
+
+            if (arrayList.size() >= 7) {
+                createPasswordOtp = arrayList.get(6);
+            }
+            if (arrayList.size() >= 8) {
+                UserMethod userMethod = StaticService.getUserMethodValue(arrayList.get(7));
+                if (userMethod != null) {
+                    method = userMethod.getUserMethod();
+                }
+            }
+            if (arrayList.size() >= 9) {
+                timestamp = arrayList.get(8);
             }
         }
     }
@@ -115,13 +138,19 @@ public class MysqlUser implements Serializable {
         int emailMaxLength = 255;
         int nameMaxLength = 255;
         int passcodeMaxLength = 15;
+        int createPasswordMaxLength = 15;
         int methodMaxLength = 255;
         int timestampMaxLength = 25;
+        int maxValueOfChangePasswordCount = 32767;
         // No truncation for password and username
-        mobile = StaticService.truncateString(mobile, methodMaxLength);
+        mobile = StaticService.truncateString(mobile, mobileMaxLength);
         email = StaticService.truncateString(email, emailMaxLength);
         name = StaticService.truncateString(name, nameMaxLength);
         passcode = StaticService.truncateString(passcode, passcodeMaxLength);
+        if (changePasswordCount > maxValueOfChangePasswordCount) {
+            changePasswordCount = maxValueOfChangePasswordCount;
+        }
+        createPasswordOtp = StaticService.truncateString(createPasswordOtp, createPasswordMaxLength);
         method = StaticService.truncateString(method, methodMaxLength);
         timestamp = StaticService.truncateString(timestamp, timestampMaxLength);
     }
@@ -213,10 +242,20 @@ public class MysqlUser implements Serializable {
         this.changePasswordCount = changePasswordCount;
     }
 
+    public String getCreatePasswordOtp() {
+        return createPasswordOtp;
+    }
+
+    public void setCreatePasswordOtp(String createPasswordOtp) {
+        this.createPasswordOtp = createPasswordOtp;
+    }
+
     @Override
     public int hashCode() {
-        return Objects.hash(id, username, password, mobile, email, name, passcode, changePasswordCount, method, timestamp, deleted);
+        return Objects.hash(id, username, password, mobile, email, name, passcode, createPasswordOtp,
+                changePasswordCount, method, timestamp, deleted);
     }
+
     @Override
     public String toString() {
         return "MysqlUser{" +
@@ -227,7 +266,8 @@ public class MysqlUser implements Serializable {
                 ", email='" + email + '\'' +
                 ", name='" + name + '\'' +
                 ", passcode='" + passcode + '\'' +
-                ", changePasswordCount='" + changePasswordCount + '\'' +
+                ", createPasswordOtp='" + createPasswordOtp + '\'' +
+                ", changePasswordCount=" + changePasswordCount +
                 ", method='" + method + '\'' +
                 ", timestamp='" + timestamp + '\'' +
                 ", deleted=" + deleted +

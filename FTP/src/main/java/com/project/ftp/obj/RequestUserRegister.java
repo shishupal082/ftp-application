@@ -15,6 +15,10 @@ public class RequestUserRegister {
     private String password;
     @JsonProperty("display_name")
     private String display_name;
+    @JsonProperty("mobile")
+    private String mobile;
+    @JsonProperty("email")
+    private String email;
     @JsonProperty("user_agent")
     private String user_agent;
 
@@ -62,6 +66,22 @@ public class RequestUserRegister {
         this.display_name = display_name;
     }
 
+    public String getMobile() {
+        return mobile;
+    }
+
+    public void setMobile(String mobile) {
+        this.mobile = mobile;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
     public String getUser_agent() {
         return user_agent;
     }
@@ -77,6 +97,8 @@ public class RequestUserRegister {
                 ", passcode='" + passcode + '\'' +
                 ", password='" + "*****" + '\'' +
                 ", display_name='" + display_name + '\'' +
+                ", mobile='" + mobile + '\'' +
+                ", email='" + email + '\'' +
                 ", user_agent='" + user_agent + '\'' +
                 '}';
     }

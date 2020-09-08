@@ -1,5 +1,6 @@
 package com.project.ftp.filters;
 
+import com.project.ftp.config.AppConfig;
 import com.project.ftp.config.AppConstant;
 import com.project.ftp.service.StaticService;
 import org.slf4j.Logger;
@@ -27,11 +28,16 @@ public class ResponseFilter implements ContainerResponseFilter {
     private HttpServletRequest httpServletRequest;
     @Context
     private HttpServletResponse httpServletResponse;
+    private final AppConfig appConfig;
+    public ResponseFilter(AppConfig appConfig) {
+        this.appConfig = appConfig;
+    }
     public void filter(ContainerRequestContext requestContext,
                        ContainerResponseContext responseContext) throws IOException {
         HttpSession httpSession = httpServletRequest.getSession();
         String responseCookieData = (String) httpSession.getAttribute(AppConstant.SESSION_COOKIE_DATA);
-        Cookie sessionCookie = new Cookie(AppConstant.COOKIE_NAME, responseCookieData);
+        String cookieName = appConfig.getCookieName();
+        Cookie sessionCookie = new Cookie(cookieName, responseCookieData);
         sessionCookie.setPath("/");
         httpServletResponse.addCookie(sessionCookie);
         String origin = requestContext.getHeaderString(AppConstant.ORIGIN);

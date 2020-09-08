@@ -36,6 +36,10 @@
     "Forgot Password View"
   ],
   [
+    "/create_password",
+    "Create Password View"
+  ],
+  [
     "/upload_file",
     "Upload File View"
   ],
@@ -74,6 +78,14 @@
   [
     "/api/login_user",
     "Login User [POST]"
+  ],
+  [
+    "/api/forgot_password",
+    "Forgot password [POST]"
+  ],
+  [
+    "/api/create_password",
+    "Create password [POST]"
   ],
   [
     "/api/change_password?u=requested_username",

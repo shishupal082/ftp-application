@@ -6,11 +6,11 @@ public class AppConstant {
     public static final String COOKIE_NAME = "ftp-cookie";
     public static final String SESSION_COOKIE_DATA = "SESSION_COOKIE_DATA";
     public static final Long SESSION_TTL = (long) (10*60*1000); // 10min = 10*60*1000 ms
-    public static final int MAX_ENTRY_ALLOWED_IN_USER_DATA_FILE = 8;
+    public static final int MAX_ENTRY_ALLOWED_IN_USER_DATA_FILE = 20;
     public static final String STATUS = "STATUS";
     public static final String SUCCESS = "SUCCESS";
     public static final String FAILURE = "FAILURE";
-    public static final String TRUE = "true";
+    public static final String IFRAME = "iframe";
     public static final String FILE_USERNAME = "fileUsername";
     public static final String FILE_NAME_STR = "filenameStr";
 //    public static final String REASON = "REASON";
@@ -20,7 +20,7 @@ public class AppConstant {
     public static final String ALLOWED_HEADERS= "Access-Control-Allow-Headers";
     public static final String FILE = "FILE";
     public static final String FOLDER = "FOLDER";
-    public static final String AppVersion = "3.0.6.6";
+    public static final String AppVersion = "4.0.0";
     public static final String server = "server";
     public static final String DATE_FORMAT = "YYYY-MM-dd";
     public static final String TIME_FORMAT = "HHmmss";
@@ -48,4 +48,19 @@ public class AppConstant {
     public static final String EXPIRED_USER_SESSION = "EXPIRED_USER_SESSION";
     public static final String REQUEST_USER_AGENT = "User-Agent";
     public static final String ORIGIN = "origin";
+    public static final String MOBILE_REGEX = "[6-9][0-9]{9}";
+    public static final String EMAIL_REGEX = "^(.+)@(.+)$"; // only care about @
 }
+
+/*
+* Regex
+* {n} : match exactly n times
+* {3,5} : match 3 to 5 times
+* {2,} : match 2 or more times
+* ? : zero or one time (same as {0,1})
+*   colou?r matches color or colour (i.e. u matches 0 or 1 time)
+* + : one or more times (same as {1,})
+*   \d0+ match 100, 10 but not 1
+* * : zero or more time (same as {0,})
+*   \d0* match 100, 10, 1
+* */

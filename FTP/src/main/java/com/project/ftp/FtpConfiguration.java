@@ -31,7 +31,10 @@ public class FtpConfiguration extends Configuration {
     private String appRestartCommand;
     private String uploadFileApiVersion;
     private String aesEncryptionPassword;
+    private String cookieName;
     private boolean mysqlEnable;
+    private boolean guestEnable;
+    private boolean forgotPasswordEnable;
 
     @JsonProperty("database")
     private DataSourceFactory dataSourceFactory = new DataSourceFactory();
@@ -214,6 +217,30 @@ public class FtpConfiguration extends Configuration {
         return mysqlEnable;
     }
 
+    public boolean isGuestEnable() {
+        return guestEnable;
+    }
+
+    public void setGuestEnable(boolean guestEnable) {
+        this.guestEnable = guestEnable;
+    }
+
+    public String getCookieName() {
+        return cookieName;
+    }
+
+    public void setCookieName(String cookieName) {
+        this.cookieName = cookieName;
+    }
+
+    public boolean isForgotPasswordEnable() {
+        return forgotPasswordEnable;
+    }
+
+    public void setForgotPasswordEnable(boolean forgotPasswordEnable) {
+        this.forgotPasswordEnable = forgotPasswordEnable;
+    }
+
     @Override
     public String toString() {
         return "FtpConfiguration{" +
@@ -236,8 +263,11 @@ public class FtpConfiguration extends Configuration {
                 ", appRestartCommand='" + appRestartCommand + '\'' +
                 ", uploadFileApiVersion='" + uploadFileApiVersion + '\'' +
                 ", aesEncryptionPassword='" + "*****" + '\'' +
+                ", dataSourceFactory=" + "*****" + '\'' +
+                ", cookieName='" + cookieName + '\'' +
                 ", mysqlEnable=" + mysqlEnable +
-                ", dataSourceFactory=" + "*****"  + '\''+
+                ", guestEnable=" + guestEnable +
+                ", forgotPasswordEnable=" + forgotPasswordEnable +
                 ", tempConfig=" + tempConfig +
                 '}';
     }

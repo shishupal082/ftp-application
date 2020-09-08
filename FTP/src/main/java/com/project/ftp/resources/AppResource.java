@@ -2,6 +2,7 @@ package com.project.ftp.resources;
 
 import com.project.ftp.config.AppConfig;
 import com.project.ftp.config.AppConstant;
+import com.project.ftp.event.EventName;
 import com.project.ftp.event.EventTracking;
 import com.project.ftp.exceptions.AppException;
 import com.project.ftp.obj.ApiResponse;
@@ -78,10 +79,10 @@ public class AppResource {
     public Response viewFile(@Context HttpServletRequest request,
                            @PathParam("username") String username,
                            @PathParam("filename2") String filename2,
-                           @QueryParam("iframe") String isIframe,
+                           @QueryParam("container") String container,
                            @QueryParam("u") String uiUsername) {
         String filename = username+"/"+filename2;
-        logger.info("Loading viewFile: {}, isIframe: {}", filename, isIframe);
+        logger.info("Loading viewFile: {}, container: {}", filename, container);
         logger.info("user: {}", userService.getUserDataForLogging(request));
         PathInfo pathInfo = null;
         Response.ResponseBuilder r;
@@ -89,10 +90,10 @@ public class AppResource {
         try {
             authService.isLogin(request);
             pathInfo = fileServiceV2.searchRequestedFileV2(request, filename);
-            eventTracking.addSuccessViewFile(request, filename, isIframe, uiUsername);
+            eventTracking.addSuccessViewFile(request, filename, container, uiUsername);
         } catch (AppException ae) {
             logger.info("Error in searching requested file: {}", ae.getErrorCode().getErrorCode());
-            eventTracking.trackViewFileFailure(request, filename, ae.getErrorCode(), isIframe, uiUsername);
+            eventTracking.trackViewFileFailure(request, filename, ae.getErrorCode(), container, uiUsername);
             apiResponse = new ApiResponse(ae.getErrorCode());
         }
 
@@ -113,7 +114,7 @@ public class AppResource {
                 logger.info("Error in loading file: {}", pathInfo);
             }
         }
-        if (AppConstant.TRUE.equals(isIframe)) {
+        if (AppConstant.IFRAME.equals(container)) {
             return Response.status(Response.Status.OK).entity(
                     apiResponse.toJsonString()).type(MediaType.APPLICATION_JSON).build();
         }
@@ -174,6 +175,7 @@ public class AppResource {
     @GET
     @Path("/register")
     public AppView register(@Context HttpServletRequest request) {
+        eventTracking.trackLandingPage(request, EventName.REGISTER);
         return new AppView(request, appViewFtlFileName, "register", userService, appConfig);
     }
     @GET
@@ -190,8 +192,15 @@ public class AppResource {
     @Path("/forgot_password")
     @UnitOfWork
     public AppView forgotPassword(@Context HttpServletRequest request) {
-        eventTracking.addForgotPassword(request);
+        eventTracking.trackLandingPage(request, EventName.FORGOT_PASSWORD);
         return new AppView(request, appViewFtlFileName, "forgot_password", userService, appConfig);
+    }
+    @GET
+    @Path("/create_password")
+    @UnitOfWork
+    public AppView createPassword(@Context HttpServletRequest request) {
+        eventTracking.trackLandingPage(request, EventName.CREATE_PASSWORD);
+        return new AppView(request, appViewFtlFileName, "create_password", userService, appConfig);
     }
     @Path("{default: .*}")
     @GET

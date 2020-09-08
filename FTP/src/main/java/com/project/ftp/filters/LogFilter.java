@@ -4,6 +4,7 @@ package com.project.ftp.filters;
  * Created by shishupalkumar on 12/01/17.
  */
 
+import com.project.ftp.config.AppConfig;
 import com.project.ftp.config.AppConstant;
 import com.project.ftp.service.StaticService;
 import org.slf4j.Logger;
@@ -25,10 +26,14 @@ public class LogFilter implements ContainerRequestFilter {
     final static private Logger LOGGER = LoggerFactory.getLogger(LogFilter.class);
     @Context
     private HttpServletRequest httpServletReq;
+    private final AppConfig appConfig;
+    public LogFilter(AppConfig appConfig) {
+        this.appConfig = appConfig;
+    }
 
     public void filter(ContainerRequestContext requestContext) throws IOException {
         String requestId = StaticService.createUUIDNumber();
-        String sessionId = StaticService.getCookieData(httpServletReq);
+        String sessionId = StaticService.getCookieData(appConfig, httpServletReq);
         String requestedPath = StaticService.getPathUrlV2(requestContext);
         if (!AppConstant.FAVICON_ICO_PATH.equals(requestedPath)) {
             LOGGER.info("Logger sessionId: {}, requestId: {}", sessionId, requestId);

@@ -31,7 +31,7 @@ public class RequestFilter implements ContainerRequestFilter {
         this.eventTracking = eventTracking;
     }
     public void filter(final ContainerRequestContext requestContext) throws AppException {
-        String cookieData = StaticService.getCookieData(httpServletRequest);
+        String cookieData = StaticService.getCookieData(appConfig, httpServletRequest);
         String newCookieData = null;
         String origin = requestContext.getHeaderString(AppConstant.ORIGIN);
         if (origin != null) {

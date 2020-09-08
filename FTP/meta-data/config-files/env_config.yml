@@ -32,6 +32,8 @@ server:
     type: http
   rootPath: /*
 
+cookieName: "ftp-cookie-8080"
+
 mysqlEnable: true
 # Database settings.
 database:
@@ -43,7 +45,6 @@ database:
   password: mysql
   # the JDBC URL; the database is called DWGettingStarted
   url: jdbc:mysql://localhost:3306/ftpapp?autoReconnect=true&useSSL=false
-
 
 supportedFileType:
   - pdf

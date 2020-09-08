@@ -5,7 +5,9 @@ import com.project.ftp.obj.Users;
 
 public interface UserInterface {
     Users getAllUsers();
-    boolean updatePassword(MysqlUser user);
-    boolean setPassword(MysqlUser user);
+    boolean register(MysqlUser user);
+    boolean forgotPassword(MysqlUser user);
+    boolean createPassword(MysqlUser user);
+    boolean changePassword(MysqlUser user);
     MysqlUser getUserByName(String username);
 }

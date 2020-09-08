@@ -7,6 +7,7 @@ create table users(
     email varchar(255) default null,
     name varchar(255) default null,
     passcode varchar(15) default null,
+    create_password_otp varchar(15) default null,
     -- smallint (2 byte, 16 bit, max = 32767)
     change_password_count smallint default 0,
     method varchar(255) default null,
@@ -15,3 +16,5 @@ create table users(
     -- boolean (tinyint, 1 byte, max = 127)
     deleted boolean default false
 );
+
+ALTER TABLE users ADD create_password_otp varchar(15) DEFAULT NULL AFTER passcode;

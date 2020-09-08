@@ -15,14 +15,16 @@ import javax.servlet.http.HttpServletRequest;
  * Created by shishupalkumar on 11/02/17.
  */
 public class AppView extends View {
-    final static Logger logger = LoggerFactory.getLogger(AppView.class);
-    final String appVersion;
-    final String pageName;
-    final String isLogin;
-    final String userName;
-    final String userDisplayName;
-    final String isLoginUserAdmin;
-    final String uploadFileApiVersion;
+    private final static Logger logger = LoggerFactory.getLogger(AppView.class);
+    private final String appVersion;
+    private final String pageName;
+    private final String isLogin;
+    private final String userName;
+    private final String userDisplayName;
+    private final String isLoginUserAdmin;
+    private final String uploadFileApiVersion;
+    private final String isGuestEnable;
+    private final String isForgotPasswordEnable;
     public AppView(HttpServletRequest request, String ftl, String pageName,
                    UserService userService, AppConfig appConfig) {
         super(ftl);
@@ -31,6 +33,8 @@ public class AppView extends View {
         this.userName = loginUserDetails.getUsername();
         this.isLogin = Boolean.toString(loginUserDetails.getLogin());
         this.isLoginUserAdmin = Boolean.toString(loginUserDetails.getLoginUserAdmin());
+        this.isGuestEnable = Boolean.toString(appConfig.getFtpConfiguration().isGuestEnable());
+        this.isForgotPasswordEnable = Boolean.toString(appConfig.getFtpConfiguration().isForgotPasswordEnable());
         this.appVersion = AppConstant.AppVersion;
         this.userDisplayName = "";
         this.uploadFileApiVersion = StaticService.getUploadFileApiVersion(appConfig);
@@ -63,5 +67,13 @@ public class AppView extends View {
 
     public String getIsLoginUserAdmin() {
         return isLoginUserAdmin;
+    }
+
+    public String getIsGuestEnable() {
+        return isGuestEnable;
+    }
+
+    public String getIsForgotPasswordEnable() {
+        return isForgotPasswordEnable;
     }
 }

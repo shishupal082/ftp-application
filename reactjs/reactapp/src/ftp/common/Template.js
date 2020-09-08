@@ -67,28 +67,28 @@ Template["link"] = [
                 "tag": "a",
                 "href": "/dashboard",
                 "name": "link.dashboard",
-                "className": "p-10px",
+                "className": "p-5px",
                 "text": "Dashboard"
             },
             {
                 "tag": "a",
                 "href": "/change_password",
                 "name": "link.change_password",
-                "className": "p-10px",
+                "className": "p-5px",
                 "text": "Change Password"
             },
             {
                 "tag": "a",
                 "href": "/upload_file",
                 "name": "link.upload_file",
-                "className": "p-10px",
+                "className": "p-5px",
                 "text": "Upload File"
             },
             {
                 "tag": "a",
                 "name": "link.logout",
                 "href": "/logout",
-                "className": "p-10px",
+                "className": "p-5px",
                 "text": "Logout"
             }
         ]
@@ -137,14 +137,35 @@ Template["login"] = [
                     "className": "form-group",
                     "text": [
                         {
-                            "tag": "label",
-                            "text": "Username"
+                            "tag": "div",
+                            "text": [
+                                {
+                                    "tag": "label",
+                                    "text": "Username"
+                                },
+                                {
+                                    "tag": "input",
+                                    "className": "form-control",
+                                    "name": "login.username",
+                                    "text": ""
+                                }
+                            ]
                         },
                         {
-                            "tag": "input",
-                            "className": "form-control",
-                            "name": "login.username",
-                            "text": ""
+                            "tag": "div",
+                            "text": [
+                                {
+                                    "tag": "label",
+                                    "text": "Password"
+                                },
+                                {
+                                    "tag": "input",
+                                    "className": "form-control",
+                                    "name": "login.password",
+                                    "type": "password",
+                                    "text": ""
+                                }
+                            ]
                         }
                     ]
                 },
@@ -153,51 +174,47 @@ Template["login"] = [
                     "className": "form-group",
                     "text": [
                         {
-                            "tag": "label",
-                            "text": "Password"
+                            "tag": "div",
+                            "text": [
+                                {
+                                    "tag": "button",
+                                    "className": "btn btn-primary",
+                                    "name": "login.submit",
+                                    "text": "Submit"
+                                },
+                                {
+                                    "tag": "a",
+                                    "href": "/forgot_password",
+                                    "className": "p-5px",
+                                    "text": "Forgot Password"
+                                },
+                                {
+                                    "tag": "a",
+                                    "name": "login.create_password-link",
+                                    "href": "/create_password",
+                                    "className": "p-5px d-none",
+                                    "text": "Create Password"
+                                },
+                                {
+                                    "tag": "a",
+                                    "href": "/register",
+                                    "className": "p-5px",
+                                    "text": "Register"
+                                }
+                            ]
                         },
                         {
-                            "tag": "input",
-                            "className": "form-control",
-                            "name": "login.password",
-                            "type": "password",
-                            "text": ""
-                        }
-                    ]
-                },
-                {
-                    "tag": "div",
-                    "text": [
-                        {
-                            "tag": "button",
-                            "className": "btn btn-primary",
-                            "name": "login.submit",
-                            "text": "Submit"
-                        },
-                        {
-                            "tag": "a",
-                            "href": "/forgot_password",
-                            "className": "p-10px",
-                            "text": "Forgot Password"
-                        },
-                        {
-                            "tag": "a",
-                            "href": "/register",
-                            "className": "p-10px",
-                            "text": "Register"
-                        }
-                    ]
-                },
-                {
-                    "tag": "div",
-                    "className": "text-center",
-                    "name": "login.guest-login-link",
-                    "text": [
-                        {
-                            "tag": "button",
-                            "className": "btn btn-link",
-                            "name": "login.submit-guest",
-                            "text": "Don't have account?, Continue as Guest."
+                            "tag": "div",
+                            "className": "text-center",
+                            "name": "login.guest-login-link",
+                            "text": [
+                                {
+                                    "tag": "button",
+                                    "className": "btn btn-link",
+                                    "name": "login.submit-guest",
+                                    "text": "Don't have account?, Continue as Guest."
+                                }
+                            ]
                         }
                     ]
                 }
@@ -220,31 +237,134 @@ Template["forgot_password"] = [
                 },
                 {
                     "tag": "div",
-                    "className": "form-group",
+                    "name": "forgot_password.old-text",
+                    "className": "form-group pl-10px d-none",
                     "text": [
                         {
-                            "tag": "div.label",
-                            "className": "pl-10px",
-                            "text": "Please contact admin"
+                            "tag": "div",
+                            "className": "",
+                            "text": [
+                                {
+                                    "tag": "label",
+                                    "text": "Please contact admin"
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "tag": "div",
+                    "name": "forgot_password.old-link",
+                    "className": "form-group d-none",
+                    "text": [
+                        {
+                            "tag": "div",
+                            "className": "pl-5px",
+                            "text": {
+                                "tag": "div",
+                                "text": [
+                                    {
+                                        "tag": "a",
+                                        "href": "/login",
+                                        "className": "p-5px",
+                                        "text": "Login"
+                                    },
+                                    {
+                                        "tag": "a",
+                                        "href": "/register",
+                                        "className": "p-5px",
+                                        "text": "Register"
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                },
+                {
+                    "tag": "div",
+                    "name": "forgot_password.fields",
+                    "className": "form-group d-none",
+                    "text": [
+                        {
+                            "tag": "div",
+                            "text": [
+                                {
+                                    "tag": "label",
+                                    "text": "Username"
+                                },
+                                {
+                                    "tag": "input",
+                                    "type": "text",
+                                    "className": "form-control",
+                                    "name": "forgot_password.username"
+                                }
+                            ]
                         },
                         {
                             "tag": "div",
                             "text": [
                                 {
-                                    "tag": "a",
-                                    "href": "/login",
-                                    "className": "p-10px",
-                                    "text": "Login"
+                                    "tag": "label",
+                                    "text": "Registered Mobile"
                                 },
                                 {
-                                    "tag": "a",
-                                    "href": "/register",
-                                    "className": "p-10px",
-                                    "text": "Register"
+                                    "tag": "input",
+                                    "type": "text",
+                                    "className": "form-control",
+                                    "name": "forgot_password.mobile"
+                                }
+                            ]
+                        },
+                        {
+                            "tag": "div",
+                            "text": [
+                                {
+                                    "tag": "label",
+                                    "text": "Registered Email"
+                                },
+                                {
+                                    "tag": "input",
+                                    "type": "text",
+                                    "className": "form-control",
+                                    "name": "forgot_password.email"
                                 }
                             ]
                         }
                     ]
+                },
+                {
+                    "tag": "div",
+                    "name": "forgot_password.links",
+                    "className": "form-group d-none",
+                    "text": {
+                        "tag": "div",
+                        "text": [
+                            {
+                                "tag": "button",
+                                "className": "btn btn-primary",
+                                "name": "forgot_password.submit",
+                                "text": "Submit"
+                            },
+                            {
+                                "tag": "a",
+                                "href": "/login",
+                                "className": "p-5px",
+                                "text": "Login"
+                            },
+                            {
+                                "tag": "a",
+                                "href": "/register",
+                                "className": "p-5px",
+                                "text": "Register"
+                            },
+                            {
+                                "tag": "a",
+                                "href": "/create_password",
+                                "className": "p-5px",
+                                "text": "Create Password"
+                            }
+                        ]
+                    }
                 }
             ]
         }
@@ -268,68 +388,119 @@ Template["register"] = [
                     "className": "form-group",
                     "text": [
                         {
-                            "tag": "label",
-                            "text": "Username"
-                        },
-                        {
-                            "tag": "input",
-                            "type": "text",
-                            "className": "form-control",
-                            "name": "register.username"
-                        }
-                    ]
-                },
-                {
-                    "tag": "div",
-                    "className": "form-group",
-                    "text": [
-                        {
-                            "tag": "label",
+                            "tag": "div",
                             "text": [
                                 {
-                                    "tag": "span",
-                                    "text": "Passcode"
+                                    "tag": "label",
+                                    "text": "Username"
                                 },
                                 {
-                                    "tag": "span",
-                                    "className": "small pl-5px",
-                                    "text": "(Receive from admin)"
+                                    "tag": "input",
+                                    "type": "text",
+                                    "className": "form-control",
+                                    "name": "register.username"
                                 }
                             ]
                         },
                         {
-                            "tag": "input",
-                            "className": "form-control",
-                            "name": "register.passcode",
-                            "type": "text",
-                            "text": ""
-                        }
-                    ]
-                },
-                {
-                    "tag": "div",
-                    "className": "form-group",
-                    "text": [
-                        {
-                            "tag": "label",
+                            "tag": "div",
                             "text": [
                                 {
-                                    "tag": "span",
-                                    "text": "New Password"
+                                    "tag": "label",
+                                    "text": [
+                                        {
+                                            "tag": "span",
+                                            "text": "Passcode"
+                                        },
+                                        {
+                                            "tag": "span",
+                                            "className": "small pl-5px",
+                                            "text": "(Receive from admin)"
+                                        }
+                                    ]
                                 },
                                 {
-                                    "tag": "span",
-                                    "className": "small pl-5px",
-                                    "text": "(Do not use gmail password here)"
+                                    "tag": "input",
+                                    "className": "form-control",
+                                    "name": "register.passcode",
+                                    "type": "text",
+                                    "text": ""
                                 }
                             ]
                         },
                         {
-                            "tag": "input",
-                            "className": "form-control",
-                            "name": "register.password",
-                            "type": "password",
-                            "text": ""
+                            "tag": "div",
+                            "text": [
+                                {
+                                    "tag": "label",
+                                    "text": [
+                                        {
+                                            "tag": "span",
+                                            "text": "New Password"
+                                        },
+                                        {
+                                            "tag": "span",
+                                            "className": "small pl-5px",
+                                            "text": "(Do not use gmail password here)"
+                                        }
+                                    ]
+                                },
+                                {
+                                    "tag": "input",
+                                    "className": "form-control",
+                                    "name": "register.password",
+                                    "type": "password",
+                                    "text": ""
+                                }
+                            ]
+                        },
+                        {
+                            "tag": "div",
+                            "text": [
+                                {
+                                    "tag": "label",
+                                    "text": "Name"
+                                },
+                                {
+                                    "tag": "input",
+                                    "className": "form-control",
+                                    "name": "register.displayName",
+                                    "type": "text",
+                                    "text": ""
+                                }
+                            ]
+                        },
+                        {
+                            "tag": "div",
+                            "text": [
+                                {
+                                    "tag": "label",
+                                    "text": "Mobile"
+                                },
+                                {
+                                    "tag": "input",
+                                    "className": "form-control",
+                                    "name": "register.mobile",
+                                    "type": "text",
+                                    "text": ""
+                                }
+                            ]
+                        },
+                        {
+                            "tag": "div",
+                            "text": [
+                                {
+                                    "tag": "label",
+                                    "text": "Email"
+                                },
+                                {
+                                    "tag": "input",
+                                    "className": "form-control",
+                                    "name": "register.email",
+                                    "type": "text",
+                                    "text": ""
+                                }
+                            ]
                         }
                     ]
                 },
@@ -338,35 +509,36 @@ Template["register"] = [
                     "className": "form-group",
                     "text": [
                         {
-                            "tag": "label",
-                            "text": "Name"
-                        },
-                        {
-                            "tag": "input",
-                            "className": "form-control",
-                            "name": "register.displayName",
-                            "type": "text",
-                            "text": ""
+                            "tag": "div",
+                            "text": [
+                                {
+                                    "tag": "button",
+                                    "className": "btn btn-primary",
+                                    "name": "register.submit",
+                                    "text": "Submit"
+                                },
+                                {
+                                    "tag": "a",
+                                    "href": "/login",
+                                    "className": "p-5px",
+                                    "text": "Login"
+                                },
+                                {
+                                    "tag": "a",
+                                    "href": "/forgot_password",
+                                    "className": "p-5px",
+                                    "text": "Forgot Password"
+                                },
+                                {
+                                    "tag": "a",
+                                    "name": "register.create_password-link",
+                                    "href": "/create_password",
+                                    "className": "p-5px d-none",
+                                    "text": "Create Password"
+                                }
+                            ]
                         }
                     ]
-                },
-                {
-                    "tag": "button",
-                    "className": "btn btn-primary",
-                    "name": "register.submit",
-                    "text": "Submit"
-                },
-                {
-                    "tag": "a",
-                    "href": "/login",
-                    "className": "p-10px",
-                    "text": "Login"
-                },
-                {
-                    "tag": "a",
-                    "href": "/forgot_password",
-                    "className": "p-10px",
-                    "text": "Forgot Password"
                 }
             ]
         }
@@ -387,37 +559,43 @@ Template["upload_file"] = [
                 },
                 {
                     "tag": "div",
-                    "className": "form-group d-none",
-                    "name": "upload_file.subject.div",
+                    "className": "form-group",
                     "text": [
                         {
-                            "tag": "label",
-                            "text": "Subject"
+                            "tag": "div",
+                            "className": "d-none",
+                            "name": "upload_file.subject.div",
+                            "text": [
+                                {
+                                    "tag": "label",
+                                    "text": "Subject"
+                                },
+                                {
+                                    "tag": "input",
+                                    "className": "form-control",
+                                    "name": "upload_file.subject",
+                                    "type": "text",
+                                    "text": ""
+                                }
+                            ]
                         },
                         {
-                            "tag": "input",
-                            "className": "form-control",
-                            "name": "upload_file.subject",
-                            "type": "text",
-                            "text": ""
-                        }
-                    ]
-                },
-                {
-                    "tag": "div",
-                    "className": "form-group d-none",
-                    "name": "upload_file.heading.div",
-                    "text": [
-                        {
-                            "tag": "label",
-                            "text": "Heading"
-                        },
-                        {
-                            "tag": "input",
-                            "className": "form-control",
-                            "name": "upload_file.heading",
-                            "type": "text",
-                            "text": ""
+                            "tag": "div",
+                            "className": "d-none",
+                            "name": "upload_file.heading.div",
+                            "text": [
+                                {
+                                    "tag": "label",
+                                    "text": "Heading"
+                                },
+                                {
+                                    "tag": "input",
+                                    "className": "form-control",
+                                    "name": "upload_file.heading",
+                                    "type": "text",
+                                    "text": ""
+                                }
+                            ]
                         }
                     ]
                 },
@@ -426,30 +604,42 @@ Template["upload_file"] = [
                     "className": "form-group",
                     "text": [
                         {
-                            "tag": "input",
-                            "type": "file",
-                            "name": "upload_file.file",
-                            "id": "file"
-                        },
-                        {
-                            "tag": "div.span",
-                            "name": "upload_file.message",
-                            "className": "small",
-                            "text": ""
+                            "tag": "div",
+                            "text": [
+                                {
+                                    "tag": "input",
+                                    "type": "file",
+                                    "name": "upload_file.file",
+                                    "id": "file"
+                                },
+                                {
+                                    "tag": "div.span",
+                                    "name": "upload_file.message",
+                                    "className": "small",
+                                    "text": ""
+                                }
+
+                            ]
                         }
                     ]
                 },
                 {
-                    "tag": "button",
-                    "className": "btn btn-primary",
-                    "name": "upload_file.submit",
-                    "text": "Submit"
-                },
-                {
-                    "tag": "span",
-                    "className": "pl-10px text-success",
-                    "name": "upload_file.complete-status",
-                    "text": ""
+                    "tag": "div",
+                    "className": "form-group",
+                    "text": [
+                        {
+                            "tag": "button",
+                            "className": "btn btn-primary",
+                            "name": "upload_file.submit",
+                            "text": "Submit"
+                        },
+                        {
+                            "tag": "span",
+                            "className": "pl-10px text-success",
+                            "name": "upload_file.complete-status",
+                            "text": ""
+                        }
+                    ]
                 }
             ]
         }
@@ -473,67 +663,210 @@ Template["change_password"] = [
                     "className": "form-group",
                     "text": [
                         {
-                            "tag": "label",
-                            "text": "Old Password"
-                        },
-                        {
-                            "tag": "input",
-                            "className": "form-control",
-                            "name": "change_password.old_password",
-                            "type": "password",
-                            "text": ""
-                        }
-                    ]
-                },
-                {
-                    "tag": "div",
-                    "className": "form-group",
-                    "text": [
-                        {
-                            "tag": "label",
+                            "tag": "div",
                             "text": [
                                 {
-                                    "tag": "span",
-                                    "text": "New Password"
+                                    "tag": "label",
+                                    "text": "Old Password"
                                 },
                                 {
-                                    "tag": "span",
-                                    "className": "small pl-5px",
-                                    "text": "(Do not use gmail password here)"
+                                    "tag": "input",
+                                    "className": "form-control",
+                                    "name": "change_password.old_password",
+                                    "type": "password",
+                                    "text": ""
                                 }
                             ]
                         },
                         {
-                            "tag": "input",
-                            "className": "form-control",
-                            "name": "change_password.new_password",
-                            "type": "password",
-                            "text": ""
+                            "tag": "div",
+                            "text": [
+                                {
+                                    "tag": "label",
+                                    "text": [
+                                        {
+                                            "tag": "span",
+                                            "text": "New Password"
+                                        },
+                                        {
+                                            "tag": "span",
+                                            "className": "small pl-5px",
+                                            "text": "(Do not use gmail password here)"
+                                        }
+                                    ]
+                                },
+                                {
+                                    "tag": "input",
+                                    "className": "form-control",
+                                    "name": "change_password.new_password",
+                                    "type": "password",
+                                    "text": ""
+                                }
+                            ]
+                        },
+                        {
+                            "tag": "div",
+                            "text": [
+                                {
+                                    "tag": "label",
+                                    "text": "Confirm Password"
+                                },
+                                {
+                                    "tag": "input",
+                                    "className": "form-control",
+                                    "name": "change_password.confirm_password",
+                                    "type": "password",
+                                    "text": ""
+                                }
+                            ]
                         }
                     ]
                 },
                 {
                     "tag": "div",
                     "className": "form-group",
+                    "text": {
+                        "tag": "button",
+                        "className": "btn btn-primary",
+                        "name": "change_password.submit",
+                        "text": "Submit"
+                    }
+                }
+            ]
+        }
+    }
+];
+Template["create_password"] = [
+    {
+        "tag": "div.div",
+        "className": "form-div pt-25px",
+        "text": {
+            "tag": "form",
+            "id": "create_password",
+            "text": [
+                {
+                    "tag": "div.h1",
+                    "className": "p-10px",
+                    "text": "Create Password"
+                },
+                {
+                    "tag": "div",
+                    "className": "form-group",
                     "text": [
                         {
-                            "tag": "label",
-                            "text": "Confirm Password"
+                            "tag": "div",
+                            "text": [
+                                {
+                                    "tag": "label",
+                                    "text": "Username"
+                                },
+                                {
+                                    "tag": "input",
+                                    "className": "form-control",
+                                    "name": "create_password.username",
+                                    "type": "text",
+                                    "text": ""
+                                }
+                            ]
                         },
                         {
-                            "tag": "input",
-                            "className": "form-control",
-                            "name": "change_password.confirm_password",
-                            "type": "password",
-                            "text": ""
+                            "tag": "div",
+                            "text": [
+                                {
+                                    "tag": "label",
+                                    "text": [
+                                        {
+                                            "tag": "span",
+                                            "text": "Create password otp"
+                                        },
+                                        {
+                                            "tag": "span",
+                                            "className": "small pl-5px",
+                                            "text": "(Receive from admin)"
+                                        }
+                                    ]
+                                },
+                                {
+                                    "tag": "input",
+                                    "className": "form-control",
+                                    "name": "create_password.create_password_otp",
+                                    "type": "text",
+                                    "text": ""
+                                }
+                            ]
+                        },
+                        {
+                            "tag": "div",
+                            "text": [
+                                {
+                                    "tag": "label",
+                                    "text": [
+                                        {
+                                            "tag": "span",
+                                            "text": "New Password"
+                                        },
+                                        {
+                                            "tag": "span",
+                                            "className": "small pl-5px",
+                                            "text": "(Do not use gmail password here)"
+                                        }
+                                    ]
+                                },
+                                {
+                                    "tag": "input",
+                                    "className": "form-control",
+                                    "name": "create_password.new_password",
+                                    "type": "password",
+                                    "text": ""
+                                }
+                            ]
+                        },
+                        {
+                            "tag": "div",
+                            "text": [
+                                {
+                                    "tag": "label",
+                                    "text": "Confirm Password"
+                                },
+                                {
+                                    "tag": "input",
+                                    "className": "form-control",
+                                    "name": "create_password.confirm_password",
+                                    "type": "password",
+                                    "text": ""
+                                }
+                            ]
                         }
                     ]
                 },
                 {
-                    "tag": "button",
-                    "className": "btn btn-primary",
-                    "name": "change_password.submit",
-                    "text": "Submit"
+                    "tag": "div",
+                    "text": [
+                        {
+                            "tag": "button",
+                            "className": "btn btn-primary",
+                            "name": "create_password.submit",
+                            "text": "Submit"
+                        },
+                        {
+                            "tag": "a",
+                            "href": "/login",
+                            "className": "p-5px",
+                            "text": "Login"
+                        },
+                        {
+                            "tag": "a",
+                            "href": "/forgot_password",
+                            "className": "p-5px",
+                            "text": "Forgot Password"
+                        },
+                        {
+                            "tag": "a",
+                            "href": "/register",
+                            "className": "p-5px",
+                            "text": "Register"
+                        }
+                    ]
                 }
             ]
         }

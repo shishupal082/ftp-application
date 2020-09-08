@@ -6,6 +6,7 @@ public enum EventName {
     REGISTER("register"),
     FORGOT_PASSWORD("forgot_password"),
     CHANGE_PASSWORD("change_password"),
+    CREATE_PASSWORD("create_password"),
     UPLOAD_FILE("upload_file"),
     UPLOAD_FILE_V1("upload_file_v1"),
     UPLOAD_FILE_V2("upload_file_v2"),

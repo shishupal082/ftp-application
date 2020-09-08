@@ -32,6 +32,8 @@ server:
     type: http
   rootPath: /*
 
+cookieName: "ftp-cookie-8080"
+
 supportedFileType:
   - pdf
   - txt
@@ -59,7 +61,7 @@ aesEncryptionPassword: "1234"
 adminUsersName:
   - Admin
 
-mysqlEnable: true
+mysqlEnable: false
 # Database settings.
 database:
   # the name of the JDBC driver, mysql in our case
@@ -76,6 +78,8 @@ database:
 indexPageReRoute: /login
 filenameFormat: "YYYY-MM-dd-HH-mm'-filename'"
 instance: DevComputer
+guestEnable: false
+forgotPasswordEnable: true
 
 # Only for development purpose
 createReadmePdf: true
@@ -87,8 +91,9 @@ allowedOrigin:
   - http://localhost
   - http://localhost:9000
   - http://localhost:8080
+  - http://localhost:9080
   - chrome-extension://fhbjgbiflinjbdggehcddcbncdddomop
 devUsersName:
   - U1
-tempConfig:
+tempConfig1:
   username: U1

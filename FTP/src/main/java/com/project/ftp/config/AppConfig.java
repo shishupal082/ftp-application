@@ -105,6 +105,13 @@ public class AppConfig {
         return this.ftpConfiguration.isMysqlEnable();
     }
 
+    public String getCookieName() {
+        String cookieName = ftpConfiguration.getCookieName();
+        if (StaticService.isInValidString(cookieName)) {
+            cookieName = AppConstant.COOKIE_NAME;
+        }
+        return cookieName;
+    }
     @Override
     public String toString() {
         return "AppConfig{" +

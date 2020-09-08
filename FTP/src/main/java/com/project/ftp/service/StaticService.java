@@ -212,6 +212,19 @@ public class StaticService {
         }
         return response;
     }
+    public static UserMethod getUserMethodValue(String name) {
+        if (name == null) {
+            return null;
+        }
+        name = name.toUpperCase();
+        UserMethod userMethod = null;
+        try {
+            userMethod = UserMethod.valueOf(name);
+        } catch (Exception e) {
+//            logger.info("Error in parsing enum ({}): {}", name, e.getMessage());
+        }
+        return userMethod;
+    }
     public static FileViewer getFileViewer(String viewer) {
         if (viewer == null || viewer.isEmpty()) {
             return null;
@@ -389,8 +402,8 @@ public class StaticService {
         str1 = StaticService.join(joinDelimiter, str1, str2);
         return StaticService.join(joinDelimiter, str1, str3);
     }
-    public static String getCookieData(HttpServletRequest request) {
-        String cookieName = AppConstant.COOKIE_NAME;
+    public static String getCookieData(AppConfig appConfig, HttpServletRequest request) {
+        String cookieName = appConfig.getCookieName();
         Cookie[] cookies = request.getCookies();
         if (cookies == null){
             return null;
@@ -403,5 +416,8 @@ public class StaticService {
             }
         }
         return cookieData;
+    }
+    public static String getRandomNumber(int min, int max) {
+        return String.valueOf(sysUtils.getRandomNumber(min, max));
     }
 }

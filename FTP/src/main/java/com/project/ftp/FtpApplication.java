@@ -83,9 +83,9 @@ public class FtpApplication  extends Application<FtpConfiguration> {
         environment.servlets().setSessionHandler(new SessionHandler());
         environment.jersey().register(MultiPartFeature.class);
         environment.jersey().register(new AppExceptionMapper(eventTracking));
-        environment.jersey().register(new LogFilter());
+        environment.jersey().register(new LogFilter(appConfig));
         environment.jersey().register(new RequestFilter(appConfig, eventTracking));
-        environment.jersey().register(new ResponseFilter());
+        environment.jersey().register(new ResponseFilter(appConfig));
         environment.jersey().register(new FaviconResource(appConfig));
 
         environment.jersey().register(new ApiResource(appConfig, userService, eventTracking, authService));

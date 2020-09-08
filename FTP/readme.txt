@@ -90,4 +90,4 @@ Change config if required
 Fixed configurations
 ---------------------
 SESSION_TTL = 10min
-MAX_ENTRY_ALLOWED_IN_USER_DATA_FILE = 8
+MAX_ENTRY_ALLOWED_IN_USER_DATA_FILE = 20

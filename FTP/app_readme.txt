@@ -611,6 +611,43 @@ put event name as "ui_" in pre of /api/track_event request
 Add sessionData in comment for login, register and logout success
 Handle properly for each request id and session id change in log
 
+4.0.0
+-------------------
+Implementing forgot_password and create_password
+
+New api added
+    - /api/forgot_password [POST]
+    - /api/create_password [POST]
+New page added
+    - /create_password
+
+ALTER TABLE users ADD create_password_otp varchar(15) DEFAULT NULL AFTER passcode;
+
+Add ,,,, after passcode field in file user_data (for mobile,email,createPasswordOtp)
+
+for download file in android, change download link to open in new tab with iframe=android
+    - For detecting android
+        - platform contains Linux armv* and appVersion contains Linux; Android
+    - If only one of them is found, track that as ui_android_check failure
+
+Added cookieName in config
+    - if cookieName is not found then it will use appConstant CookieName
+Added guestEnable: true in config
+    - if not found it will be false
+Added forgotPasswordEnable: true in config
+    - if not found it will be false
+
+
+
+Added event for track landing page
+    - forgot_password
+    - create_password
+    - register
+Password change count limit exceed from 15 to 20
+Disable submit button for login, register, forgot_password, create_password on request submit
+
+
+
 Future releases
 -------------------
 on expired user session entry, also put current session data along with old session data

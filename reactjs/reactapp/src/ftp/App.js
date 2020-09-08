@@ -57,6 +57,14 @@ if (!isUserAdmin) {
     PageData.setData("dashboard.orderBy", "orderByDate");
 }
 
+function checkAndroid() {
+    var isAndroid = FTPHelper.isAndroid();
+    if (isAndroid) {
+        PageData.setData("platform", "Android");
+    }
+}
+
+
 class App extends React.Component {
     constructor(props) {
         super(props);
@@ -133,6 +141,7 @@ class App extends React.Component {
         FTPHelper.loadPageData(Data, function() {
             self.setRenderField();
         });
+        checkAndroid();
     }
     render() {
         var renderFieldRow = this.state.renderField;

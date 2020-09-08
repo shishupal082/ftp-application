@@ -38,8 +38,17 @@ public class AddEvent {
         }
         this.addCommonEvent(username, eventNameStr, AppConstant.SUCCESS, null, comment);
     }
+
     public void addSuccessEventV2(String username, EventName eventName) {
         this.addSuccessEvent(username, eventName, null);
+    }
+
+    public void addSuccessEventV3(String username, EventName eventName, String reason, String comment) {
+        String eventNameStr = null;
+        if (eventName != null) {
+            eventNameStr = eventName.getName();
+        }
+        this.addCommonEvent(username, eventNameStr, AppConstant.SUCCESS, reason, comment);
     }
 
     public void addEventTextV2(String username, EventName eventName, String status, String reason, String comment) {

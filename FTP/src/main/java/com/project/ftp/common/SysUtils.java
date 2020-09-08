@@ -32,4 +32,7 @@ public class SysUtils {
     public String createUUIDNumber() {
         return UUID.randomUUID().toString();
     }
+    public int getRandomNumber(int min, int max) {
+        return (int) ((Math.random() * (max - min)) + min);
+    }
 }

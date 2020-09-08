@@ -40,6 +40,34 @@ FTP.extend({
     }
 });
 
+//isAndroid
+FTP.extend({
+    isAndroid: function() {
+        var platform = PageData.getNavigatorData("platform");
+        var appVersion = PageData.getNavigatorData("appVersion");
+        var isLinuxArmv = platform.search(/linux armv/i) >= 0;
+        var isLinuxAndroid = appVersion.search(/linux; android/i) >= 0;
+        if (isLinuxArmv && isLinuxAndroid) {
+            return true;
+        }
+        var event = "android_check";
+        var status = "FAILURE";
+        var reason = "";
+        var comment = "";
+        if (isLinuxArmv) {
+            comment = PageData.getUserAgentTrackingData();
+            reason = "LINUX_ARMV_NOT_ANDROID";
+        } else if (isLinuxAndroid) {
+            comment = PageData.getUserAgentTrackingData();
+            reason = "ANDROID_NOT_LINUX_ARMV";
+        } else {
+            return false;
+        }
+        PageData.trackUIEvent(event, status, reason, comment);
+        return false;
+    }
+});
+
 // checkForRedirect
 FTP.extend({
     checkForRedirect: function(Data) {
@@ -51,7 +79,7 @@ FTP.extend({
                 Config.location.href = Config.basepathname + "/login";
                 redirectStatus = true;
             }
-        } else if (["forgot_password", "login", "register"].indexOf(pageName) >= 0) {
+        } else if (["forgot_password", "login", "register", "create_password"].indexOf(pageName) >= 0) {
             if (isLogin) {
                 Config.location.href = Config.basepathname + "/dashboard";
                 redirectStatus = true;
@@ -88,7 +116,13 @@ FTP.extend({
 
         // Changing download link parameter
         field = TemplateHelper(template).searchFieldV2("dashboard.fileinfo.download");
-        field.href = PageData.getPdfDownloadLink(fullFilename);
+        var platform = PageData.getData("platform", false);
+        if (platform === "Android") {
+            field.isTargetBlank = true;
+            field.href = PageData.getPdfViewLink(fullFilename)+"&container="+platform;
+        } else {
+            field.href = PageData.getPdfDownloadLink(fullFilename);
+        }
 
         // Changing delete link parameter
         field = TemplateHelper(template).searchFieldV2("dashboard.fileinfo.delete");
@@ -233,12 +267,14 @@ FTP.extend({
         }
     },
     uploadSubmitButtonStatus: function(pageName, template) {
-        var formPage = ["login", "change_password", "register", "upload_file"];
+        var formPage = ["login", "forgot_password", "create_password", "change_password", "register", "upload_file"];
         if (formPage.indexOf(pageName) < 0) {
             return template;
         }
         var submitBtnNames = {"upload_file": "upload_file.submit"};
         submitBtnNames["login"] = "login.submit";
+        submitBtnNames["forgot_password"] = "forgot_password.submit";
+        submitBtnNames["create_password"] = "create_password.submit";
         submitBtnNames["change_password"] = "change_password.submit";
         submitBtnNames["register"] = "register.submit";
         var formSubmitStatus = PageData.getData("formSubmitStatus", "");
@@ -260,9 +296,35 @@ FTP.extend({
         }
         return template;
     },
+    checkForForgotPasswordEnable: function(pageName, template) {
+        var pageNames = ["login","forgot_password", "register", "create_password"];
+        if (pageNames.indexOf(pageName) < 0) {
+            return true;
+        }
+        var isForgotPasswordEnable = Config.getPageData("is_forgot_password_enable", "false");
+        if (isForgotPasswordEnable === "true") {
+            isForgotPasswordEnable = true;
+        } else {
+            isForgotPasswordEnable = false;
+        }
+        if (isForgotPasswordEnable && ["login", "register"].indexOf(pageName) >= 0) {
+            var createPasswordLink = pageName+".create_password-link";
+            TemplateHelper.removeClassTemplate(template, createPasswordLink, "d-none");
+        }
+        if (["forgot_password"].indexOf(pageName) >= 0) {
+            if (isForgotPasswordEnable) {
+                TemplateHelper.removeClassTemplate(template, "forgot_password.fields", "d-none");
+                TemplateHelper.removeClassTemplate(template, "forgot_password.links", "d-none");
+            } else {
+                TemplateHelper.removeClassTemplate(template, "forgot_password.old-text", "d-none");
+                TemplateHelper.removeClassTemplate(template, "forgot_password.old-link", "d-none");
+            }
+        }
+    },
     getFieldTemplateByPageName: function(Data, pageName) {
         var pageTemplate = [];
         var template = {};
+
         if (pageName === "upload_file") {
             template = Data.getTemplate(pageName, {});
             var message = Config.getApiConfig("uploadFileInstruction", "");
@@ -284,10 +346,13 @@ FTP.extend({
             if (isGuestLinkEnable !== "true") {
                 TemplateHelper.addClassTemplate(template, "login.guest-login-link", "d-none");
             }
+            FTP.uploadSubmitButtonStatus(pageName, template);
+            FTP.checkForForgotPasswordEnable(pageName, template);
             pageTemplate.push(template);
         } else {
             template = Data.getTemplate(pageName, {});
             FTP.uploadSubmitButtonStatus(pageName, template);
+            FTP.checkForForgotPasswordEnable(pageName, template);
             pageTemplate.push(template);
         }
         return pageTemplate;
