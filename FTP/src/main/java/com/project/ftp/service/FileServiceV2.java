@@ -346,10 +346,10 @@ public class FileServiceV2 {
     private void deleteFileV3(FileDetail fileDetail) throws AppException {
         String dir = appConfig.getFtpConfiguration().getFileSaveDir();
         PathInfo pathInfo = fileService.getPathInfo(dir + fileDetail.getFilepath());
-        Boolean permanentlyDeleteFile = appConfig.getFtpConfiguration().getPermanentlyDeleteFile();
+        boolean permanentlyDeleteFile = appConfig.getFtpConfiguration().isPermanentlyDeleteFile();
         Boolean fileDeleteStatus;
         if (AppConstant.FILE.equals(pathInfo.getType())) {
-            if (permanentlyDeleteFile == null || permanentlyDeleteFile) {
+            if (permanentlyDeleteFile) {
                 logger.info("Permanently deleting file: {}", fileDetail);
                 fileDeleteStatus = fileService.deleteFileV2(pathInfo.getPath());
             } else {

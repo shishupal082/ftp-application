@@ -2,8 +2,9 @@
 
 echo [INFO] Copying file to desired location
 
-appVersionDir="../../project/ftp-app/ftp-app-4.0.0/"
+appVersionDir="../../project/ftp-app/ftp-app-4.0.1/"
 configDataDir="../../project/ftp-app/config-files/"
+#configFilename="env_config-4.0.1.yml"
 #savedFilesDir=${appVersionDir}"/saved-files/"
 
 # copying to app folder
@@ -30,10 +31,8 @@ copyFiles() {
   cp run.bat ${appVersionDir}
   cp meta-data/FTP-*.jar ${appVersionDir}
 
-  cp meta-data/config-files/env_config.yml ${configDataDir}
-  cp meta-data/config-files/favicon.ico ${configDataDir}
-
-
+#  cp meta-data/config-files/${configFilename} ${configDataDir}
+#  cp meta-data/config-files/favicon.ico ${configDataDir}
 #  cp meta-data/saved-files/app_static_data.json ${savedFilesDir}
 #  cp meta-data/saved-files/user_data.csv ${savedFilesDir}
 #  cp meta-data/favicon.ico ${metaDataDir}

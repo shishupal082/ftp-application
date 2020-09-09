@@ -6,7 +6,7 @@ public class AppConstant {
     public static final String COOKIE_NAME = "ftp-cookie";
     public static final String SESSION_COOKIE_DATA = "SESSION_COOKIE_DATA";
     public static final Long SESSION_TTL = (long) (10*60*1000); // 10min = 10*60*1000 ms
-    public static final int MAX_ENTRY_ALLOWED_IN_USER_DATA_FILE = 20;
+    public static final int MAX_ENTRY_ALLOWED_IN_USER_DATA_FILE = 8;
     public static final String STATUS = "STATUS";
     public static final String SUCCESS = "SUCCESS";
     public static final String FAILURE = "FAILURE";
@@ -20,7 +20,7 @@ public class AppConstant {
     public static final String ALLOWED_HEADERS= "Access-Control-Allow-Headers";
     public static final String FILE = "FILE";
     public static final String FOLDER = "FOLDER";
-    public static final String AppVersion = "4.0.0";
+    public static final String AppVersion = "4.0.1";
     public static final String server = "server";
     public static final String DATE_FORMAT = "YYYY-MM-dd";
     public static final String TIME_FORMAT = "HHmmss";

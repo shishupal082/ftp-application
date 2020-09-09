@@ -3,6 +3,7 @@ package com.project.ftp;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.project.ftp.obj.FtlConfig;
 import io.dropwizard.Configuration;
 import io.dropwizard.db.DataSourceFactory;
 
@@ -17,35 +18,36 @@ public class FtpConfiguration extends Configuration {
     private String fileSaveDir;
     private String publicDir;
     private String publicPostDir;
-    private Integer maxFileSize;
     private String fileDeleteAccess;
     private String defaultFileViewer;
     private String filenameFormat;
+    private String instance;
+    private String appRestartCommand;
+    private String uploadFileApiVersion;
+    private String cookieName;
+
+    private String aesEncryptionPassword;
+    @JsonProperty("database")
+    private DataSourceFactory dataSourceFactory = new DataSourceFactory();
+
+    private Integer maxFileSize;
+    private boolean createReadmePdf;
+    private boolean permanentlyDeleteFile;
+    private boolean mysqlEnable;
+    private boolean guestEnable;
     private ArrayList<String> allowedOrigin;
     private ArrayList<String> adminUsersName;
     private ArrayList<String> devUsersName;
     private ArrayList<String> supportedFileType;
-    private Boolean createReadmePdf;
-    private String instance;
-    private Boolean permanentlyDeleteFile;
-    private String appRestartCommand;
-    private String uploadFileApiVersion;
-    private String aesEncryptionPassword;
-    private String cookieName;
-    private boolean mysqlEnable;
-    private boolean guestEnable;
-    private boolean forgotPasswordEnable;
-
-    @JsonProperty("database")
-    private DataSourceFactory dataSourceFactory = new DataSourceFactory();
-
+    private FtlConfig ftlConfig;
     private HashMap<String, String> tempConfig;
 
-    public DataSourceFactory getDataSourceFactory() {
-        return dataSourceFactory;
+    public FtlConfig getFtlConfig() {
+        return ftlConfig;
     }
-    public void setDataSourceFactory(DataSourceFactory dataSourceFactory) {
-        this.dataSourceFactory = dataSourceFactory;
+
+    public void setFtlConfig(FtlConfig ftlConfig) {
+        this.ftlConfig = ftlConfig;
     }
 
     public String getIndexPageReRoute() {
@@ -56,20 +58,20 @@ public class FtpConfiguration extends Configuration {
         this.indexPageReRoute = indexPageReRoute;
     }
 
-    public Boolean getCreateReadmePdf() {
-        return createReadmePdf;
-    }
-
-    public void setCreateReadmePdf(Boolean createReadmePdf) {
-        this.createReadmePdf = createReadmePdf;
-    }
-
     public String getConfigDataFilePath() {
         return configDataFilePath;
     }
 
     public void setConfigDataFilePath(String configDataFilePath) {
         this.configDataFilePath = configDataFilePath;
+    }
+
+    public String getFileSaveDir() {
+        return fileSaveDir;
+    }
+
+    public void setFileSaveDir(String fileSaveDir) {
+        this.fileSaveDir = fileSaveDir;
     }
 
     public String getPublicDir() {
@@ -88,12 +90,20 @@ public class FtpConfiguration extends Configuration {
         this.publicPostDir = publicPostDir;
     }
 
-    public Integer getMaxFileSize() {
-        return maxFileSize;
+    public String getFileDeleteAccess() {
+        return fileDeleteAccess;
     }
 
-    public void setMaxFileSize(Integer maxFileSize) {
-        this.maxFileSize = maxFileSize;
+    public void setFileDeleteAccess(String fileDeleteAccess) {
+        this.fileDeleteAccess = fileDeleteAccess;
+    }
+
+    public String getDefaultFileViewer() {
+        return defaultFileViewer;
+    }
+
+    public void setDefaultFileViewer(String defaultFileViewer) {
+        this.defaultFileViewer = defaultFileViewer;
     }
 
     public String getFilenameFormat() {
@@ -104,12 +114,52 @@ public class FtpConfiguration extends Configuration {
         this.filenameFormat = filenameFormat;
     }
 
-    public String getFileSaveDir() {
-        return fileSaveDir;
+    public String getInstance() {
+        return instance;
     }
 
-    public void setFileSaveDir(String fileSaveDir) {
-        this.fileSaveDir = fileSaveDir;
+    public void setInstance(String instance) {
+        this.instance = instance;
+    }
+
+    public String getAppRestartCommand() {
+        return appRestartCommand;
+    }
+
+    public void setAppRestartCommand(String appRestartCommand) {
+        this.appRestartCommand = appRestartCommand;
+    }
+
+    public String getUploadFileApiVersion() {
+        return uploadFileApiVersion;
+    }
+
+    public void setUploadFileApiVersion(String uploadFileApiVersion) {
+        this.uploadFileApiVersion = uploadFileApiVersion;
+    }
+
+    public String getCookieName() {
+        return cookieName;
+    }
+
+    public void setCookieName(String cookieName) {
+        this.cookieName = cookieName;
+    }
+
+    public String getAesEncryptionPassword() {
+        return aesEncryptionPassword;
+    }
+
+    public void setAesEncryptionPassword(String aesEncryptionPassword) {
+        this.aesEncryptionPassword = aesEncryptionPassword;
+    }
+
+    public DataSourceFactory getDataSourceFactory() {
+        return dataSourceFactory;
+    }
+
+    public void setDataSourceFactory(DataSourceFactory dataSourceFactory) {
+        this.dataSourceFactory = dataSourceFactory;
     }
 
     public ArrayList<String> getAllowedOrigin() {
@@ -152,69 +202,36 @@ public class FtpConfiguration extends Configuration {
         this.tempConfig = tempConfig;
     }
 
+    public Integer getMaxFileSize() {
+        return maxFileSize;
+    }
 
-    public Boolean getPermanentlyDeleteFile() {
+    public void setMaxFileSize(Integer maxFileSize) {
+        this.maxFileSize = maxFileSize;
+    }
+
+    public boolean isCreateReadmePdf() {
+        return createReadmePdf;
+    }
+
+    public void setCreateReadmePdf(boolean createReadmePdf) {
+        this.createReadmePdf = createReadmePdf;
+    }
+
+    public boolean isPermanentlyDeleteFile() {
         return permanentlyDeleteFile;
     }
 
-    public void setPermanentlyDeleteFile(Boolean permanentlyDeleteFile) {
+    public void setPermanentlyDeleteFile(boolean permanentlyDeleteFile) {
         this.permanentlyDeleteFile = permanentlyDeleteFile;
-    }
-
-    public String getAppRestartCommand() {
-        return appRestartCommand;
-    }
-
-    public void setAppRestartCommand(String appRestartCommand) {
-        this.appRestartCommand = appRestartCommand;
-    }
-
-    public String getFileDeleteAccess() {
-        return fileDeleteAccess;
-    }
-
-    public void setFileDeleteAccess(String fileDeleteAccess) {
-        this.fileDeleteAccess = fileDeleteAccess;
-    }
-
-    public String getDefaultFileViewer() {
-        return defaultFileViewer;
-    }
-
-    public void setDefaultFileViewer(String defaultFileViewer) {
-        this.defaultFileViewer = defaultFileViewer;
-    }
-
-    public String getUploadFileApiVersion() {
-        return uploadFileApiVersion;
-    }
-
-    public void setUploadFileApiVersion(String uploadFileApiVersion) {
-        this.uploadFileApiVersion = uploadFileApiVersion;
-    }
-
-    public String getInstance() {
-        return instance;
-    }
-
-    public void setInstance(String instance) {
-        this.instance = instance;
-    }
-
-    public String getAesEncryptionPassword() {
-        return aesEncryptionPassword;
-    }
-
-    public void setAesEncryptionPassword(String aesEncryptionPassword) {
-        this.aesEncryptionPassword = aesEncryptionPassword;
-    }
-
-    public void setMysqlEnable(boolean mysqlEnable) {
-        this.mysqlEnable = mysqlEnable;
     }
 
     public boolean isMysqlEnable() {
         return mysqlEnable;
+    }
+
+    public void setMysqlEnable(boolean mysqlEnable) {
+        this.mysqlEnable = mysqlEnable;
     }
 
     public boolean isGuestEnable() {
@@ -225,22 +242,6 @@ public class FtpConfiguration extends Configuration {
         this.guestEnable = guestEnable;
     }
 
-    public String getCookieName() {
-        return cookieName;
-    }
-
-    public void setCookieName(String cookieName) {
-        this.cookieName = cookieName;
-    }
-
-    public boolean isForgotPasswordEnable() {
-        return forgotPasswordEnable;
-    }
-
-    public void setForgotPasswordEnable(boolean forgotPasswordEnable) {
-        this.forgotPasswordEnable = forgotPasswordEnable;
-    }
-
     @Override
     public String toString() {
         return "FtpConfiguration{" +
@@ -249,25 +250,25 @@ public class FtpConfiguration extends Configuration {
                 ", fileSaveDir='" + fileSaveDir + '\'' +
                 ", publicDir='" + publicDir + '\'' +
                 ", publicPostDir='" + publicPostDir + '\'' +
-                ", maxFileSize=" + maxFileSize +
                 ", fileDeleteAccess='" + fileDeleteAccess + '\'' +
                 ", defaultFileViewer='" + defaultFileViewer + '\'' +
                 ", filenameFormat='" + filenameFormat + '\'' +
+                ", instance='" + instance + '\'' +
+                ", appRestartCommand='" + appRestartCommand + '\'' +
+                ", uploadFileApiVersion='" + uploadFileApiVersion + '\'' +
+                ", cookieName='" + cookieName + '\'' +
+                ", aesEncryptionPassword='" + "*****" + '\'' +
+                ", dataSourceFactory='" + "*****" + '\'' +
+                ", maxFileSize=" + maxFileSize +
+                ", createReadmePdf=" + createReadmePdf +
+                ", permanentlyDeleteFile=" + permanentlyDeleteFile +
+                ", mysqlEnable=" + mysqlEnable +
+                ", guestEnable=" + guestEnable +
                 ", allowedOrigin=" + allowedOrigin +
                 ", adminUsersName=" + adminUsersName +
                 ", devUsersName=" + devUsersName +
                 ", supportedFileType=" + supportedFileType +
-                ", createReadmePdf=" + createReadmePdf +
-                ", instance='" + instance + '\'' +
-                ", permanentlyDeleteFile=" + permanentlyDeleteFile +
-                ", appRestartCommand='" + appRestartCommand + '\'' +
-                ", uploadFileApiVersion='" + uploadFileApiVersion + '\'' +
-                ", aesEncryptionPassword='" + "*****" + '\'' +
-                ", dataSourceFactory=" + "*****" + '\'' +
-                ", cookieName='" + cookieName + '\'' +
-                ", mysqlEnable=" + mysqlEnable +
-                ", guestEnable=" + guestEnable +
-                ", forgotPasswordEnable=" + forgotPasswordEnable +
+                ", ftlConfig=" + ftlConfig +
                 ", tempConfig=" + tempConfig +
                 '}';
     }

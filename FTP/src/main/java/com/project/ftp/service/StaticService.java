@@ -62,8 +62,7 @@ public class StaticService {
         }
         ftpConfiguration.setIndexPageReRoute(indexPageReRoute);
         TextToPdfService textToPdfService = new TextToPdfService();
-        Boolean createReadmePdf = ftpConfiguration.getCreateReadmePdf();
-        if (createReadmePdf != null && createReadmePdf) {
+        if (ftpConfiguration.isCreateReadmePdf()) {
             String textFilename, pdfFilename, pdfTitle, pdfSubject;
             textFilename = "readme.txt";
             pdfFilename = "readme.pdf";

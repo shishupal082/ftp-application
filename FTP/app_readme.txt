@@ -638,13 +638,23 @@ Added forgotPasswordEnable: true in config
     - if not found it will be false
 
 
-
 Added event for track landing page
     - forgot_password
     - create_password
     - register
 Password change count limit exceed from 15 to 20
 Disable submit button for login, register, forgot_password, create_password on request submit
+
+4.0.1
+-------------------
+Added ftlConfig in config file
+Removed forgotPasswordEnable from config file
+    - it became part of ftlConfig
+
+Password change count limit exceed from 20 to 8
+Read headingJson from ftlConfig instead of putting multiple in Template.json
+Read description, keywords, author and title from ftlConfig
+Read uploadFileInstruction from ftlConfig instead of calling separate api for this
 
 
 

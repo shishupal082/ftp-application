@@ -2,6 +2,7 @@ package com.project.ftp.view;
 
 import com.project.ftp.config.AppConfig;
 import com.project.ftp.config.AppConstant;
+import com.project.ftp.obj.FtlConfig;
 import com.project.ftp.obj.LoginUserDetails;
 import com.project.ftp.service.StaticService;
 import com.project.ftp.service.UserService;
@@ -25,16 +26,18 @@ public class AppView extends View {
     private final String uploadFileApiVersion;
     private final String isGuestEnable;
     private final String isForgotPasswordEnable;
+    private final FtlConfig ftlConfig;
     public AppView(HttpServletRequest request, String ftl, String pageName,
                    UserService userService, AppConfig appConfig) {
         super(ftl);
+        ftlConfig = appConfig.getFtlConfig();
         LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
         this.pageName = pageName;
         this.userName = loginUserDetails.getUsername();
         this.isLogin = Boolean.toString(loginUserDetails.getLogin());
         this.isLoginUserAdmin = Boolean.toString(loginUserDetails.getLoginUserAdmin());
         this.isGuestEnable = Boolean.toString(appConfig.getFtpConfiguration().isGuestEnable());
-        this.isForgotPasswordEnable = Boolean.toString(appConfig.getFtpConfiguration().isForgotPasswordEnable());
+        this.isForgotPasswordEnable = Boolean.toString(ftlConfig.isForgotPasswordEnable());
         this.appVersion = AppConstant.AppVersion;
         this.userDisplayName = "";
         this.uploadFileApiVersion = StaticService.getUploadFileApiVersion(appConfig);
@@ -75,5 +78,9 @@ public class AppView extends View {
 
     public String getIsForgotPasswordEnable() {
         return isForgotPasswordEnable;
+    }
+
+    public FtlConfig getFtlConfig() {
+        return ftlConfig;
     }
 }

@@ -67,7 +67,7 @@ public class FtpApplication  extends Application<FtpConfiguration> {
 
         EventInterface eventInterface;
         UserInterface userInterface;
-        if (appConfig.isMySqlEnable()) {
+        if (appConfig.getFtpConfiguration().isMysqlEnable()) {
             DbDAO dbDAO = new DbDAO(hibernateBundle.getSessionFactory(), ftpConfiguration.getDataSourceFactory());
             eventInterface = new EventDb(dbDAO);
             userInterface = new UserDb(dbDAO);

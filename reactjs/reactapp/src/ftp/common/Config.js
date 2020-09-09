@@ -1,12 +1,26 @@
 import $$$ from '../../interface/global';
 import $S from "../../interface/stack.js";
+import TemplateHelper from "../../common/TemplateHelper.js";
+import Template from "./Template";
 
 var Config = {"name": "Config", "imgExt": ["jpg", "jpeg", "png"]};
 var PageData = {};
 var baseapi = $$$.baseapi;
 var basepathname = $$$.basepathname;
+var headingJson = $$$.headingJson;
+var uploadFileInstruction = $$$.uploadFileInstruction;
 
+try {
+    headingJson = JSON.parse(headingJson);
+    Template["heading"] = headingJson;
+} catch(e) {}
 
+if ($S.isString(uploadFileInstruction)) {
+    var template = Template["upload_file"];
+    TemplateHelper.setTemplateAttr(template, "upload_file.message", "text", uploadFileInstruction);
+}
+
+/**
 var ApiConfig = {};
 Config.setApiConfig = function(apiConfig) {
     if ($S.isObject(apiConfig)) {
@@ -19,6 +33,7 @@ Config.getApiConfig = function(key, defaultValue) {
     }
     return defaultValue;
 }
+*/
 
 Config.JQ = $$$.JQ;
 Config.location = $$$.location;

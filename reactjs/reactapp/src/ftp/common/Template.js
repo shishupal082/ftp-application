@@ -29,36 +29,6 @@ Template["heading"] = [
         ]
     }
 ];
-Template["heading"] = [
-    {
-        "tag": "div.center.table.tbody.tr",
-        "className": "heading",
-        "text": [
-            {
-                "tag": "td",
-                "text": {
-                    "tag": "img",
-                    "className": "logo",
-                    "src": "/assets/static/img/railwayslogo-128.png"
-                }
-            },
-            {
-                "tag": "td",
-                "className": "text-center pl-5px",
-                "text": [
-                    {
-                        "tag": "div",
-                        "text": "Indian Railways Institute of"
-                    },
-                    {
-                        "tag": "div",
-                        "text": "Signal Engineering and Telecommunications"
-                    }
-                ]
-            }
-        ]
-    }
-];
 Template["link"] = [
     {
         "tag": "div.center",

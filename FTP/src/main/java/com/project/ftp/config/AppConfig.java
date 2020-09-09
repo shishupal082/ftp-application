@@ -6,6 +6,7 @@ package com.project.ftp.config;
 */
 
 import com.project.ftp.FtpConfiguration;
+import com.project.ftp.obj.FtlConfig;
 import com.project.ftp.service.StaticService;
 import com.project.ftp.session.SessionData;
 
@@ -101,9 +102,6 @@ public class AppConfig {
     public void setLogFiles(ArrayList<String> logFiles) {
         this.logFiles = logFiles;
     }
-    public boolean isMySqlEnable() {
-        return this.ftpConfiguration.isMysqlEnable();
-    }
 
     public String getCookieName() {
         String cookieName = ftpConfiguration.getCookieName();
@@ -111,6 +109,13 @@ public class AppConfig {
             cookieName = AppConstant.COOKIE_NAME;
         }
         return cookieName;
+    }
+    public FtlConfig getFtlConfig() {
+        FtlConfig ftlConfig = ftpConfiguration.getFtlConfig();
+        if (ftlConfig == null) {
+            return new FtlConfig();
+        }
+        return ftlConfig;
     }
     @Override
     public String toString() {

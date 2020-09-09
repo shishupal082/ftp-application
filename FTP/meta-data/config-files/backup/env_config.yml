@@ -54,6 +54,7 @@ supportedFileType:
 adminUsersName:
   - Admin
 
+
 defaultFileViewer: "self" #self or all
 fileDeleteAccess: "self" #self or admin or self_admin
 permanentlyDeleteFile: false #File will saved in trash folder

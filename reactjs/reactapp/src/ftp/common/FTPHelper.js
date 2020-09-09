@@ -327,8 +327,6 @@ FTP.extend({
 
         if (pageName === "upload_file") {
             template = Data.getTemplate(pageName, {});
-            var message = Config.getApiConfig("uploadFileInstruction", "");
-            TemplateHelper.setTemplateAttr(template, "upload_file.message", "text", message);
             var uploadFileApiVersion = Config.getPageData("upload_file_api_version", "v1");
             if (uploadFileApiVersion === "v2") {
                 TemplateHelper.removeClassTemplate(template, "upload_file.subject.div", "d-none");
@@ -365,7 +363,8 @@ FTP.extend({
         $S.loadJsonData(null, [url], function(response, apiName, ajaxDetails) {
             if ($S.isObject(response) && $S.isObject(response.data)) {
                 if ($S.isObject(response.data.config)) {
-                    Config.setApiConfig(response.data.config);
+                    console.log(response.data);
+                    // Config.setApiConfig(response.data.config);
                 }
             }
         }, function() {
