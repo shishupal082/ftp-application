@@ -13,12 +13,11 @@ public class FtlConfig {
     private String title;
     private String headingJson;
     private String uploadFileInstruction;
+    private String gaTrackingId;
     private boolean forgotPasswordEnable;
+
     public FtlConfig() {}
     public String getDescription() {
-        if (description == null) {
-            return "";
-        }
         return description;
     }
 
@@ -27,9 +26,6 @@ public class FtlConfig {
     }
 
     public String getKeywords() {
-        if (keywords == null) {
-            return "";
-        }
         return keywords;
     }
 
@@ -38,9 +34,6 @@ public class FtlConfig {
     }
 
     public String getAuthor() {
-        if (author == null) {
-            return "";
-        }
         return author;
     }
 
@@ -49,9 +42,6 @@ public class FtlConfig {
     }
 
     public String getTitle() {
-        if (title == null) {
-            return "";
-        }
         return title;
     }
 
@@ -60,9 +50,6 @@ public class FtlConfig {
     }
 
     public String getHeadingJson() {
-        if (headingJson == null) {
-            return "";
-        }
         return headingJson;
     }
 
@@ -71,9 +58,6 @@ public class FtlConfig {
     }
 
     public String getUploadFileInstruction() {
-        if (uploadFileInstruction == null) {
-            return "";
-        }
         return uploadFileInstruction;
     }
 
@@ -89,6 +73,14 @@ public class FtlConfig {
         this.forgotPasswordEnable = forgotPasswordEnable;
     }
 
+    public String getGaTrackingId() {
+        return gaTrackingId;
+    }
+
+    public void setGaTrackingId(String gaTrackingId) {
+        this.gaTrackingId = gaTrackingId;
+    }
+
     @Override
     public String toString() {
         return "FtlConfig{" +
@@ -98,6 +90,7 @@ public class FtlConfig {
                 ", title='" + title + '\'' +
                 ", headingJson='" + headingJson + '\'' +
                 ", uploadFileInstruction='" + uploadFileInstruction + '\'' +
+                ", gaTrackingId='" + gaTrackingId + '\'' +
                 ", forgotPasswordEnable=" + forgotPasswordEnable +
                 '}';
     }

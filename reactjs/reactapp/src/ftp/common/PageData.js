@@ -2,6 +2,7 @@ import $$$ from '../../interface/global';
 import $S from "../../interface/stack.js";
 import Config from "./Config";
 import FTPHelper from "./FTPHelper";
+import GATracking from "./GATracking";
 
 var PageData;
 
@@ -119,6 +120,7 @@ PageData.extend({
     handleButtonClick: function(e, Data, callBack) {
         var currentTarget = e.currentTarget;
         if (currentTarget.name === "dashboard.fileinfo.view") {
+            GATracking.trackResponse("view_file", {"status": "IFRAME"});
             CurrentFormData.setData("dashboard.currentPdfLink", currentTarget.value);
             window.scrollTo(0, 0);
             callBack(true);
@@ -144,8 +146,10 @@ PageData.extend({
         $S.sendPostRequest(Config.JQ, url, postData, function(ajax, status, response) {
             console.log(response);
             if (status === "FAILURE") {
+                GATracking.trackResponse("delete_file", {"status": "FAILURE_RESPONSE"});
                 alert("Error in delete file, Please Try again.");
             } else {
+                GATracking.trackResponse("delete_file", response);
                 PageData.handleApiResponse(Data, callBack, "delete_file", ajax, response);
             }
         });
@@ -186,8 +190,10 @@ PageData.extend({
                     $S.callMethod(callBack);
                     console.log(response);
                     if (status === "FAILURE") {
+                        GATracking.trackResponse("upload_file", {"status": "FAILURE_RESPONSE"});
                         alert("Error in uploading file, Please Try again.");
                     } else {
+                        GATracking.trackResponse("upload_file", response);
                         PageData.handleApiResponse(Data, callBack, pageName, ajax, response);
                     }
                 }, function(percentComplete) {
@@ -213,8 +219,10 @@ PageData.extend({
                     $S.callMethod(callBack);
                     console.log(response);
                     if (status === "FAILURE") {
+                        GATracking.trackResponse("login", {"status": "FAILURE_RESPONSE"});
                         alert("Error in login, Please Try again.");
                     } else {
+                        GATracking.trackResponse("login", response);
                         PageData.handleApiResponse(Data, callBack, pageName, ajax, response);
                     }
                 });
@@ -229,8 +237,10 @@ PageData.extend({
                     $S.callMethod(callBack);
                     console.log(response);
                     if (status === "FAILURE") {
+                        GATracking.trackResponse("change_password", {"status": "FAILURE_RESPONSE"});
                         alert("Error in change password, Please Try again.");
                     } else {
+                        GATracking.trackResponse("change_password", response);
                         PageData.handleApiResponse(Data, callBack, pageName, ajax, response);
                     }
                 });
@@ -249,8 +259,10 @@ PageData.extend({
                     $S.callMethod(callBack);
                     console.log(response);
                     if (status === "FAILURE") {
+                        GATracking.trackResponse("register", {"status": "FAILURE_RESPONSE"});
                         alert("Error in register user, Please Try again.");
                     } else {
+                        GATracking.trackResponse("register", response);
                         PageData.handleApiResponse(Data, callBack, pageName, ajax, response);
                     }
                 });
@@ -266,8 +278,10 @@ PageData.extend({
                     $S.callMethod(callBack);
                     console.log(response);
                     if (status === "FAILURE") {
+                        GATracking.trackResponse("forgot_password", {"status": "FAILURE_RESPONSE"});
                         alert("Error in forgot password user, Please Try again.");
                     } else {
+                        GATracking.trackResponse("forgot_password", response);
                         PageData.handleApiResponse(Data, callBack, pageName, ajax, response);
                     }
                 });
@@ -284,8 +298,10 @@ PageData.extend({
                     $S.callMethod(callBack);
                     console.log(response);
                     if (status === "FAILURE") {
+                        GATracking.trackResponse("create_password", {"status": "FAILURE_RESPONSE"});
                         alert("Error in register user, Please Try again.");
                     } else {
+                        GATracking.trackResponse("create_password", response);
                         PageData.handleApiResponse(Data, callBack, pageName, ajax, response);
                     }
                 });

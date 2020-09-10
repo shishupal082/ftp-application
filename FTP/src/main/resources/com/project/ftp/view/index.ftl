@@ -4,6 +4,19 @@
     <meta charset="UTF-8">
     <link rel="stylesheet" type="text/css" href="/assets/static/libs/bootstrap-v3.1.1.css">
     <title>FTP App</title>
+    <#if ftlConfig.gaTrackingId??>
+        <!-- If condition -->
+        <!-- Global site tag (gtag.js) - Google Analytics -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=<#if ftlConfig.gaTrackingId??>${ftlConfig.gaTrackingId}<#else></#if>"></script>
+        <script>
+              window.dataLayer = window.dataLayer || [];
+              function gtag(){dataLayer.push(arguments);}
+              gtag('js', new Date());
+              gtag('config', '<#if ftlConfig.gaTrackingId??>${ftlConfig.gaTrackingId}<#else></#if>');
+            </script>
+    <#else>
+        <!-- Else condition -->
+    </#if>
 </head>
 <body>
     <div class="container">

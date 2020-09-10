@@ -630,6 +630,10 @@ for download file in android, change download link to open in new tab with ifram
         - platform contains Linux armv* and appVersion contains Linux; Android
     - If only one of them is found, track that as ui_android_check failure
 
+Added user agent detection support in UI
+    - change download link to view in new tab for android
+
+
 Added cookieName in config
     - if cookieName is not found then it will use appConstant CookieName
 Added guestEnable: true in config
@@ -655,6 +659,12 @@ Password change count limit exceed from 20 to 8
 Read headingJson from ftlConfig instead of putting multiple in Template.json
 Read description, keywords, author and title from ftlConfig
 Read uploadFileInstruction from ftlConfig instead of calling separate api for this
+
+4.0.2
+-------------------
+Added GA tracking for UI
+    - Added config in ftlConfig
+        - gaTrackingId (String)
 
 
 
@@ -686,8 +696,7 @@ select * from file_details where fileUsername = {username} and filename = {filen
 insert into file_details (username,filename,subject,heading,uploadedby) values();
 update table file_details set deletedby="", deleted=true where username="username" and filename="filename";
 
-Add user agent detection support for /download/file/username/filename
-Add GA for UI tracking
+
 
 
 Save filename should not contain (<>/\"|*:)

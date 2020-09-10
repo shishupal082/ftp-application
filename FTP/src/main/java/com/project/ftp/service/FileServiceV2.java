@@ -467,7 +467,7 @@ public class FileServiceV2 {
                 logger.info("Error in loading file: {}", pathInfo);
             }
         }
-        return new CommonView(request, "page_not_found_404.ftl");
+        return new CommonView(request, "page_not_found_404.ftl", appConfig);
     }
     private PathInfo getFileResponse(String filePath) {
         String publicDir = appConfig.getPublicDir();

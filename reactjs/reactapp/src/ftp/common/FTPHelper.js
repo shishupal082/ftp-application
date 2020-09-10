@@ -3,6 +3,7 @@ import Api from "../../common/Api";
 import TemplateHelper from "../../common/TemplateHelper";
 import Config from "./Config";
 import PageData from "./PageData";
+import GATracking from "./GATracking";
 
 var FTPHelper = {};
 
@@ -335,6 +336,7 @@ FTP.extend({
             FTP.uploadSubmitButtonStatus(pageName, template);
             pageTemplate.push(template);
         } else if (pageName === "dashboard") {
+            GATracking.trackUser(pageName);
             var dashboardField = FTP.getDashboardField(Data, pageName);
             FTP.displayVisibleItem(dashboardField);
             pageTemplate.push(dashboardField);

@@ -71,7 +71,7 @@ public class AppResource {
     @Path("/view/resource")
     public IndexView getViewResource(@Context HttpServletRequest request) {
         logger.info("Loading indexPage: {}", userService.getUserDataForLogging(request));
-        return new IndexView(request, null);
+        return new IndexView(request, null, appConfig);
     }
     @GET
     @Path("/view/file/{username}/{filename2}")
@@ -118,7 +118,7 @@ public class AppResource {
             return Response.status(Response.Status.OK).entity(
                     apiResponse.toJsonString()).type(MediaType.APPLICATION_JSON).build();
         }
-        return Response.ok(new CommonView(request, "page_not_found_404.ftl")).build();
+        return Response.ok(new CommonView(request, "page_not_found_404.ftl", appConfig)).build();
     }
     @GET
     @Path("/download/file/{username}/{filename2}")
@@ -152,7 +152,7 @@ public class AppResource {
                 logger.info("Error in loading file: {}", pathInfo);
             }
         }
-        return new CommonView(request, "page_not_found_404.ftl");
+        return new CommonView(request, "page_not_found_404.ftl", appConfig);
     }
     @GET
     @Path("/dashboard")
