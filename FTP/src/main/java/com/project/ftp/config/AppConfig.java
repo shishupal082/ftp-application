@@ -115,6 +115,7 @@ public class AppConfig {
         if (ftlConfig == null) {
             return new FtlConfig();
         }
+        ftlConfig.setTempGaEnable(null);
         return ftlConfig;
     }
     @Override

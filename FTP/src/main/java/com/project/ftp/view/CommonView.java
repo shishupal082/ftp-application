@@ -17,7 +17,6 @@ public class CommonView extends View {
     public CommonView(HttpServletRequest httpServletRequest, String pageName, AppConfig appConfig) {
         super(pageName);
         ftlConfig = appConfig.getFtlConfig();
-        ftlConfig.setTempGaEnable(null);
         logger.info("Loading CommonView with page : {}", pageName);
     }
 

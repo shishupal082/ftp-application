@@ -31,7 +31,6 @@ public class AppView extends View {
                    UserService userService, AppConfig appConfig) {
         super(ftl);
         ftlConfig = appConfig.getFtlConfig();
-        ftlConfig.setTempGaEnable(null);
         LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
         this.pageName = pageName;
         this.userName = loginUserDetails.getUsername();
