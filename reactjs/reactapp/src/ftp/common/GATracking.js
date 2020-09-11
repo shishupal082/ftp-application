@@ -47,12 +47,32 @@ GATracking.fn = GATracking.prototype = {
 };
 $S.extendObject(GATracking);
 
+/**
+redirect (do lazyRedirect on success)
+    - login
+    - register
+    - create_password
+    - change_password
+
+redirect on alert
+    - forgot_password
+    - upload_file
+    - delete_file
+
+click on view file or, loading dashboard data (get_files_info)
+    - view_file
+*/
 GATracking.extend({
+    // login. register, forgot_password, create_password
     trackResponse: function(event, response) {
         if (!$S.isObject(response)) {
             return;
         }
-        var username = PageData.getData(event+".username", "empty-username");
+        var username = "empty-username";
+        // It will fix problem of guest user login
+        if ($S.isString(response.data)) {
+            username = response.data;
+        }
         var action = event + "_" + response.status;
         GATracking(action).send(username);
     },

@@ -673,9 +673,19 @@ Added config in ftlConfig
 
 Improve GA tracking
 
+4.0.2.2
+------------------
+Track view file on dashboard page loading
+Track login, create_password, register, change_password success by lazy redirect
+Send username in login, register, create_password in response
+    - not in forgot_password, because we send success alert message in data
+
 
 Future releases
 -------------------
+
+Integrate sending email or sms to user for forgot password request otp
+
 on expired user session entry, also put current session data along with old session data
 create string Upload File in such a way that it always come together
 
@@ -771,8 +781,3 @@ failure event
         - expired_session_data
     - filepath,subject,heading,ui_username,error_code_str
         - file_upload
-
-
-Forgot password
------------------
-

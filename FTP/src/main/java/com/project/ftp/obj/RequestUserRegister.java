@@ -67,7 +67,10 @@ public class RequestUserRegister {
     }
 
     public String getMobile() {
-        return mobile;
+        if (StaticService.isInValidString(mobile)) {
+            return null;
+        }
+        return mobile.trim();
     }
 
     public void setMobile(String mobile) {
@@ -75,7 +78,10 @@ public class RequestUserRegister {
     }
 
     public String getEmail() {
-        return email;
+        if (StaticService.isInValidString(email)) {
+            return null;
+        }
+        return email.trim();
     }
 
     public void setEmail(String email) {

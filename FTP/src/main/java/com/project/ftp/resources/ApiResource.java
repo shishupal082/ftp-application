@@ -213,11 +213,17 @@ public class ApiResource {
                                  RequestUserLogin userLogin) {
         logger.info("loginUser : In, {}, user: {}",
                 userLogin, userService.getUserDataForLogging(httpServletRequest));
+        String username = null;
+        if (userLogin != null) {
+            username = userLogin.getUsername();
+        }
         ApiResponse response;
         if (authService.isLoginV2(httpServletRequest)) {
             eventTracking.trackLoginFailure(httpServletRequest, userLogin, ErrorCodes.USER_ALREADY_LOGIN);
             logger.info("Error in login, user already login: {}", userService.getLoginUserDetails(httpServletRequest));
-            return new ApiResponse(ErrorCodes.USER_ALREADY_LOGIN);
+            response = new ApiResponse(ErrorCodes.USER_ALREADY_LOGIN);
+            response.setData(username);
+            return response;
         }
         try {
             LoginUserDetails loginUserDetails = userService.loginUser(httpServletRequest, userLogin);
@@ -228,6 +234,7 @@ public class ApiResource {
             eventTracking.trackLoginFailure(httpServletRequest, userLogin, ae.getErrorCode());
             response = new ApiResponse(ae.getErrorCode());
         }
+        response.setData(username);
         logger.info("loginUser : Out: {}", response);
         return response;
     }
@@ -238,12 +245,18 @@ public class ApiResource {
                                  RequestUserRegister userRegister) {
         logger.info("registerUser : In, userRegister: {}, user: {}",
                 userRegister, userService.getUserDataForLogging(httpServletRequest));
+        String username = null;
+        if (userRegister != null) {
+            username = userRegister.getUsername();
+        }
         ApiResponse response;
         if (authService.isLoginV2(httpServletRequest)) {
             eventTracking.trackRegisterFailure(httpServletRequest, userRegister, ErrorCodes.USER_ALREADY_LOGIN);
             logger.info("Error in register, user already login: {}",
                     userService.getLoginUserDetails(httpServletRequest));
-            return new ApiResponse(ErrorCodes.USER_ALREADY_LOGIN);
+            response = new ApiResponse(ErrorCodes.USER_ALREADY_LOGIN);
+            response.setData(username);
+            return response;
         }
         try {
             userService.userRegister(httpServletRequest, userRegister);
@@ -254,6 +267,7 @@ public class ApiResource {
             eventTracking.trackRegisterFailure(httpServletRequest, userRegister, ae.getErrorCode());
             response = new ApiResponse(ae.getErrorCode());
         }
+        response.setData(username);
         logger.info("registerUser : Out: {}", response);
         return response;
     }
@@ -326,12 +340,18 @@ public class ApiResource {
     public ApiResponse createPassword(@Context HttpServletRequest request,
                                       RequestCreatePassword requestCreatePassword) {
         logger.info("createPassword : In, {}", requestCreatePassword);
+        String username = null;
+        if (requestCreatePassword != null) {
+            username = requestCreatePassword.getUsername();
+        }
         ApiResponse response;
         if (authService.isLoginV2(request)) {
             eventTracking.trackCreatePasswordFailure(request, requestCreatePassword, ErrorCodes.USER_ALREADY_LOGIN);
             logger.info("Error in createPassword, user already login: {}",
                     userService.getLoginUserDetails(request));
-            return new ApiResponse(ErrorCodes.USER_ALREADY_LOGIN);
+            response = new ApiResponse(ErrorCodes.USER_ALREADY_LOGIN);
+            response.setData(username);
+            return response;
         }
         try {
             userService.createPassword(request, requestCreatePassword);
@@ -342,6 +362,7 @@ public class ApiResource {
             eventTracking.trackCreatePasswordFailure(request, requestCreatePassword, ae.getErrorCode());
             response = new ApiResponse(ae.getErrorCode());
         }
+        response.setData(username);
         logger.info("createPassword : Out");
         return response;
     }

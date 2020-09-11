@@ -181,6 +181,13 @@ PageData.extend({
             }
         });
     },
+    parseUsername: function(str) {
+        try {
+            var data = JSON.parse(str);
+            return data["username"];
+        } catch(e) {}
+        return "";
+    },
     handleFormSubmit: function(e, Data, callBack) {
         var pageName = Config.getPageData("page", "");
         var url = Config.apiMapping[pageName];
@@ -236,17 +243,19 @@ PageData.extend({
                 if (guestLoginStatus === "true") {
                     username = "Guest";
                     password = "Guest";
-                    CurrentFormData.setData("guest-login-status", "false")
+                    CurrentFormData.setData("guest-login-status", "false");
                 }
                 postData["username"] = username;
                 postData["password"] = password;
                 postData["user_agent"] = PageData.getUserAgentTrackingData();
                 $S.sendPostRequest(Config.JQ, url, postData, function(ajax, status, response) {
                     PageData.setData("formSubmitStatus", "completed");
-                    $S.callMethod(callBack);
                     console.log(response);
                     if (status === "FAILURE") {
-                        GATracking.trackResponse("login", {"status": "FAILURE_RESPONSE"});
+                        $S.callMethod(callBack);
+                        response = {"status": "FAILURE_RESPONSE"};
+                        response["data"] = PageData.parseUsername(ajax.data);
+                        GATracking.trackResponse("login", response);
                         alert("Error in login, Please Try again.");
                     } else {
                         GATracking.trackResponse("login", response);
@@ -261,9 +270,9 @@ PageData.extend({
                 postData["confirm_password"] = CurrentFormData.getData("change_password.confirm_password", "");
                 $S.sendPostRequest(Config.JQ, url, postData, function(ajax, status, response) {
                     PageData.setData("formSubmitStatus", "completed");
-                    $S.callMethod(callBack);
                     console.log(response);
                     if (status === "FAILURE") {
+                        $S.callMethod(callBack);
                         GATracking.trackResponseAfterLogin("change_password", {"status": "FAILURE_RESPONSE"});
                         alert("Error in change password, Please Try again.");
                     } else {
@@ -283,10 +292,12 @@ PageData.extend({
                 postData["user_agent"] = PageData.getUserAgentTrackingData();
                 $S.sendPostRequest(Config.JQ, url, postData, function(ajax, status, response) {
                     PageData.setData("formSubmitStatus", "completed");
-                    $S.callMethod(callBack);
                     console.log(response);
                     if (status === "FAILURE") {
-                        GATracking.trackResponse("register", {"status": "FAILURE_RESPONSE"});
+                        $S.callMethod(callBack);
+                        response = {"status": "FAILURE_RESPONSE"};
+                        response["data"] = PageData.parseUsername(ajax.data);
+                        GATracking.trackResponse("register", response);
                         alert("Error in register user, Please Try again.");
                     } else {
                         GATracking.trackResponse("register", response);
@@ -305,10 +316,14 @@ PageData.extend({
                     $S.callMethod(callBack);
                     console.log(response);
                     if (status === "FAILURE") {
-                        GATracking.trackResponse("forgot_password", {"status": "FAILURE_RESPONSE"});
+                        response = {"status": "FAILURE_RESPONSE"};
+                        response["data"] = PageData.parseUsername(ajax.data);
+                        GATracking.trackResponse("forgot_password", response);
                         alert("Error in forgot password user, Please Try again.");
                     } else {
-                        GATracking.trackResponse("forgot_password", response);
+                        var r = {"status": response.status};
+                        r["data"] = PageData.parseUsername(ajax.data);
+                        GATracking.trackResponse("forgot_password", r);
                         PageData.handleApiResponse(Data, callBack, pageName, ajax, response);
                     }
                 });
@@ -322,10 +337,12 @@ PageData.extend({
                 postData["user_agent"] = PageData.getUserAgentTrackingData();
                 $S.sendPostRequest(Config.JQ, url, postData, function(ajax, status, response) {
                     PageData.setData("formSubmitStatus", "completed");
-                    $S.callMethod(callBack);
                     console.log(response);
                     if (status === "FAILURE") {
-                        GATracking.trackResponse("create_password", {"status": "FAILURE_RESPONSE"});
+                        $S.callMethod(callBack);
+                        response = {"status": "FAILURE_RESPONSE"};
+                        response["data"] = PageData.parseUsername(ajax.data);
+                        GATracking.trackResponse("create_password", response);
                         alert("Error in register user, Please Try again.");
                     } else {
                         GATracking.trackResponse("create_password", response);
@@ -357,12 +374,13 @@ PageData.extend({
             }
         } else if (["login", "register", "create_password"].indexOf(apiName) >= 0) {
             if (response.status === "FAILURE") {
+                $S.callMethod(callBack);
                 alert(Config.getAleartMessage(response));
                 if (response.failureCode === "USER_ALREADY_LOGIN") {
                     FTPHelper.pageReload();
                 }
             } else {
-                Config.location.href = "/dashboard";
+                FTPHelper.lazyRedirect("/dashboard", 250);
             }
         } else if (["forgot_password"].indexOf(apiName) >= 0) {
             if (response.status === "FAILURE") {
@@ -378,12 +396,13 @@ PageData.extend({
             }
         } else if (apiName === "change_password") {
             if (response.status === "FAILURE") {
+                $S.callMethod(callBack);
                 alert(Config.getAleartMessage(response));
                 if (response.failureCode === "UNAUTHORIZED_USER") {
                     FTPHelper.pageReload();
                 }
             } else {
-                Config.location.href = "/dashboard";
+                FTPHelper.lazyRedirect("/dashboard", 250);
             }
         } else if (apiName === "delete_file") {
             if (response.status === "FAILURE") {

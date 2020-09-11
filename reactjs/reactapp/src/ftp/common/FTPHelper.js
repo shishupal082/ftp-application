@@ -3,6 +3,7 @@ import Api from "../../common/Api";
 import TemplateHelper from "../../common/TemplateHelper";
 import Config from "./Config";
 import PageData from "./PageData";
+import GATracking from "./GATracking";
 
 var FTPHelper = {};
 
@@ -61,6 +62,15 @@ FTP.extend({
     },
     pageReload: function() {
         Config.location.reload();
+    },
+    lazyRedirect: function(url, delay) {
+        if ($S.isNumber(delay)) {
+            window.setTimeout(function() {
+                Config.location.href = url;
+            }, delay);
+        } else {
+            Config.location.href = url;
+        }
     }
 });
 FTP.extend({
@@ -488,6 +498,7 @@ FTP.extend({
                     var apiResponseByDate = FTP._generateDashboardResponseByDate(dashboardApiResponse);
                     if (apiResponseByDate && apiResponseByDate.length > 0) {
                         if (apiResponseByDate[0].fieldData && apiResponseByDate[0].fieldData.length > 0) {
+                            GATracking.trackResponseAfterLogin("view_file_dashboard", {"status": "IFRAME"});
                             PageData.setData("dashboard.currentPdfLink", apiResponseByDate[0].fieldData[0].actualFilename);
                         }
                     }

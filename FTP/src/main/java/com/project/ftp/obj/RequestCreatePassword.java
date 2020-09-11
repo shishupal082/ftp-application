@@ -1,6 +1,7 @@
 package com.project.ftp.obj;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.project.ftp.service.StaticService;
 
 public class RequestCreatePassword {
     @JsonProperty("username")
@@ -15,7 +16,10 @@ public class RequestCreatePassword {
     private String userAgent;
 
     public String getUsername() {
-        return username;
+        if (StaticService.isInValidString(username)) {
+            return null;
+        }
+        return username.trim();
     }
 
     public void setUsername(String username) {
@@ -23,7 +27,10 @@ public class RequestCreatePassword {
     }
 
     public String getCreatePasswordOtp() {
-        return createPasswordOtp;
+        if (StaticService.isInValidString(createPasswordOtp)) {
+            return null;
+        }
+        return createPasswordOtp.trim();
     }
 
     public void setCreatePasswordOtp(String createPasswordOtp) {
@@ -31,7 +38,10 @@ public class RequestCreatePassword {
     }
 
     public String getNewPassword() {
-        return newPassword;
+        if (StaticService.isInValidString(newPassword)) {
+            return null;
+        }
+        return newPassword.trim();
     }
 
     public void setNewPassword(String newPassword) {
@@ -39,7 +49,10 @@ public class RequestCreatePassword {
     }
 
     public String getConfirmPassword() {
-        return confirmPassword;
+        if (StaticService.isInValidString(confirmPassword)) {
+            return null;
+        }
+        return confirmPassword.trim();
     }
 
     public void setConfirmPassword(String confirmPassword) {
