@@ -9,7 +9,7 @@
     <title><#if ftlConfig.title??>${ftlConfig.title}<#else></#if></title>
     <link rel="stylesheet" type="text/css" href="/assets/static/libs/bootstrap-v4.4.1.css">
     <link rel="stylesheet" type="text/css" href="/assets/static/dist-ftp-app/style.css?v=${appVersion}">
-    <#if ftlConfig.gaTrackingId??>
+    <#if ftlConfig.tempGaEnable??>
         <!-- If condition -->
         <!-- Global site tag (gtag.js) - Google Analytics -->
         <script async src="https://www.googletagmanager.com/gtag/js?id=<#if ftlConfig.gaTrackingId??>${ftlConfig.gaTrackingId}<#else></#if>"></script>
@@ -42,11 +42,10 @@ var GLOBAL = {
     JQ: $,
     isReactEnv: false
 };
-<#if ftlConfig.gaTrackingId??>
-GLOBAL.gaTrackingEnable = true;
+GLOBAL.gaTrackingEnable = ${ftlConfig.gaTrackingEnable?c};
+<#if ftlConfig.tempGaEnable??>
 GLOBAL.gtag = gtag;
 <#else>
-GLOBAL.gaTrackingEnable = false;
 GLOBAL.gtag = null;
 </#if>
 GLOBAL.currentPageData = document.getElementById("pageData").value;

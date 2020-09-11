@@ -79,6 +79,7 @@ ftlConfig:
   author: "FTP Application Author"
   title: "FTP Application"
   gaTrackingId: "UA-177553408-1" # for development
+  gaTrackingEnable: true
   forgotPasswordEnable: false
   uploadFileInstruction: "(Supported type: pdf,jpeg,jpg and png, max size < 10MB)"
   headingJson: '[{"tag":"div.center.table.tbody.tr","className":"heading","text":[{"tag":"td","text":{"tag":"img","className":"logo","src":"/assets/static/img/railwayslogo-128.png"}},{"tag":"td","className":"text-center pl-5px","text":[{"tag":"div","text":"Heading Line 1 (config)"},{"tag":"div","text":"Larger Heading Line 2 Row"}]}]}]'

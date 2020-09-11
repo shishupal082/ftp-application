@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Page not found</title>
-    <#if ftlConfig.gaTrackingId??>
+    <#if ftlConfig.tempGaEnable??>
         <!-- If condition -->
         <!-- Global site tag (gtag.js) - Google Analytics -->
         <script async src="https://www.googletagmanager.com/gtag/js?id=<#if ftlConfig.gaTrackingId??>${ftlConfig.gaTrackingId}<#else></#if>"></script>

@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <link rel="stylesheet" type="text/css" href="/assets/static/libs/bootstrap-v3.1.1.css">
     <title>FTP App</title>
-    <#if ftlConfig.gaTrackingId??>
+    <#if ftlConfig.tempGaEnable??>
         <!-- If condition -->
         <!-- Global site tag (gtag.js) - Google Analytics -->
         <script async src="https://www.googletagmanager.com/gtag/js?id=<#if ftlConfig.gaTrackingId??>${ftlConfig.gaTrackingId}<#else></#if>"></script>

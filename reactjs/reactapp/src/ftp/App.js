@@ -51,6 +51,8 @@ Data.setData("userName", userName);
 Data.setData("isUserAdmin", isUserAdmin);
 Data.setData("userDisplayName", userDisplayName);
 
+PageData.setData("ui.username", userName);
+
 if (!isUserAdmin) {
     PageData.setData("dashboard.orderBy", "orderByUsername");
 } else {
@@ -58,7 +60,7 @@ if (!isUserAdmin) {
 }
 
 function checkAndroid() {
-    var isAndroid = FTPHelper.isAndroid();
+    var isAndroid = PageData.isAndroid();
     if (isAndroid) {
         PageData.setData("platform", "Android");
     }
@@ -124,6 +126,7 @@ class App extends React.Component {
         this.setState({renderField: renderField});
     }
     componentDidMount() {
+        checkAndroid();
         var redirectStatus = FTPHelper.checkForRedirect(Data);
         if (redirectStatus) {
             return;
@@ -143,7 +146,6 @@ class App extends React.Component {
         FTPHelper.loadPageData(Data, function() {
             self.setRenderField();
         });
-        checkAndroid();
     }
     render() {
         var renderFieldRow = this.state.renderField;

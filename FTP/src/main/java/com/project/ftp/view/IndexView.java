@@ -20,6 +20,7 @@ public class IndexView extends View {
     public IndexView(HttpServletRequest httpServletRequest, String indexPageReRoute, AppConfig appConfig) {
         super("index.ftl");
         ftlConfig = appConfig.getFtlConfig();
+        ftlConfig.setTempGaEnable(null);
         this.indexPageReRoute = indexPageReRoute;
         if (this.indexPageReRoute == null) {
             this.indexPageReRoute = "";

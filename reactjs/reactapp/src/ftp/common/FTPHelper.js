@@ -3,7 +3,6 @@ import Api from "../../common/Api";
 import TemplateHelper from "../../common/TemplateHelper";
 import Config from "./Config";
 import PageData from "./PageData";
-import GATracking from "./GATracking";
 
 var FTPHelper = {};
 
@@ -38,34 +37,6 @@ FTP.extend({
         }
         Data.setData("linkTemplate", linkTemplate);
         return linkTemplate;
-    }
-});
-
-//isAndroid
-FTP.extend({
-    isAndroid: function() {
-        var platform = PageData.getNavigatorData("platform");
-        var appVersion = PageData.getNavigatorData("appVersion");
-        var isLinuxArmv = platform.search(/linux armv/i) >= 0;
-        var isLinuxAndroid = appVersion.search(/linux; android/i) >= 0;
-        if (isLinuxArmv && isLinuxAndroid) {
-            return true;
-        }
-        var event = "android_check";
-        var status = "FAILURE";
-        var reason = "";
-        var comment = "";
-        if (isLinuxArmv) {
-            comment = PageData.getUserAgentTrackingData();
-            reason = "LINUX_ARMV_NOT_ANDROID";
-        } else if (isLinuxAndroid) {
-            comment = PageData.getUserAgentTrackingData();
-            reason = "ANDROID_NOT_LINUX_ARMV";
-        } else {
-            return false;
-        }
-        PageData.trackUIEvent(event, status, reason, comment);
-        return false;
     }
 });
 
@@ -336,7 +307,6 @@ FTP.extend({
             FTP.uploadSubmitButtonStatus(pageName, template);
             pageTemplate.push(template);
         } else if (pageName === "dashboard") {
-            GATracking.trackUser(pageName);
             var dashboardField = FTP.getDashboardField(Data, pageName);
             FTP.displayVisibleItem(dashboardField);
             pageTemplate.push(dashboardField);

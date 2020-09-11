@@ -14,6 +14,8 @@ public class FtlConfig {
     private String headingJson;
     private String uploadFileInstruction;
     private String gaTrackingId;
+    private String tempGaEnable;
+    private boolean gaTrackingEnable;
     private boolean forgotPasswordEnable;
 
     public FtlConfig() {}
@@ -73,12 +75,32 @@ public class FtlConfig {
         this.forgotPasswordEnable = forgotPasswordEnable;
     }
 
+    public boolean isGaTrackingEnable() {
+        return gaTrackingEnable;
+    }
+
+    public void setGaTrackingEnable(boolean gaTrackingEnable) {
+        this.gaTrackingEnable = gaTrackingEnable;
+    }
+
     public String getGaTrackingId() {
         return gaTrackingId;
     }
 
     public void setGaTrackingId(String gaTrackingId) {
         this.gaTrackingId = gaTrackingId;
+    }
+
+    public String getTempGaEnable() {
+        return tempGaEnable;
+    }
+
+    public void setTempGaEnable(String tempGaEnable) {
+        if (this.gaTrackingEnable && this.gaTrackingId != null && this.gaTrackingId.length() > 0) {
+            this.tempGaEnable = "true";
+        } else {
+            this.tempGaEnable = tempGaEnable;
+        }
     }
 
     @Override
@@ -91,6 +113,8 @@ public class FtlConfig {
                 ", headingJson='" + headingJson + '\'' +
                 ", uploadFileInstruction='" + uploadFileInstruction + '\'' +
                 ", gaTrackingId='" + gaTrackingId + '\'' +
+                ", tempGaEnable='" + tempGaEnable + '\'' +
+                ", gaTrackingEnable=" + gaTrackingEnable +
                 ", forgotPasswordEnable=" + forgotPasswordEnable +
                 '}';
     }

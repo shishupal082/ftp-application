@@ -11,6 +11,9 @@ var PageData;
 var CurrentFormData = $S.getDataObj();
 var keys = ["platform"];
 
+keys.push("ui.username");
+
+
 keys.push("upload_file.file");
 keys.push("upload_file.percentComplete");
 keys.push("upload_file.subject");
@@ -89,6 +92,30 @@ PageData.extend({
             trackingData.push(PageData.getNavigatorData(trackingKey[i]));
         }
         return trackingData.join(",");
+    },
+    isAndroid: function() {
+        var platform = PageData.getNavigatorData("platform");
+        var appVersion = PageData.getNavigatorData("appVersion");
+        var isLinuxArmv = platform.search(/linux armv/i) >= 0;
+        var isLinuxAndroid = appVersion.search(/linux; android/i) >= 0;
+        if (isLinuxArmv && isLinuxAndroid) {
+            return true;
+        }
+        var event = "android_check";
+        var status = "FAILURE";
+        var reason = "";
+        var comment = "";
+        if (isLinuxArmv) {
+            comment = PageData.getUserAgentTrackingData();
+            reason = "LINUX_ARMV_NOT_ANDROID";
+        } else if (isLinuxAndroid) {
+            comment = PageData.getUserAgentTrackingData();
+            reason = "ANDROID_NOT_LINUX_ARMV";
+        } else {
+            return false;
+        }
+        PageData.trackUIEvent(event, status, reason, comment);
+        return false;
     }
 });
 PageData.extend({
@@ -120,7 +147,7 @@ PageData.extend({
     handleButtonClick: function(e, Data, callBack) {
         var currentTarget = e.currentTarget;
         if (currentTarget.name === "dashboard.fileinfo.view") {
-            GATracking.trackResponse("view_file", {"status": "IFRAME"});
+            GATracking.trackResponseAfterLogin("view_file", {"status": "IFRAME"});
             CurrentFormData.setData("dashboard.currentPdfLink", currentTarget.value);
             window.scrollTo(0, 0);
             callBack(true);
@@ -146,10 +173,10 @@ PageData.extend({
         $S.sendPostRequest(Config.JQ, url, postData, function(ajax, status, response) {
             console.log(response);
             if (status === "FAILURE") {
-                GATracking.trackResponse("delete_file", {"status": "FAILURE_RESPONSE"});
+                GATracking.trackResponseAfterLogin("delete_file", {"status": "FAILURE_RESPONSE"});
                 alert("Error in delete file, Please Try again.");
             } else {
-                GATracking.trackResponse("delete_file", response);
+                GATracking.trackResponseAfterLogin("delete_file", response);
                 PageData.handleApiResponse(Data, callBack, "delete_file", ajax, response);
             }
         });
@@ -190,10 +217,10 @@ PageData.extend({
                     $S.callMethod(callBack);
                     console.log(response);
                     if (status === "FAILURE") {
-                        GATracking.trackResponse("upload_file", {"status": "FAILURE_RESPONSE"});
+                        GATracking.trackResponseAfterLogin("upload_file", {"status": "FAILURE_RESPONSE"});
                         alert("Error in uploading file, Please Try again.");
                     } else {
-                        GATracking.trackResponse("upload_file", response);
+                        GATracking.trackResponseAfterLogin("upload_file", response);
                         PageData.handleApiResponse(Data, callBack, pageName, ajax, response);
                     }
                 }, function(percentComplete) {
@@ -237,10 +264,10 @@ PageData.extend({
                     $S.callMethod(callBack);
                     console.log(response);
                     if (status === "FAILURE") {
-                        GATracking.trackResponse("change_password", {"status": "FAILURE_RESPONSE"});
+                        GATracking.trackResponseAfterLogin("change_password", {"status": "FAILURE_RESPONSE"});
                         alert("Error in change password, Please Try again.");
                     } else {
-                        GATracking.trackResponse("change_password", response);
+                        GATracking.trackResponseAfterLogin("change_password", response);
                         PageData.handleApiResponse(Data, callBack, pageName, ajax, response);
                     }
                 });

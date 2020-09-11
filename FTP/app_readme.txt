@@ -666,6 +666,12 @@ Added GA tracking for UI
     - Added config in ftlConfig
         - gaTrackingId (String)
 
+4.0.2.1
+-------------------
+Added config in ftlConfig
+    - gaTrackingEnable (boolean)
+
+Improve GA tracking
 
 
 Future releases
