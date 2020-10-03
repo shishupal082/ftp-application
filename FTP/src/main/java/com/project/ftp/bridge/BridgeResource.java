@@ -13,10 +13,9 @@ public class BridgeResource {
         this.bridgeTracking = new BridgeTracking(bridgeToAppInterface);
         this.bridgeService = new BridgeService(bridgeConfig, bridgeTracking);
     }
-    public void sendCreatePasswordOtpEmail(String username, String email, String name, String otp) {
-        BridgeRequestSendCreatePasswordOtp request;
-        request = new BridgeRequestSendCreatePasswordOtp(username, email, name, otp);
-        logger.info("Request for sending create password otp email: {}", request.toString());
+    public void sendCreatePasswordOtpEmail(BridgeRequestSendCreatePasswordOtp request) {
+        logger.info("Request for sending create password otp email: {}", request);
+        request = new BridgeRequestSendCreatePasswordOtp(request);
         try {
             bridgeService.sendCreatePasswordOtpEmail(request);
         } catch (BridgeException e) {

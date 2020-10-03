@@ -13,6 +13,17 @@ public class BridgeRequestSendCreatePasswordOtp {
     // It is use for de serialise incoming post request
 
     public BridgeRequestSendCreatePasswordOtp() {}
+
+    public BridgeRequestSendCreatePasswordOtp(BridgeRequestSendCreatePasswordOtp request) {
+        if (request == null) {
+            return;
+        }
+        username = request.getUsername();
+        email = request.getEmail();
+        name = request.getName();
+        otp = request.getOtp();
+    }
+
     public BridgeRequestSendCreatePasswordOtp(String username, String email, String name, String otp) {
         this.username = username;
         this.email = email;

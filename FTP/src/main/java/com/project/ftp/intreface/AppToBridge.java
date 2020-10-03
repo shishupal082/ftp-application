@@ -5,6 +5,7 @@ import com.project.ftp.bridge.BridgeResource;
 import com.project.ftp.bridge.BridgeToAppInterface;
 import com.project.ftp.bridge.config.BridgeConfig;
 import com.project.ftp.bridge.config.EmailConfig;
+import com.project.ftp.bridge.obj.BridgeRequestSendCreatePasswordOtp;
 import com.project.ftp.config.AppConstant;
 import com.project.ftp.event.EventTracking;
 import com.project.ftp.mysql.MysqlUser;
@@ -40,7 +41,9 @@ public class AppToBridge implements AppToBridgeInterface {
                 logger.info("forgot_password email send limit ({}) exceed: {}", limit, count);
                 return;
             }
-            bridgeResource.sendCreatePasswordOtpEmail(username, email, name, otp);
+            BridgeRequestSendCreatePasswordOtp request;
+            request = new BridgeRequestSendCreatePasswordOtp(username, email, name, otp);
+            bridgeResource.sendCreatePasswordOtpEmail(request);
         }
     }
 }
