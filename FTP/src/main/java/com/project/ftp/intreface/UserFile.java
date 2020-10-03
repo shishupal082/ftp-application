@@ -27,7 +27,9 @@ public class UserFile implements UserInterface {
         String mobile = user.getMobile();
         String email = user.getEmail();
         String createPasswordOtp = user.getCreatePasswordOtp();
+        int changePasswordCount = user.getChangePasswordCount();
         String method = user.getMethod();
+        boolean deleted = user.isDeleted();
         if (username != null) {
             text += username + ",";
         } else {
@@ -63,12 +65,14 @@ public class UserFile implements UserInterface {
         } else {
             text += ",";
         }
+        text += changePasswordCount + ",";
         if (method != null) {
             text += method +",";
         } else {
             text += ",";
         }
         text += StaticService.getDateStrFromPattern(AppConstant.DateTimeFormat6) + ",";
+        text += deleted + ",";
         return text;
     }
     public Users getAllUsers() {
@@ -94,19 +98,10 @@ public class UserFile implements UserInterface {
         logger.info("User data for username: {}, is: {}", username, user);
         return user;
     }
-    public boolean changePassword(MysqlUser user) {
-        return this.register(user);
-    }
-    public boolean register(MysqlUser user) {
+    public boolean saveUser(MysqlUser user) {
         String filepath = appConfig.getFtpConfiguration().getConfigDataFilePath() + AppConstant.USER_DATA_FILENAME;
         TextFileParser textFileParser = new TextFileParser(filepath);
         String text = this.getAddTextResponse(user);
         return textFileParser.addText(text);
-    }
-    public boolean forgotPassword(MysqlUser user) {
-        return this.register(user);
-    }
-    public boolean createPassword(MysqlUser user) {
-        return this.register(user);
     }
 }

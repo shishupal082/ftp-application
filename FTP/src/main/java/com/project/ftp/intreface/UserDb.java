@@ -45,24 +45,9 @@ public class UserDb implements UserInterface {
         logger.info("User data for username: {}, is: {}", username, mysqlUser1);
         return mysqlUser1;
     }
-    private boolean saveUser(MysqlUser user) {
+    public boolean saveUser(MysqlUser user) {
         user.setTimestamp(StaticService.getDateStrFromPattern(AppConstant.DateTimeFormat6));
         user.truncateString();
         return true;
-    }
-    public boolean changePassword(MysqlUser user) {
-        user.incrementEntryCount();
-        return this.saveUser(user);
-    }
-    public boolean register(MysqlUser user) {
-        user.setChangePasswordCount(0);
-        return this.saveUser(user);
-    }
-    public boolean forgotPassword(MysqlUser user) {
-        return this.saveUser(user);
-    }
-    public boolean createPassword(MysqlUser user) {
-        user.setChangePasswordCount(0);
-        return this.register(user);
     }
 }

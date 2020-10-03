@@ -51,6 +51,9 @@ public class SessionService {
         if (oldSessionId != null && !oldSessionId.equals(newSessionId)) {
             logger.info("sessionId change from: {} to {}", oldSessionId, newSessionId);
             LogFilter.addSessionIdInLog(newSessionId);
+        } else if (oldSessionId == null) {
+            logger.info("sessionId change from: null to {}", newSessionId);
+            LogFilter.addSessionIdInLog(newSessionId);
         }
         HttpSession httpSession = request.getSession();
         httpSession.setAttribute(AppConstant.SESSION_COOKIE_DATA, newSessionId);

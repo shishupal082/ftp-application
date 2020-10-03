@@ -1,4 +1,4 @@
-username,password,userDisplayName,passcode,mobile,phone,createPasswordOtp,method,timestamp
+username,password,userDisplayName,passcode,mobile,email,createPasswordOtp,changePasswordCount,method,timestamp,deleted
 U1,89d7c86cefabbf8d104cb40e1710661c,U1 User (password=U1),1234
 U2,89d7c86cefabbf8d104cb40e1710661c,U2 User (password=U1),1234
 U3,89d7c86cefabbf8d104cb40e1710661c,U3 User (password=U1),1234

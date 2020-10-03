@@ -66,6 +66,10 @@ public class EventTracking {
         addEvent.addFailureEvent(loginUserDetails.getUsername(), eventName, errorCodes, null);
     }
 
+    public void trackEventV2(String username, String eventName, String status, String reason, String comment) {
+        addEvent.addCommonEventV2(username, eventName, status, reason, comment);
+    }
+
     public void trackChangePasswordSuccess(HttpServletRequest request, String uiUsername) {
         LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
         addEvent.addSuccessEvent(loginUserDetails.getUsername(), EventName.CHANGE_PASSWORD, uiUsername);
@@ -185,8 +189,8 @@ public class EventTracking {
         String username = null;
         HashMap<String, String> commentData = new HashMap<>();
         ArrayList<String> sequence = new ArrayList<>();
-        sequence.add(mobile);
         sequence.add(email);
+        sequence.add(mobile);
         sequence.add(errorCodeStr);
         sequence.add(uiUserAgent);
         sequence.add(requestUserAgent);
@@ -194,8 +198,8 @@ public class EventTracking {
 
         if (forgotPassword != null) {
             username = forgotPassword.getUsername();
-            commentData.put(mobile, "passcode="+forgotPassword.getMobile());
             commentData.put(email, "email=" + forgotPassword.getEmail());
+            commentData.put(mobile, "mobile="+forgotPassword.getMobile());
             commentData.put(uiUserAgent, forgotPassword.getUserAgent());
         }
         commentData.put(requestUserAgent, StaticService.getRequestUserAgent(request));

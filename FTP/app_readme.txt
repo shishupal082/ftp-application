@@ -680,11 +680,55 @@ Track login, create_password, register, change_password success by lazy redirect
 Send username in login, register, create_password in response
     - not in forgot_password, because we send success alert message in data
 
+5.0.0
+-----------------
+Added Two new field in user_file
+    - 1) changePasswordCount = integer (before method and after createPasswordOtp)
+    - 2) deleted = true/false (At the end)
+
+Integrated send otp via email (google smtp)
+Config added for sending otp via email
+
+emailConfig:
+  enable: true
+  senderEmail: "username@gmail.com"
+  senderPassword: "gmail_password"
+
+createPasswordEmailConfig:
+    createPasswordLink: "http://localhost:8080/create_password"
+    createPasswordSubject: "Forgot your password?"
+    createPasswordMessage: '<div>
+                                <div>Dear <b>%s</b>,</div>
+                                <br></br><div>Please find OTP for creating new password: <b>%s</b></div>
+                                <br></br><div><a href="%s">Click here</a> for creating new password or, open %s</div>
+                                <br></br><div>Please do not reply to this email.</div>
+                             </div>'
+
+changePasswordCount value in DB or file
+    - will be set to 1 when forgot password requested
+    - increment up to 3 when repeat forgot password
+    - will be set to 0 on register and create password
+    - increment up to 8 when change password continuous
+
+Made forgotPasswordMessage configurable using ftlConfig
+
+ftlConfig:
+    forgotPasswordMessage: "Forgot password request submitted, Please check your email."
+    or "Forgot password request submitted, Please create password."
+
+Change logger session id when session id changes from null to valid
+Remove log files from log as it may be very big
+
+UI changes
+    - do lazy redirect on page load
+        - from logout
+        - to dashboard if required
+        - to login if required
 
 Future releases
 -------------------
 
-Integrate sending email or sms to user for forgot password request otp
+Integrate sending sms to user for forgot password request otp
 
 on expired user session entry, also put current session data along with old session data
 create string Upload File in such a way that it always come together

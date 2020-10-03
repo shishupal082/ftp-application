@@ -49,12 +49,12 @@ FTP.extend({
         var redirectStatus = false;
         if (["dashboard", "upload_file", "change_password", "logout"].indexOf(pageName) >= 0) {
             if (!isLogin) {
-                Config.location.href = Config.basepathname + "/login";
+                FTPHelper.lazyRedirect("/login", 250);
                 redirectStatus = true;
             }
         } else if (["forgot_password", "login", "register", "create_password"].indexOf(pageName) >= 0) {
             if (isLogin) {
-                Config.location.href = Config.basepathname + "/dashboard";
+                FTPHelper.lazyRedirect("/dashboard", 250);
                 redirectStatus = true;
             }
         }
@@ -66,10 +66,10 @@ FTP.extend({
     lazyRedirect: function(url, delay) {
         if ($S.isNumber(delay)) {
             window.setTimeout(function() {
-                Config.location.href = url;
+                Config.location.href = Config.basepathname + url;
             }, delay);
         } else {
-            Config.location.href = url;
+            Config.location.href = Config.basepathname +  url;
         }
     }
 });

@@ -1,6 +1,7 @@
 package com.project.ftp.obj;
 
 import com.project.ftp.mysql.MysqlUser;
+import com.project.ftp.service.StaticService;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -36,16 +37,13 @@ public class Users {
     public Users(ArrayList<ArrayList<String>> filedata) {
         if (filedata != null) {
             userHashMap = new HashMap<>();
-            MysqlUser user, updatedUser;
+            MysqlUser user;
             for(int i=filedata.size()-1; i>=0; i--) {
                 user = new MysqlUser(filedata.get(i));
-                if (user.getUsername() != null && !user.getUsername().isEmpty()) {
-                    updatedUser = userHashMap.get(user.getUsername());
-                    if (updatedUser == null) {
+                if (StaticService.isValidString(user.getUsername())) {
+                    if (userHashMap.get(user.getUsername()) == null) {
                         userHashMap.put(user.getUsername(), user);
                         userCount++;
-                    } else {
-                        userHashMap.put(user.getUsername(), updatedUser.incrementEntryCount());
                     }
                 }
             }

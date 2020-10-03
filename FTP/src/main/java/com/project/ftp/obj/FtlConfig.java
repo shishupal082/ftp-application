@@ -4,8 +4,6 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 
-// Configuration which are only required in UI
-
 public class FtlConfig {
     private String description;
     private String keywords;
@@ -14,7 +12,9 @@ public class FtlConfig {
     private String headingJson;
     private String uploadFileInstruction;
     private String gaTrackingId;
+    // It is used locally
     private String tempGaEnable;
+    private String forgotPasswordMessage;
     private boolean gaTrackingEnable;
     private boolean forgotPasswordEnable;
 
@@ -91,6 +91,14 @@ public class FtlConfig {
         this.gaTrackingId = gaTrackingId;
     }
 
+    public String getForgotPasswordMessage() {
+        return forgotPasswordMessage;
+    }
+
+    public void setForgotPasswordMessage(String forgotPasswordMessage) {
+        this.forgotPasswordMessage = forgotPasswordMessage;
+    }
+
     public String getTempGaEnable() {
         return tempGaEnable;
     }
@@ -114,6 +122,7 @@ public class FtlConfig {
                 ", uploadFileInstruction='" + uploadFileInstruction + '\'' +
                 ", gaTrackingId='" + gaTrackingId + '\'' +
                 ", tempGaEnable='" + tempGaEnable + '\'' +
+                ", forgotPasswordMessage='" + forgotPasswordMessage + '\'' +
                 ", gaTrackingEnable=" + gaTrackingEnable +
                 ", forgotPasswordEnable=" + forgotPasswordEnable +
                 '}';

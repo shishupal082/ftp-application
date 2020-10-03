@@ -58,4 +58,8 @@ public class AddEvent {
         }
         eventInterface.addTextV2(username, eventNameStr, status, reason, comment);
     }
+
+    public void addCommonEventV2(String username, String eventNameStr, String status, String reason, String comment) {
+        eventInterface.addTextV2(username, eventNameStr, status, reason, comment);
+    }
 }

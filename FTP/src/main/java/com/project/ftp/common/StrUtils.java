@@ -48,4 +48,12 @@ public class StrUtils {
         str = str.trim();
         return str.isEmpty();
     }
+    public int strToInt(String str) {
+        int result = 0;
+        try {
+            result = Integer.parseInt(str);
+        } catch (Exception ignored) {};
+        logger.info("strToInt:{},{}", str, result);
+        return result;
+    }
 }

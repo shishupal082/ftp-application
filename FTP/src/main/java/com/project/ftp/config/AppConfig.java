@@ -6,6 +6,7 @@ package com.project.ftp.config;
 */
 
 import com.project.ftp.FtpConfiguration;
+import com.project.ftp.intreface.AppToBridge;
 import com.project.ftp.obj.FtlConfig;
 import com.project.ftp.service.StaticService;
 import com.project.ftp.session.SessionData;
@@ -24,9 +25,20 @@ public class AppConfig {
     private ArrayList<String> logFiles;
     private HashMap<String, SessionData> sessionData;
     private FtpConfiguration ftpConfiguration;
+
+    private AppToBridge appToBridge;
     public AppConfig() {
         this.configDate = StaticService.getDateStrFromPattern(AppConstant.DATE_FORMAT);
     }
+
+    public AppToBridge getAppToBridge() {
+        return appToBridge;
+    }
+
+    public void setAppToBridge(AppToBridge appToBridge) {
+        this.appToBridge = appToBridge;
+    }
+
     public String getPublicDir() {
         return publicDir;
     }
@@ -118,6 +130,7 @@ public class AppConfig {
         ftlConfig.setTempGaEnable(null);
         return ftlConfig;
     }
+
     @Override
     public String toString() {
         return "AppConfig{" +
@@ -127,7 +140,7 @@ public class AppConfig {
                 ", configPath='" + configPath + '\'' +
                 ", logFilePath='" + logFilePath + '\'' +
                 ", requestCount=" + requestCount +
-                ", logFiles=" + logFiles +
+                ", logFiles=" + "*****" +
                 ", sessionData=" + sessionData +
                 ", ftpConfiguration=" + ftpConfiguration +
                 '}';

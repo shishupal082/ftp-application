@@ -7,10 +7,7 @@ import com.project.ftp.exceptions.AppException;
 import com.project.ftp.exceptions.ErrorCodes;
 import com.project.ftp.obj.*;
 import com.project.ftp.parser.JsonFileParser;
-import com.project.ftp.service.AuthService;
-import com.project.ftp.service.FileServiceV2;
-import com.project.ftp.service.SecurityService;
-import com.project.ftp.service.UserService;
+import com.project.ftp.service.*;
 import io.dropwizard.hibernate.UnitOfWork;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataParam;
@@ -323,8 +320,8 @@ public class ApiResource {
             return new ApiResponse(ErrorCodes.USER_ALREADY_LOGIN);
         }
         try {
-            userService.forgotPassword(request, requestForgotPassword);
-            response = new ApiResponse(ErrorCodes.FORGOT_PASSWORD_REPEAT_REQUEST.getErrorString());
+            userService.forgotPassword(requestForgotPassword);
+            response = new ApiResponse(StaticService.getForgotPasswordMessage(appConfig));
             eventTracking.trackForgotPasswordSuccess(request, requestForgotPassword);
         } catch (AppException ae) {
             logger.info("Error in forgotPassword: {}", ae.getErrorCode().getErrorCode());
@@ -426,6 +423,7 @@ public class ApiResource {
         logger.info("md5Encrypt : Out");
         return response;
     }
+
     @Path("{default: .*}")
     @GET
     @Produces(MediaType.TEXT_HTML)

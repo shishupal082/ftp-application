@@ -91,7 +91,6 @@ public class MysqlUser implements Serializable {
     public MysqlUser(ArrayList<String> arrayList) {
         if (arrayList != null) {
             if (arrayList.size() >= 1) {
-                changePasswordCount = 1;
                 username = arrayList.get(0);
             }
             if (arrayList.size() >= 2) {
@@ -111,24 +110,28 @@ public class MysqlUser implements Serializable {
             if (arrayList.size() >= 6) {
                 email = arrayList.get(5);
             }
-
             if (arrayList.size() >= 7) {
                 createPasswordOtp = arrayList.get(6);
             }
             if (arrayList.size() >= 8) {
-                UserMethod userMethod = StaticService.getUserMethodValue(arrayList.get(7));
+                changePasswordCount = StaticService.strToInt(arrayList.get(7));
+            }
+            if (arrayList.size() >= 9) {
+                UserMethod userMethod = StaticService.getUserMethodValue(arrayList.get(8));
                 if (userMethod != null) {
                     method = userMethod.getUserMethod();
                 }
             }
-            if (arrayList.size() >= 9) {
-                timestamp = arrayList.get(8);
+            if (arrayList.size() >= 10) {
+                timestamp = arrayList.get(9);
+            }
+            if (arrayList.size() >= 11) {
+                deleted = "true".equals(arrayList.get(10));
             }
         }
     }
-    public MysqlUser incrementEntryCount() {
+    public void incrementEntryCount() {
         changePasswordCount++;
-        return this;
     }
 
     public void truncateString() {
@@ -138,7 +141,7 @@ public class MysqlUser implements Serializable {
         int emailMaxLength = 255;
         int nameMaxLength = 255;
         int passcodeMaxLength = 15;
-        int createPasswordMaxLength = 15;
+        int createPasswordOtpMaxLength = 15;
         int methodMaxLength = 255;
         int timestampMaxLength = 25;
         int maxValueOfChangePasswordCount = 32767;
@@ -150,7 +153,7 @@ public class MysqlUser implements Serializable {
         if (changePasswordCount > maxValueOfChangePasswordCount) {
             changePasswordCount = maxValueOfChangePasswordCount;
         }
-        createPasswordOtp = StaticService.truncateString(createPasswordOtp, createPasswordMaxLength);
+        createPasswordOtp = StaticService.truncateString(createPasswordOtp, createPasswordOtpMaxLength);
         method = StaticService.truncateString(method, methodMaxLength);
         timestamp = StaticService.truncateString(timestamp, timestampMaxLength);
     }

@@ -21,27 +21,9 @@ GATracking.fn = GATracking.prototype = {
     },
     send: function(eventCategory) {
         var trackingAction = this.trackingAction;
-        if (!$S.isString(trackingAction)) {
-            trackingAction = "not-string";
-        } else if (trackingAction.length === 0) {
-            trackingAction = "empty-string";
-        }
-        if (!$S.isString(eventCategory)) {
-            eventCategory = "not-string";
-        } else if (eventCategory.length === 0) {
-            eventCategory = "empty-string";
-        }
         var eventLabel = PageData.getUserAgentTrackingData();
-        if (!$S.isString(eventLabel)) {
-            eventLabel = "not-string";
-        } else if (eventLabel.length === 0) {
-            eventLabel = "empty-string";
-        }
-        if (GaTrackingEnable && Gtag !== null) {
-            Gtag('event', trackingAction, {
-              'event_category' : eventCategory,
-              'event_label' : eventLabel
-            });
+        if (GaTrackingEnable) {
+            $S.pushGAEvent(Gtag, trackingAction, eventCategory, eventLabel);
         }
     }
 };
@@ -53,6 +35,11 @@ redirect (do lazyRedirect on success)
     - register
     - create_password
     - change_password
+
+redirect (do lazyRedirect on page redirect)
+    - logout
+    - login if required
+    - dashboard if required
 
 redirect on alert
     - forgot_password

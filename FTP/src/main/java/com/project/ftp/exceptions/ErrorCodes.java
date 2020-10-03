@@ -88,8 +88,8 @@ public enum ErrorCodes {
     RUNTIME_ERROR("RUN_TIME_ERROR", "Run time error", 599);
 
     private final String errorCode;
-    private final String errorString;
     private final Integer statusCode;
+    private String errorString;
 
     ErrorCodes(String errorCode, String errorString, Integer statusCode) {
         this.errorCode = errorCode;
@@ -107,5 +107,18 @@ public enum ErrorCodes {
 
     public Integer getStatusCode() {
         return statusCode;
+    }
+
+    public void setErrorString(String errorString) {
+        this.errorString = errorString;
+    }
+
+    @Override
+    public String toString() {
+        return "ErrorCodes{" +
+                "errorCode='" + errorCode + '\'' +
+                ", statusCode=" + statusCode +
+                ", errorString='" + errorString + '\'' +
+                '}';
     }
 }

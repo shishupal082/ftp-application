@@ -3,6 +3,8 @@ package com.project.ftp;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.project.ftp.bridge.config.CreatePasswordEmailConfig;
+import com.project.ftp.bridge.config.EmailConfig;
 import com.project.ftp.obj.FtlConfig;
 import io.dropwizard.Configuration;
 import io.dropwizard.db.DataSourceFactory;
@@ -29,6 +31,8 @@ public class FtpConfiguration extends Configuration {
     private String aesEncryptionPassword;
     @JsonProperty("database")
     private DataSourceFactory dataSourceFactory = new DataSourceFactory();
+    private EmailConfig emailConfig;
+    private CreatePasswordEmailConfig createPasswordEmailConfig;
 
     private Integer maxFileSize;
     private boolean createReadmePdf;
@@ -41,6 +45,28 @@ public class FtpConfiguration extends Configuration {
     private ArrayList<String> supportedFileType;
     private FtlConfig ftlConfig;
     private HashMap<String, String> tempConfig;
+
+    public EmailConfig getEmailConfig() {
+        if (emailConfig == null) {
+            return new EmailConfig();
+        }
+        return emailConfig;
+    }
+
+    public void setEmailConfig(EmailConfig emailConfig) {
+        this.emailConfig = emailConfig;
+    }
+
+    public CreatePasswordEmailConfig getCreatePasswordEmailConfig() {
+        if (createPasswordEmailConfig == null) {
+            return new CreatePasswordEmailConfig();
+        }
+        return createPasswordEmailConfig;
+    }
+
+    public void setCreatePasswordEmailConfig(CreatePasswordEmailConfig createPasswordEmailConfig) {
+        this.createPasswordEmailConfig = createPasswordEmailConfig;
+    }
 
     public FtlConfig getFtlConfig() {
         return ftlConfig;
@@ -257,8 +283,10 @@ public class FtpConfiguration extends Configuration {
                 ", appRestartCommand='" + appRestartCommand + '\'' +
                 ", uploadFileApiVersion='" + uploadFileApiVersion + '\'' +
                 ", cookieName='" + cookieName + '\'' +
-                ", aesEncryptionPassword='" + "*****" + '\'' +
-                ", dataSourceFactory='" + "*****" + '\'' +
+                ", aesEncryptionPassword='" + "*****" +
+                ", dataSourceFactory=" + "*****" +
+                ", emailConfig=" + emailConfig +
+                ", createPasswordEmailConfig=" + createPasswordEmailConfig +
                 ", maxFileSize=" + maxFileSize +
                 ", createReadmePdf=" + createReadmePdf +
                 ", permanentlyDeleteFile=" + permanentlyDeleteFile +

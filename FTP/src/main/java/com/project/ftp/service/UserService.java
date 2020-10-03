@@ -47,17 +47,19 @@ public class UserService {
             return false;
         }
         user.setMethod(UserMethod.CHANGE_PASSWORD.getUserMethod());
+        user.incrementEntryCount();
         user.setCreatePasswordOtp(null);
-        return userInterface.changePassword(user);
+        return userInterface.saveUser(user);
     }
     private boolean register(MysqlUser user) {
         if (user == null) {
             logger.info("Error in register, user is null");
             return false;
         }
+        user.setChangePasswordCount(0);
         user.setMethod(UserMethod.REGISTER.getUserMethod());
         user.setCreatePasswordOtp(null);
-        return userInterface.register(user);
+        return userInterface.saveUser(user);
     }
     private void forgotPassword(MysqlUser user) {
         if (user == null) {
@@ -65,18 +67,28 @@ public class UserService {
             return;
         }
         String createPasswordOtp = StaticService.getRandomNumber(10000, 99999);
+        user.setChangePasswordCount(1);
         user.setCreatePasswordOtp(createPasswordOtp);
         user.setMethod(UserMethod.FORGOT_PASSWORD.getUserMethod());
-        userInterface.forgotPassword(user);
+        userInterface.saveUser(user);
+    }
+    private void repeatForgotPassword(MysqlUser user) {
+        if (user == null) {
+            logger.info("Error in repeatForgotPassword, user is null");
+            return;
+        }
+        user.incrementEntryCount();
+        userInterface.saveUser(user);
     }
     private void createPassword(MysqlUser user) {
         if (user == null) {
             logger.info("Error in createPassword, user is null");
             return;
         }
+        user.setChangePasswordCount(0);
         user.setMethod(UserMethod.CREATE_PASSWORD.getUserMethod());
         user.setCreatePasswordOtp(null);
-        userInterface.createPassword(user);
+        userInterface.saveUser(user);
     }
     public String getUserDisplayName(final String username) {
         String userDisplayName = null;
@@ -265,8 +277,10 @@ public class UserService {
         logger.info("logout user: {}", loginUserDetails);
         sessionService.logoutUser(request);
     }
-
-    public void forgotPassword(HttpServletRequest request, RequestForgotPassword forgotPassword) throws AppException {
+    private void sendCreatePasswordOtpEmail(MysqlUser user) {
+        appConfig.getAppToBridge().sendCreatePasswordOtpEmail(user);
+    }
+    public void forgotPassword(RequestForgotPassword forgotPassword) throws AppException {
         inputValidate.validateForgotPassword(forgotPassword);
         String username = forgotPassword.getUsername();
         String mobile = forgotPassword.getMobile();
@@ -285,9 +299,14 @@ public class UserService {
         }
         if (UserMethod.FORGOT_PASSWORD == StaticService.getUserMethodValue(user.getMethod())) {
             logger.info("forgot_password request already submitted: {}", user);
-            throw new AppException(ErrorCodes.FORGOT_PASSWORD_REPEAT_REQUEST);
+            this.repeatForgotPassword(user);
+            this.sendCreatePasswordOtpEmail(user);
+            ErrorCodes errorCodes = ErrorCodes.FORGOT_PASSWORD_REPEAT_REQUEST;
+            errorCodes.setErrorString(StaticService.getForgotPasswordMessage(appConfig));
+            throw new AppException(errorCodes);
         }
         this.forgotPassword(user);
+        this.sendCreatePasswordOtpEmail(user);
     }
 
     public void createPassword(HttpServletRequest request, RequestCreatePassword createPassword) throws AppException {
