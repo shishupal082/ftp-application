@@ -32,6 +32,10 @@
             value="<#if ftlConfig.headingJson??>${ftlConfig.headingJson}<#else></#if>"/>
     <input type="hidden" style="display: none;" name="uploadFileInstruction" id="uploadFileInstruction"
             value="<#if ftlConfig.uploadFileInstruction??>${ftlConfig.uploadFileInstruction}<#else></#if>"/>
+    <input type="hidden" style="display: none;" name="forgotPasswordPageInstruction" id="forgotPasswordPageInstruction"
+           value="<#if ftlConfig.forgotPasswordPageInstruction??>${ftlConfig.forgotPasswordPageInstruction}<#else></#if>"/>
+    <input type="hidden" style="display: none;" name="createPasswordOtpInstruction" id="createPasswordOtpInstruction"
+           value="<#if ftlConfig.createPasswordOtpInstruction??>${ftlConfig.createPasswordOtpInstruction}<#else></#if>"/>
 </div>
 <div id="root"></div>
 <script type="text/javascript" src="/assets/static/libs/jquery-2.1.3.js"></script>
@@ -51,6 +55,8 @@ GLOBAL.gtag = null;
 GLOBAL.currentPageData = document.getElementById("pageData").value;
 GLOBAL.headingJson = document.getElementById("headingJson").value;
 GLOBAL.uploadFileInstruction = document.getElementById("uploadFileInstruction").value;
+GLOBAL.forgotPasswordPageInstruction = document.getElementById("forgotPasswordPageInstruction").value;
+GLOBAL.createPasswordOtpInstruction = document.getElementById("createPasswordOtpInstruction").value;
 window.GLOBAL = GLOBAL;
 </script>
 

@@ -9,6 +9,9 @@ var baseapi = $$$.baseapi;
 var basepathname = $$$.basepathname;
 var headingJson = $$$.headingJson;
 var uploadFileInstruction = $$$.uploadFileInstruction;
+var forgotPasswordPageInstruction = $$$.forgotPasswordPageInstruction;
+var createPasswordOtpInstruction = $$$.createPasswordOtpInstruction;
+
 
 try {
     headingJson = JSON.parse(headingJson);
@@ -18,6 +21,16 @@ try {
 if ($S.isString(uploadFileInstruction)) {
     var template = Template["upload_file"];
     TemplateHelper.setTemplateAttr(template, "upload_file.message", "text", uploadFileInstruction);
+}
+
+if ($S.isString(forgotPasswordPageInstruction) && forgotPasswordPageInstruction.length > 0) {
+    var template = Template["forgot_password"];
+    TemplateHelper.setTemplateAttr(template, "forgot_password.page-instruction", "text", forgotPasswordPageInstruction);
+}
+
+if ($S.isString(createPasswordOtpInstruction) && createPasswordOtpInstruction.length > 0) {
+    var template = Template["create_password"];
+    TemplateHelper.setTemplateAttr(template, "create_password.otp-instruction", "text", createPasswordOtpInstruction);
 }
 
 /**

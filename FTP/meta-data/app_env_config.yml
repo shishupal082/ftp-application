@@ -88,8 +88,12 @@ database:
   # the JDBC URL; the database is called DWGettingStarted
   url: jdbc:mysql://localhost:3306/ftpapp?autoReconnect=true&useSSL=false&allowPublicKeyRetrieval=true
 
+backendConfig:
+  #  forgotPasswordMessage: "Forgot password request submitted, Please check your email."
+  forgotPasswordMessage: "Forgot password request submitted, Please create password."
+
 uiBackendConfig:
-  forgotPasswordEnable: true
+  forgotPasswordEnable: false
 
 ftlConfig:
   description: "FTP Application description"
@@ -99,9 +103,11 @@ ftlConfig:
   gaTrackingId: "UA-177553408-1" # for development
   gaTrackingEnable: true
   displayCreatePasswordLink: false
-#  forgotPasswordMessage: "Forgot password request submitted, Please check your email."
-#  forgotPasswordMessage: "Forgot password request submitted, Please create password."
   uploadFileInstruction: "(Supported type: pdf,jpeg,jpg and png, max size < 10MB)"
+#  forgotPasswordPageInstruction: "Please contact admin."
+  forgotPasswordPageInstruction: "Please contact admin to get create password otp."
+#  createPasswordOtpInstruction: "(Receive from admin)"
+  createPasswordOtpInstruction: "(Check your email)"
   headingJson: '[{"tag":"div.center.table.tbody.tr","className":"heading","text":[{"tag":"td","text":{"tag":"img","className":"logo","src":"/assets/static/img/railwayslogo-128.png"}},{"tag":"td","className":"text-center pl-5px","text":[{"tag":"div","text":"Heading Line 1 (config)"},{"tag":"div","text":"Larger Heading Line 2 Row"}]}]}]'
 
 # Optional parameter

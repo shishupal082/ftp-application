@@ -741,6 +741,10 @@ backendConfig:
 Rename forgotPasswordEnable config to displayCreatePasswordLink in ftlConfig
 Move forgotPasswordMessage from ftlConfig to backendConfig
 
+Added 2 new parameter in ftlConfig
+    - forgotPasswordPageInstruction (String)
+    - createPasswordOtpInstruction (String)
+
 
 Future releases
 -------------------

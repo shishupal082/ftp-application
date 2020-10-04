@@ -216,7 +216,8 @@ Template["forgot_password"] = [
                             "text": [
                                 {
                                     "tag": "label",
-                                    "text": "Please contact admin"
+                                    "name": "forgot_password.page-instruction",
+                                    "text": "Please contact admin."
                                 }
                             ]
                         }
@@ -752,6 +753,7 @@ Template["create_password"] = [
                                         {
                                             "tag": "span",
                                             "className": "small pl-5px",
+                                            "name": "create_password.otp-instruction",
                                             "text": "(Receive from admin)"
                                         }
                                     ]

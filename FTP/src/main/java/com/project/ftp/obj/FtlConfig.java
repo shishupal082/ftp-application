@@ -12,6 +12,8 @@ public class FtlConfig {
     private String headingJson;
     private String uploadFileInstruction;
     private String gaTrackingId;
+    private String forgotPasswordPageInstruction;
+    private String createPasswordOtpInstruction;
     // It is used locally
     private String tempGaEnable;
     private boolean gaTrackingEnable;
@@ -94,6 +96,22 @@ public class FtlConfig {
         return tempGaEnable;
     }
 
+    public String getForgotPasswordPageInstruction() {
+        return forgotPasswordPageInstruction;
+    }
+
+    public void setForgotPasswordPageInstruction(String forgotPasswordPageInstruction) {
+        this.forgotPasswordPageInstruction = forgotPasswordPageInstruction;
+    }
+
+    public String getCreatePasswordOtpInstruction() {
+        return createPasswordOtpInstruction;
+    }
+
+    public void setCreatePasswordOtpInstruction(String createPasswordOtpInstruction) {
+        this.createPasswordOtpInstruction = createPasswordOtpInstruction;
+    }
+
     public void setTempGaEnable(String tempGaEnable) {
         if (this.gaTrackingEnable && this.gaTrackingId != null && this.gaTrackingId.length() > 0) {
             this.tempGaEnable = "true";
@@ -112,6 +130,8 @@ public class FtlConfig {
                 ", headingJson='" + headingJson + '\'' +
                 ", uploadFileInstruction='" + uploadFileInstruction + '\'' +
                 ", gaTrackingId='" + gaTrackingId + '\'' +
+                ", forgotPasswordPageInstruction='" + forgotPasswordPageInstruction + '\'' +
+                ", createPasswordOtpInstruction='" + createPasswordOtpInstruction + '\'' +
                 ", tempGaEnable='" + tempGaEnable + '\'' +
                 ", gaTrackingEnable=" + gaTrackingEnable +
                 ", displayCreatePasswordLink=" + displayCreatePasswordLink +
