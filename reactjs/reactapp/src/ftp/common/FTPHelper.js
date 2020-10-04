@@ -298,6 +298,10 @@ FTP.extend({
         if (displayCreatePasswordLink && ["login", "forgot_password", "register"].indexOf(pageName) >= 0) {
             var createPasswordLink = pageName+".create_password-link";
             TemplateHelper.removeClassTemplate(template, createPasswordLink, "d-none");
+            if (pageName === "forgot_password") {
+                createPasswordLink = pageName+"_disable.create_password-link";
+                TemplateHelper.removeClassTemplate(template, createPasswordLink, "d-none");
+            }
         }
         if (["forgot_password"].indexOf(pageName) >= 0) {
             if (isForgotPasswordEnable) {

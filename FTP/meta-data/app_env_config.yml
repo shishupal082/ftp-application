@@ -104,10 +104,10 @@ ftlConfig:
   gaTrackingEnable: true
   displayCreatePasswordLink: false
   uploadFileInstruction: "(Supported type: pdf,jpeg,jpg and png, max size < 10MB)"
-#  forgotPasswordPageInstruction: "Please contact admin."
-  forgotPasswordPageInstruction: "Please contact admin to get create password otp."
-#  createPasswordOtpInstruction: "(Receive from admin)"
-  createPasswordOtpInstruction: "(Check your email)"
+  forgotPasswordPageInstruction: "Please contact admin."
+#  forgotPasswordPageInstruction: "Please contact admin to get create password otp."
+  createPasswordOtpInstruction: "(Receive from admin)"
+#  createPasswordOtpInstruction: "(Check your email)"
   headingJson: '[{"tag":"div.center.table.tbody.tr","className":"heading","text":[{"tag":"td","text":{"tag":"img","className":"logo","src":"/assets/static/img/railwayslogo-128.png"}},{"tag":"td","className":"text-center pl-5px","text":[{"tag":"div","text":"Heading Line 1 (config)"},{"tag":"div","text":"Larger Heading Line 2 Row"}]}]}]'
 
 # Optional parameter
