@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.project.ftp.bridge.config.CreatePasswordEmailConfig;
 import com.project.ftp.bridge.config.EmailConfig;
+import com.project.ftp.obj.BackendConfig;
 import com.project.ftp.obj.FtlConfig;
 import com.project.ftp.obj.UiBackendConfig;
 import io.dropwizard.Configuration;
@@ -46,6 +47,7 @@ public class FtpConfiguration extends Configuration {
     private ArrayList<String> supportedFileType;
     private FtlConfig ftlConfig;
     private UiBackendConfig uiBackendConfig;
+    private BackendConfig backendConfig;
     private HashMap<String, String> tempConfig;
 
     public EmailConfig getEmailConfig() {
@@ -281,6 +283,17 @@ public class FtpConfiguration extends Configuration {
         this.uiBackendConfig = uiBackendConfig;
     }
 
+    public BackendConfig getBackendConfig() {
+        if (backendConfig == null) {
+            return new BackendConfig();
+        }
+        return backendConfig;
+    }
+
+    public void setBackendConfig(BackendConfig backendConfig) {
+        this.backendConfig = backendConfig;
+    }
+
     @Override
     public String toString() {
         return "FtpConfiguration{" +
@@ -311,6 +324,7 @@ public class FtpConfiguration extends Configuration {
                 ", supportedFileType=" + supportedFileType +
                 ", ftlConfig=" + ftlConfig +
                 ", uiBackendConfig=" + uiBackendConfig +
+                ", backendConfig=" + backendConfig +
                 ", tempConfig=" + tempConfig +
                 '}';
     }

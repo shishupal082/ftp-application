@@ -5,7 +5,7 @@ import com.project.ftp.common.*;
 import com.project.ftp.config.*;
 import com.project.ftp.event.EventTracking;
 import com.project.ftp.exceptions.ErrorCodes;
-import com.project.ftp.obj.FtlConfig;
+import com.project.ftp.obj.BackendConfig;
 import com.project.ftp.obj.PathInfo;
 import com.project.ftp.parser.YamlFileParser;
 import com.project.ftp.pdf.TextToPdfService;
@@ -427,9 +427,9 @@ public class StaticService {
     public static String getForgotPasswordMessage(AppConfig appConfig) {
         ErrorCodes errorCodes = ErrorCodes.FORGOT_PASSWORD_REPEAT_REQUEST;
         String message = errorCodes.getErrorString();
-        FtlConfig ftlConfig = appConfig.getFtlConfig();
-        if (StaticService.isValidString(ftlConfig.getForgotPasswordMessage())) {
-            message = ftlConfig.getForgotPasswordMessage();
+        BackendConfig backendConfig = appConfig.getFtpConfiguration().getBackendConfig();
+        if (StaticService.isValidString(backendConfig.getForgotPasswordMessage())) {
+            message = backendConfig.getForgotPasswordMessage();
         }
         return message;
     }

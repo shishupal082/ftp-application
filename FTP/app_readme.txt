@@ -734,7 +734,12 @@ Added below config to stop brute force create password
 uiBackendConfig:
   forgotPasswordEnable: true
 
+backendConfig:
+  #  forgotPasswordMessage: "Forgot password request submitted, Please check your email."
+  forgotPasswordMessage: "Forgot password request submitted, Please create password."
+
 Rename forgotPasswordEnable config to displayCreatePasswordLink in ftlConfig
+Move forgotPasswordMessage from ftlConfig to backendConfig
 
 
 Future releases
