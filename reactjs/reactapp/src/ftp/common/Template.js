@@ -331,7 +331,8 @@ Template["forgot_password"] = [
                             {
                                 "tag": "a",
                                 "href": "/create_password",
-                                "className": "p-5px",
+                                "className": "p-5px d-none",
+                                "name": "forgot_password.create_password-link",
                                 "text": "Create Password"
                             }
                         ]
