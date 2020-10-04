@@ -284,12 +284,18 @@ FTP.extend({
             return true;
         }
         var isForgotPasswordEnable = Config.getPageData("is_forgot_password_enable", "false");
+        var displayCreatePasswordLink = Config.getPageData("display_create_password_link", "false");
         if (isForgotPasswordEnable === "true") {
             isForgotPasswordEnable = true;
         } else {
             isForgotPasswordEnable = false;
         }
-        if (isForgotPasswordEnable && ["login", "register"].indexOf(pageName) >= 0) {
+        if (displayCreatePasswordLink === "true") {
+            displayCreatePasswordLink = true;
+        } else {
+            displayCreatePasswordLink = false;
+        }
+        if (displayCreatePasswordLink && ["login", "forgot_password", "register"].indexOf(pageName) >= 0) {
             var createPasswordLink = pageName+".create_password-link";
             TemplateHelper.removeClassTemplate(template, createPasswordLink, "d-none");
         }

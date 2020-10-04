@@ -281,6 +281,11 @@ public class UserService {
         appConfig.getAppToBridge().sendCreatePasswordOtpEmail(user);
     }
     public void forgotPassword(RequestForgotPassword forgotPassword) throws AppException {
+        UiBackendConfig uiBackendConfig = appConfig.getFtpConfiguration().getUiBackendConfig();
+        if (!uiBackendConfig.isForgotPasswordEnable()) {
+            logger.info("ForgotPassword is not enable, requested forgotPassword");
+            throw new AppException(ErrorCodes.FORGOT_PASSWORD_NOT_ENABLE);
+        }
         inputValidate.validateForgotPassword(forgotPassword);
         String username = forgotPassword.getUsername();
         String mobile = forgotPassword.getMobile();

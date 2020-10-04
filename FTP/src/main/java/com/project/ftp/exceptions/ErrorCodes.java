@@ -60,6 +60,7 @@ public enum ErrorCodes {
     // create password, change password
     NEW_AND_CONFIRM_PASSWORD_NOT_MATCHING("NEW_AND_CONFIRM_PASSWORD_NOT_MATCHING", "New password and confirm password are not matching.", 403),
     // forgot password
+    FORGOT_PASSWORD_NOT_ENABLE("FORGOT_PASSWORD_NOT_ENABLE", "Forgot password is not enable.", 403),
     FORGOT_PASSWORD_MOBILE_MISMATCH("FORGOT_PASSWORD_MOBILE_MISMATCH", "Username and mobile number not matching.", 403),
     FORGOT_PASSWORD_EMAIL_MISMATCH("FORGOT_PASSWORD_EMAIL_MISMATCH", "Username and email not matching.", 403),
     FORGOT_PASSWORD_REPEAT_REQUEST("FORGOT_PASSWORD_REPEAT_REQUEST", "Forgot password request submitted, Please create password.", 403),

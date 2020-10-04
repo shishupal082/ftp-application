@@ -694,6 +694,8 @@ emailConfig:
   senderEmail: "username@gmail.com"
   senderPassword: "gmail_password"
 
+email can be change max 3 times with the same otp in forgot password
+
 createPasswordEmailConfig:
     createPasswordLink: "http://localhost:8080/create_password"
     createPasswordSubject: "Forgot your password?"
@@ -724,6 +726,16 @@ UI changes
         - from logout
         - to dashboard if required
         - to login if required
+
+5.0.0.1
+-------------------
+Added below config to stop brute force create password
+
+uiBackendConfig:
+  forgotPasswordEnable: true
+
+Rename forgotPasswordEnable config to displayCreatePasswordLink in ftlConfig
+
 
 Future releases
 -------------------

@@ -16,7 +16,7 @@ public class FtlConfig {
     private String tempGaEnable;
     private String forgotPasswordMessage;
     private boolean gaTrackingEnable;
-    private boolean forgotPasswordEnable;
+    private boolean displayCreatePasswordLink;
 
     public FtlConfig() {}
     public String getDescription() {
@@ -67,12 +67,12 @@ public class FtlConfig {
         this.uploadFileInstruction = uploadFileInstruction;
     }
 
-    public boolean isForgotPasswordEnable() {
-        return forgotPasswordEnable;
+    public boolean isDisplayCreatePasswordLink() {
+        return displayCreatePasswordLink;
     }
 
-    public void setForgotPasswordEnable(boolean forgotPasswordEnable) {
-        this.forgotPasswordEnable = forgotPasswordEnable;
+    public void setDisplayCreatePasswordLink(boolean displayCreatePasswordLink) {
+        this.displayCreatePasswordLink = displayCreatePasswordLink;
     }
 
     public boolean isGaTrackingEnable() {
@@ -124,7 +124,7 @@ public class FtlConfig {
                 ", tempGaEnable='" + tempGaEnable + '\'' +
                 ", forgotPasswordMessage='" + forgotPasswordMessage + '\'' +
                 ", gaTrackingEnable=" + gaTrackingEnable +
-                ", forgotPasswordEnable=" + forgotPasswordEnable +
+                ", displayCreatePasswordLink=" + displayCreatePasswordLink +
                 '}';
     }
 }
