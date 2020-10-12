@@ -4,6 +4,7 @@ import com.project.ftp.config.*;
 import com.project.ftp.exceptions.AppException;
 import com.project.ftp.exceptions.ErrorCodes;
 import com.project.ftp.obj.*;
+import com.project.ftp.parser.YamlFileParser;
 import com.project.ftp.view.CommonView;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.slf4j.Logger;
@@ -470,6 +471,11 @@ public class FileServiceV2 {
         return new CommonView(request, "page_not_found_404.ftl", appConfig);
     }
     private PathInfo getFileResponse(String filePath) {
+        YamlFileParser yamlFileParser = new YamlFileParser();
+        String filePathMapping = yamlFileParser.getFileNotFoundMapping(appConfig, filePath);
+        if (StaticService.isValidString(filePathMapping)) {
+            filePath = filePathMapping;
+        }
         String publicDir = appConfig.getPublicDir();
         if (publicDir == null) {
             return null;

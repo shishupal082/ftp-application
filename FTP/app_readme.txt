@@ -745,6 +745,10 @@ Added 2 new parameter in ftlConfig
     - forgotPasswordPageInstruction (String)
     - createPasswordOtpInstruction (String)
 
+5.0.0.2
+-------------------
+Added ymlFileParser for fileNotFound url mapping by reading below file name in config files dir
+    - file_not_found_config.yml (AppConstant.FILE_NOT_FOUND_MAPPING)
 
 Future releases
 -------------------

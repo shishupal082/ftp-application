@@ -111,7 +111,7 @@ ftlConfig:
   headingJson: '[{"tag":"div.center.table.tbody.tr","className":"heading","text":[{"tag":"td","text":{"tag":"img","className":"logo","src":"/assets/static/img/railwayslogo-128.png"}},{"tag":"td","className":"text-center pl-5px","text":[{"tag":"div","text":"Heading Line 1 (config)"},{"tag":"div","text":"Larger Heading Line 2 Row"}]}]}]'
 
 # Optional parameter
-indexPageReRoute: /login
+indexPageReRoute: /account
 filenameFormat: "YYYY-MM-dd-HH-mm'-filename'"
 instance: DevComputer
 guestEnable: false
@@ -121,7 +121,7 @@ createReadmePdf: true
 appRestartCommand: "sh app_run.bat" # not required for now
 appViewFtlFileName: app_view.ftl
 publicDir: "../.."
-publicPostDir:
+publicPostDir: "/project"
 allowedOrigin:
   - http://localhost
   - http://127.0.0.1:9000
