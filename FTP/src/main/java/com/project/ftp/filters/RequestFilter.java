@@ -39,7 +39,9 @@ public class RequestFilter implements ContainerRequestFilter {
             if (allowedOrigin != null) {
                 if (!allowedOrigin.contains(origin)) {
                     logger.info("UnAuthorized Origin: {}, AllowedOrigin: {}", origin, allowedOrigin);
-                    throw new AppException(ErrorCodes.UNAUTHORIZED_ORIGIN);
+                    ErrorCodes errorCode = ErrorCodes.UNAUTHORIZED_ORIGIN;
+                    errorCode.setErrorString(StaticService.getPathUrlV3(requestContext));
+                    throw new AppException(errorCode);
                 }
             } else {
                 logger.info("allowedOrigin not defined in FtpConfiguration: {}", origin);

@@ -198,6 +198,10 @@ public class StaticService {
         }
         return path;
     }
+    public static String getPathUrlV3(final ContainerRequestContext requestContext) {
+//        String url = requestContext.getUriInfo().getAbsolutePath().toString();
+        return requestContext.getUriInfo().getAbsolutePath().toString();
+    }
     public static String getFileMimeTypeValue(String name) {
         if (name == null) {
             return null;

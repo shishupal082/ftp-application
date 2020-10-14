@@ -750,6 +750,9 @@ Added 2 new parameter in ftlConfig
 Added ymlFileParser for fileNotFound url mapping by reading below file name in config files dir
     - file_not_found_config.yml (AppConstant.FILE_NOT_FOUND_MAPPING)
 
+Change comment from error code string to requested url in unauthorised origin error event tracking
+
+
 Future releases
 -------------------
 
