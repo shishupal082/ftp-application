@@ -119,12 +119,12 @@ public class FileServiceV2 {
     public ApiResponse scanUserDirectory(HttpServletRequest request) {
         ApiResponse apiResponse;
         LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
-        boolean isLoginUserAdmin = userService.isLoginUserAdmin(loginUserDetails.getUsername());
         ArrayList<ScanResult> scanResults = new ArrayList<>();
         String dir = appConfig.getFtpConfiguration().getFileSaveDir();
         String publicDir = dir+AppConstant.PUBLIC+"/";
         String loginUserName = loginUserDetails.getUsername();
-        if (userService.isLoginUserAdmin(loginUserName)) {
+        boolean isLoginUserAdmin = userService.isLoginUserAdmin(loginUserName);
+        if (isLoginUserAdmin) {
             scanResults.add(fileService.scanDirectory(dir, dir, true));
         } else {
             dir = dir + loginUserName + "/";
