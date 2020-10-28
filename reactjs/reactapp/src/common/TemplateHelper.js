@@ -100,10 +100,11 @@ Template.extend({
         }
         return template;
     },
-    addItemInTextArray: function(template, subTemplate) {
-        if ($S.isObject(template)) {
-            if ($S.isArray(template.text)) {
-                template.text.push(subTemplate);
+    addItemInTextArray: function(template, fieldName, subTemplate) {
+        var field = Template(template).searchField(fieldName);
+        if ($S.isObject(field)) {
+            if ($S.isArray(field.text)) {
+                field.text.push(subTemplate);
             }
         }
         return template;

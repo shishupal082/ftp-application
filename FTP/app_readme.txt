@@ -752,6 +752,16 @@ Added ymlFileParser for fileNotFound url mapping by reading below file name in c
 
 Change comment from error code string to requested url in unauthorised origin error event tracking
 
+6.0.0
+-------------------
+Implemented role based system
+Valid boolean operator = &,|,~
+Valid numeric operator = +,-,*,/
+Valid brackets = (,)
+
+Added RolesFileParser for roles mapping by reading below file name in config files dir
+    - roles.yml (AppConstant.ROLES)
+
 
 Future releases
 -------------------

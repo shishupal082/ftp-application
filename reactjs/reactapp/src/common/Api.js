@@ -1,5 +1,7 @@
 import React from 'react';
+import {Link} from 'react-router-dom';
 import $S from '../interface/stack.js';
+
 var Api
 (function($S) {
 Api = function(config) {
@@ -123,6 +125,9 @@ Api.extend({
 });
 
 childGenerator = {
+    "link": function(props, data, reactChildText, key) {
+        return <Link key={key} to={data.url}>{reactChildText}</Link>;
+    },
     "a": function(props, data, reactChildText, key) {
         var target = "";
         if ($S.isBooleanTrue(data.isTargetBlank)) {
@@ -185,7 +190,7 @@ childGenerator = {
         return <br key={key} className={data.className}/>;
     },
     "img": function(props, data, reactChildText, key) {
-        return <img src={data.src} alt={data.alt} className={data.className}/>;
+        return <img key={key} src={data.src} alt={data.alt} className={data.className}/>;
     },
     "ol": function(props, data, reactChildText, key) {
         return <ol key={key} type={data.type} className={data.className}>{reactChildText}</ol>;

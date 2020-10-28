@@ -202,8 +202,6 @@ function getRandomNumber(minVal, maxVal) {
     return random;
 }
 var Data = (function() {
-    // var keys = [];
-    // var localData = {};
     function isValidKey(keys, key) {
         if (keys.indexOf(key) >= 0) {
             return true;
@@ -211,6 +209,7 @@ var Data = (function() {
         return false;
     }
     function Data() {
+        this.name = "DataObj";
         this.keys = [];
         this.localData = {};
     }
@@ -239,6 +238,29 @@ var Data = (function() {
             this.localData[keys[i]] = null;
         }
         return 0;
+    };
+    Data.prototype.initData = function(bypassKeys) {
+        if (!isArray(bypassKeys)) {
+            return;
+        }
+        var keys = this.getKeys();
+        var allData = this.getAllData();
+        var key, defaultData;
+        for (var i = 0; i < keys.length; i++) {
+            key = keys[i];
+            if (bypassKeys.indexOf(key) >= 0) {
+                continue;
+            }
+            defaultData = null;
+            if (isObject(allData[key])) {
+                defaultData = {};
+            } else if (isArray(allData[key])) {
+                defaultData = [];
+            } else if (isString(allData[key])) {
+                defaultData = "";
+            }
+            this.setData(key, defaultData);
+        }
     };
     Data.prototype.setData = function(key, value, isDirect) {
         if (isValidKey(this.keys, key)) {
@@ -924,11 +946,21 @@ var BT = (function(){
         currentTree = eTree;
         for (var i = 0; i < items.length; i++) {
             if (items[i] === "(") {
+                /*
+                    ~ should not be followed by ( "open bracket"
+                    Fix for Input = [(,~,A,)]
+                */
+                if (i < items.length-1 && items[i+1] === "~") {
+                    continue;
+                }
                 this.insertLeft(currentTree, "");
                 st.push(currentTree);
                 currentTree = this.getLeftChild(currentTree);
             } else if(items[i] === ")") {
-                currentTree = st.pop();
+                // currentTree = st.pop();
+                if (st.getTop() >= 0) {
+                    currentTree = st.pop();
+                }
             } else if(["+","-","*","/","&&","&","||","|","#"].indexOf(items[i]) >=0) {
                 // Numeric: "+","-","*","/"
                 // Boolean: and: "&&","&","*"
@@ -968,12 +1000,19 @@ var BT = (function(){
                     i++;
                     this.insertLeft(currentTree, items[i]);
                 }
-                parent = st.pop();
-                currentTree = parent;
+                /*
+                    Fix for Input = [(,~,A,)]
+                */
+                if (st.getTop() >= 0) {
+                    parent = st.pop();
+                    currentTree = parent;
+                }
             } else {
                 currentTree.data = items[i];
-                parent = st.pop();
-                currentTree = parent;
+                if (st.getTop() >= 0) {
+                    parent = st.pop();
+                    currentTree = parent;
+                }
             }
         }
         return eTree;
@@ -1512,6 +1551,36 @@ Stack.extend({
             return target;
         }
         return source;
+    },
+    updateDataObj: function(dataObj, key, value, type) {
+        if (isObject(dataObj) && isString(key) && key.length > 0) {
+            if (type === "checkType") {
+                if (typeof dataObj[key] === typeof value) {
+                    if (typeof value === "object") {
+                        if (Stack.isArray(value) === Stack.isArray(dataObj[key])) {
+                            dataObj[key] = value;
+                        } else if (Stack.isObject(value) === Stack.isObject(dataObj[key])) {
+                            dataObj[key] = value;
+                        } else {
+                            Stack.log("dataObj not updated: " + type + ":" + key);
+                        }
+                    } else {
+                        dataObj[key] = value;
+                    }
+                } else {
+                    Stack.log("dataObj not updated: " + type + ":" + key);
+                }
+            } else if (type === "checkUndefined") {
+                if (isUndefined(dataObj[key])) {
+                    dataObj[key] = value;
+                }
+            } else {
+                dataObj[key] = value;
+            }
+        } else {
+            Stack.log("dataObj is invalid: " + key);
+        }
+        return dataObj;
     }
 });
 
@@ -1985,6 +2054,12 @@ Stack.extend({
             }
         }
         return words.reverse().join(' ');
+    },
+    numberToFixed: function(num, decimal) {
+        if (isNumeric(num) && isNumber(decimal)) {
+            num = num.toFixed(2)*1;
+        }
+        return num;
     }
 });
 //GATracking push event
