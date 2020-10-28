@@ -146,7 +146,7 @@ public class ApiResource {
         ApiResponse response;
         try {
             authService.isLoginUserDev(request);
-            response = new ApiResponse(appConfig);
+            response = new ApiResponse(appConfig.toString());
             eventTracking.trackSuccessEvent(request, EventName.GET_APP_CONFIG);
         } catch (AppException ae) {
             logger.info("Unauthorised username: {}, trying to access app config.",

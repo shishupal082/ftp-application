@@ -42,8 +42,6 @@ public class FtpConfiguration extends Configuration {
     private boolean mysqlEnable;
     private boolean guestEnable;
     private ArrayList<String> allowedOrigin;
-    private ArrayList<String> adminUsersName;
-    private ArrayList<String> devUsersName;
     private ArrayList<String> supportedFileType;
     private FtlConfig ftlConfig;
     private UiBackendConfig uiBackendConfig;
@@ -200,21 +198,6 @@ public class FtpConfiguration extends Configuration {
         this.allowedOrigin = allowedOrigin;
     }
 
-    public ArrayList<String> getAdminUsersName() {
-        return adminUsersName;
-    }
-
-    public void setAdminUsersName(ArrayList<String> adminUsersName) {
-        this.adminUsersName = adminUsersName;
-    }
-
-    public ArrayList<String> getDevUsersName() {
-        return devUsersName;
-    }
-
-    public void setDevUsersName(ArrayList<String> devUsersName) {
-        this.devUsersName = devUsersName;
-    }
 
     public ArrayList<String> getSupportedFileType() {
         return supportedFileType;
@@ -319,8 +302,6 @@ public class FtpConfiguration extends Configuration {
                 ", mysqlEnable=" + mysqlEnable +
                 ", guestEnable=" + guestEnable +
                 ", allowedOrigin=" + allowedOrigin +
-                ", adminUsersName=" + adminUsersName +
-                ", devUsersName=" + devUsersName +
                 ", supportedFileType=" + supportedFileType +
                 ", ftlConfig=" + ftlConfig +
                 ", uiBackendConfig=" + uiBackendConfig +

@@ -110,18 +110,10 @@ public class UserService {
         return result;
     }
     private Boolean isAdminUser(String loginUserName) {
-        ArrayList<String> adminUserNames = appConfig.getFtpConfiguration().getAdminUsersName();
-        if (adminUserNames != null && loginUserName != null && !loginUserName.isEmpty()) {
-            return adminUserNames.contains(loginUserName);
-        }
-        return false;
+        return appConfig.getAppToBridge().isAuthorisedApi("isAdminUser", loginUserName);
     }
     private Boolean isDevUser(String loginUserName) {
-        ArrayList<String> devUsersName = appConfig.getFtpConfiguration().getDevUsersName();
-        if (devUsersName != null && loginUserName != null && !loginUserName.isEmpty()) {
-            return devUsersName.contains(loginUserName);
-        }
-        return  false;
+        return appConfig.getAppToBridge().isAuthorisedApi("isDevUser", loginUserName);
     }
     private Boolean isUserLogin(String loginUserName) {
         return loginUserName != null && !loginUserName.isEmpty();

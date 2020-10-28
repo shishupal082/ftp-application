@@ -86,7 +86,9 @@ public class RolesService {
             return false;
         }
         String apiRoles = this.getRolesByApiName(apiName);
-        return this.apiRolesIncludeUser(apiRoles, userName);
+        boolean result = this.apiRolesIncludeUser(apiRoles, userName);
+        logger.info("isApiAuthorised check response:{}", result);
+        return result;
     }
     private String getBooleanEquivalentToRole(String role, String userName) {
         if (BridgeStaticService.isInValidString(role)) {

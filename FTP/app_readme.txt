@@ -761,6 +761,9 @@ Valid brackets = (,)
 
 Added RolesFileParser for roles mapping by reading below file name in config files dir
     - roles.yml (AppConstant.ROLES)
+Remove below config data from env_config.yaml (6.0.0)
+    - adminUsersName
+    - devUsersName
 
 
 Future releases

@@ -1,0 +1,41 @@
+Role based system using bridge
+define roles (array of string)
+r1 (getAllFiles)
+r2
+Role access (or operations to be followed)
+r1 (array of string)
+u1
+u2
+r2
+*(all)
+u5 (meaningless but valid)
+r3
+~u4 (except u4)
+u4 (valid equivalent to all after combining both)
+r4
+not-null-and-not-empty
+r5
+%username% (pattern i.e. mapping for all valid username)
+allFileViewer1stApp
+a
+apiRolesMapping
+apiname1: (r1||r2)
+apiname2: r3
+apiname3: (r3&&r5)
+apiname4: (r1||(r2&&r3))
+Application of role baesd system
+isAuthoraised(apiname1, currentLoginUsername)
+(getAllFiles,username)
+If role admin is not there return public + personal files
+if role is admin return all files
+Api for roles application
+get available roles for user id /api/getrole/u/{uid}
+get all roles /api/roles/all
+get particular roles /api/roles/r/{roleid}
+get roles of all user /api/getrole/alluser
+
+
+
+
+
+

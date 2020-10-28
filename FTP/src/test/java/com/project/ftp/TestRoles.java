@@ -77,9 +77,12 @@ public class TestRoles {
         Assert.assertNotNull(rolesService.getRolesAccess());
         Assert.assertNotNull(rolesService.getApiRolesMapping());
         Assert.assertNotNull(rolesService.getRolesAccessByRoleId("admin"));
-        Assert.assertNotNull(rolesService.getRolesByApiName("getPublicFiles"));
-        Assert.assertTrue(rolesService.isApiAuthorised("getPublicFiles", "u1"));
-        Assert.assertFalse(rolesService.isApiAuthorised("getPublicFiles", "userNotFound"));
-        Assert.assertFalse(rolesService.isApiAuthorised("getPublicFilesNotFound", "u1"));
+        Assert.assertNull(rolesService.getRolesAccessByRoleId("adminNotFound"));
+        Assert.assertNotNull(rolesService.getRolesByApiName("isAdminUser"));
+        Assert.assertTrue(rolesService.isApiAuthorised("isAdminUser", "Admin"));
+        Assert.assertFalse(rolesService.isApiAuthorised("isAdminUser", "U1"));
+        Assert.assertFalse(rolesService.isApiAuthorised("isAdminUser", "userNotFound"));
+        Assert.assertTrue(rolesService.isApiAuthorised("isDevUser", "U1"));
+        Assert.assertFalse(rolesService.isApiAuthorised("isDevUserNotFound", "U1"));
     }
 }

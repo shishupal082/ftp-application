@@ -1,12 +1,9 @@
 roleAccess:
   admin:
     - Admin
-  public:
-    - not-null-and-not-empty
-  developer:
-    - u1
+  dev:
+    - U1
 
 apiRolesMapping:
-  getAllFiles: admin
-  getPublicFiles: (public|admin|developer)
-  devloperAccess: developer
+  isAdminUser: admin
+  isDevUser: dev
