@@ -34,7 +34,7 @@ import java.util.Arrays;
 
 public class FtpApplication  extends Application<FtpConfiguration> {
     final static Logger LOGGER = LoggerFactory.getLogger(FtpApplication.class);
-    final static ArrayList<String> arguments = new ArrayList<String>();
+    final static ArrayList<String> arguments = new ArrayList<>();
 
     private final HibernateBundle<FtpConfiguration> hibernateBundle
             = new HibernateBundle<FtpConfiguration>(
@@ -48,14 +48,14 @@ public class FtpApplication  extends Application<FtpConfiguration> {
     @Override
     public void initialize(Bootstrap<FtpConfiguration> bootstrap) {
         super.initialize(bootstrap);
-        bootstrap.addBundle(new ViewBundle<FtpConfiguration>());
+        bootstrap.addBundle(new ViewBundle<>());
         bootstrap.addBundle(new AssetsBundle("/assets/", "/assets"));
         if (StaticService.isMysqlEnable(arguments.get(0))) {
             bootstrap.addBundle(hibernateBundle);
         }
     }
     @Override
-    public void run(FtpConfiguration ftpConfiguration, Environment environment) throws Exception {
+    public void run(FtpConfiguration ftpConfiguration, Environment environment) {
         LOGGER.info("commandLineArguments: " + arguments.toString());
         AppConfig appConfig = new AppConfig();
         appConfig.setConfigPath(arguments.get(0));
@@ -78,7 +78,7 @@ public class FtpApplication  extends Application<FtpConfiguration> {
             LOGGER.info("mysql is not enabled, configure user interface from file");
         }
         UserService userService = new UserService(appConfig, userInterface);
-        AuthService authService = new AuthService(appConfig, userService);
+        AuthService authService = new AuthService(userService);
         EventTracking eventTracking = new EventTracking(appConfig, userService, eventInterface);
         // for bridge implementation
         appConfig.setAppToBridge(new AppToBridge(ftpConfiguration, eventTracking));

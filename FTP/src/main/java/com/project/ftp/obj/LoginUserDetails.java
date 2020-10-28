@@ -1,13 +1,9 @@
 package com.project.ftp.obj;
 
-import com.project.ftp.config.AppConfig;
-
 public class LoginUserDetails {
     private String username;
     private String displayName;
     private boolean isLogin;
-    private boolean isLoginUserAdmin;
-    private boolean isLoginUserDev;
     /* Why added displayName?
     * It will be required for api/get_login_user_details (Right now it is not used)
     * */
@@ -15,8 +11,6 @@ public class LoginUserDetails {
         username = "";
         displayName = "";
         isLogin = false;
-        isLoginUserAdmin = false;
-        isLoginUserDev = false;
     }
     public String getUsername() {
         return username;
@@ -42,30 +36,12 @@ public class LoginUserDetails {
         isLogin = login;
     }
 
-    public boolean getLoginUserAdmin(AppConfig appConfig) {
-        return appConfig.getAppToBridge().isAuthorisedApi("isAdminUser", username);
-    }
-
-    public void setLoginUserAdmin(boolean loginUserAdmin) {
-        isLoginUserAdmin = loginUserAdmin;
-    }
-
-    public boolean getLoginUserDev(AppConfig appConfig) {
-        return appConfig.getAppToBridge().isAuthorisedApi("isDevUser", username);
-    }
-
-    public void setLoginUserDev(boolean loginUserDev) {
-        isLoginUserDev = loginUserDev;
-    }
-
     @Override
     public String toString() {
         return "LoginUserDetails{" +
                 "username='" + username + '\'' +
                 ", displayName='" + displayName + '\'' +
                 ", isLogin=" + isLogin +
-                ", isLoginUserAdmin=" + isLoginUserAdmin +
-                ", isLoginUserDev=" + isLoginUserDev +
                 '}';
     }
 }

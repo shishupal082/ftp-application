@@ -373,7 +373,7 @@ public class ApiResource {
         ApiResponse response;
         try {
             authService.isLoginUserDev(request);
-            response = securityService.aesEncrypt(requestSecurity);;
+            response = securityService.aesEncrypt(requestSecurity);
             eventTracking.trackSuccessEvent(request, EventName.AES_ENCRYPTION);
         } catch (AppException ae) {
             logger.info("Error in aesEncrypt: {}", ae.getErrorCode().getErrorCode());
@@ -393,7 +393,7 @@ public class ApiResource {
         ApiResponse response;
         try {
             authService.isLoginUserDev(request);
-            response = securityService.aesDecrypt(requestSecurity);;
+            response = securityService.aesDecrypt(requestSecurity);
             eventTracking.trackSuccessEvent(request, EventName.AES_DECRYPTION);
         } catch (AppException ae) {
             logger.info("Error in aesDecrypt: {}", ae.getErrorCode().getErrorCode());
@@ -413,7 +413,7 @@ public class ApiResource {
         ApiResponse response;
         try {
             authService.isLoginUserDev(request);
-            response = securityService.md5Encrypt(requestSecurity);;
+            response = securityService.md5Encrypt(requestSecurity);
             eventTracking.trackSuccessEvent(request, EventName.MD5_ENCRYPTION);
         } catch (AppException ae) {
             logger.info("Error in md5Encrypt: {}", ae.getErrorCode().getErrorCode());

@@ -43,6 +43,8 @@ public class AppConstant {
     public static final String FILE_NOT_FOUND_MAPPING = "file_not_found_config.yml";
     public static final String ROLES = "roles.yml";
     public static final String PUBLIC = "public";
+    public static final String IS_ADMIN_USER = "isAdminUser";
+    public static final String IS_DEV_USER = "isDevUser";
     public static final String V1 = "v1";
     public static final String V2 = "v2";
     public static final String PDF_AUTHOR = "Project Author";

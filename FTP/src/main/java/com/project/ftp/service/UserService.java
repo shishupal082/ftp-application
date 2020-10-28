@@ -28,7 +28,12 @@ public class UserService {
         this.userInterface = userInterface;
         this.inputValidate = new InputValidate();
     }
-
+    public boolean isLoginUserAdmin(String username)  {
+        return appConfig.getAppToBridge().isAuthorisedApi(AppConstant.IS_ADMIN_USER, username);
+    }
+    public boolean isLoginUserDev(String username)  {
+        return appConfig.getAppToBridge().isAuthorisedApi(AppConstant.IS_DEV_USER, username);
+    }
     public Users getAllUser() throws AppException {
         Users users = userInterface.getAllUsers();
         if (users == null) {

@@ -1,6 +1,5 @@
 package com.project.ftp.obj;
 
-import com.project.ftp.config.AppConfig;
 import com.project.ftp.config.FileDeleteAccess;
 import com.project.ftp.config.FileViewer;
 
@@ -10,7 +9,7 @@ public class ResponseFilesInfo {
     private boolean deleteOption;
     private String subject;
     private String heading;
-    public ResponseFilesInfo(AppConfig appConfig, FileDetail fileDetail, LoginUserDetails loginUserDetails) {
+    public ResponseFilesInfo(boolean isLoginUserAdmin, FileDetail fileDetail, LoginUserDetails loginUserDetails) {
         if (fileDetail == null || loginUserDetails == null) {
             return;
         }
@@ -22,7 +21,7 @@ public class ResponseFilesInfo {
         this.heading = fileDetail.getHeading();
         this.viewOption = false;
         FileViewer viewer = fileDetail.getViewer();
-        if (loginUserDetails.getLoginUserAdmin(appConfig)) {
+        if (isLoginUserAdmin) {
             this.viewOption = true;
         } else if (FileViewer.ALL == viewer) {
             this.viewOption = true;
@@ -34,12 +33,11 @@ public class ResponseFilesInfo {
         this.deleteOption = false;
         FileDeleteAccess deleteAccess = fileDetail.getDeleteAccess();
         if (FileDeleteAccess.ADMIN == deleteAccess) {
-            if (loginUserDetails.getLoginUserAdmin(appConfig)) {
+            if (isLoginUserAdmin) {
                 this.deleteOption = true;
             }
         } else if (FileDeleteAccess.SELF_ADMIN == deleteAccess) {
-            if (loginUserDetails.getLoginUserAdmin(appConfig) ||
-                    loginUserDetails.getUsername().equals(fileDetail.getUploadedby())) {
+            if (isLoginUserAdmin || loginUserDetails.getUsername().equals(fileDetail.getUploadedby())) {
                 this.deleteOption = true;
             }
         } else if (FileDeleteAccess.SELF == deleteAccess) {
