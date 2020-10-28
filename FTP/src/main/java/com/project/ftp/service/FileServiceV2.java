@@ -96,7 +96,7 @@ public class FileServiceV2 {
                     fileDetail = this.generateFileDetailsFromFilepath(fileUsername,filenameStr,"getFileSInfo");
                 }
             }
-            finalResponse.add(new ResponseFilesInfo(fileDetail, loginUserDetails));
+            finalResponse.add(new ResponseFilesInfo(appConfig, fileDetail, loginUserDetails));
         }
         String filepath;
         for (Map.Entry<String, FileDetail> entry: fileDetailHashMap.entrySet()) {
@@ -108,7 +108,7 @@ public class FileServiceV2 {
                 logger.info("filepath: {}, does not exist.", filepath);
                 continue;
             }
-            ResponseFilesInfo filesInfoResponse = new ResponseFilesInfo(entry.getValue(), loginUserDetails);
+            ResponseFilesInfo filesInfoResponse = new ResponseFilesInfo(appConfig, entry.getValue(), loginUserDetails);
             if (filesInfoResponse.isViewOption()) {
                 finalResponse.add(filesInfoResponse);
             }
@@ -122,7 +122,7 @@ public class FileServiceV2 {
         String dir = appConfig.getFtpConfiguration().getFileSaveDir();
         String publicDir = dir+AppConstant.PUBLIC+"/";
         String loginUserName = loginUserDetails.getUsername();
-        if (loginUserDetails.getLoginUserAdmin()) {
+        if (loginUserDetails.getLoginUserAdmin(appConfig)) {
             scanResults.add(fileService.scanDirectory(dir, dir, true));
         } else {
             dir = dir + loginUserName + "/";
@@ -239,7 +239,7 @@ public class FileServiceV2 {
                     throw new AppException(ErrorCodes.UNAUTHORIZED_USER);
                 }
                 if (!AppConstant.PUBLIC.equals(fileUsername)) {
-                    if (!loginUserDetails.getLoginUserAdmin() && !loginUserName.equals(fileUsername)) {
+                    if (!loginUserDetails.getLoginUserAdmin(appConfig) && !loginUserName.equals(fileUsername)) {
                         logger.info("Unauthorised access loginUserName: {}, filename: {}",
                                 loginUserName, filename);
                         throw new AppException(ErrorCodes.UNAUTHORIZED_USER);
@@ -428,7 +428,7 @@ public class FileServiceV2 {
         if (deleteAccess == FileDeleteAccess.SELF) {
             this.deleteFileByUser(loginUserDetails, fileDetail);
         } else if (deleteAccess == FileDeleteAccess.ADMIN) {
-            if (loginUserDetails.getLoginUserAdmin()) {
+            if (loginUserDetails.getLoginUserAdmin(appConfig)) {
                 this.deleteFileV3(fileDetail);
             } else {
                 logger.info("Only admin is allowed delete this file: {}, currentUser: {}",
@@ -436,7 +436,7 @@ public class FileServiceV2 {
                 throw new AppException((ErrorCodes.UNAUTHORIZED_USER));
             }
         } else if (deleteAccess == FileDeleteAccess.SELF_ADMIN) {
-            if (loginUserDetails.getLoginUserAdmin()) {
+            if (loginUserDetails.getLoginUserAdmin(appConfig)) {
                 this.deleteFileV3(fileDetail);
             } else {
                 this.deleteFileByUser(loginUserDetails, fileDetail);

@@ -78,7 +78,7 @@ public class FtpApplication  extends Application<FtpConfiguration> {
             LOGGER.info("mysql is not enabled, configure user interface from file");
         }
         UserService userService = new UserService(appConfig, userInterface);
-        AuthService authService = new AuthService(userService);
+        AuthService authService = new AuthService(appConfig, userService);
         EventTracking eventTracking = new EventTracking(appConfig, userService, eventInterface);
         // for bridge implementation
         appConfig.setAppToBridge(new AppToBridge(ftpConfiguration, eventTracking));

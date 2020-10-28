@@ -1,5 +1,6 @@
 package com.project.ftp.service;
 
+import com.project.ftp.config.AppConfig;
 import com.project.ftp.exceptions.AppException;
 import com.project.ftp.exceptions.ErrorCodes;
 import com.project.ftp.obj.LoginUserDetails;
@@ -10,8 +11,10 @@ import javax.servlet.http.HttpServletRequest;
 
 public class AuthService {
     private final static Logger logger = LoggerFactory.getLogger(AuthService.class);
+    private final AppConfig appConfig;
     private final UserService userService;
-    public AuthService(final UserService userService) {
+    public AuthService(final AppConfig appConfig, final UserService userService) {
+        this.appConfig = appConfig;
         this.userService = userService;
     }
     public void isLogin(final HttpServletRequest request) throws AppException {
@@ -28,7 +31,7 @@ public class AuthService {
 
     public void isLoginUserAdmin(HttpServletRequest request) throws AppException {
         LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
-        if (!loginUserDetails.getLoginUserAdmin()) {
+        if (!loginUserDetails.getLoginUserAdmin(appConfig)) {
             logger.info("UnAuthorised user trying to access admin data: {}", loginUserDetails);
             throw new AppException(ErrorCodes.UNAUTHORIZED_USER);
         }
@@ -36,7 +39,7 @@ public class AuthService {
 
     public void isLoginUserDev(HttpServletRequest request) throws AppException {
         LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
-        if (!loginUserDetails.getLoginUserDev()) {
+        if (!loginUserDetails.getLoginUserDev(appConfig)) {
             logger.info("UnAuthorised user: not dev user, {}", loginUserDetails);
             throw new AppException(ErrorCodes.UNAUTHORIZED_USER);
         }

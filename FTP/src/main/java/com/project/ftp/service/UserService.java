@@ -14,7 +14,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
 import java.util.HashMap;
 
 public class UserService {
@@ -109,12 +108,6 @@ public class UserService {
         result.put("loginUserName", loginUserDetails.getUsername());
         return result;
     }
-    private Boolean isAdminUser(String loginUserName) {
-        return appConfig.getAppToBridge().isAuthorisedApi("isAdminUser", loginUserName);
-    }
-    private Boolean isDevUser(String loginUserName) {
-        return appConfig.getAppToBridge().isAuthorisedApi("isDevUser", loginUserName);
-    }
     private Boolean isUserLogin(String loginUserName) {
         return loginUserName != null && !loginUserName.isEmpty();
     }
@@ -124,8 +117,6 @@ public class UserService {
         if (loginUserName != null) {
             loginUserDetails.setUsername(loginUserName);
             loginUserDetails.setLogin(this.isUserLogin(loginUserName));
-            loginUserDetails.setLoginUserDev(this.isDevUser(loginUserName));
-            loginUserDetails.setLoginUserAdmin(this.isAdminUser(loginUserName));
         }
         return loginUserDetails;
     }

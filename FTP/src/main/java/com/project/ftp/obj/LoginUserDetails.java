@@ -1,5 +1,7 @@
 package com.project.ftp.obj;
 
+import com.project.ftp.config.AppConfig;
+
 public class LoginUserDetails {
     private String username;
     private String displayName;
@@ -40,16 +42,16 @@ public class LoginUserDetails {
         isLogin = login;
     }
 
-    public boolean getLoginUserAdmin() {
-        return isLoginUserAdmin;
+    public boolean getLoginUserAdmin(AppConfig appConfig) {
+        return appConfig.getAppToBridge().isAuthorisedApi("isAdminUser", username);
     }
 
     public void setLoginUserAdmin(boolean loginUserAdmin) {
         isLoginUserAdmin = loginUserAdmin;
     }
 
-    public boolean getLoginUserDev() {
-        return isLoginUserDev;
+    public boolean getLoginUserDev(AppConfig appConfig) {
+        return appConfig.getAppToBridge().isAuthorisedApi("isDevUser", username);
     }
 
     public void setLoginUserDev(boolean loginUserDev) {
