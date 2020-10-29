@@ -1,6 +1,5 @@
 package com.project.ftp.service;
 
-import com.project.ftp.common.StrUtils;
 import com.project.ftp.config.AppConstant;
 import com.project.ftp.config.PathType;
 import com.project.ftp.exceptions.AppException;
@@ -18,7 +17,6 @@ import java.util.ArrayList;
 
 public class FileService {
     private final static Logger logger = LoggerFactory.getLogger(FileService.class);
-    private final StrUtils strUtils = new StrUtils();
     public FileService() {}
     public FileDetails getAllFileDetails(String savedDataFilepath) {
         TextFileParser textFileParser = new TextFileParser(savedDataFilepath);
@@ -62,7 +60,7 @@ public class FileService {
         } else if(file.isFile()) {
             pathInfo.setType(AppConstant.FILE);
             pathInfo.setFileName(file.getName());
-            String parentFolder = strUtils.replaceBackSlashToSlash(file.getParent());
+            String parentFolder = StaticService.replaceBackSlashToSlash(file.getParent());
             pathInfo.setParentFolder(parentFolder); // It does not contain "/" in the end
             pathInfo.findExtension();
             pathInfo.findMimeType();

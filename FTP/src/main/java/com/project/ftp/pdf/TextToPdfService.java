@@ -4,7 +4,6 @@ import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.pdf.PdfWriter;
-import com.project.ftp.common.StrUtils;
 import com.project.ftp.config.AppConstant;
 import com.project.ftp.service.StaticService;
 import org.slf4j.Logger;
@@ -23,7 +22,7 @@ public class TextToPdfService {
         this.pdfSubject = pdfSubject;
     }
     private ArrayList<String> readTextFile(String textFileName) {
-        ArrayList<String> response = new ArrayList<String>();
+        ArrayList<String> response = new ArrayList<>();
         File file = new File(textFileName);
         try {
             BufferedReader in = new BufferedReader(
@@ -76,20 +75,19 @@ public class TextToPdfService {
         }
     }
     public void createPdf(String textFilename, String pdfFilename, String pdfTitle, String pdfSubject) {
-        StrUtils strUtils = new StrUtils();
-        if (strUtils.isInValidString(textFilename)) {
+        if (StaticService.isInValidString(textFilename)) {
             logger.info("createPdf, invalid textFilename: '{}'", textFilename);
             return;
         }
-        if (strUtils.isInValidString(pdfFilename)) {
+        if (StaticService.isInValidString(pdfFilename)) {
             logger.info("createPdf, invalid pdfFilename: '{}'", pdfFilename);
             return;
         }
-        if (strUtils.isInValidString(pdfTitle)) {
+        if (StaticService.isInValidString(pdfTitle)) {
             logger.info("createPdf, invalid pdfTitle: '{}'", pdfTitle);
             return;
         }
-        if (strUtils.isInValidString(pdfSubject)) {
+        if (StaticService.isInValidString(pdfSubject)) {
             logger.info("createPdf, invalid pdfSubject: '{}'", pdfSubject);
             return;
         }

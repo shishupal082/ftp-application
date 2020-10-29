@@ -268,6 +268,10 @@ public class StaticService {
         configFilePath = strUtils.replaceBackSlashToSlash(configFilePath);
         return ymlFileParser.isMysqlEnable(configFilePath);
     }
+    public static String getProjectWorkingDir() {
+        String projectWorkingDirectory = sysUtils.getProjectWorkingDir();
+        return strUtils.replaceBackSlashToSlash(projectWorkingDirectory);
+    }
     public static void checkForDateChange(final AppConfig appConfig, final EventTracking eventTracking) {
         String currentDate = StaticService.getDateStrFromPattern(AppConstant.DATE_FORMAT);
         String configDate = appConfig.getConfigDate();

@@ -5,11 +5,13 @@ import com.project.ftp.bridge.roles.obj.Roles;
 import com.project.ftp.bridge.roles.service.ExpressionEvaluator;
 import com.project.ftp.bridge.roles.service.RolesFileParser;
 import com.project.ftp.bridge.roles.service.RolesService;
+import com.project.ftp.service.StaticService;
 import org.junit.Assert;
 import org.junit.Test;
 
 public class TestRoles {
     private final ExpressionEvaluator testRoles = new ExpressionEvaluator();
+    private final String projectWorkingDir = StaticService.getProjectWorkingDir();
     @Test
     public void testEvaluateBinary() {
         Assert.assertTrue(testRoles.evaluateBinaryExpression("((true&true&true&true)&(~false))"));
@@ -47,7 +49,7 @@ public class TestRoles {
     @Test
     public void testRoleFileEntry() {
         RolesFileParser rolesFileParser = new RolesFileParser();
-        String roleFileName = "D:/workspace/ftp-application/FTP/meta-data/config-files/roles.yml";
+        String roleFileName = projectWorkingDir + "/meta-data/config-files/roles.yml";
         Assert.assertNull(rolesFileParser.getRolesFileData(null));
         Assert.assertNull(rolesFileParser.getRolesFileData("invalid-file-name"));
         Roles roles = rolesFileParser.getRolesFileData(roleFileName);
@@ -71,7 +73,7 @@ public class TestRoles {
         Assert.assertFalse(rolesService.isApiAuthorised("apiName", null));
         Assert.assertFalse(rolesService.isApiAuthorised(null, "userName"));
 
-        roleFileName = "D:/workspace/ftp-application/FTP/meta-data/config-files/roles.yml";
+        roleFileName = projectWorkingDir + "/meta-data/config-files/roles.yml";
         rolesService = new RolesService(bridgeConfig, roleFileName);
         Assert.assertNotNull(rolesService.getRolesConfig());
         Assert.assertNotNull(rolesService.getRolesAccess());
