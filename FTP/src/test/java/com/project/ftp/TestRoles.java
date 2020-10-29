@@ -11,7 +11,7 @@ import org.junit.Test;
 
 public class TestRoles {
     private final ExpressionEvaluator testRoles = new ExpressionEvaluator();
-    private final String projectWorkingDir = StaticService.getProjectWorkingDir();
+    private final String rolesFilePath = StaticService.getProjectWorkingDir()+"/meta-data/config-files/roles.yml";
     @Test
     public void testEvaluateBinary() {
         Assert.assertTrue(testRoles.evaluateBinaryExpression("((true&true&true&true)&(~false))"));
@@ -29,8 +29,10 @@ public class TestRoles {
         Assert.assertFalse(testRoles.evaluateBinaryExpression("(true&false)"));
         Assert.assertFalse(testRoles.evaluateBinaryExpression("(~true)"));
         Assert.assertFalse(testRoles.evaluateBinaryExpression("~true"));
+        Assert.assertTrue(testRoles.evaluateBinaryExpression("true"));
         Assert.assertTrue(testRoles.evaluateBinaryExpression("(~false)"));
         Assert.assertTrue(testRoles.evaluateBinaryExpression("~false"));
+        Assert.assertFalse(testRoles.evaluateBinaryExpression("false"));
         Assert.assertNull(testRoles.evaluateBinaryExpression("((~false))"));
         Assert.assertTrue(testRoles.evaluateBinaryExpression("((~false)&(~false))"));
     }
@@ -49,19 +51,16 @@ public class TestRoles {
     @Test
     public void testRoleFileEntry() {
         RolesFileParser rolesFileParser = new RolesFileParser();
-        String roleFileName = projectWorkingDir + "/meta-data/config-files/roles.yml";
         Assert.assertNull(rolesFileParser.getRolesFileData(null));
         Assert.assertNull(rolesFileParser.getRolesFileData("invalid-file-name"));
-        Roles roles = rolesFileParser.getRolesFileData(roleFileName);
+        Roles roles = rolesFileParser.getRolesFileData(rolesFilePath);
         Assert.assertNotNull(roles);
     }
     @Test
     public void testRoleService() {
         RolesService rolesService;
-        String roleFileName;
         BridgeConfig bridgeConfig = new BridgeConfig(null, null);
-        roleFileName = "invalid-file-name";
-        rolesService = new RolesService(bridgeConfig, roleFileName);
+        rolesService = new RolesService(bridgeConfig, "invalid-roles-file-path");
         Assert.assertNull(rolesService.getRolesConfig());
         Assert.assertNull(rolesService.getRolesAccess());
         Assert.assertNull(rolesService.getApiRolesMapping());
@@ -73,8 +72,7 @@ public class TestRoles {
         Assert.assertFalse(rolesService.isApiAuthorised("apiName", null));
         Assert.assertFalse(rolesService.isApiAuthorised(null, "userName"));
 
-        roleFileName = projectWorkingDir + "/meta-data/config-files/roles.yml";
-        rolesService = new RolesService(bridgeConfig, roleFileName);
+        rolesService = new RolesService(bridgeConfig, rolesFilePath);
         Assert.assertNotNull(rolesService.getRolesConfig());
         Assert.assertNotNull(rolesService.getRolesAccess());
         Assert.assertNotNull(rolesService.getApiRolesMapping());
