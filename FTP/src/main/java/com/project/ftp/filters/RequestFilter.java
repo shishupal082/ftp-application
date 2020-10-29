@@ -5,6 +5,7 @@ import com.project.ftp.config.AppConstant;
 import com.project.ftp.event.EventTracking;
 import com.project.ftp.exceptions.AppException;
 import com.project.ftp.exceptions.ErrorCodes;
+import com.project.ftp.service.RequestService;
 import com.project.ftp.service.StaticService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,7 +32,7 @@ public class RequestFilter implements ContainerRequestFilter {
         this.eventTracking = eventTracking;
     }
     public void filter(final ContainerRequestContext requestContext) throws AppException {
-        String cookieData = StaticService.getCookieData(appConfig, httpServletRequest);
+        String cookieData = RequestService.getCookieData(appConfig, httpServletRequest);
         String newCookieData = null;
         String origin = requestContext.getHeaderString(AppConstant.ORIGIN);
         if (origin != null) {
@@ -40,7 +41,7 @@ public class RequestFilter implements ContainerRequestFilter {
                 if (!allowedOrigin.contains(origin)) {
                     logger.info("UnAuthorized Origin: {}, AllowedOrigin: {}", origin, allowedOrigin);
                     ErrorCodes errorCode = ErrorCodes.UNAUTHORIZED_ORIGIN;
-                    errorCode.setErrorString(StaticService.getPathUrlV3(requestContext));
+                    errorCode.setErrorString(RequestService.getPathUrlV3(requestContext));
                     throw new AppException(errorCode);
                 }
             } else {
@@ -53,8 +54,8 @@ public class RequestFilter implements ContainerRequestFilter {
             logger.info("Invalid session cookieData : {}, Created new : {}", cookieData, newCookieData);
             cookieData = newCookieData;
         }
-        cookieData = StaticService.updateSessionId(httpServletRequest, appConfig, cookieData, eventTracking);
-        String requestedPath = StaticService.getPathUrlV2(requestContext);
+        cookieData = RequestService.updateSessionId(httpServletRequest, appConfig, cookieData, eventTracking);
+        String requestedPath = RequestService.getPathUrlV2(requestContext);
         if (!AppConstant.FAVICON_ICO_PATH.equals(requestedPath)) {
             logger.info("RequestFilter executed, cookieData : {}", cookieData);
         }

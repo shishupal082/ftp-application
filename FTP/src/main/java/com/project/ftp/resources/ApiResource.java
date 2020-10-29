@@ -31,6 +31,7 @@ public class ApiResource {
     private final AuthService authService;
     private final SecurityService securityService;
     private final EventTracking eventTracking;
+    private final RequestService requestService;
     public ApiResource(final AppConfig appConfig,
                        final UserService userService,
                        final EventTracking eventTracking,
@@ -41,11 +42,12 @@ public class ApiResource {
         this.eventTracking = eventTracking;
         this.authService = authService;
         this.securityService = new SecurityService();
+        this.requestService = new RequestService(appConfig, userService, fileServiceV2);
     }
     @GET
     @Produces(MediaType.TEXT_HTML)
     public Object defaultMethodApi(@Context HttpServletRequest request) {
-        return fileServiceV2.handleDefaultUrl(request);
+        return requestService.handleDefaultUrl(request);
     }
     @GET
     @Path("/get_static_file")
@@ -107,7 +109,8 @@ public class ApiResource {
         ApiResponse apiResponse;
         try {
             authService.isLogin(request);
-            fileServiceV2.deleteRequestFileV2(request, deleteFile);
+            LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
+            fileServiceV2.deleteRequestFileV2(loginUserDetails, deleteFile);
             apiResponse = new ApiResponse();
             eventTracking.addSuccessDeleteFile(request, deleteFile, uiUsername);
         } catch (AppException ae) {
@@ -127,7 +130,8 @@ public class ApiResource {
         ApiResponse response;
         try {
             authService.isLogin(request);
-            response = fileServiceV2.scanUserDirectory(request);
+            LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
+            response = fileServiceV2.scanUserDirectory(loginUserDetails);
 //            eventTracking.trackSuccessEvent(request, EventName.GET_FILES_INFO);
         } catch (AppException ae) {
             logger.info("Error in scanning user directory: {}", ae.getErrorCode().getErrorString());
@@ -192,7 +196,8 @@ public class ApiResource {
         ApiResponse response;
         try {
             authService.isLogin(request);
-            response = fileServiceV2.uploadFileV2(request, uploadedInputStream,
+            LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
+            response = fileServiceV2.uploadFileV2(loginUserDetails, uploadedInputStream,
                     fileDetail, subject, heading);
             eventTracking.addSuccessUploadFile(request, fileDetail, subject, heading, uiUsername);
         } catch (AppException ae) {
@@ -428,6 +433,6 @@ public class ApiResource {
     @GET
     @Produces(MediaType.TEXT_HTML)
     public Object defaultMethod(@Context HttpServletRequest request) {
-        return fileServiceV2.handleDefaultUrl(request);
+        return requestService.handleDefaultUrl(request);
     }
 }

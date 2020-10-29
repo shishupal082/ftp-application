@@ -6,6 +6,7 @@ package com.project.ftp.filters;
 
 import com.project.ftp.config.AppConfig;
 import com.project.ftp.config.AppConstant;
+import com.project.ftp.service.RequestService;
 import com.project.ftp.service.StaticService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,8 +34,8 @@ public class LogFilter implements ContainerRequestFilter {
 
     public void filter(ContainerRequestContext requestContext) throws IOException {
         String requestId = StaticService.createUUIDNumber();
-        String sessionId = StaticService.getCookieData(appConfig, httpServletReq);
-        String requestedPath = StaticService.getPathUrlV2(requestContext);
+        String sessionId = RequestService.getCookieData(appConfig, httpServletReq);
+        String requestedPath = RequestService.getPathUrlV2(requestContext);
         if (!AppConstant.FAVICON_ICO_PATH.equals(requestedPath)) {
             LOGGER.info("Logger sessionId: {}, requestId: {}", sessionId, requestId);
         }

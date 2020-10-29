@@ -6,9 +6,11 @@ import com.project.ftp.event.EventName;
 import com.project.ftp.event.EventTracking;
 import com.project.ftp.exceptions.AppException;
 import com.project.ftp.obj.ApiResponse;
+import com.project.ftp.obj.LoginUserDetails;
 import com.project.ftp.obj.PathInfo;
 import com.project.ftp.service.AuthService;
 import com.project.ftp.service.FileServiceV2;
+import com.project.ftp.service.RequestService;
 import com.project.ftp.service.UserService;
 import com.project.ftp.view.AppView;
 import com.project.ftp.view.CommonView;
@@ -40,6 +42,7 @@ public class AppResource {
     private final AuthService authService;
     private final String appViewFtlFileName;
     private final EventTracking eventTracking;
+    private final RequestService requestService;
     public AppResource(final AppConfig appConfig,
                        final UserService userService,
                        final EventTracking eventTracking,
@@ -50,6 +53,7 @@ public class AppResource {
         this.appViewFtlFileName = AppConstant.APP_VIEW_FTL_FILENAME;
         this.eventTracking = eventTracking;
         this.authService = authService;
+        this.requestService = new RequestService(appConfig, userService, fileServiceV2);
     }
     @GET
     public Response indexPage(@Context HttpServletRequest request) throws URISyntaxException {
@@ -71,7 +75,7 @@ public class AppResource {
     @Path("/view/resource")
     public IndexView getViewResource(@Context HttpServletRequest request) {
         logger.info("Loading indexPage: {}", userService.getUserDataForLogging(request));
-        return new IndexView(request, null, appConfig);
+        return new IndexView(null, appConfig);
     }
     @GET
     @Path("/view/file/{username}/{filename2}")
@@ -89,7 +93,8 @@ public class AppResource {
         ApiResponse apiResponse = new ApiResponse();
         try {
             authService.isLogin(request);
-            pathInfo = fileServiceV2.searchRequestedFileV2(request, filename);
+            LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
+            pathInfo = fileServiceV2.searchRequestedFileV2(loginUserDetails, filename);
             eventTracking.addSuccessViewFile(request, filename, container, uiUsername);
         } catch (AppException ae) {
             logger.info("Error in searching requested file: {}", ae.getErrorCode().getErrorCode());
@@ -118,7 +123,7 @@ public class AppResource {
             return Response.status(Response.Status.OK).entity(
                     apiResponse.toJsonString()).type(MediaType.APPLICATION_JSON).build();
         }
-        return Response.ok(new CommonView(request, "page_not_found_404.ftl", appConfig)).build();
+        return Response.ok(new CommonView("page_not_found_404.ftl", appConfig)).build();
     }
     @GET
     @Path("/download/file/{username}/{filename2}")
@@ -134,7 +139,8 @@ public class AppResource {
         Response.ResponseBuilder r;
         try {
             authService.isLogin(request);
-            pathInfo = fileServiceV2.searchRequestedFileV2(request, filename);
+            LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
+            pathInfo = fileServiceV2.searchRequestedFileV2(loginUserDetails, filename);
             eventTracking.addSuccessDownloadFile(request, filename, uiUsername);
         } catch (AppException ae) {
             logger.info("Error in searching requested file: {}", ae.getErrorCode().getErrorCode());
@@ -152,7 +158,7 @@ public class AppResource {
                 logger.info("Error in loading file: {}", pathInfo);
             }
         }
-        return new CommonView(request, "page_not_found_404.ftl", appConfig);
+        return new CommonView("page_not_found_404.ftl", appConfig);
     }
     @GET
     @Path("/dashboard")
@@ -208,6 +214,6 @@ public class AppResource {
     @Produces(MediaType.TEXT_HTML)
     @Consumes(MediaType.APPLICATION_JSON)
     public Object defaultMethod(@Context HttpServletRequest request) {
-        return fileServiceV2.handleDefaultUrl(request);
+        return requestService.handleDefaultUrl(request);
     }
 }

@@ -6,6 +6,7 @@ import com.project.ftp.exceptions.ErrorCodes;
 import com.project.ftp.intreface.EventInterface;
 import com.project.ftp.obj.*;
 import com.project.ftp.service.FileService;
+import com.project.ftp.service.RequestService;
 import com.project.ftp.service.StaticService;
 import com.project.ftp.service.UserService;
 import com.project.ftp.session.SessionData;
@@ -88,7 +89,7 @@ public class EventTracking {
             commentData.put(uiUserAgent, userLogin.getUser_agent());
         }
         commentData.put(sessionDataStr, sessionService.getCurrentSessionDataV2(request));
-        commentData.put(requestUserAgent, StaticService.getRequestUserAgent(request));
+        commentData.put(requestUserAgent, RequestService.getRequestUserAgent(request));
         String comment = this.generateCommentString(commentData, sequence);
         addEvent.addSuccessEvent(username, EventName.LOGIN, comment);
     }
@@ -114,7 +115,7 @@ public class EventTracking {
             username = userRegister.getUsername();
         }
         commentData.put(sessionDataStr, sessionService.getCurrentSessionDataV2(request));
-        commentData.put(requestUserAgent, StaticService.getRequestUserAgent(request));
+        commentData.put(requestUserAgent, RequestService.getRequestUserAgent(request));
         String comment = this.generateCommentString(commentData, sequence);
         addEvent.addSuccessEvent(username, EventName.REGISTER, comment);
     }
@@ -142,7 +143,7 @@ public class EventTracking {
             String encryptedPassword = StaticService.encryptAesPassword(appConfig, requestUserLogin.getPassword());
             logger.info("Encrypted password: {}", encryptedPassword);
         }
-        commentData.put(requestUserAgent, StaticService.getRequestUserAgent(request));
+        commentData.put(requestUserAgent, RequestService.getRequestUserAgent(request));
         commentData.put(sessionDataStr, sessionService.getCurrentSessionDataV2(request));
         String comment = this.generateCommentString(commentData, sequence);
         addEvent.addFailureEvent(username, EventName.LOGIN, errorCodes, comment);
@@ -178,7 +179,7 @@ public class EventTracking {
         if (errorCodes != null) {
             commentData.put(errorCodeStr, errorCodes.getErrorString());
         }
-        commentData.put(requestUserAgent, StaticService.getRequestUserAgent(request));
+        commentData.put(requestUserAgent, RequestService.getRequestUserAgent(request));
         commentData.put(sessionDataStr, sessionService.getCurrentSessionDataV2(request));
         String comment = this.generateCommentString(commentData, sequence);
         addEvent.addFailureEvent(username, EventName.REGISTER, errorCodes, comment);
@@ -202,7 +203,7 @@ public class EventTracking {
             commentData.put(mobile, "mobile="+forgotPassword.getMobile());
             commentData.put(uiUserAgent, forgotPassword.getUserAgent());
         }
-        commentData.put(requestUserAgent, StaticService.getRequestUserAgent(request));
+        commentData.put(requestUserAgent, RequestService.getRequestUserAgent(request));
         commentData.put(sessionDataStr, sessionService.getCurrentSessionDataV2(request));
         String comment = this.generateCommentString(commentData, sequence);
         addEvent.addSuccessEvent(username, EventName.FORGOT_PASSWORD, comment);
@@ -235,7 +236,7 @@ public class EventTracking {
         if (errorCode != null) {
             commentData.put(errorCodeStr, errorCode.getErrorString());
         }
-        commentData.put(requestUserAgent, StaticService.getRequestUserAgent(request));
+        commentData.put(requestUserAgent, RequestService.getRequestUserAgent(request));
         commentData.put(sessionDataStr, sessionService.getCurrentSessionDataV2(request));
         String comment = this.generateCommentString(commentData, sequence);
         addEvent.addFailureEvent(username, EventName.FORGOT_PASSWORD, errorCode, comment);
@@ -256,7 +257,7 @@ public class EventTracking {
             commentData.put(createPasswordOtp, "otp="+createPassword.getCreatePasswordOtp());
             commentData.put(uiUserAgent, createPassword.getUserAgent());
         }
-        commentData.put(requestUserAgent, StaticService.getRequestUserAgent(request));
+        commentData.put(requestUserAgent, RequestService.getRequestUserAgent(request));
         commentData.put(sessionDataStr, sessionService.getCurrentSessionDataV2(request));
         String comment = this.generateCommentString(commentData, sequence);
         addEvent.addSuccessEvent(username, EventName.CREATE_PASSWORD, comment);
@@ -287,7 +288,7 @@ public class EventTracking {
         if (errorCode != null) {
             commentData.put(errorCodeStr, errorCode.getErrorString());
         }
-        commentData.put(requestUserAgent, StaticService.getRequestUserAgent(request));
+        commentData.put(requestUserAgent, RequestService.getRequestUserAgent(request));
         commentData.put(sessionDataStr, sessionService.getCurrentSessionDataV2(request));
         String comment = this.generateCommentString(commentData, sequence);
         addEvent.addFailureEvent(username, EventName.CREATE_PASSWORD, errorCode, comment);

@@ -7,8 +7,6 @@ import io.dropwizard.views.View;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.servlet.http.HttpServletRequest;
-
 /**
  * Created by shishupalkumar on 11/02/17.
  */
@@ -17,7 +15,7 @@ public class IndexView extends View {
     private String indexPageReRoute;
     final String appVersion;
     private final FtlConfig ftlConfig;
-    public IndexView(HttpServletRequest httpServletRequest, String indexPageReRoute, AppConfig appConfig) {
+    public IndexView(String indexPageReRoute, AppConfig appConfig) {
         super("index.ftl");
         ftlConfig = appConfig.getFtlConfig();
         this.indexPageReRoute = indexPageReRoute;

@@ -9,14 +9,9 @@ import com.project.ftp.obj.BackendConfig;
 import com.project.ftp.obj.PathInfo;
 import com.project.ftp.parser.YamlFileParser;
 import com.project.ftp.pdf.TextToPdfService;
-import com.project.ftp.session.SessionService;
-import org.glassfish.jersey.server.ContainerRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.container.ContainerRequestContext;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -102,10 +97,6 @@ public class StaticService {
         DateUtilities dateUtilities = new DateUtilities();
         return dateUtilities.getDateStrFromTimeMs(format, timeInMs);
     }
-    public static String updateSessionId(HttpServletRequest request, AppConfig appConfig, String cookieData, EventTracking eventTracking) {
-        SessionService sessionService = new SessionService(appConfig);
-        return sessionService.updateSessionId(request, cookieData, eventTracking);
-    }
     public static String replaceLast(String find, String replace, String str) {
         return strUtils.replaceLast(find, replace, str);
     }
@@ -181,26 +172,6 @@ public class StaticService {
     }
     public static String replaceBackSlashToSlash(String str) {
         return strUtils.replaceBackSlashToSlash(str);
-    }
-    public static String getPathUrl(final HttpServletRequest request) {
-        String path = request.getPathInfo();
-        String[] pathArr = path.split("\\?");
-        if (pathArr.length > 0) {
-            path = pathArr[0];
-        }
-        return path;
-    }
-    public static String getPathUrlV2(final ContainerRequestContext requestContext) {
-        String path = ((ContainerRequest) requestContext).getPath(true);
-        String[] pathArr = path.split("\\?");
-        if (pathArr.length > 0) {
-            path = pathArr[0];
-        }
-        return path;
-    }
-    public static String getPathUrlV3(final ContainerRequestContext requestContext) {
-//        String url = requestContext.getUriInfo().getAbsolutePath().toString();
-        return requestContext.getUriInfo().getAbsolutePath().toString();
     }
     public static String getFileMimeTypeValue(String name) {
         if (name == null) {
@@ -366,14 +337,6 @@ public class StaticService {
         return version;
     }
 
-    public static String getRequestUserAgent(HttpServletRequest request) {
-        String userAgent = null;
-        if (request != null) {
-            userAgent = request.getHeader(AppConstant.REQUEST_USER_AGENT);
-        }
-        return userAgent;
-    }
-
     public static String joinWithComma(String str1, String str2) {
         if (StaticService.isInValidString(str2)) {
             return str1;
@@ -406,21 +369,6 @@ public class StaticService {
     public static String joinV2(String joinDelimiter, String str1, String str2, String str3) {
         str1 = StaticService.join(joinDelimiter, str1, str2);
         return StaticService.join(joinDelimiter, str1, str3);
-    }
-    public static String getCookieData(AppConfig appConfig, HttpServletRequest request) {
-        String cookieName = appConfig.getCookieName();
-        Cookie[] cookies = request.getCookies();
-        if (cookies == null){
-            return null;
-        }
-        String cookieData = null;
-        for (Cookie cookie : cookies) {
-            if (cookie.getName().equalsIgnoreCase(cookieName)) {
-                cookieData = cookie.getValue();
-                break;
-            }
-        }
-        return cookieData;
     }
     public static String getRandomNumber(int min, int max) {
         return String.valueOf(sysUtils.getRandomNumber(min, max));

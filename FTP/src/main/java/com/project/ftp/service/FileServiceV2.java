@@ -5,16 +5,10 @@ import com.project.ftp.exceptions.AppException;
 import com.project.ftp.exceptions.ErrorCodes;
 import com.project.ftp.obj.*;
 import com.project.ftp.parser.YamlFileParser;
-import com.project.ftp.view.CommonView;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.Response;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -116,9 +110,8 @@ public class FileServiceV2 {
         }
         return finalResponse;
     }
-    public ApiResponse scanUserDirectory(HttpServletRequest request) {
+    public ApiResponse scanUserDirectory(LoginUserDetails loginUserDetails) {
         ApiResponse apiResponse;
-        LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
         ArrayList<ScanResult> scanResults = new ArrayList<>();
         String dir = appConfig.getFtpConfiguration().getFileSaveDir();
         String publicDir = dir+AppConstant.PUBLIC+"/";
@@ -167,13 +160,13 @@ public class FileServiceV2 {
         return response;
     }
     /**
-    public PathInfo searchRequestedFile(HttpServletRequest request, final UserService userService,
+    public PathInfo searchRequestedFile(LoginUserDetails loginUserDetails,
+                                        final UserService userService,
                                         String filename) throws AppException {
         if (filename == null) {
             logger.info("filename can not be null");
             throw new AppException(ErrorCodes.INVALID_QUERY_PARAMS);
         }
-        LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
         String loginUserName = loginUserDetails.getUsername();
         String[] filenameArr = filename.split("/");
         String filePath = appConfig.getFtpConfiguration().getFileSaveDir();
@@ -204,14 +197,13 @@ public class FileServiceV2 {
         return pathInfo;
     }
      **/
-    public PathInfo searchRequestedFileV2(HttpServletRequest request,
+    public PathInfo searchRequestedFileV2(LoginUserDetails loginUserDetails,
                                           String filename) throws AppException {
         if (filename == null) {
             logger.info("filename can not be null");
             throw new AppException(ErrorCodes.INVALID_QUERY_PARAMS);
         }
         HashMap<String, String> parsedFileStr = this.parseRequestedFileStr(filename);
-        LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
         String loginUserName = loginUserDetails.getUsername();
         String filePath = appConfig.getFtpConfiguration().getFileSaveDir();
         PathInfo pathInfo;
@@ -256,10 +248,9 @@ public class FileServiceV2 {
         return pathInfo;
     }
     /**
-    public void deleteRequestFile(HttpServletRequest request,
-                                         UserService userService,
-                                         RequestDeleteFile deleteFile) throws AppException {
-        LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
+    public void deleteRequestFile(LoginUserDetails loginUserDetails,
+                                    UserService userService,
+                                    RequestDeleteFile deleteFile) throws AppException {
         if (!loginUserDetails.getLogin()) {
             logger.info("Login required to deleteFile: {}", deleteFile);
             throw new AppException(ErrorCodes.UNAUTHORIZED_USER);
@@ -404,7 +395,7 @@ public class FileServiceV2 {
                                     subject, heading, FileViewer.ALL, deleteAccess);
         fileService.saveFileDetails(savedDataFilepath, fileDetail);
     }
-    public void deleteRequestFileV2(HttpServletRequest request,
+    public void deleteRequestFileV2(LoginUserDetails loginUserDetails,
                                     RequestDeleteFile deleteFile) throws AppException {
         HashMap<String, String> parsedFileStr = this.verifyDeleteRequestParameters(deleteFile);
         String deleteFileReq = deleteFile.getFilename();
@@ -426,7 +417,6 @@ public class FileServiceV2 {
             logger.info("deleteAccess of file is null: {}", fileDetail);
             throw new AppException(ErrorCodes.UNAUTHORIZED_USER);
         }
-        LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
         boolean isLoginUserAdmin = userService.isLoginUserAdmin(loginUserDetails.getUsername());
         if (deleteAccess == FileDeleteAccess.SELF) {
             this.deleteFileByUser(loginUserDetails, fileDetail);
@@ -447,33 +437,7 @@ public class FileServiceV2 {
         }
         this.addTextInFileDetailForDelete(loginUserDetails, fileDetail);
     }
-    public Object handleDefaultUrl(HttpServletRequest request) {
-        String requestedPath = StaticService.getPathUrl(request);
-        logger.info("Loading defaultMethod: {}, user: {}",
-                requestedPath, userService.getUserDataForLogging(request));
-
-        PathInfo pathInfo = this.getFileResponse(requestedPath);
-        Response.ResponseBuilder r;
-        if (pathInfo!= null && AppConstant.FILE.equals(pathInfo.getType())) {
-            File file = new File(pathInfo.getPath());
-            try {
-                InputStream inputStream = new FileInputStream(file);
-                r = Response.ok(inputStream);
-                if (pathInfo.getMediaType() == null) {
-                    logger.info("MediaType is not found (download now): {}", pathInfo);
-                    String responseHeader = "attachment; filename=" + pathInfo.getFileName();
-                    r.header(HttpHeaders.CONTENT_DISPOSITION, responseHeader);
-                } else {
-                    r.header(HttpHeaders.CONTENT_TYPE, pathInfo.getMediaType());
-                }
-                return r.build();
-            } catch (Exception e) {
-                logger.info("Error in loading file: {}", pathInfo);
-            }
-        }
-        return new CommonView(request, "page_not_found_404.ftl", appConfig);
-    }
-    private PathInfo getFileResponse(String filePath) {
+    public PathInfo getFileResponse(String filePath) {
         YamlFileParser yamlFileParser = new YamlFileParser();
         String filePathMapping = yamlFileParser.getFileNotFoundMapping(appConfig, filePath);
         if (StaticService.isValidString(filePathMapping)) {
@@ -568,7 +532,7 @@ public class FileServiceV2 {
         fileService.saveFileDetails(savedDataFilepath, fileDetail);
         return new ApiResponse(pathInfo);
     }
-    public ApiResponse uploadFileV2(HttpServletRequest request,
+    public ApiResponse uploadFileV2(LoginUserDetails loginUserDetails,
                                   InputStream uploadedInputStream, FormDataContentDisposition fileDetails,
                                   String subject, String heading) throws AppException {
         if (fileDetails == null) {
@@ -581,7 +545,6 @@ public class FileServiceV2 {
             throw new AppException(ErrorCodes.UPLOAD_FILE_FILENAME_REQUIRED);
         }
         fileName = StaticService.replaceComma(fileName);
-        LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
         String loginUsername = loginUserDetails.getUsername();
         String apiVersion = StaticService.getUploadFileApiVersion(appConfig);
         if (AppConstant.V1.equals(apiVersion)) {
