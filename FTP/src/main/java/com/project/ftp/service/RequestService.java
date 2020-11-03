@@ -3,6 +3,7 @@ package com.project.ftp.service;
 import com.project.ftp.config.AppConfig;
 import com.project.ftp.config.AppConstant;
 import com.project.ftp.event.EventTracking;
+import com.project.ftp.obj.LoginUserDetails;
 import com.project.ftp.obj.PathInfo;
 import com.project.ftp.session.SessionService;
 import com.project.ftp.view.CommonView;
@@ -35,6 +36,9 @@ public class RequestService {
         if (pathArr.length > 0) {
             path = pathArr[0];
         }
+        path = path + "/";
+        path = path.replaceAll("/+", "/");
+        path = StaticService.replaceLast("/", "", path);
         return path;
     }
     public static String getPathUrlV3(final ContainerRequestContext requestContext) {
@@ -53,7 +57,8 @@ public class RequestService {
         String requestedPath = this.getPathUrl(request);
         logger.info("Loading defaultMethod: {}, user: {}",
                 requestedPath, userService.getUserDataForLogging(request));
-        PathInfo pathInfo = fileServiceV2.getFileResponse(requestedPath);
+        LoginUserDetails userDetails = userService.getLoginUserDetails(request);
+        PathInfo pathInfo = fileServiceV2.getFileResponse(requestedPath, userDetails);
         Response.ResponseBuilder r;
         if (pathInfo!= null && AppConstant.FILE.equals(pathInfo.getType())) {
             File file = new File(pathInfo.getPath());

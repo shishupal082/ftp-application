@@ -28,7 +28,7 @@ public class AuthService {
 
     public void isLoginUserAdmin(HttpServletRequest request) throws AppException {
         LoginUserDetails userDetails = userService.getLoginUserDetails(request);
-        if (!userService.isLoginUserAdmin(userDetails.getUsername())) {
+        if (!userService.isLoginUserAdmin(userDetails)) {
             logger.info("UnAuthorised user trying to access admin data: {}", userDetails);
             throw new AppException(ErrorCodes.UNAUTHORIZED_USER);
         }
@@ -36,7 +36,7 @@ public class AuthService {
 
     public void isLoginUserDev(HttpServletRequest request) throws AppException {
         LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
-        if (!userService.isLoginUserDev(loginUserDetails.getUsername())) {
+        if (!userService.isLoginUserDev(loginUserDetails)) {
             logger.info("UnAuthorised user: not dev user, {}", loginUserDetails);
             throw new AppException(ErrorCodes.UNAUTHORIZED_USER);
         }

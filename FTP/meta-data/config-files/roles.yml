@@ -1,9 +1,14 @@
 roleAccess:
   admin:
     - Admin
+    - adminAndDev
   dev:
     - U1
+    - adminAndDev
 
-apiRolesMapping:
+roleAccessMapping:
   isAdminUser: admin
   isDevUser: dev
+  isAdminOrDevUser: (admin|dev)
+  isAdminAndDevUser: (admin&dev)
+#  isLogin: notRequiredAnyRoleAccess

@@ -28,11 +28,20 @@ public class UserService {
         this.userInterface = userInterface;
         this.inputValidate = new InputValidate();
     }
-    public boolean isLoginUserAdmin(String username)  {
-        return appConfig.getAppToBridge().isAuthorisedApi(AppConstant.IS_ADMIN_USER, username);
+    public boolean isAuthorised(LoginUserDetails loginUserDetails, String roleAccess)  {
+        String username = null;
+        boolean isLogin = false;
+        if (loginUserDetails != null) {
+            username = loginUserDetails.getUsername();
+            isLogin = loginUserDetails.getLogin();
+        }
+        return appConfig.getAppToBridge().isAuthorisedApi(roleAccess, username, isLogin);
     }
-    public boolean isLoginUserDev(String username)  {
-        return appConfig.getAppToBridge().isAuthorisedApi(AppConstant.IS_DEV_USER, username);
+    public boolean isLoginUserAdmin(LoginUserDetails loginUserDetails)  {
+        return this.isAuthorised(loginUserDetails, AppConstant.IS_ADMIN_USER);
+    }
+    public boolean isLoginUserDev(LoginUserDetails loginUserDetails)  {
+        return this.isAuthorised(loginUserDetails, AppConstant.IS_ADMIN_USER);
     }
     public Users getAllUser() throws AppException {
         Users users = userInterface.getAllUsers();
@@ -124,6 +133,21 @@ public class UserService {
             loginUserDetails.setLogin(this.isUserLogin(loginUserName));
         }
         return loginUserDetails;
+    }
+    public HashMap<String, Object> getLoginUserDetailsV2(HttpServletRequest request) throws AppException {
+        LoginUserDetails loginUserDetails = this.getLoginUserDetails(request);
+        HashMap<String, Object> result = new HashMap<>();
+        if (loginUserDetails.getLogin()) {
+            String loginUsername = loginUserDetails.getUsername();
+            boolean isAdmin = this.isLoginUserAdmin(loginUserDetails);
+            result.put("isAdmin", isAdmin);
+            result.put("username", loginUsername);
+            result.put("isLogin", loginUserDetails.getLogin());
+            result.put("displayName", this.getUserDisplayName(loginUsername));
+        } else {
+            throw new AppException(ErrorCodes.UNAUTHORIZED_USER);
+        }
+        return result;
     }
     private MysqlUser isUserBlocked(String username) throws AppException {
         MysqlUser user = this.getUserByName(username);

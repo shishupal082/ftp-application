@@ -9,7 +9,7 @@ import java.util.HashMap;
 
 public class Roles {
     private HashMap<String, ArrayList<String>> roleAccess;
-    private HashMap<String, String> apiRolesMapping;
+    private HashMap<String, String> roleAccessMapping;
 
     public HashMap<String, ArrayList<String>> getRoleAccess() {
         return roleAccess;
@@ -19,19 +19,19 @@ public class Roles {
         this.roleAccess = roleAccess;
     }
 
-    public HashMap<String, String> getApiRolesMapping() {
-        return apiRolesMapping;
+    public HashMap<String, String> getRoleAccessMapping() {
+        return roleAccessMapping;
     }
 
-    public void setApiRolesMapping(HashMap<String, String> apiRolesMapping) {
-        this.apiRolesMapping = apiRolesMapping;
+    public void setRoleAccessMapping(HashMap<String, String> roleAccessMapping) {
+        this.roleAccessMapping = roleAccessMapping;
     }
 
     @Override
     public String toString() {
         return "Roles{" +
                 "roleAccess=" + roleAccess +
-                ", apiRolesMapping=" + apiRolesMapping +
+                ", roleAccessMapping=" + roleAccessMapping +
                 '}';
     }
 }

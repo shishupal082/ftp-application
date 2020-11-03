@@ -6,13 +6,13 @@ import java.util.HashMap;
 @JsonIgnoreProperties(ignoreUnknown = true)
 
 public class PageConfig404 {
-    private HashMap<String, String> pageMapping404;
+    private HashMap<String, Page404Entry> pageMapping404;
 
-    public HashMap<String, String> getPageMapping404() {
+    public HashMap<String, Page404Entry> getPageMapping404() {
         return pageMapping404;
     }
 
-    public void setPageMapping404(HashMap<String, String> pageMapping404) {
+    public void setPageMapping404(HashMap<String, Page404Entry> pageMapping404) {
         this.pageMapping404 = pageMapping404;
     }
 

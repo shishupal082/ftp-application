@@ -1,29 +1,36 @@
 pageMapping404:
-  /account: "/app/account/indexv2.html"
-  /account/: "/app/account/indexv2.html"
-  /account/journal: "/app/account/indexv2.html"
-  /account/journal/: "/app/account/indexv2.html"
-  /account/journalbydate: "/app/account/indexv2.html"
-  /account/journalbydate/: "/app/account/indexv2.html"
-  /account/ledger: "/app/account/indexv2.html"
-  /account/ledger/: "/app/account/indexv2.html"
-  /account/trialbalance: "/app/account/indexv2.html"
-  /account/trialbalance/: "/app/account/indexv2.html"
-  /account/currentbal: "/app/account/indexv2.html"
-  /account/currentbal/: "/app/account/indexv2.html"
-  /account/currentbalbydate: "/app/account/indexv2.html"
-  /account/currentbalbydate/: "/app/account/indexv2.html"
-  /account/summary: "/app/account/indexv2.html"
-  /account/summary/: "/app/account/indexv2.html"
-  /account/summarybydate: "/app/account/indexv2.html"
-  /account/summarybydate/: "/app/account/indexv2.html"
-  /account/summarybycalander: "/app/account/indexv2.html"
-  /account/summarybycalander/: "/app/account/indexv2.html"
-  /account/customisedebit: "/app/account/indexv2.html"
-  /account/customisedebit/: "/app/account/indexv2.html"
-  /account/customisecredit: "/app/account/indexv2.html"
-  /account/customisecredit/: "/app/account/indexv2.html"
-  /account/custompage: "/app/account/indexv2.html"
-  /account/custompage/: "/app/account/indexv2.html"
-  /account/profitandloss: "/app/account/indexv2.html"
-  /account/profitandloss/: "/app/account/indexv2.html"
+  /account:
+    fileName: "/app/account/indexv2.html"
+  /account/journal:
+    fileName: "/app/account/indexv2.html"
+  /account/journalbydate:
+    fileName: "/app/account/indexv2.html"
+  /account/ledger:
+    fileName: "/app/account/indexv2.html"
+  /account/trialbalance:
+    fileName: "/app/account/indexv2.html"
+  /account/currentbal:
+    fileName: "/app/account/indexv2.html"
+  /account/currentbalbydate:
+    fileName: "/app/account/indexv2.html"
+  /account/currentbalbydatev2:
+    fileName: "/app/account/indexv2.html"
+  /account/summary:
+    fileName: "/app/account/indexv2.html"
+  /account/summarybydate:
+    fileName: "/app/account/indexv2.html"
+  /account/summarybycalander:
+    fileName: "/app/account/indexv2.html"
+  /account/customisedebit:
+    fileName: "/app/account/indexv2.html"
+  /account/customisecredit:
+    fileName: "/app/account/indexv2.html"
+  /account/custompage:
+    fileName: "/app/account/indexv2.html"
+  /account/profitandloss:
+    fileName: "/app/account/indexv2.html"
+
+  /data-path:
+    rollAccess: "isLogin"
+    fileName: "/data-path-csv-or-json"
+

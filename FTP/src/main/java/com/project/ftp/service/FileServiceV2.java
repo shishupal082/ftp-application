@@ -116,7 +116,7 @@ public class FileServiceV2 {
         String dir = appConfig.getFtpConfiguration().getFileSaveDir();
         String publicDir = dir+AppConstant.PUBLIC+"/";
         String loginUserName = loginUserDetails.getUsername();
-        boolean isLoginUserAdmin = userService.isLoginUserAdmin(loginUserName);
+        boolean isLoginUserAdmin = userService.isLoginUserAdmin(loginUserDetails);
         if (isLoginUserAdmin) {
             scanResults.add(fileService.scanDirectory(dir, dir, true));
         } else {
@@ -233,7 +233,7 @@ public class FileServiceV2 {
                     throw new AppException(ErrorCodes.UNAUTHORIZED_USER);
                 }
                 if (!AppConstant.PUBLIC.equals(fileUsername)) {
-                    if (!userService.isLoginUserAdmin(loginUserName) && !loginUserName.equals(fileUsername)) {
+                    if (!userService.isLoginUserAdmin(loginUserDetails) && !loginUserName.equals(fileUsername)) {
                         logger.info("Unauthorised access loginUserName: {}, filename: {}",
                                 loginUserName, filename);
                         throw new AppException(ErrorCodes.UNAUTHORIZED_USER);
@@ -417,7 +417,7 @@ public class FileServiceV2 {
             logger.info("deleteAccess of file is null: {}", fileDetail);
             throw new AppException(ErrorCodes.UNAUTHORIZED_USER);
         }
-        boolean isLoginUserAdmin = userService.isLoginUserAdmin(loginUserDetails.getUsername());
+        boolean isLoginUserAdmin = userService.isLoginUserAdmin(loginUserDetails);
         if (deleteAccess == FileDeleteAccess.SELF) {
             this.deleteFileByUser(loginUserDetails, fileDetail);
         } else if (deleteAccess == FileDeleteAccess.ADMIN) {
@@ -437,9 +437,9 @@ public class FileServiceV2 {
         }
         this.addTextInFileDetailForDelete(loginUserDetails, fileDetail);
     }
-    public PathInfo getFileResponse(String filePath) {
+    public PathInfo getFileResponse(String filePath, LoginUserDetails userDetails) {
         YamlFileParser yamlFileParser = new YamlFileParser();
-        String filePathMapping = yamlFileParser.getFileNotFoundMapping(appConfig, filePath);
+        String filePathMapping = yamlFileParser.getFileNotFoundMapping(appConfig, userService, filePath, userDetails);
         if (StaticService.isValidString(filePathMapping)) {
             filePath = filePathMapping;
         }

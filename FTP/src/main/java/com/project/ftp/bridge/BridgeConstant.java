@@ -3,6 +3,7 @@ package com.project.ftp.bridge;
 public class BridgeConstant {
     public static final String SUCCESS = "SUCCESS";
     public static final String FAILURE = "FAILURE";
+    public static final String IS_LOGIN = "isLogin";
     public static final String TRUE = "true";
     public static final String FALSE = "false";
     public static final String AND = "&";

@@ -4,5 +4,5 @@ import com.project.ftp.mysql.MysqlUser;
 
 public interface AppToBridgeInterface {
     void sendCreatePasswordOtpEmail(MysqlUser user);
-    boolean isAuthorisedApi(String apiName, String userName);
+    boolean isAuthorisedApi(String apiName, String userName, boolean isLogin);
 }

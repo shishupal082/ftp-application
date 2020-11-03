@@ -9,8 +9,8 @@ public class RolesResource {
         this.rolesService = rolesService;
 //        this.rolesTracking = new RolesTracking();
     }
-    public boolean isApiAuthorised(String apiName, String userName) {
-        return rolesService.isApiAuthorised(apiName, userName);
+    public boolean isApiAuthorised(String apiName, String userName, boolean isLogin) {
+        return rolesService.isApiAuthorised(apiName, userName, isLogin);
     }
     // /api/get/roles/config
     public Object getRolesConfig() {

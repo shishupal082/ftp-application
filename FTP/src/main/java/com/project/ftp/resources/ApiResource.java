@@ -19,6 +19,7 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import java.io.InputStream;
+import java.util.HashMap;
 
 @Path("/api")
 @Produces(MediaType.APPLICATION_JSON)
@@ -273,22 +274,27 @@ public class ApiResource {
         logger.info("registerUser : Out: {}", response);
         return response;
     }
-//    @GET
-//    @Path("/get_login_user_details")
-//    @UnitOfWork
-//    public ApiResponse getLoginUserDetails(@Context HttpServletRequest request) {
-//        logger.info("getLoginUserDetails : In, user: {}",
-//                userService.getUserDataForLogging(request));
-//        LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
-//        ApiResponse response;
-//        if (loginUserDetails.getLogin()) {
-//            response = new ApiResponse(loginUserDetails);
-//        } else {
-//            response = new ApiResponse(ErrorCodes.UNAUTHORIZED_USER);
-//        }
-//        logger.info("getLoginUserDetails : Out, response: {}", response);
-//        return response;
-//    }
+    /*
+    * It is required for react application to display login / logout link
+    * */
+    @GET
+    @Path("/get_login_user_details")
+    @UnitOfWork
+    public ApiResponse getLoginUserDetails(@Context HttpServletRequest request) {
+        logger.info("getLoginUserDetails : In");
+        ApiResponse response;
+        try {
+            HashMap<String, Object> result = userService.getLoginUserDetailsV2(request);
+            response = new ApiResponse(result);
+            eventTracking.trackSuccessEvent(request, EventName.GET_LOGIN_USER_DETAILS);
+        } catch (AppException ae) {
+            logger.info("Error in getLoginUserDetails: {}", ae.getErrorCode().getErrorCode());
+            response = new ApiResponse(ae.getErrorCode());
+            eventTracking.trackFailureEvent(request, EventName.GET_LOGIN_USER_DETAILS, ae.getErrorCode());
+        }
+        logger.info("getLoginUserDetails : Out, response: {}", response);
+        return response;
+    }
     @POST
     @Path("/change_password")
     @UnitOfWork

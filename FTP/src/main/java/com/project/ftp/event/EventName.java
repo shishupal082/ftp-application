@@ -17,6 +17,7 @@ public enum EventName {
     APPLICATION_START("application_start"),
     UN_HANDLE_EXCEPTION("un_handle_exception"),
     EXPIRED_USER_SESSION("expired_user_session"),
+    GET_LOGIN_USER_DETAILS("get_login_user_details"),
     GET_USERS("get_users"),
     GET_APP_CONFIG("get_app_config"),
     GET_SESSION_DATA("get_session_data"),

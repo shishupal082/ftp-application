@@ -765,6 +765,13 @@ Remove below config data from env_config.yaml (6.0.0)
     - adminUsersName
     - devUsersName
 
+file_not_found_config.yml file signature changes from
+    - HashMap<String, String> to HashMap<String, Page404Entry>
+
+Page404Entry = Object (key roleAccess and fileName)
+
+Role implemented
+    - isAdminUser, isDevUser, isLogin
 
 Future releases
 -------------------

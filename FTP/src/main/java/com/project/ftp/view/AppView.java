@@ -38,7 +38,7 @@ public class AppView extends View {
         this.pageName = pageName;
         this.userName = loginUserDetails.getUsername();
         this.isLogin = Boolean.toString(loginUserDetails.getLogin());
-        this.isLoginUserAdmin = Boolean.toString(userService.isLoginUserAdmin(this.userName));
+        this.isLoginUserAdmin = Boolean.toString(userService.isLoginUserAdmin(loginUserDetails));
         this.isGuestEnable = Boolean.toString(appConfig.getFtpConfiguration().isGuestEnable());
         this.isForgotPasswordEnable = Boolean.toString(uiBackendConfig.isForgotPasswordEnable());
         this.displayCreatePasswordLink = Boolean.toString(ftlConfig.isDisplayCreatePasswordLink());

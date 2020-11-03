@@ -1,5 +1,6 @@
 package com.project.ftp;
 
+import com.project.ftp.bridge.BridgeConstant;
 import com.project.ftp.bridge.config.BridgeConfig;
 import com.project.ftp.bridge.roles.obj.Roles;
 import com.project.ftp.bridge.roles.service.ExpressionEvaluator;
@@ -55,10 +56,15 @@ public class TestRoles {
         Assert.assertNull(rolesFileParser.getRolesFileData("invalid-file-name"));
         Roles roles = rolesFileParser.getRolesFileData(rolesFilePath);
         Assert.assertNotNull(roles);
+        Assert.assertNotNull(roles.getRoleAccess());
+        Assert.assertNotNull(roles.getRoleAccessMapping());
     }
     @Test
     public void testRoleService() {
         RolesService rolesService;
+        rolesService = new RolesService(null, "invalid-roles-file-path");
+        Assert.assertNull(rolesService.getRolesConfig());
+
         BridgeConfig bridgeConfig = new BridgeConfig(null, null);
         rolesService = new RolesService(bridgeConfig, "invalid-roles-file-path");
         Assert.assertNull(rolesService.getRolesConfig());
@@ -68,9 +74,16 @@ public class TestRoles {
         Assert.assertNull(rolesService.getRolesAccessByRoleId("admin"));
         Assert.assertNull(rolesService.getRolesByApiName(null));
         Assert.assertNull(rolesService.getRolesByApiName("getPublicFiles"));
-        Assert.assertFalse(rolesService.isApiAuthorised(null, null));
-        Assert.assertFalse(rolesService.isApiAuthorised("apiName", null));
-        Assert.assertFalse(rolesService.isApiAuthorised(null, "userName"));
+        Assert.assertFalse(rolesService.isApiAuthorised(null, null, false));
+        Assert.assertFalse(rolesService.isApiAuthorised(null, null, true));
+        Assert.assertFalse(rolesService.isApiAuthorised("apiName", null, false));
+        Assert.assertFalse(rolesService.isApiAuthorised("apiName", null, true));
+        Assert.assertFalse(rolesService.isApiAuthorised(null, "userName", false));
+        Assert.assertFalse(rolesService.isApiAuthorised(null, "userName", true));
+        Assert.assertFalse(rolesService.isApiAuthorised(BridgeConstant.IS_LOGIN, null, false));
+        Assert.assertFalse(rolesService.isApiAuthorised(BridgeConstant.IS_LOGIN, null, true));
+        Assert.assertFalse(rolesService.isApiAuthorised(BridgeConstant.IS_LOGIN, "username", false));
+        Assert.assertTrue(rolesService.isApiAuthorised(BridgeConstant.IS_LOGIN, "username", true));
 
         rolesService = new RolesService(bridgeConfig, rolesFilePath);
         Assert.assertNotNull(rolesService.getRolesConfig());
@@ -79,10 +92,28 @@ public class TestRoles {
         Assert.assertNotNull(rolesService.getRolesAccessByRoleId("admin"));
         Assert.assertNull(rolesService.getRolesAccessByRoleId("adminNotFound"));
         Assert.assertNotNull(rolesService.getRolesByApiName("isAdminUser"));
-        Assert.assertTrue(rolesService.isApiAuthorised("isAdminUser", "Admin"));
-        Assert.assertFalse(rolesService.isApiAuthorised("isAdminUser", "U1"));
-        Assert.assertFalse(rolesService.isApiAuthorised("isAdminUser", "userNotFound"));
-        Assert.assertTrue(rolesService.isApiAuthorised("isDevUser", "U1"));
-        Assert.assertFalse(rolesService.isApiAuthorised("isDevUserNotFound", "U1"));
+        Assert.assertTrue(rolesService.isApiAuthorised("isAdminUser", "Admin", false));
+        Assert.assertTrue(rolesService.isApiAuthorised("isAdminUser", "Admin", true));
+        Assert.assertFalse(rolesService.isApiAuthorised("isAdminUser", "U1", false));
+        Assert.assertFalse(rolesService.isApiAuthorised("isAdminUser", "U1", true));
+        Assert.assertFalse(rolesService.isApiAuthorised("isAdminUser", "userNotFound", false));
+        Assert.assertFalse(rolesService.isApiAuthorised("isAdminUser", "userNotFound", true));
+        Assert.assertTrue(rolesService.isApiAuthorised("isDevUser", "U1", false));
+        Assert.assertTrue(rolesService.isApiAuthorised("isDevUser", "U1", true));
+
+        Assert.assertFalse(rolesService.isApiAuthorised(BridgeConstant.IS_LOGIN, "", false));
+        Assert.assertFalse(rolesService.isApiAuthorised(BridgeConstant.IS_LOGIN, "", true));
+        Assert.assertFalse(rolesService.isApiAuthorised(BridgeConstant.IS_LOGIN, null, false));
+        Assert.assertFalse(rolesService.isApiAuthorised(BridgeConstant.IS_LOGIN, null, true));
+        Assert.assertFalse(rolesService.isApiAuthorised(BridgeConstant.IS_LOGIN, "U1", false));
+        Assert.assertTrue(rolesService.isApiAuthorised(BridgeConstant.IS_LOGIN, "U1", true));
+        Assert.assertTrue(rolesService.isApiAuthorised(BridgeConstant.IS_LOGIN, "InvalidUsername", true));
+
+        Assert.assertFalse(rolesService.isApiAuthorised("isDevUserNotFound", "U1", false));
+        Assert.assertFalse(rolesService.isApiAuthorised("isDevUserNotFound", "U1", true));
+
+        Assert.assertTrue(rolesService.isApiAuthorised("isAdminOrDevUser", "U1", true));
+        Assert.assertTrue(rolesService.isApiAuthorised("isAdminOrDevUser", "Admin", true));
+        Assert.assertTrue(rolesService.isApiAuthorised("isAdminAndDevUser", "adminAndDev", true));
     }
 }

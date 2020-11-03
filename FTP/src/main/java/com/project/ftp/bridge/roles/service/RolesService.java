@@ -15,7 +15,9 @@ public class RolesService {
     private final BridgeConfig bridgeConfig;
     public RolesService(BridgeConfig bridgeConfig, String rolesConfigPath) {
         this.bridgeConfig = bridgeConfig;
-        this.bridgeConfig.setRoles(this.getRolesConfigByConfigPath(rolesConfigPath));
+        if (bridgeConfig != null) {
+            this.bridgeConfig.setRoles(this.getRolesConfigByConfigPath(rolesConfigPath));
+        }
     }
     public Roles getRolesConfigByConfigPath(String rolesConfigPath) {
         RolesFileParser rolesFileParser = new RolesFileParser();
@@ -39,7 +41,7 @@ public class RolesService {
     public HashMap<String, String> getApiRolesMapping() {
         Roles roles = this.getRolesConfig();
         if (roles != null) {
-            return roles.getApiRolesMapping();
+            return roles.getRoleAccessMapping();
         }
         return null;
     }
@@ -75,17 +77,20 @@ public class RolesService {
         }
         return null;
     }
-    public boolean isApiAuthorised(String apiName, String userName) {
-        logger.info("isApiAuthorised check request:{},{}", apiName, userName);
-        if (BridgeStaticService.isInValidString(apiName)) {
-            logger.info("Invalid apiName:{}", apiName);
+    public boolean isApiAuthorised(String roleName, String userName, boolean isLogin) {
+        logger.info("isApiAuthorised check request:"+roleName+",{},{}", userName, isLogin);
+        if (BridgeStaticService.isInValidString(roleName)) {
+            logger.info("Invalid apiName:{}", roleName);
             return false;
         }
         if (BridgeStaticService.isInValidString(userName)) {
             logger.info("Invalid userName:{}", userName);
             return false;
         }
-        String apiRoles = this.getRolesByApiName(apiName);
+        if (BridgeConstant.IS_LOGIN.equals(roleName)) {
+            return isLogin;
+        }
+        String apiRoles = this.getRolesByApiName(roleName);
         boolean result = this.apiRolesIncludeUser(apiRoles, userName);
         logger.info("isApiAuthorised check response:{}", result);
         return result;
