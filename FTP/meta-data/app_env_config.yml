@@ -98,6 +98,7 @@ ftlConfig:
   keywords: "FTP Application, File upload, PDF, JPEG, JPG, PNG"
   author: "FTP Application Author"
   title: "FTP Application"
+  loginRedirectUrl: "/dashboard"
   gaTrackingId: "UA-177553408-1" # for development
   gaTrackingEnable: true
   displayCreatePasswordLink: false

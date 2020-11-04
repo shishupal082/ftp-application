@@ -146,14 +146,14 @@ public class FileService {
         dirStr = StaticService.replaceLast("/", "", dirStr);
         return dirStr;
     }
-    public Boolean isDirectory(String path) {
+    public boolean isDirectory(String path) {
         if (path == null) {
             return false;
         }
         File file = new File(path);
         return file.isDirectory();
     }
-    public Boolean isFile(String path) {
+    public boolean isFile(String path) {
         if (path == null) {
             return false;
         }

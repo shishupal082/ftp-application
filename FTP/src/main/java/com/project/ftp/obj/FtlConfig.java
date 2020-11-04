@@ -11,6 +11,7 @@ public class FtlConfig {
     private String title;
     private String headingJson;
     private String uploadFileInstruction;
+    private String loginRedirectUrl;
     private String gaTrackingId;
     private String forgotPasswordPageInstruction;
     private String createPasswordOtpInstruction;
@@ -50,6 +51,14 @@ public class FtlConfig {
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    public String getLoginRedirectUrl() {
+        return loginRedirectUrl;
+    }
+
+    public void setLoginRedirectUrl(String loginRedirectUrl) {
+        this.loginRedirectUrl = loginRedirectUrl;
     }
 
     public String getHeadingJson() {
@@ -129,6 +138,7 @@ public class FtlConfig {
                 ", title='" + title + '\'' +
                 ", headingJson='" + headingJson + '\'' +
                 ", uploadFileInstruction='" + uploadFileInstruction + '\'' +
+                ", loginRedirectUrl='" + loginRedirectUrl + '\'' +
                 ", gaTrackingId='" + gaTrackingId + '\'' +
                 ", forgotPasswordPageInstruction='" + forgotPasswordPageInstruction + '\'' +
                 ", createPasswordOtpInstruction='" + createPasswordOtpInstruction + '\'' +

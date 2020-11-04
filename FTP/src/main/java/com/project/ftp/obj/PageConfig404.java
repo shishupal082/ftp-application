@@ -5,6 +5,23 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.util.HashMap;
 @JsonIgnoreProperties(ignoreUnknown = true)
 
+/*
+- if requested path is file then only we have to process
+- if directory or not file, no processing of 404 config file
+
+if file
+    - if roll access is valid string
+        - authorised
+            - return file
+        - not authorised
+            - 404
+     - else
+        - return file
+if not file
+    - process as it is
+
+* */
+
 public class PageConfig404 {
     private HashMap<String, Page404Entry> pageMapping404;
 

@@ -1,4 +1,6 @@
 pageMapping404:
+  default:
+    fileName: "/app/account/indexv2.html"
   /account:
     fileName: "/app/account/indexv2.html"
   /account/journal:

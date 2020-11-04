@@ -36,10 +36,7 @@ public class RequestService {
         if (pathArr.length > 0) {
             path = pathArr[0];
         }
-        path = path + "/";
-        path = path.replaceAll("/+", "/");
-        path = StaticService.replaceLast("/", "", path);
-        return path;
+        return StaticService.getProperDirString(path);
     }
     public static String getPathUrlV3(final ContainerRequestContext requestContext) {
 //        String url = requestContext.getUriInfo().getAbsolutePath().toString();

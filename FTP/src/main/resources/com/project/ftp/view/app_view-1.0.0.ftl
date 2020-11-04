@@ -30,6 +30,8 @@
            value="page=${pageName},app_version=${appVersion},is_login=${isLogin},username=${userName},user_display_name=${userDisplayName},is_login_user_admin=${isLoginUserAdmin},upload_file_api_version=${uploadFileApiVersion},is_guest_enable=${isGuestEnable},is_forgot_password_enable=${isForgotPasswordEnable},display_create_password_link=${displayCreatePasswordLink}"/>
     <input type="hidden" style="display: none;" name="headingJson" id="headingJson"
             value="<#if ftlConfig.headingJson??>${ftlConfig.headingJson}<#else></#if>"/>
+    <input type="hidden" style="display: none;" name="loginRedirectUrl" id="loginRedirectUrl"
+           value="<#if ftlConfig.loginRedirectUrl??>${ftlConfig.loginRedirectUrl}<#else></#if>"/>
     <input type="hidden" style="display: none;" name="uploadFileInstruction" id="uploadFileInstruction"
             value="<#if ftlConfig.uploadFileInstruction??>${ftlConfig.uploadFileInstruction}<#else></#if>"/>
     <input type="hidden" style="display: none;" name="forgotPasswordPageInstruction" id="forgotPasswordPageInstruction"
@@ -54,6 +56,7 @@ GLOBAL.gtag = null;
 </#if>
 GLOBAL.currentPageData = document.getElementById("pageData").value;
 GLOBAL.headingJson = document.getElementById("headingJson").value;
+GLOBAL.loginRedirectUrl = document.getElementById("loginRedirectUrl").value;
 GLOBAL.uploadFileInstruction = document.getElementById("uploadFileInstruction").value;
 GLOBAL.forgotPasswordPageInstruction = document.getElementById("forgotPasswordPageInstruction").value;
 GLOBAL.createPasswordOtpInstruction = document.getElementById("createPasswordOtpInstruction").value;

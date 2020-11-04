@@ -6,6 +6,7 @@ import com.project.ftp.bridge.roles.obj.Roles;
 import com.project.ftp.bridge.roles.service.ExpressionEvaluator;
 import com.project.ftp.bridge.roles.service.RolesFileParser;
 import com.project.ftp.bridge.roles.service.RolesService;
+import com.project.ftp.service.ConfigService;
 import com.project.ftp.service.StaticService;
 import org.junit.Assert;
 import org.junit.Test;
@@ -115,5 +116,39 @@ public class TestRoles {
         Assert.assertTrue(rolesService.isApiAuthorised("isAdminOrDevUser", "U1", true));
         Assert.assertTrue(rolesService.isApiAuthorised("isAdminOrDevUser", "Admin", true));
         Assert.assertTrue(rolesService.isApiAuthorised("isAdminAndDevUser", "adminAndDev", true));
+    }
+    @Test
+    public void testConfigService() {
+        ConfigService configService = new ConfigService(null);
+        String sys = "F:/ftp-app/ftp-app-6.0.0-stable";
+        String pub = "../../..";
+        String pubPost = "D:/workspace/project";
+        String calculatedStr = configService.getValidPublicDir(sys, pub, pubPost);
+        Assert.assertEquals("D:/workspace/project", calculatedStr);
+
+        sys = "D:\\workspace\\ftp-application\\FTP";
+        pub = "../..";
+        pubPost = "/project";
+        calculatedStr = configService.getValidPublicDir(sys, pub, pubPost);
+        Assert.assertEquals("D:/workspace/project", calculatedStr);
+
+        sys = "/D:/workspace/ftp-application/FTP";
+        pub = "../..";
+        pubPost = "/project";
+        calculatedStr = configService.getValidPublicDir(sys, pub, pubPost);
+        Assert.assertEquals("/D:/workspace/project", calculatedStr);
+
+
+        sys = "D:/workspace/ftp-application/FTP";
+        pub = "../../../..";
+        pubPost = "/project";
+        calculatedStr = configService.getValidPublicDir(sys, pub, pubPost);
+        Assert.assertEquals("/project", calculatedStr);
+
+        sys = "D:/workspace/ftp-application/FTP";
+        pub = "../../../../../";
+        pubPost = "/project";
+        calculatedStr = configService.getValidPublicDir(sys, pub, pubPost);
+        Assert.assertEquals("/project", calculatedStr);
     }
 }

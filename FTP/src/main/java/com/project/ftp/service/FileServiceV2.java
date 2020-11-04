@@ -437,22 +437,62 @@ public class FileServiceV2 {
         }
         this.addTextInFileDetailForDelete(loginUserDetails, fileDetail);
     }
-    public PathInfo getFileResponse(String filePath, LoginUserDetails userDetails) {
-        YamlFileParser yamlFileParser = new YamlFileParser();
-        String filePathMapping = yamlFileParser.getFileNotFoundMapping(appConfig, userService, filePath, userDetails);
-        if (StaticService.isValidString(filePathMapping)) {
-            filePath = filePathMapping;
+    private Page404Entry getFileNotFoundMapping(PageConfig404 pageConfig404, String requestPath) {
+        String publicDir = appConfig.getPublicDir();
+        if (publicDir == null) {
+            return  null;
         }
+        Page404Entry page404Entry;
+        if (pageConfig404 != null) {
+            HashMap<String, Page404Entry> pageMapping = pageConfig404.getPageMapping404();
+            if (pageMapping != null) {
+                page404Entry = pageMapping.get(requestPath);
+                if (page404Entry != null && fileService.isFile(publicDir + page404Entry.getFileName())) {
+                    return page404Entry;
+                }
+            }
+        }
+        return null;
+    }
+    public PathInfo getFileResponse(String filePath, LoginUserDetails userDetails) {
         String publicDir = appConfig.getPublicDir();
         if (publicDir == null) {
             return null;
         }
-        filePath = publicDir + filePath;
-        PathInfo pathInfo = fileService.getPathInfo(filePath);
-        if (AppConstant.FOLDER.equals(pathInfo.getType())) {
-            pathInfo = fileService.searchIndexHtmlInFolder(pathInfo);
+        YamlFileParser yamlFileParser = new YamlFileParser();
+        PageConfig404 pageConfig404 = yamlFileParser.getPageConfig404(appConfig);
+        Page404Entry page404Entry;
+        if (pageConfig404 != null) {
+            page404Entry = this.getFileNotFoundMapping(pageConfig404, filePath);
+            if (page404Entry != null) {
+                String rollAccess = page404Entry.getRoleAccess();
+                if (StaticService.isValidString(rollAccess)) {
+                    if (userService.isAuthorised(userDetails, rollAccess)) {
+                        filePath = page404Entry.getFileName();
+                    } else {
+                        logger.info("unAuthorised page404Entry: {}", page404Entry);
+                        filePath = null;
+                    }
+                } else {
+                    filePath = page404Entry.getFileName();
+                }
+            }
         }
-        logger.info("PathDetails: {}", pathInfo);
+        PathInfo pathInfo = null;
+        if (StaticService.isValidString(filePath)) {
+            pathInfo = fileService.getPathInfo(publicDir + filePath);
+            if (AppConstant.FOLDER.equals(pathInfo.getType())) {
+                pathInfo = fileService.searchIndexHtmlInFolder(pathInfo);
+            }
+        }
+        if (pathInfo == null || !AppConstant.FILE.equals(pathInfo.getType())) {
+            logger.info("pathInfo is not found: searching default404 page");
+            page404Entry = this.getFileNotFoundMapping(pageConfig404, AppConstant.DEFAULT);
+            if (page404Entry != null) {
+                pathInfo = fileService.getPathInfo(publicDir + page404Entry.getFileName());
+            }
+        }
+        logger.info("final pathInfo: {}", pathInfo);
         return pathInfo;
     }
     public PathInfo doUpload(InputStream uploadedInputStream, String fileName) throws AppException {

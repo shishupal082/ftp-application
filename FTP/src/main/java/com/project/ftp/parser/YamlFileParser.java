@@ -55,54 +55,37 @@ public class YamlFileParser {
         }
         return false;
     }
-
-    public String getFileNotFoundMapping(AppConfig appConfig, UserService userService,
-                                         String requestPath, LoginUserDetails userDetails) {
+    private String get404Filename(UserService userService, LoginUserDetails userDetails, Page404Entry page404Entry) {
+        String filename = null;
+        if (page404Entry != null) {
+            filename = page404Entry.getFileName();
+            if (filename != null) {
+                String roleAccess = page404Entry.getRoleAccess();
+                if (roleAccess != null) {
+                    if (!userService.isAuthorised(userDetails, roleAccess)) {
+                        filename = "null";
+                        logger.info("unAuthorised page404Entry: {}", page404Entry);
+                    }
+                }
+            }
+        }
+        return filename;
+    }
+    public PageConfig404 getPageConfig404(AppConfig appConfig) {
         FtpConfiguration ftpConfiguration = appConfig.getFtpConfiguration();
         String filePath = ftpConfiguration.getConfigDataFilePath();
-        if (StaticService.isInValidString(requestPath) && StaticService.isInValidString(filePath)) {
+        if (StaticService.isInValidString(filePath)) {
             return null;
         }
         filePath += AppConstant.FILE_NOT_FOUND_MAPPING;
-        String newFilePath = null;
-        ObjectMapper objectMapper = new ObjectMapper(new YAMLFactory());
         PageConfig404 pageConfig404 = null;
+        ObjectMapper objectMapper = new ObjectMapper(new YAMLFactory());
         try {
             pageConfig404 = objectMapper.readValue(new File(filePath), PageConfig404.class);
         } catch (IOException ioe) {
             logger.info("IOE : for file : {}", filePath);
         }
-        if (pageConfig404 != null) {
-            HashMap<String, Page404Entry> pageMapping = pageConfig404.getPageMapping404();
-            if (pageMapping != null) {
-                Page404Entry page404Entry = pageMapping.get(requestPath);
-                if (page404Entry != null) {
-                    String newFilePath2 = page404Entry.getFileName();
-                    if (newFilePath2 != null) {
-                        String roleAccess = page404Entry.getRoleAccess();
-                        if (roleAccess != null) {
-                            if (userService.isAuthorised(userDetails, roleAccess)) {
-                                newFilePath = newFilePath2;
-                                logger.info("filePath changes from :{}, to :{}", requestPath, newFilePath);
-                            } else {
-                                newFilePath = "null";
-                                logger.info("unAuthorised requestedPath: {}", requestPath);
-                                logger.info("filePath changes from :{}, to :{}", requestPath, newFilePath);
-                            }
-                        } else {
-                            newFilePath = newFilePath2;
-                            logger.info("roleAccess is null for requestedPath: {}", requestPath);
-                        }
-                    } else {
-                        newFilePath = requestPath;
-                        logger.info("newFilePath2 is null for requestedPath: {}", requestPath);
-                    }
-                } else {
-                    newFilePath = requestPath;
-                    logger.info("page404Entry is null for requestedPath: {}", requestPath);
-                }
-            }
-        }
-        return newFilePath;
+        return pageConfig404;
     }
+
 }

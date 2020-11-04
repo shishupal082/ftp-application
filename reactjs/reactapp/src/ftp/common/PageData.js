@@ -380,7 +380,7 @@ PageData.extend({
                     FTPHelper.pageReload();
                 }
             } else {
-                FTPHelper.lazyRedirect("/dashboard", 250);
+                FTPHelper.lazyRedirect(Config.loginRedirectUrl, 250);
             }
         } else if (["forgot_password"].indexOf(apiName) >= 0) {
             if (response.status === "FAILURE") {
@@ -402,7 +402,7 @@ PageData.extend({
                     FTPHelper.pageReload();
                 }
             } else {
-                FTPHelper.lazyRedirect("/dashboard", 250);
+                FTPHelper.lazyRedirect(Config.loginRedirectUrl, 250);
             }
         } else if (apiName === "delete_file") {
             if (response.status === "FAILURE") {

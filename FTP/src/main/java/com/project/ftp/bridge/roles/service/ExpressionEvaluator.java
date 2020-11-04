@@ -45,7 +45,7 @@ public class ExpressionEvaluator {
         String t;
         for (i=0; i<validTokens.size(); i++) {
             t = validTokens.get(i);
-            temp = expression.split(t, -1);
+            temp = BridgeStaticService.splitStringOnLimit(expression, t, -1);
             if (i == 0) {
                 t = BridgeConstant.OPEN;
             } else if (i == 1) {

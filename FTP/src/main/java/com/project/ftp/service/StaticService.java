@@ -100,6 +100,37 @@ public class StaticService {
     public static String replaceLast(String find, String replace, String str) {
         return strUtils.replaceLast(find, replace, str);
     }
+    public static String[] splitStringOnLimit(String str, String regex, int limit) {
+        if (str == null) {
+            return null;
+        }
+        if (regex == null) {
+            regex = ",";
+        }
+        /*
+        * For input ///d/workspace/project//ftp/application///
+        * for no limit, result = []: [, , , d, workspace, project, , ftp, application],9
+        * for limit = -1, result = []:  [, , , d, workspace, project, , ftp, application, , , ],12
+        * for limit = 0, result = []: [, , , d, workspace, project, , ftp, application],9
+        * for limit = 1, result = []:  [///d/workspace/project//ftp/application///],1
+        *
+        * For input /d/workspace/project//ftp/application/
+        * for no limit, result = []: [, d, workspace, project, , ftp, application],7
+        * for limit = -1, result = []:  [, d, workspace, project, , ftp, application, ],8
+        * for limit = 0, result = []:  [, d, workspace, project, , ftp, application],7
+        * for limit = 1, result = []:  [/d/workspace/project//ftp/application/],1
+        * for limit = 3, result = []:  [, d, workspace/project//ftp/application/],3
+        * */
+        return str.split(regex, limit);
+    }
+    public static String getProperDirString(String path) {
+        if (path == null) {
+            return null;
+        }
+        path = path + "/";
+        path = path.replaceAll("/+", "/");
+        return strUtils.replaceLast("/", "", path);
+    }
     public static String replaceComma(String str) {
         if (str == null) {
             return null;

@@ -54,7 +54,7 @@ FTP.extend({
             }
         } else if (["forgot_password", "login", "register", "create_password"].indexOf(pageName) >= 0) {
             if (isLogin) {
-                FTPHelper.lazyRedirect("/dashboard", 250);
+                FTPHelper.lazyRedirect(Config.loginRedirectUrl, 250);
                 redirectStatus = true;
             }
         }

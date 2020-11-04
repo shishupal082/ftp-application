@@ -14,25 +14,21 @@ public class ConfigService {
     public ConfigService(final AppConfig appConfig) {
         this.appConfig = appConfig;
     }
-    public void setPublicDir() {
-        String systemDir = sysUtils.getProjectWorkingDir();
-        String orgPublicDir = appConfig.getFtpConfiguration().getPublicDir();
-        String publicPostDir = appConfig.getFtpConfiguration().getPublicPostDir();
-        String publicDir = orgPublicDir;
+    public String getValidPublicDir(String systemDir, String orgPublicDir, String publicPostDir) {
         systemDir = StaticService.replaceBackSlashToSlash(systemDir);
         logger.info("systemDir: {}", systemDir);
-        logger.info("configPublicDir: {}", publicDir);
+        logger.info("configPublicDir: {}", orgPublicDir);
         logger.info("configPublicPostDir: {}", publicPostDir);
-        if (publicDir == null) {
-            publicDir = "";
+        if (orgPublicDir == null) {
+            orgPublicDir = "";
         }
         if (systemDir == null) {
             systemDir = "";
         }
-        String[] publicDirArr = publicDir.split("/");
-        String[] systemDirArr = null;
+        String[] publicDirArr = orgPublicDir.split("/");
+        String[] systemDirArr;
         if (systemDir.contains("/")) {
-            systemDirArr = systemDir.split("/");
+            systemDirArr = StaticService.splitStringOnLimit(systemDir, "/",-1);
         } else {
             // Fix for windows system
             systemDirArr = systemDir.split("\\\\");
@@ -40,22 +36,28 @@ public class ConfigService {
         int j = systemDirArr.length-1;
         for (int i=publicDirArr.length-1; i>=0; i--) {
             if (j>=0 && publicDirArr[i].equals("..")) {
-                systemDirArr[j] = "";
+                systemDirArr[j] = "/";
                 j--;
             }
         }
         String setPublicDir = "";
         for (int i=0; i<systemDirArr.length; i++) {
-            if (!systemDirArr[i].equals("")) {
+            if (!systemDirArr[i].equals("/")) {
                 setPublicDir += systemDirArr[i] + "/";
             }
         }
         if (publicPostDir != null) {
             setPublicDir += publicPostDir;
         }
-        setPublicDir = StaticService.replaceLast("/", "", setPublicDir);
+        return StaticService.getProperDirString(setPublicDir);
+    }
+    public void setPublicDir() {
+        String systemDir = sysUtils.getProjectWorkingDir();
+        String configPublicDir = appConfig.getFtpConfiguration().getPublicDir();
+        String configPublicPostDir = appConfig.getFtpConfiguration().getPublicPostDir();
+        String setPublicDir = this.getValidPublicDir(systemDir, configPublicDir, configPublicPostDir);
         logger.info("Calculated PublicDir: {}", setPublicDir);
-        if (orgPublicDir != null) {
+        if (configPublicDir != null) {
             appConfig.setPublicDir(setPublicDir);
         } else {
             logger.info("appConfig publicDir set skip.");

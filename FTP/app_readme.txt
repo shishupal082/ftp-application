@@ -769,6 +769,7 @@ file_not_found_config.yml file signature changes from
     - HashMap<String, String> to HashMap<String, Page404Entry>
 
 Page404Entry = Object (key roleAccess and fileName)
+Add default page404Entry
 
 Role implemented
     - isAdminUser, isDevUser, isLogin
