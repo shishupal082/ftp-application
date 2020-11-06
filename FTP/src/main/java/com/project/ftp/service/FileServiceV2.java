@@ -447,8 +447,10 @@ public class FileServiceV2 {
             HashMap<String, Page404Entry> pageMapping = pageConfig404.getPageMapping404();
             if (pageMapping != null) {
                 page404Entry = pageMapping.get(requestPath);
-                if (page404Entry != null && fileService.isFile(publicDir + page404Entry.getFileName())) {
-                    return page404Entry;
+                if (page404Entry != null) {
+                    if (fileService.isFile(publicDir + page404Entry.getFileName())) {
+                        return page404Entry;
+                    }
                 }
             }
         }
@@ -471,7 +473,14 @@ public class FileServiceV2 {
                         filePath = page404Entry.getFileName();
                     } else {
                         logger.info("unAuthorised page404Entry: {}", page404Entry);
-                        filePath = null;
+                        page404Entry = this.getFileNotFoundMapping(pageConfig404, AppConstant.UN_AUTHORISED);
+                        if (page404Entry != null) {
+                            logger.info("unAuthorised page404 found: {}", page404Entry);
+                            filePath = page404Entry.getFileName();
+                        } else {
+                            logger.info("unAuthorised page404 not found");
+                            filePath = null;
+                        }
                     }
                 } else {
                     filePath = page404Entry.getFileName();

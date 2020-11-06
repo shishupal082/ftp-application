@@ -1,6 +1,8 @@
 pageMapping404:
   default:
     fileName: "/app/account/indexv2.html"
+  un_authorised:
+    fileName: "/data/unathorised_page.json"
   /account:
     fileName: "/app/account/indexv2.html"
   /account/journal:

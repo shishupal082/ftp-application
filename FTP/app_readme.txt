@@ -770,6 +770,7 @@ file_not_found_config.yml file signature changes from
 
 Page404Entry = Object (key roleAccess and fileName)
 Add default page404Entry
+Add un_authorised page404Entry
 
 Role implemented
     - isAdminUser, isDevUser, isLogin

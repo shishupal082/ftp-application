@@ -44,6 +44,7 @@ public class AppConstant {
     public static final String ROLES = "roles.yml";
     public static final String PUBLIC = "public";
     public static final String DEFAULT = "default";
+    public static final String UN_AUTHORISED = "un_authorised";
     public static final String IS_ADMIN_USER = "isAdminUser";
     public static final String IS_DEV_USER = "isDevUser";
     public static final String V1 = "v1";
