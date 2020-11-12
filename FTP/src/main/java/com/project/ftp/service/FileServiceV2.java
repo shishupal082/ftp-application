@@ -437,6 +437,39 @@ public class FileServiceV2 {
         }
         this.addTextInFileDetailForDelete(loginUserDetails, fileDetail);
     }
+    // By default folder is authorised
+    private boolean isFolderAuthorised(LoginUserDetails userDetails,
+                                       PageConfig404 pageConfig404, String fileParentFolder) {
+        String publicDir = appConfig.getPublicDir();
+        if (publicDir == null) {
+            return  true;
+        }
+        if (fileParentFolder == null) {
+            return true;
+        }
+        fileParentFolder = String.join("/", fileParentFolder.split(publicDir));
+        fileParentFolder = StaticService.getProperDirString(fileParentFolder);
+        if (pageConfig404 == null || pageConfig404.getPageMapping404() == null) {
+            return true;
+        }
+        Page404Entry page404Entry1;
+        String[] filenameArr = StaticService.splitStringOnLimit(fileParentFolder, "/", -1);
+        String folderPath = "", rollAccess;
+        for (int i=0; i<filenameArr.length; i++) {
+            folderPath += filenameArr[i]+ "/";
+            page404Entry1 = pageConfig404.getPageMapping404().get(folderPath);
+            if (page404Entry1 != null) {
+                rollAccess = page404Entry1.getRoleAccess();
+                if (!userService.isAuthorised(userDetails, rollAccess)) {
+                    logger.info("folderPath not authorised: {}, {}", folderPath, page404Entry1);
+                    return false;
+                } else {
+                    logger.info("folderPath authorised: {}", folderPath);
+                }
+            }
+        }
+        return true;
+    }
     private Page404Entry getFileNotFoundMapping(PageConfig404 pageConfig404, String requestPath) {
         String publicDir = appConfig.getPublicDir();
         if (publicDir == null) {
@@ -447,7 +480,7 @@ public class FileServiceV2 {
             HashMap<String, Page404Entry> pageMapping = pageConfig404.getPageMapping404();
             if (pageMapping != null) {
                 page404Entry = pageMapping.get(requestPath);
-                if (page404Entry != null) {
+                if (page404Entry != null && page404Entry.getFileName() != null) {
                     if (fileService.isFile(publicDir + page404Entry.getFileName())) {
                         logger.info("page404Entry found for '{}', {}", requestPath, page404Entry);
                         return page404Entry;
@@ -500,6 +533,16 @@ public class FileServiceV2 {
             page404Entry = this.getFileNotFoundMapping(pageConfig404, AppConstant.DEFAULT);
             if (page404Entry != null) {
                 pathInfo = fileService.getPathInfo(publicDir + page404Entry.getFileName());
+            }
+        }
+        if (pathInfo != null) {
+            if (!this.isFolderAuthorised(userDetails, pageConfig404, pathInfo.getParentFolder())) {
+                page404Entry = this.getFileNotFoundMapping(pageConfig404, AppConstant.UN_AUTHORISED);
+                if (page404Entry != null) {
+                    pathInfo = fileService.getPathInfo(publicDir + page404Entry.getFileName());
+                } else {
+                    pathInfo = null;
+                }
             }
         }
         logger.info("final pathInfo: {}", pathInfo);

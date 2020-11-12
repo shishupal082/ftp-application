@@ -775,6 +775,8 @@ Add un_authorised page404Entry
 Role implemented
     - isAdminUser, isDevUser, isLogin
 
+folder level authorization check added for 404 page mapping
+
 Future releases
 -------------------
 

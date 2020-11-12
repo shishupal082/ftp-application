@@ -38,3 +38,5 @@ pageMapping404:
     rollAccess: "isLogin"
     fileName: "/data-path-csv-or-json"
 
+  /folder-path/:
+    rollAccess: "isLogin"
