@@ -497,6 +497,9 @@ public class FileServiceV2 {
         if (publicDir == null) {
             return null;
         }
+        if (filePath == null) {
+            return null;
+        }
         YamlFileParser yamlFileParser = new YamlFileParser();
         PageConfig404 pageConfig404 = yamlFileParser.getPageConfig404(appConfig);
         Page404Entry page404Entry;
