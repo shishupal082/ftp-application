@@ -777,6 +777,9 @@ Role implemented
 
 folder level authorization check added for 404 page mapping
 
+If /./ or /../ is found in default page loading,
+    - then requested path will set to null
+
 Future releases
 -------------------
 

@@ -36,7 +36,15 @@ public class RequestService {
         if (pathArr.length > 0) {
             path = pathArr[0];
         }
-        return StaticService.getProperDirString(path);
+        String requestedPath = StaticService.getProperDirString(path);
+//        requestedPath = "/./venv/cmdlog.txt";
+        if (requestedPath != null) {
+            if (requestedPath.contains("/./") || requestedPath.contains("/../")) {
+                logger.info("Invalid requested path in request: {}, set to null", requestedPath);
+                requestedPath = null;
+            }
+        }
+        return requestedPath;
     }
     public static String getPathUrlV3(final ContainerRequestContext requestContext) {
 //        String url = requestContext.getUriInfo().getAbsolutePath().toString();
