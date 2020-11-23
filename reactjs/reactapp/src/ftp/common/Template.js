@@ -162,7 +162,7 @@ Template["login"] = [
                                     "tag": "a",
                                     "name": "login.create_password-link",
                                     "href": "/create_password",
-                                    "className": "p-5px",
+                                    "className": "p-5px d-none",
                                     "text": "Create Password"
                                 },
                                 {
@@ -249,7 +249,7 @@ Template["forgot_password"] = [
                                     {
                                         "tag": "a",
                                         "href": "/create_password",
-                                        "className": "p-5px",
+                                        "className": "p-5px d-none",
                                         "name": "forgot_password_disable.create_password-link",
                                         "text": "Create Password"
                                     }
@@ -338,7 +338,7 @@ Template["forgot_password"] = [
                             {
                                 "tag": "a",
                                 "href": "/create_password",
-                                "className": "p-5px",
+                                "className": "p-5px d-none",
                                 "name": "forgot_password.create_password-link",
                                 "text": "Create Password"
                             }
@@ -512,7 +512,7 @@ Template["register"] = [
                                     "tag": "a",
                                     "name": "register.create_password-link",
                                     "href": "/create_password",
-                                    "className": "p-5px",
+                                    "className": "p-5px d-none",
                                     "text": "Create Password"
                                 }
                             ]
