@@ -10,6 +10,7 @@ public class FtlConfig {
     private String author;
     private String title;
     private String headingJson;
+    private String afterLoginLinkJson;
     private String uploadFileInstruction;
     private String loginRedirectUrl;
     private String gaTrackingId;
@@ -18,7 +19,6 @@ public class FtlConfig {
     // It is used locally
     private String tempGaEnable;
     private boolean gaTrackingEnable;
-    private boolean displayCreatePasswordLink;
 
     public FtlConfig() {}
     public String getDescription() {
@@ -69,20 +69,20 @@ public class FtlConfig {
         this.headingJson = headingJson;
     }
 
+    public String getAfterLoginLinkJson() {
+        return afterLoginLinkJson;
+    }
+
+    public void setAfterLoginLinkJson(String afterLoginLinkJson) {
+        this.afterLoginLinkJson = afterLoginLinkJson;
+    }
+
     public String getUploadFileInstruction() {
         return uploadFileInstruction;
     }
 
     public void setUploadFileInstruction(String uploadFileInstruction) {
         this.uploadFileInstruction = uploadFileInstruction;
-    }
-
-    public boolean isDisplayCreatePasswordLink() {
-        return displayCreatePasswordLink;
-    }
-
-    public void setDisplayCreatePasswordLink(boolean displayCreatePasswordLink) {
-        this.displayCreatePasswordLink = displayCreatePasswordLink;
     }
 
     public boolean isGaTrackingEnable() {
@@ -137,6 +137,7 @@ public class FtlConfig {
                 ", author='" + author + '\'' +
                 ", title='" + title + '\'' +
                 ", headingJson='" + headingJson + '\'' +
+                ", afterLoginLinkJson='" + afterLoginLinkJson + '\'' +
                 ", uploadFileInstruction='" + uploadFileInstruction + '\'' +
                 ", loginRedirectUrl='" + loginRedirectUrl + '\'' +
                 ", gaTrackingId='" + gaTrackingId + '\'' +
@@ -144,7 +145,6 @@ public class FtlConfig {
                 ", createPasswordOtpInstruction='" + createPasswordOtpInstruction + '\'' +
                 ", tempGaEnable='" + tempGaEnable + '\'' +
                 ", gaTrackingEnable=" + gaTrackingEnable +
-                ", displayCreatePasswordLink=" + displayCreatePasswordLink +
                 '}';
     }
 }

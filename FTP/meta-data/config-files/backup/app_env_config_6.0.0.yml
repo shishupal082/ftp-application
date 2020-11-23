@@ -56,7 +56,7 @@ defaultFileViewer: "self" #self or all
 fileDeleteAccess: "self_admin" #self or admin or self_admin
 permanentlyDeleteFile: false #File will saved in trash folder
 maxFileSize: 10240001 #i.e. #i.e. 2048000 = 2048 kB = 2MB, 10240001 = 10MB
-uploadFileApiVersion: v1 #(v1|v2)
+uploadFileApiVersion: v2 #(v1|v2)
 aesEncryptionPassword: "1234"
 
 emailConfig:
@@ -101,13 +101,13 @@ ftlConfig:
   loginRedirectUrl: "/dashboard"
   gaTrackingId: "UA-177553408-1" # for development
   gaTrackingEnable: true
+  displayCreatePasswordLink: false
   uploadFileInstruction: "(Supported type: pdf,jpeg,jpg and png, max size < 10MB)"
   forgotPasswordPageInstruction: "Please contact admin."
 #  forgotPasswordPageInstruction: "Please contact admin to get create password otp."
   createPasswordOtpInstruction: "(Receive from admin)"
 #  createPasswordOtpInstruction: "(Check your email)"
   headingJson: '[{"tag":"div.center.table.tbody.tr","className":"heading","text":[{"tag":"td","text":{"tag":"img","className":"logo","src":"/assets/static/img/railwayslogo-128.png"}},{"tag":"td","className":"text-center pl-5px","text":[{"tag":"div","text":"Heading Line 1 (config)"},{"tag":"div","text":"Larger Heading Line 2 Row"}]}]}]'
-  afterLoginLinkJson: '[{"tag":"div.center","text":[{"tag":"a","href":"/dashboard","name":"link.dashboard","className":"p-5px","text":"Dashboard"},{"tag":"a","href":"/change_password","name":"link.change_password","className":"p-5px","text":"Change Password"},{"tag":"a","href":"/upload_file","name":"link.upload_file","className":"p-5px","text":"Upload File"},{"tag":"a","name":"link.logout","href":"/logout","className":"p-5px","text":"Logout"}]},{"tag":"div.center","text":[{"tag":"span","text":"Login as(Config)"},{"tag":"span","className":"small","name":"link.is-admin","text":" (Admin)"},{"tag":"span","className":"","text":":"},{"tag":"b","name":"link.loginAs","text":""}]}]'
 
 # Optional parameter
 indexPageReRoute: /login
@@ -129,5 +129,5 @@ allowedOrigin:
   - http://localhost:9080
   - chrome-extension://fhbjgbiflinjbdggehcddcbncdddomop
 
-tempConfig:
+tempConfig1:
   username: U1

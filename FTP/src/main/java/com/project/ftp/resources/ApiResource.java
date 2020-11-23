@@ -142,6 +142,24 @@ public class ApiResource {
         // Not putting response in log as it may be very large
         logger.info("getAllV3Data : Out");
         return response;
+    }@GET
+    @Path("/get_current_user_files_info")
+    @UnitOfWork
+    public ApiResponse getAllV3DataV2(@Context HttpServletRequest request) {
+        logger.info("getAllV3DataV2 : In, user: {}", userService.getUserDataForLogging(request));
+        ApiResponse response;
+        try {
+            authService.isLogin(request);
+            LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
+            response = fileServiceV2.scanCurrentUserDirectory(loginUserDetails);
+        } catch (AppException ae) {
+            logger.info("Error in scanning user directory: {}", ae.getErrorCode().getErrorString());
+            response = new ApiResponse(ae.getErrorCode());
+            eventTracking.trackFailureEvent(request, EventName.GET_CURRENT_USER_FILES_INFO, ae.getErrorCode());
+        }
+        // Not putting response in log as it may be very large
+        logger.info("getAllV3DataV2 : Out");
+        return response;
     }
     @GET
     @Path("/get_app_config")
@@ -207,6 +225,30 @@ public class ApiResource {
             eventTracking.addFailureUploadFile(request, ae.getErrorCode(), fileDetail, subject, heading, uiUsername);
         }
         logger.info("uploadFile : Out {}", response);
+        return response;
+    }
+
+    @POST
+    @Path("/add_text")
+    @UnitOfWork
+    public ApiResponse addText(@Context HttpServletRequest request, RequestAddText addText) {
+        logger.info("addText: In, data: {}, user: {}", addText, userService.getUserDataForLogging(request));
+        String comment = null;
+        if (addText != null) {
+            comment = addText.toString();
+        }
+        ApiResponse response;
+        try {
+            authService.isLogin(request);
+            LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
+            response = fileServiceV2.addText(loginUserDetails, addText);
+            eventTracking.trackSuccessEventV2(request, EventName.ADD_TEXT, comment);
+        } catch (AppException ae) {
+            logger.info("Error in addText: {}", ae.getErrorCode().getErrorCode());
+            response = new ApiResponse(ae.getErrorCode());
+            eventTracking.trackFailureEventV2(request, EventName.ADD_TEXT, ae.getErrorCode(), comment);
+        }
+        logger.info("addText : Out {}", response);
         return response;
     }
     @POST
@@ -432,6 +474,32 @@ public class ApiResource {
             response = new ApiResponse(ae.getErrorCode());
         }
         logger.info("md5Encrypt : Out");
+        return response;
+    }
+
+
+    @POST
+    @Path("/verify_permission")
+    @UnitOfWork
+    public ApiResponse verifyPermission(@Context HttpServletRequest request,
+                                        RequestVerifyPermission verifyPermission) {
+        logger.info("verifyPermission : In, user: {}, request: {}",
+                userService.getUserDataForLogging(request), verifyPermission);
+        String comment = null;
+        if (verifyPermission != null) {
+            comment = verifyPermission.toString();
+        }
+        ApiResponse response;
+        try {
+            LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
+            response = userService.isValidPermission(loginUserDetails, verifyPermission);
+            eventTracking.trackSuccessEventV2(request, EventName.VERIFY_PERMISSION, comment);
+        } catch (AppException ae) {
+            logger.info("Error in verifyPermission: {}", ae.getErrorCode().getErrorCode());
+            eventTracking.trackFailureEventV2(request, EventName.VERIFY_PERMISSION, ae.getErrorCode(), comment);
+            response = new ApiResponse(ae.getErrorCode());
+        }
+        logger.info("verifyPermission : Out, {}", response);
         return response;
     }
 

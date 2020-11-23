@@ -8,6 +8,7 @@ var PageData = {};
 var baseapi = $$$.baseapi;
 var basepathname = $$$.basepathname;
 var headingJson = $$$.headingJson;
+var afterLoginLinkJson = $$$.afterLoginLinkJson;
 var uploadFileInstruction = $$$.uploadFileInstruction;
 var forgotPasswordPageInstruction = $$$.forgotPasswordPageInstruction;
 var createPasswordOtpInstruction = $$$.createPasswordOtpInstruction;
@@ -23,6 +24,13 @@ try {
     headingJson = JSON.parse(headingJson);
     Template["heading"] = headingJson;
 } catch(e) {}
+
+try {
+    afterLoginLinkJson = JSON.parse(afterLoginLinkJson);
+    Template["link"] = afterLoginLinkJson;
+} catch(e) {}
+
+
 
 var template;
 

@@ -43,6 +43,23 @@ public class UserService {
     public boolean isLoginUserDev(LoginUserDetails loginUserDetails)  {
         return this.isAuthorised(loginUserDetails, AppConstant.IS_ADMIN_USER);
     }
+
+    public ApiResponse isValidPermission(LoginUserDetails loginUserDetails,
+                                  RequestVerifyPermission verifyPermission) throws AppException  {
+        if (verifyPermission == null) {
+            logger.info("Invalid user input verifyPermission: null");
+            throw new AppException(ErrorCodes.BAD_REQUEST_ERROR);
+        }
+        if (verifyPermission.getRoleName() == null) {
+            logger.info("Invalid user input roleName: null");
+            throw new AppException(ErrorCodes.BAD_REQUEST_ERROR);
+        }
+        boolean isAuthorised = this.isAuthorised(loginUserDetails, verifyPermission.getRoleName());
+        if (isAuthorised) {
+            return new ApiResponse();
+        }
+        throw new AppException(ErrorCodes.VERIFY_PERMISSION_ERROR);
+    }
     public Users getAllUser() throws AppException {
         Users users = userInterface.getAllUsers();
         if (users == null) {

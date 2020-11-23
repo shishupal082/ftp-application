@@ -27,7 +27,6 @@ public class AppView extends View {
     private final String uploadFileApiVersion;
     private final String isGuestEnable;
     private final String isForgotPasswordEnable;
-    private final String displayCreatePasswordLink;
     private final FtlConfig ftlConfig;
     public AppView(HttpServletRequest request, String ftl, String pageName,
                    UserService userService, AppConfig appConfig) {
@@ -41,7 +40,6 @@ public class AppView extends View {
         this.isLoginUserAdmin = Boolean.toString(userService.isLoginUserAdmin(loginUserDetails));
         this.isGuestEnable = Boolean.toString(appConfig.getFtpConfiguration().isGuestEnable());
         this.isForgotPasswordEnable = Boolean.toString(uiBackendConfig.isForgotPasswordEnable());
-        this.displayCreatePasswordLink = Boolean.toString(ftlConfig.isDisplayCreatePasswordLink());
         this.appVersion = AppConstant.AppVersion;
         this.userDisplayName = "";
         this.uploadFileApiVersion = StaticService.getUploadFileApiVersion(appConfig);
@@ -82,10 +80,6 @@ public class AppView extends View {
 
     public String getIsForgotPasswordEnable() {
         return isForgotPasswordEnable;
-    }
-
-    public String getDisplayCreatePasswordLink() {
-        return displayCreatePasswordLink;
     }
 
     public FtlConfig getFtlConfig() {

@@ -780,6 +780,32 @@ folder level authorization check added for 404 page mapping
 If /./ or /../ is found in default page loading,
     - then requested path will set to null
 
+6.0.1
+-------------------
+New role implemented
+    - isUploadFileEnable
+    - isAddTextEnable
+
+env_config change
+    - removed: ftlConfig.displayCreatePasswordLink
+    - added: ftlConfig.afterLoginLinkJson
+
+
+Always display create password link
+
+Read afterLoginLinkJson from ftp_view page (just like headingJson)
+
+New api added:
+    - /api/get_current_user_files_info [Get]
+    - /api/verify_permission [Post]
+    - /api/add_text [Post] (file will be saved in current user directory with filename as parameter)
+
+Change in api
+    - /api/upload_file (In both v1 or v2)
+        Added check for isUploadFileEnable from roles config
+
+
+
 Future releases
 -------------------
 

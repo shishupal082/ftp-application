@@ -4,12 +4,14 @@ import com.project.ftp.config.*;
 import com.project.ftp.exceptions.AppException;
 import com.project.ftp.exceptions.ErrorCodes;
 import com.project.ftp.obj.*;
+import com.project.ftp.parser.TextFileParser;
 import com.project.ftp.parser.YamlFileParser;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.InputStream;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -109,6 +111,20 @@ public class FileServiceV2 {
             }
         }
         return finalResponse;
+    }
+    public ApiResponse scanCurrentUserDirectory(LoginUserDetails loginUserDetails) {
+        ArrayList<ScanResult> scanResults = new ArrayList<>();
+        String dir = appConfig.getFtpConfiguration().getFileSaveDir();
+        String loginUserName = loginUserDetails.getUsername();
+        dir = dir + loginUserName + "/";
+        scanResults.add(fileService.scanDirectory(dir, dir, false));
+        ArrayList<String> response = new ArrayList<>();
+        this.generateApiResponse(scanResults, response);
+        logger.info("scanUserDirectory result size: {}", response.size());
+        ArrayList<ResponseFilesInfo> filesInfo =
+                this.generateFileInfoResponse(response, loginUserDetails, false);
+        logger.info("final result size: {}", filesInfo.size());
+        return new ApiResponse(filesInfo);
     }
     public ApiResponse scanUserDirectory(LoginUserDetails loginUserDetails) {
         ApiResponse apiResponse;
@@ -640,6 +656,11 @@ public class FileServiceV2 {
             logger.info("fileName is: null");
             throw new AppException(ErrorCodes.UPLOAD_FILE_FILENAME_REQUIRED);
         }
+        boolean isAuthorised = userService.isAuthorised(loginUserDetails, AppConstant.IS_UPLOAD_FILE_ENABLE);
+        if (!isAuthorised) {
+            logger.info("fileUpload is disabled.");
+            throw new AppException(ErrorCodes.FILE_UPLOAD_DISABLED);
+        }
         fileName = StaticService.replaceComma(fileName);
         String loginUsername = loginUserDetails.getUsername();
         String apiVersion = StaticService.getUploadFileApiVersion(appConfig);
@@ -665,5 +686,55 @@ public class FileServiceV2 {
         this.generateFileDetailsFromFilepathV2(loginUserDetails.getUsername(),
                 pathInfo.getFileName(), subject, heading);
         return new ApiResponse(pathInfo);
+    }
+    public ApiResponse addText(LoginUserDetails userDetails, RequestAddText addText) throws AppException {
+        if (addText == null) {
+            logger.info("Invalid addText request: null");
+            throw new AppException(ErrorCodes.BAD_REQUEST_ERROR);
+        }
+        if (StaticService.isInValidString(addText.getFilename())) {
+            logger.info("Invalid addText filename: {}", addText.getFilename());
+            throw new AppException(ErrorCodes.BAD_REQUEST_ERROR);
+        }
+        if (addText.getText() == null || addText.getText().length < 1) {
+            logger.info("Invalid addText.text: {}", addText);
+            throw new AppException(ErrorCodes.BAD_REQUEST_ERROR);
+        }
+        boolean isAuthorised = userService.isAuthorised(userDetails, AppConstant.IS_ADD_TEXT_ENABLE);
+        if (!isAuthorised) {
+            logger.info("addText is disabled.");
+            throw new AppException(ErrorCodes.ADD_TEXT_DISABLED);
+        }
+        String username = userDetails.getUsername();
+        String folderPath = appConfig.getFtpConfiguration().getFileSaveDir();
+        String[] text = addText.getText();
+        if (!fileService.isDirectory(folderPath)) {
+            logger.info("Invalid file save dir: {}", folderPath);
+            throw new AppException(ErrorCodes.CONFIG_ERROR);
+        }
+        boolean dirExist = true;
+        String userDir = folderPath + username + "/";
+        if (!fileService.isDirectory(userDir)) {
+            logger.info("Directory: {}, does not exist creating new.", userDir);
+            dirExist = fileService.createFolder(folderPath, username);
+        }
+        if (!dirExist) {
+            logger.info("userDir: {}, does not exist", userDir);
+            throw new AppException(ErrorCodes.ADD_TEXT_ERROR);
+        }
+        boolean fileExist = true;
+        String filePath = userDir + addText.getFilename();
+        if (!fileService.isFile(filePath)) {
+            fileExist = fileService.createNewFile(filePath);
+        }
+        if (fileExist) {
+            TextFileParser textFileParser = new TextFileParser(filePath);
+            for (String str : text) {
+                textFileParser.addText(str);
+            }
+            return new ApiResponse();
+        }
+        logger.info("Error in adding text filePath: {}, data: {}", filePath, addText);
+        throw new AppException(ErrorCodes.ADD_TEXT_ERROR);
     }
 }

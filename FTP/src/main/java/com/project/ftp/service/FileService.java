@@ -17,7 +17,10 @@ import java.util.ArrayList;
 
 public class FileService {
     private final static Logger logger = LoggerFactory.getLogger(FileService.class);
-    public FileService() {}
+
+    public FileService() {
+    }
+
     public FileDetails getAllFileDetails(String savedDataFilepath) {
         TextFileParser textFileParser = new TextFileParser(savedDataFilepath);
         FileDetails details = null;
@@ -30,6 +33,7 @@ public class FileService {
         }
         return details;
     }
+
     public FileDetail searchFileDetails(String savedDataFilepath, String filepath) {
         FileDetails fileDetails = this.getAllFileDetails(savedDataFilepath);
         FileDetail detail = null;
@@ -39,6 +43,7 @@ public class FileService {
         }
         return detail;
     }
+
     // fileUpload v1, fileUpload v2, file delete
     public void saveFileDetails(String savedDataFilepath, FileDetail fileDetail) {
         if (fileDetail == null) {
@@ -49,6 +54,7 @@ public class FileService {
         logger.info("Saving file details data: {}", savedText);
         textFileParser.addText(savedText);
     }
+
     public PathInfo getPathInfo(String requestedPath) {
         if (requestedPath == null) {
             requestedPath = "";
@@ -57,7 +63,7 @@ public class FileService {
         File file = new File(requestedPath);
         if (file.isDirectory()) {
             pathInfo.setType(AppConstant.FOLDER);
-        } else if(file.isFile()) {
+        } else if (file.isFile()) {
             pathInfo.setType(AppConstant.FILE);
             pathInfo.setFileName(file.getName());
             String parentFolder = StaticService.replaceBackSlashToSlash(file.getParent());
@@ -67,6 +73,7 @@ public class FileService {
         }
         return pathInfo;
     }
+
     public Boolean copyFileV2(String oldFilePath, String newFilePath) {
         boolean fileCopyStatus = false;
         InputStream is = null;
@@ -92,11 +99,12 @@ public class FileService {
         }
         return fileCopyStatus;
     }
+
     public Boolean moveFile(String source, String destination, String filename, String ext) {
         // Here source and destination both does not contain / in the end
         if (source == null || destination == null || filename == null || ext == null) {
             logger.info("Invalid request to moveFile: {}", source + "--" + destination + "--"
-                            + filename + "--" + ext);
+                    + filename + "--" + ext);
             return false;
         }
         if (!this.isDirectory(source)) {
@@ -112,7 +120,7 @@ public class FileService {
         if (this.isFile(destinationFilePath)) {
             logger.info("filename: {}, exist in the destination folder, renaming it.", destinationFilePath);
             String filename2 = filename + "-" + StaticService.getDateStrFromPattern(AppConstant.DateTimeFormat);
-            this.renameExistingFile(destination, filename + "." + ext, filename2+ "." + ext);
+            this.renameExistingFile(destination, filename + "." + ext, filename2 + "." + ext);
         }
         Boolean copyFileStatus = this.copyFileV2(sourceFilePath, destinationFilePath);
         Boolean deleteStatus = false;
@@ -126,6 +134,7 @@ public class FileService {
         }
         return deleteStatus;
     }
+
     public String createDir(ArrayList<String> dirs) {
         if (dirs == null || dirs.isEmpty()) {
             return null;
@@ -135,7 +144,7 @@ public class FileService {
         if (!this.isDirectory(dirStr)) {
             return null;
         }
-        for (int i=1; i<dirs.size(); i++) {
+        for (int i = 1; i < dirs.size(); i++) {
             if (!this.isDirectory(dirStr + dirs.get(i) + "/")) {
                 if (!this.createFolder(dirStr, dirs.get(i))) {
                     return null;
@@ -146,6 +155,7 @@ public class FileService {
         dirStr = StaticService.replaceLast("/", "", dirStr);
         return dirStr;
     }
+
     public boolean isDirectory(String path) {
         if (path == null) {
             return false;
@@ -153,6 +163,7 @@ public class FileService {
         File file = new File(path);
         return file.isDirectory();
     }
+
     public boolean isFile(String path) {
         if (path == null) {
             return false;
@@ -160,6 +171,7 @@ public class FileService {
         File file = new File(path);
         return file.isFile();
     }
+
     public PathInfo getPathInfoFromFileName(String fileName) {
         PathInfo pathInfo = new PathInfo();
         pathInfo.setType(AppConstant.FILE);
@@ -170,9 +182,9 @@ public class FileService {
             String[] strArr = fileName.split("/");
             String parentFolder = "";
             if (strArr.length > 1) {
-                pathInfo.setFileName(strArr[strArr.length-1]);
-                for(int i=0; i<strArr.length-1; i++) {
-                    if (i!=0) {
+                pathInfo.setFileName(strArr[strArr.length - 1]);
+                for (int i = 0; i < strArr.length - 1; i++) {
+                    if (i != 0) {
                         parentFolder += "/" + strArr[i];
                     } else {
                         parentFolder = strArr[i];
@@ -183,6 +195,7 @@ public class FileService {
         }
         return pathInfo;
     }
+
     public boolean createFolder(String existingFolder, String currentFolderName) {
         if (existingFolder == null) {
             return false;
@@ -202,6 +215,7 @@ public class FileService {
         }
         return dirCreateStatus;
     }
+
     public ScanResult scanDirectory(String folderPath, String staticFolderPath, boolean isRecursive) {
         //folderPath and staticFolderPath should contain / in the end
         ScanResult finalFileScanResult = new ScanResult(staticFolderPath, folderPath);
@@ -223,7 +237,7 @@ public class FileService {
                     if (file.isFile()) {
                         fileScanResult = scanDirectory(folderPath + file.getName(),
                                 staticFolderPath, false);
-                    } else if (file.isDirectory()){
+                    } else if (file.isDirectory()) {
                         if (isRecursive) {
                             fileScanResult = scanDirectory(folderPath + file.getName() + "/",
                                     staticFolderPath, true);
@@ -247,20 +261,22 @@ public class FileService {
         logger.info("Scan complete for folder : {}", folderPath);
         return finalFileScanResult;
     }
+
     public ArrayList<String> getAvailableFiles(String directory) {
         //directory should contain / in the end
         ArrayList<String> availableFiles = new ArrayList<>();
-        ScanResult scanResult = this.scanDirectory(directory, directory,false);
+        ScanResult scanResult = this.scanDirectory(directory, directory, false);
         ArrayList<ScanResult> scanResults = scanResult.getScanResults();
         if (scanResults != null && scanResults.size() > 0) {
-            for(ScanResult scanResult1: scanResults) {
+            for (ScanResult scanResult1 : scanResults) {
                 availableFiles.add(StaticService.replaceBackSlashToSlash(scanResult1.getPathName()));
             }
         }
         return availableFiles;
     }
+
     public Boolean renameExistingFile(String dir, String fileName, String renameFilename) {
-        String logStr = "File rename request: dir="+ dir+", filename="+fileName;
+        String logStr = "File rename request: dir=" + dir + ", filename=" + fileName;
         logger.info("{}, renameFilename={}", logStr, renameFilename);
         if (dir == null || fileName == null || renameFilename == null) {
             logger.info("Invalid request for file rename.");
@@ -291,6 +307,7 @@ public class FileService {
         }
         return renameStatus;
     }
+
     public PathInfo searchIndexHtmlInFolder(PathInfo pathInfo) {
         if (AppConstant.FOLDER.equals(pathInfo.getType())) {
             File file1 = new File(pathInfo.getPath() + "index.html");
@@ -309,6 +326,7 @@ public class FileService {
         }
         return pathInfo;
     }
+
     public Boolean deleteFileV2(String filePath) {
         if (filePath == null) {
             return false;
@@ -327,6 +345,7 @@ public class FileService {
         }
         return fileDeleteStatus;
     }
+
     public PathInfo uploadFile(InputStream uploadedInputStream, String filePath, Integer maxFileSize) throws AppException {
         logger.info("uploadFile request: {}", filePath);
         if (maxFileSize == null || maxFileSize < 1) {
@@ -361,5 +380,15 @@ public class FileService {
             throw new AppException(ErrorCodes.RUNTIME_ERROR);
         }
         return getPathInfo(filePath);
+    }
+
+    public boolean createNewFile(String filePath) {
+        File file = new File(filePath);
+        try {
+            return file.createNewFile();
+        } catch (Exception e) {
+            logger.info("Error in creating file: {}", filePath);
+        }
+        return false;
     }
 }

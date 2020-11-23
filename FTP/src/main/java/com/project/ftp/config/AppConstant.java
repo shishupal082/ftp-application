@@ -21,7 +21,7 @@ public class AppConstant {
     public static final String ALLOWED_HEADERS= "Access-Control-Allow-Headers";
     public static final String FILE = "FILE";
     public static final String FOLDER = "FOLDER";
-    public static final String AppVersion = "6.0.0";
+    public static final String AppVersion = "6.0.1";
     public static final String server = "server";
     public static final String DATE_FORMAT = "YYYY-MM-dd";
     public static final String TIME_FORMAT = "HHmmss";
@@ -45,8 +45,10 @@ public class AppConstant {
     public static final String PUBLIC = "public";
     public static final String DEFAULT = "default";
     public static final String UN_AUTHORISED = "un_authorised";
-    public static final String IS_ADMIN_USER = "isAdminUser";
     public static final String IS_DEV_USER = "isDevUser";
+    public static final String IS_ADMIN_USER = "isAdminUser";
+    public static final String IS_ADD_TEXT_ENABLE = "isAddTextEnable";
+    public static final String IS_UPLOAD_FILE_ENABLE = "isUploadFileEnable";
     public static final String V1 = "v1";
     public static final String V2 = "v2";
     public static final String PDF_AUTHOR = "Project Author";

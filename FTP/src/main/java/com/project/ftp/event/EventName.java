@@ -19,9 +19,12 @@ public enum EventName {
     EXPIRED_USER_SESSION("expired_user_session"),
     GET_LOGIN_USER_DETAILS("get_login_user_details"),
     GET_USERS("get_users"),
+    ADD_TEXT("add_text"),
     GET_APP_CONFIG("get_app_config"),
     GET_SESSION_DATA("get_session_data"),
     GET_FILES_INFO("get_files_info"),
+    GET_CURRENT_USER_FILES_INFO("get_files_info"),
+    VERIFY_PERMISSION("verify_permission"),
     AES_ENCRYPTION("aes_encryption"),
     AES_DECRYPTION("aes_decryption"),
     MD5_ENCRYPTION("md5_encryption");

@@ -56,6 +56,10 @@
     "Scan directory based on user login"
   ],
   [
+    "/api/get_current_user_files_info",
+    "Scan only current user directory"
+  ],
+  [
     "/api/get_app_config",
     "App config data"
   ],
@@ -98,6 +102,14 @@
   [
     "/api/delete_file?u=requested_username",
     "Delete File [POST]"
+  ],
+  [
+    "/api/verify_permission",
+    "Verify role permission [POST]"
+  ],
+  [
+    "/api/add_text",
+    "Add array text in file given by user [POST]"
   ],
   [
     "/api/aes_encrypt",

@@ -77,10 +77,10 @@ public class RolesService {
         }
         return null;
     }
-    public boolean isApiAuthorised(String roleName, String userName, boolean isLogin) {
-        logger.info("isApiAuthorised check request:"+roleName+",{},{}", userName, isLogin);
+    public boolean isRoleAuthorised(String roleName, String userName, boolean isLogin) {
+        logger.info("isRoleAuthorised check request:"+roleName+",{},{}", userName, isLogin);
         if (BridgeStaticService.isInValidString(roleName)) {
-            logger.info("Invalid apiName:{}", roleName);
+            logger.info("Invalid roleName:{}", roleName);
             return false;
         }
         if (BridgeStaticService.isInValidString(userName)) {
@@ -91,11 +91,11 @@ public class RolesService {
             return isLogin;
         }
         String apiRoles = this.getRolesByApiName(roleName);
-        boolean result = this.apiRolesIncludeUser(apiRoles, userName);
-        logger.info("isApiAuthorised check response:{}", result);
+        boolean result = this.apiRolesIncludeUser(apiRoles, userName, isLogin);
+        logger.info("isRoleAuthorised check response:{}", result);
         return result;
     }
-    private String getBooleanEquivalentToRole(String role, String userName) {
+    private String getBooleanEquivalentToRole(String role, String userName, boolean isLogin) {
         if (BridgeStaticService.isInValidString(role)) {
             logger.info("Invalid role:{}", role);
             return null;
@@ -103,6 +103,13 @@ public class RolesService {
         if (BridgeStaticService.isInValidString(userName)) {
             logger.info("Invalid userName:{}", userName);
             return null;
+        }
+        if (BridgeConstant.IS_LOGIN.equals(role)) {
+            if (isLogin) {
+                return BridgeConstant.TRUE;
+            } else {
+                return BridgeConstant.FALSE;
+            }
         }
         ArrayList<String> roleAccessUsers = this.getRolesAccessByRoleId(role);
         if (roleAccessUsers == null) {
@@ -113,7 +120,7 @@ public class RolesService {
         }
         return BridgeConstant.FALSE;
     }
-    private boolean apiRolesIncludeUser(String apiRoles, String userName) {
+    private boolean apiRolesIncludeUser(String apiRoles, String userName, boolean isLogin) {
         if (BridgeStaticService.isInValidString(apiRoles)) {
             logger.info("Invalid apiRoles:{}", apiRoles);
             return false;
@@ -132,7 +139,7 @@ public class RolesService {
             if (parameters.contains(token)) {
                 continue;
             }
-            tokens.set(i, this.getBooleanEquivalentToRole(token, userName));
+            tokens.set(i, this.getBooleanEquivalentToRole(token, userName, isLogin));
         }
         Boolean finalResult = evaluator.evaluateBinaryExpression(String.join("", tokens));
         if (finalResult == null) {

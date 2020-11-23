@@ -5,10 +5,14 @@ roleAccess:
   dev:
     - U1
     - adminAndDev
-
+#  isLogin: notRequiredAnyUserName
 roleAccessMapping:
   isAdminUser: admin
   isDevUser: dev
+  isUploadFileEnable: isLogin
+  isAddTextEnable: isLogin
   isAdminOrDevUser: (admin|dev)
+  isAdminOrDevOrLoginUser: (admin|dev|isLogin)
+  inValidRoleEntry: (admin1|dev|isLogin)
   isAdminAndDevUser: (admin&dev)
 #  isLogin: notRequiredAnyRoleAccess

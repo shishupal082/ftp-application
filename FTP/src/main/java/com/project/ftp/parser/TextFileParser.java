@@ -63,7 +63,7 @@ public class TextFileParser {
             writer.append("\n");
             writer.append(text);
             writer.close();
-            logger.info("Text added in : {}", filepath);
+            logger.info("Text added in: {}", filepath);
             textAddStatus = true;
         } catch (Exception e) {
             logger.info("Error in adding text in filename: {}", filepath);
