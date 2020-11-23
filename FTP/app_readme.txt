@@ -790,8 +790,8 @@ env_config change
     - removed: ftlConfig.displayCreatePasswordLink
     - added: ftlConfig.afterLoginLinkJson
 
-
-Always display create password link
+Always hide create password link
+    - added d-none class in Template
 
 Read afterLoginLinkJson from ftp_view page (just like headingJson)
 
