@@ -223,7 +223,7 @@ childGenerator = {
                             id={data.id} onChange={props.onChange}
                             value={data.value}/>;
 
-        if (data.required) {
+        if ($S.isBooleanTrue(data.required)) {
             inputField = <input key={key} type={data.type} name={data.name}
                     placeholder={data.placeholder} className={data.className}
                     id={data.id} onChange={props.onChange}
@@ -237,6 +237,21 @@ childGenerator = {
     },
     "option": function(props, data, reactChildText, key) {
         return <option key={key} value={data.value}>{reactChildText}</option>
+    },
+    "dropdown": function(props, data, reactChildText, key) {
+        if ($S.isObject(data)) {
+            data.tag = "select"; //Other select parameters will be as it is (value, className, name)
+            data.text = [];
+            if ($S.isArray(data.options)) {
+                var value, text;
+                for (var i = 0; i < data.options.length; i++) {
+                    value = data.options[i].value;
+                    text = data.options[i].text;
+                    data.text.push({"tag": "option", "value": value, "text": text});
+                }
+            }
+        }
+        return generateReactChild(props, data, key);
     }
 };
 
