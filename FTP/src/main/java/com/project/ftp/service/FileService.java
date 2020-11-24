@@ -139,20 +139,21 @@ public class FileService {
         if (dirs == null || dirs.isEmpty()) {
             return null;
         }
-        // First element must contain / (slash) in the path
         String dirStr = dirs.get(0);
+        dirStr = StaticService.getProperDirString(dirStr);
         if (!this.isDirectory(dirStr)) {
             return null;
         }
+        dirStr += "/"; // First element must contain / (slash) in the path
         for (int i = 1; i < dirs.size(); i++) {
-            if (!this.isDirectory(dirStr + dirs.get(i) + "/")) {
+            if (!this.isDirectory(dirStr + dirs.get(i))) {
                 if (!this.createFolder(dirStr, dirs.get(i))) {
                     return null;
                 }
             }
             dirStr += dirs.get(i) + "/";
         }
-        dirStr = StaticService.replaceLast("/", "", dirStr);
+        dirStr = StaticService.getProperDirString(dirStr);
         return dirStr;
     }
 
@@ -200,6 +201,7 @@ public class FileService {
         if (existingFolder == null) {
             return false;
         }
+        existingFolder = StaticService.getProperDirString(existingFolder);
         File file = new File(existingFolder);
         boolean dirCreateStatus = false;
         if (file.isDirectory()) {

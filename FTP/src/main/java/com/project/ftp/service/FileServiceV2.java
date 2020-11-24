@@ -354,8 +354,8 @@ public class FileServiceV2 {
         fileService.saveFileDetails(savedDataFilepath, finalFileDetail);
     }
     private void deleteFileV3(FileDetail fileDetail) throws AppException {
-        String dir = appConfig.getFtpConfiguration().getFileSaveDir();
-        PathInfo pathInfo = fileService.getPathInfo(dir + fileDetail.getFilepath());
+        String saveDir = appConfig.getFtpConfiguration().getFileSaveDir();
+        PathInfo pathInfo = fileService.getPathInfo(saveDir + fileDetail.getFilepath());
         boolean permanentlyDeleteFile = appConfig.getFtpConfiguration().isPermanentlyDeleteFile();
         Boolean fileDeleteStatus;
         if (AppConstant.FILE.equals(pathInfo.getType())) {
@@ -364,7 +364,7 @@ public class FileServiceV2 {
                 fileDeleteStatus = fileService.deleteFileV2(pathInfo.getPath());
             } else {
                 ArrayList<String> requiredDirs = new ArrayList<>();
-                requiredDirs.add(dir);
+                requiredDirs.add(saveDir);
                 requiredDirs.add("trash");
                 requiredDirs.add(fileDetail.getUploadedby());
                 String trashFolder = fileService.createDir(requiredDirs);
@@ -614,19 +614,19 @@ public class FileServiceV2 {
             logger.info("File extension '{}', is not supported", ext);
             throw new AppException(ErrorCodes.UNSUPPORTED_FILE_TYPE);
         }
-        String dir = appConfig.getFtpConfiguration().getFileSaveDir();
+        String saveDir = appConfig.getFtpConfiguration().getFileSaveDir();
         HashMap<String, String> values = new HashMap<>();
         values.put("username", loginUserName);
         values.put("filename", pathInfo.getFilenameWithoutExt());
-        String uploadingFileName = dir + loginUserName + "/" +
+        String uploadingFileName = saveDir + loginUserName + "/" +
                 StaticService.generateStringFromFormat(appConfig, values) + "." + pathInfo.getExtension();
         if (parseUserFileName(uploadingFileName) == null) {
             logger.info("Invalid upload filepath: {}", uploadingFileName);
             throw new AppException(ErrorCodes.INVALID_FILE_SAVE_PATH);
         }
         boolean dirStatus = true;
-        if (!fileService.isDirectory(dir+loginUserName)) {
-            dirStatus = fileService.createFolder(dir, loginUserName);
+        if (!fileService.isDirectory(saveDir+loginUserName)) {
+            dirStatus = fileService.createFolder(saveDir, loginUserName);
         }
         if (dirStatus) {
             pathInfo = this.doUpload(uploadedInputStream, uploadingFileName);
@@ -692,11 +692,13 @@ public class FileServiceV2 {
             logger.info("Invalid addText request: null");
             throw new AppException(ErrorCodes.BAD_REQUEST_ERROR);
         }
-        if (StaticService.isInValidString(addText.getFilename())) {
-            logger.info("Invalid addText filename: {}", addText.getFilename());
+        String filename = addText.getFilename();
+        String[] textData = addText.getText();
+        if (StaticService.isInValidString(filename)) {
+            logger.info("Invalid addText.filename: {}", addText);
             throw new AppException(ErrorCodes.BAD_REQUEST_ERROR);
         }
-        if (addText.getText() == null || addText.getText().length < 1) {
+        if (textData == null || textData.length < 1) {
             logger.info("Invalid addText.text: {}", addText);
             throw new AppException(ErrorCodes.BAD_REQUEST_ERROR);
         }
@@ -706,30 +708,34 @@ public class FileServiceV2 {
             throw new AppException(ErrorCodes.ADD_TEXT_DISABLED);
         }
         String username = userDetails.getUsername();
-        String folderPath = appConfig.getFtpConfiguration().getFileSaveDir();
-        String[] text = addText.getText();
-        if (!fileService.isDirectory(folderPath)) {
-            logger.info("Invalid file save dir: {}", folderPath);
+        String saveDir = appConfig.getFtpConfiguration().getFileSaveDir();
+        String userDir = saveDir + username + "/";
+        String filePath = userDir + filename;
+        String userFilename = this.parseUserFileName(filePath);
+        if (userFilename == null) {
+            logger.info("Invalid final filePath: {}", filePath);
+            throw new AppException(ErrorCodes.ADD_TEXT_ERROR);
+        }
+        if (!fileService.isDirectory(saveDir)) {
+            logger.info("Invalid file save dir: {}", saveDir);
             throw new AppException(ErrorCodes.CONFIG_ERROR);
         }
         boolean dirExist = true;
-        String userDir = folderPath + username + "/";
         if (!fileService.isDirectory(userDir)) {
             logger.info("Directory: {}, does not exist creating new.", userDir);
-            dirExist = fileService.createFolder(folderPath, username);
+            dirExist = fileService.createFolder(saveDir, username);
         }
         if (!dirExist) {
             logger.info("userDir: {}, does not exist", userDir);
             throw new AppException(ErrorCodes.ADD_TEXT_ERROR);
         }
         boolean fileExist = true;
-        String filePath = userDir + addText.getFilename();
         if (!fileService.isFile(filePath)) {
             fileExist = fileService.createNewFile(filePath);
         }
         if (fileExist) {
             TextFileParser textFileParser = new TextFileParser(filePath);
-            for (String str : text) {
+            for (String str : textData) {
                 textFileParser.addText(str);
             }
             return new ApiResponse();
