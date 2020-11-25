@@ -4,6 +4,7 @@ import com.project.ftp.config.AppConfig;
 import com.project.ftp.config.AppConstant;
 import com.project.ftp.obj.FtlConfig;
 import com.project.ftp.obj.LoginUserDetails;
+import com.project.ftp.obj.LoginUserDetailsV2;
 import com.project.ftp.obj.UiBackendConfig;
 import com.project.ftp.service.StaticService;
 import com.project.ftp.service.UserService;
@@ -20,30 +21,25 @@ public class AppView extends View {
     private final static Logger logger = LoggerFactory.getLogger(AppView.class);
     private final String appVersion;
     private final String pageName;
-    private final String isLogin;
-    private final String userName;
-    private final String userDisplayName;
-    private final String isLoginUserAdmin;
     private final String uploadFileApiVersion;
     private final String isGuestEnable;
     private final String isForgotPasswordEnable;
     private final FtlConfig ftlConfig;
+    private final String loginUserDetailsV2Str;
     public AppView(HttpServletRequest request, String ftl, String pageName,
                    UserService userService, AppConfig appConfig) {
         super(ftl);
         ftlConfig = appConfig.getFtlConfig();
         UiBackendConfig uiBackendConfig = appConfig.getFtpConfiguration().getUiBackendConfig();
-        LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
+        LoginUserDetailsV2 loginUserDetailsV2 = userService.getLoginUserDetailsV2Data(request,
+                AppConstant.FromEnvConfig);
         this.pageName = pageName;
-        this.userName = loginUserDetails.getUsername();
-        this.isLogin = Boolean.toString(loginUserDetails.getLogin());
-        this.isLoginUserAdmin = Boolean.toString(userService.isLoginUserAdmin(loginUserDetails));
         this.isGuestEnable = Boolean.toString(appConfig.getFtpConfiguration().isGuestEnable());
         this.isForgotPasswordEnable = Boolean.toString(uiBackendConfig.isForgotPasswordEnable());
         this.appVersion = AppConstant.AppVersion;
-        this.userDisplayName = "";
         this.uploadFileApiVersion = StaticService.getUploadFileApiVersion(appConfig);
-        logger.info("Loading AppView, page: {}, userDetails: {}", pageName, loginUserDetails);
+        this.loginUserDetailsV2Str = loginUserDetailsV2.toJsonString();
+        logger.info("Loading AppView, page: {}, userDetails: {}", pageName, loginUserDetailsV2);
     }
 
     public String getAppVersion() {
@@ -54,24 +50,8 @@ public class AppView extends View {
         return pageName;
     }
 
-    public String getIsLogin() {
-        return isLogin;
-    }
-
-    public String getUserName() {
-        return userName;
-    }
-
-    public String getUserDisplayName() {
-        return userDisplayName;
-    }
-
     public String getUploadFileApiVersion() {
         return uploadFileApiVersion;
-    }
-
-    public String getIsLoginUserAdmin() {
-        return isLoginUserAdmin;
     }
 
     public String getIsGuestEnable() {
@@ -84,5 +64,9 @@ public class AppView extends View {
 
     public FtlConfig getFtlConfig() {
         return ftlConfig;
+    }
+
+    public String getLoginUserDetailsV2Str() {
+        return loginUserDetailsV2Str;
     }
 }

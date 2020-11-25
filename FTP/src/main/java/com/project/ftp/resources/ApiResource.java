@@ -326,7 +326,7 @@ public class ApiResource {
         logger.info("getLoginUserDetails : In");
         ApiResponse response;
         try {
-            HashMap<String, Object> result = userService.getLoginUserDetailsV2(request);
+            LoginUserDetailsV2 result = userService.getLoginUserDetailsV2(request);
             response = new ApiResponse(result);
             eventTracking.trackSuccessEvent(request, EventName.GET_LOGIN_USER_DETAILS);
         } catch (AppException ae) {

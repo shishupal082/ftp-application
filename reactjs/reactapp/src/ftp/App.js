@@ -41,10 +41,10 @@ Data.getTemplate = function(key, defaultTemplate) {
 Data.setKeys(keys);
 // Data.initData();
 Data.setData("FTPTemplate", Template);
-var isLogin = Config.getPageData("is_login") === "true" ? true : false;
-var isUserAdmin = Config.getPageData("is_login_user_admin") === "true" ? true : false;
-var userName = Config.getPageData("username", "");
-var userDisplayName = Config.getPageData("user_display_name", "");
+var isLogin = Config.getUserData("isLogin") === "true" ? true : false;
+var isUserAdmin = Config.getUserData("isAdminUser") === "true" ? true : false;
+var userName = Config.getUserData("username", "");
+var userDisplayName = Config.getUserData("displayName", "");
 
 Data.setData("isLogin", isLogin);
 Data.setData("userName", userName);

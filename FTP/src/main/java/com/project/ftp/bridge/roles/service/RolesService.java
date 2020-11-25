@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 public class RolesService {
     final static Logger logger = LoggerFactory.getLogger(RolesService.class);
@@ -93,6 +94,16 @@ public class RolesService {
         String apiRoles = this.getRolesByApiName(roleName);
         boolean result = this.apiRolesIncludeUser(apiRoles, userName, isLogin);
         logger.info("isRoleAuthorised check response:{}", result);
+        return result;
+    }
+    public ArrayList<String> getAllRoles() {
+        HashMap<String, String> roleAccessMapping = this.getApiRolesMapping();
+        ArrayList<String> result = new ArrayList<>();
+        if (roleAccessMapping != null) {
+            for (Map.Entry<String, String> el: roleAccessMapping.entrySet()) {
+                result.add(el.getKey());
+            }
+        }
         return result;
     }
     private String getBooleanEquivalentToRole(String role, String userName, boolean isLogin) {

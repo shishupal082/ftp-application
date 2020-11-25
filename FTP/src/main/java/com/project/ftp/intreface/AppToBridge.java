@@ -14,6 +14,8 @@ import com.project.ftp.mysql.MysqlUser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
+
 public class AppToBridge implements AppToBridgeInterface {
     private final static Logger logger = LoggerFactory.getLogger(AppToBridge.class);
     private final BridgeResource bridgeResource;
@@ -55,5 +57,9 @@ public class AppToBridge implements AppToBridgeInterface {
     @Override
     public boolean isAuthorisedApi(String apiName, String userName, boolean isLogin) {
         return rolesResource.isRoleAuthorised(apiName, userName, isLogin);
+    }
+    @Override
+    public ArrayList<String> getAllRoles() {
+        return rolesResource.getAllRoles();
     }
 }

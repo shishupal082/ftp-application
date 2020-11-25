@@ -2,14 +2,12 @@ package com.project.ftp.obj;
 
 public class LoginUserDetails {
     private String username;
-    private String displayName;
     private boolean isLogin;
     /* Why added displayName?
     * It will be required for api/get_login_user_details (Right now it is not used)
     * */
     public LoginUserDetails() {
         username = "";
-        displayName = "";
         isLogin = false;
     }
     public String getUsername() {
@@ -18,14 +16,6 @@ public class LoginUserDetails {
 
     public void setUsername(String username) {
         this.username = username;
-    }
-
-    public String getDisplayName() {
-        return displayName;
-    }
-
-    public void setDisplayName(String displayName) {
-        this.displayName = displayName;
     }
 
     public boolean getLogin() {
@@ -40,7 +30,6 @@ public class LoginUserDetails {
     public String toString() {
         return "LoginUserDetails{" +
                 "username='" + username + '\'' +
-                ", displayName='" + displayName + '\'' +
                 ", isLogin=" + isLogin +
                 '}';
     }

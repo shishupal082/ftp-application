@@ -2,6 +2,8 @@ package com.project.ftp.bridge.roles.resource;
 
 import com.project.ftp.bridge.roles.service.RolesService;
 
+import java.util.ArrayList;
+
 public class RolesResource {
     private final RolesService rolesService;
 //    private final RolesTracking rolesTracking;
@@ -12,12 +14,11 @@ public class RolesResource {
     public boolean isRoleAuthorised(String apiName, String userName, boolean isLogin) {
         return rolesService.isRoleAuthorised(apiName, userName, isLogin);
     }
+    public ArrayList<String> getAllRoles() {
+        return rolesService.getAllRoles();
+    }
     // /api/get/roles/config
     public Object getRolesConfig() {
-        return null;
-    }
-    // /api/get/roles/allByUid
-    public Object getAllRolesByUsersId() {
         return null;
     }
     // /api/get/roles/allByRid

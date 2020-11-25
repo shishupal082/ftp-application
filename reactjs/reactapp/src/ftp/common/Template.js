@@ -190,6 +190,11 @@ Template["login"] = [
                 }
             ]
         }
+    },
+    {
+        "tag": "div",
+        "name": "footer",
+        "text": ""
     }
 ];
 Template["forgot_password"] = [
@@ -347,6 +352,11 @@ Template["forgot_password"] = [
                 }
             ]
         }
+    },
+    {
+        "tag": "div",
+        "name": "footer",
+        "text": ""
     }
 ];
 Template["register"] = [
@@ -521,6 +531,11 @@ Template["register"] = [
                 }
             ]
         }
+    },
+    {
+        "tag": "div",
+        "name": "footer",
+        "text": ""
     }
 ];
 Template["upload_file"] = [
@@ -622,6 +637,11 @@ Template["upload_file"] = [
                 }
             ]
         }
+    },
+    {
+        "tag": "div",
+        "name": "footer",
+        "text": ""
     }
 ];
 Template["change_password"] = [
@@ -713,6 +733,11 @@ Template["change_password"] = [
                 }
             ]
         }
+    },
+    {
+        "tag": "div",
+        "name": "footer",
+        "text": ""
     }
 ];
 Template["create_password"] = [
@@ -850,6 +875,11 @@ Template["create_password"] = [
                 }
             ]
         }
+    },
+    {
+        "tag": "div",
+        "name": "footer",
+        "text": ""
     }
 ];
 Template["dashboard"] = [
@@ -917,6 +947,11 @@ Template["dashboard"] = [
                 }
             }
         ]
+    },
+    {
+        "tag": "div",
+        "name": "footer",
+        "text": ""
     }
 ];
 Template["dashboardOrderByOption"] = [
@@ -1153,5 +1188,7 @@ Template["loading"] = [
         "text": "Loading..."
     }
 ];
+
+Template["footerLinkJson"] = {};
 
 export default Template;

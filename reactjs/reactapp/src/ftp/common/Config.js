@@ -5,10 +5,14 @@ import Template from "./Template";
 
 var Config = {"name": "Config", "imgExt": ["jpg", "jpeg", "png"]};
 var PageData = {};
+var UserData = {};
+
 var baseapi = $$$.baseapi;
 var basepathname = $$$.basepathname;
 var headingJson = $$$.headingJson;
 var afterLoginLinkJson = $$$.afterLoginLinkJson;
+var footerLinkJson = $$$.footerLinkJson;
+var loginUserDetails = $$$.loginUserDetails;
 var uploadFileInstruction = $$$.uploadFileInstruction;
 var forgotPasswordPageInstruction = $$$.forgotPasswordPageInstruction;
 var createPasswordOtpInstruction = $$$.createPasswordOtpInstruction;
@@ -29,6 +33,17 @@ try {
     afterLoginLinkJson = JSON.parse(afterLoginLinkJson);
     Template["link"] = afterLoginLinkJson;
 } catch(e) {}
+
+try {
+    footerLinkJson = JSON.parse(footerLinkJson);
+    Template["footerLinkJson"] = footerLinkJson;
+} catch(e) {}
+
+
+try {
+    UserData = JSON.parse(loginUserDetails);
+} catch(e) {}
+
 
 
 
@@ -111,7 +126,14 @@ Config.getPageData = function(key, defaultValue) {
     return defaultValue;
 };
 
-var uiUsername = Config.getPageData("username", "");
+Config.getUserData = function(key, defaultValue) {
+    if ($S.isString(UserData[key])) {
+        return UserData[key];
+    }
+    return defaultValue;
+};
+
+var uiUsername = Config.getUserData("username", "");
 var RequestId = Config.getPageData("app_version", "");
 Config.apiMapping = {};
 Config.apiMapping["static_file"] = baseapi + "/api/get_static_file?v=" + RequestId;

@@ -14,6 +14,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 
 public class UserService {
@@ -34,6 +36,15 @@ public class UserService {
         if (loginUserDetails != null) {
             username = loginUserDetails.getUsername();
             isLogin = loginUserDetails.getLogin();
+        }
+        return appConfig.getAppToBridge().isAuthorisedApi(roleAccess, username, isLogin);
+    }
+    public boolean isAuthorisedV2(LoginUserDetailsV2 loginUserDetailsV2, String roleAccess)  {
+        String username = null;
+        boolean isLogin = false;
+        if (loginUserDetailsV2 != null) {
+            username = loginUserDetailsV2.getUsername();
+            isLogin = loginUserDetailsV2.isLogin();
         }
         return appConfig.getAppToBridge().isAuthorisedApi(roleAccess, username, isLogin);
     }
@@ -151,20 +162,55 @@ public class UserService {
         }
         return loginUserDetails;
     }
-    public HashMap<String, Object> getLoginUserDetailsV2(HttpServletRequest request) throws AppException {
+    private void setUserRoles(final LoginUserDetailsV2 loginUserDetailsV2, String source) {
+        if (loginUserDetailsV2 == null) {
+            return;
+        }
+        ArrayList<String> allRoles = new ArrayList<>();
+        String[] allRolesConfig;
+        if (AppConstant.FromEnvConfig.equals(source)) {
+            String loadRoleStatusOnPageLoad = null;
+            BackendConfig backendConfig = appConfig.getFtpConfiguration().getBackendConfig();
+            if (backendConfig != null) {
+                loadRoleStatusOnPageLoad = backendConfig.getLoadRoleStatusOnPageLoad();
+            }
+            if (AppConstant.FromRoleConfig.equals(loadRoleStatusOnPageLoad)) {
+                source = AppConstant.FromRoleConfig;
+            } else if (loadRoleStatusOnPageLoad != null) {
+                allRolesConfig = loadRoleStatusOnPageLoad.split(",");
+                allRoles.addAll(Arrays.asList(allRolesConfig));
+            }
+        }
+        if (AppConstant.FromRoleConfig.equals(source)) {
+            allRoles = appConfig.getAppToBridge().getAllRoles();
+        }
+        if (allRoles == null) {
+            return;
+        }
+        loginUserDetailsV2.setRoles(new HashMap<>());
+        boolean access;
+        for (String role: allRoles) {
+            access = this.isAuthorisedV2(loginUserDetailsV2, role);
+            if (access) {
+                loginUserDetailsV2.getRoles().put(role, true);
+            }
+        }
+    }
+    public LoginUserDetailsV2 getLoginUserDetailsV2Data(HttpServletRequest request, String source)  {
         LoginUserDetails loginUserDetails = this.getLoginUserDetails(request);
-        HashMap<String, Object> result = new HashMap<>();
-        if (loginUserDetails.getLogin()) {
-            String loginUsername = loginUserDetails.getUsername();
-            boolean isAdmin = this.isLoginUserAdmin(loginUserDetails);
-            result.put("isAdmin", isAdmin);
-            result.put("username", loginUsername);
-            result.put("isLogin", loginUserDetails.getLogin());
-            result.put("displayName", this.getUserDisplayName(loginUsername));
-        } else {
+        LoginUserDetailsV2 loginUserDetailsV2 = new LoginUserDetailsV2(loginUserDetails);
+        if (loginUserDetailsV2.isLogin()) {
+            loginUserDetailsV2.setDisplayName(this.getUserDisplayName(loginUserDetailsV2.getUsername()));
+            this.setUserRoles(loginUserDetailsV2, source);
+        }
+        return loginUserDetailsV2;
+    }
+    public LoginUserDetailsV2 getLoginUserDetailsV2(HttpServletRequest request) throws AppException {
+        LoginUserDetailsV2 loginUserDetailsV2 = this.getLoginUserDetailsV2Data(request, AppConstant.FromRoleConfig);
+        if (!loginUserDetailsV2.isLogin()) {
             throw new AppException(ErrorCodes.UNAUTHORIZED_USER);
         }
-        return result;
+        return loginUserDetailsV2;
     }
     private MysqlUser isUserBlocked(String username) throws AppException {
         MysqlUser user = this.getUserByName(username);

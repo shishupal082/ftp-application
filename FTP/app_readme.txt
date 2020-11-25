@@ -804,10 +804,23 @@ Change in api
     - /api/upload_file (In both v1 or v2)
         Added check for isUploadFileEnable from roles config
 
+6.0.2
+-------------------
+Added backendConfig parameter
+    - loadRoleStatusOnPageLoad: "isAdminUser" ("FromRoleConfig")
+Added ftlConfig parameter
+    - footerLinkJson
+Load login user details data in the beginning
+Load footer link data json from ftlConfig
+
+Display footer link on all pages
+    - login, forgot_password, create_password, register, dashboard, change_password, uploadFile
 
 
 Future releases
 -------------------
+
+
 
 Integrate sending sms to user for forgot password request otp
 

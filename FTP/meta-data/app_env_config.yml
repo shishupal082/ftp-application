@@ -89,6 +89,7 @@ database:
 backendConfig:
   #  forgotPasswordMessage: "Forgot password request submitted, Please check your email."
   forgotPasswordMessage: "Forgot password request submitted, Please create password."
+  loadRoleStatusOnPageLoad: "FromRoleConfig" #"isAdminUser" #FromRoleConfig
 
 uiBackendConfig:
   forgotPasswordEnable: false
@@ -108,6 +109,7 @@ ftlConfig:
 #  createPasswordOtpInstruction: "(Check your email)"
   headingJson: '[{"tag":"div.center.table.tbody.tr","className":"heading","text":[{"tag":"td","text":{"tag":"img","className":"logo","src":"/assets/static/img/railwayslogo-128.png"}},{"tag":"td","className":"text-center pl-5px","text":[{"tag":"div","text":"Heading Line 1 (config)"},{"tag":"div","text":"Larger Heading Line 2 Row"}]}]}]'
   afterLoginLinkJson: '[{"tag":"div.center","text":[{"tag":"a","href":"/dashboard","name":"link.dashboard","className":"p-5px","text":"Dashboard"},{"tag":"a","href":"/change_password","name":"link.change_password","className":"p-5px","text":"Change Password"},{"tag":"a","href":"/upload_file","name":"link.upload_file","className":"p-5px","text":"Upload File"},{"tag":"a","name":"link.logout","href":"/logout","className":"p-5px","text":"Logout"}]},{"tag":"div.center","text":[{"tag":"span","text":"Login as(Config)"},{"tag":"span","className":"small","name":"link.is-admin","text":" (Admin)"},{"tag":"span","className":"","text":":"},{"tag":"b","name":"link.loginAs","text":""}]}]'
+  footerLinkJson: '[{"tag":"div.center","text":[{"tag":"a","href":"/dashboard","name":"link.dashboard","className":"p-5px","text":"Dashboard"},{"tag":"a","href":"/change_password","name":"link.change_password","className":"p-5px","text":"Change Password"},{"tag":"a","href":"/upload_file","name":"link.upload_file","className":"p-5px","text":"Upload File"},{"tag":"a","name":"link.logout","href":"/logout","className":"p-5px","text":"Logout"}]},{"tag":"div.center","text":[{"tag":"span","text":"Login as(Config)"},{"tag":"span","className":"small","name":"link.is-admin","text":" (Admin)"},{"tag":"span","className":"","text":":"},{"tag":"b","name":"link.loginAs","text":""}]}]'
 
 # Optional parameter
 indexPageReRoute: /login

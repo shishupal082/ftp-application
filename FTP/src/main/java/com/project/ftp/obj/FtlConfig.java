@@ -11,6 +11,7 @@ public class FtlConfig {
     private String title;
     private String headingJson;
     private String afterLoginLinkJson;
+    private String footerLinkJson;
     private String uploadFileInstruction;
     private String loginRedirectUrl;
     private String gaTrackingId;
@@ -77,6 +78,14 @@ public class FtlConfig {
         this.afterLoginLinkJson = afterLoginLinkJson;
     }
 
+    public String getFooterLinkJson() {
+        return footerLinkJson;
+    }
+
+    public void setFooterLinkJson(String footerLinkJson) {
+        this.footerLinkJson = footerLinkJson;
+    }
+
     public String getUploadFileInstruction() {
         return uploadFileInstruction;
     }
@@ -138,6 +147,7 @@ public class FtlConfig {
                 ", title='" + title + '\'' +
                 ", headingJson='" + headingJson + '\'' +
                 ", afterLoginLinkJson='" + afterLoginLinkJson + '\'' +
+                ", footerLinkJson='" + footerLinkJson + '\'' +
                 ", uploadFileInstruction='" + uploadFileInstruction + '\'' +
                 ", loginRedirectUrl='" + loginRedirectUrl + '\'' +
                 ", gaTrackingId='" + gaTrackingId + '\'' +

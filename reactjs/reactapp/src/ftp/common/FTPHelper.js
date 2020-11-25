@@ -302,7 +302,6 @@ FTP.extend({
     getFieldTemplateByPageName: function(Data, pageName) {
         var pageTemplate = [];
         var template = {};
-
         if (pageName === "upload_file") {
             template = Data.getTemplate(pageName, {});
             var uploadFileApiVersion = Config.getPageData("upload_file_api_version", "v1");
@@ -330,6 +329,11 @@ FTP.extend({
             FTP.uploadSubmitButtonStatus(pageName, template);
             FTP.checkForForgotPasswordEnable(pageName, template);
             pageTemplate.push(template);
+        }
+        var footerTemplate = Data.getTemplate("footerLinkJson", {});
+        var field = TemplateHelper(pageTemplate).searchFieldV2("footer");
+        if ($S.isObject(field) && field.name === "footer") {
+            TemplateHelper.setTemplateAttr(field, "footer", "text", footerTemplate);
         }
         return pageTemplate;
     }
