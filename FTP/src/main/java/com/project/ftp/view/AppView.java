@@ -3,7 +3,6 @@ package com.project.ftp.view;
 import com.project.ftp.config.AppConfig;
 import com.project.ftp.config.AppConstant;
 import com.project.ftp.obj.FtlConfig;
-import com.project.ftp.obj.LoginUserDetails;
 import com.project.ftp.obj.LoginUserDetailsV2;
 import com.project.ftp.obj.UiBackendConfig;
 import com.project.ftp.service.StaticService;

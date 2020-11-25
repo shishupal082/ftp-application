@@ -25,18 +25,15 @@ public class ExpressionEvaluator {
         arithmeticOperator.add(BridgeConstant.PROD);
         arithmeticOperator.add(BridgeConstant.DIV);
     }
-    public ArrayList<String> tokenize(String expression) {
+
+    public ArrayList<String> tokenizeBinary(String expression) {
         ArrayList<String> tokens = new ArrayList<>();
         ArrayList<String> validTokens = new ArrayList<>();
         validTokens.add(BridgeConstant.OPENExp);
         validTokens.add(BridgeConstant.CLOSEExp);
         validTokens.add(BridgeConstant.ORExp);
-        validTokens.add(BridgeConstant.PLUSExp);
-        validTokens.add(BridgeConstant.PRODExp);
         validTokens.add(BridgeConstant.AND);
-        validTokens.add(BridgeConstant.MINUS);
-        validTokens.add(BridgeConstant.DIV);
-        validTokens.addAll(unaryOp);
+        validTokens.add(BridgeConstant.NOT);
         if (expression == null) {
             return tokens;
         }
@@ -52,9 +49,42 @@ public class ExpressionEvaluator {
                 t = BridgeConstant.CLOSE;
             } else if (i == 2) {
                 t = BridgeConstant.OR;
-            } else if (i == 3) {
+            }
+            expression = String.join(","+t+",", temp);
+        }
+        temp = expression.split(",");
+        for (i=0; i<temp.length; i++) {
+            if (!BridgeStaticService.isInValidString(temp[i])) {
+                tokens.add(temp[i]);
+            }
+        }
+        return tokens;
+    }
+    public ArrayList<String> tokenizeNumeric(String expression) {
+        ArrayList<String> tokens = new ArrayList<>();
+        ArrayList<String> validTokens = new ArrayList<>();
+        validTokens.add(BridgeConstant.OPENExp);
+        validTokens.add(BridgeConstant.CLOSEExp);
+        validTokens.add(BridgeConstant.PLUSExp);
+        validTokens.add(BridgeConstant.PRODExp);
+        validTokens.add(BridgeConstant.MINUS);
+        validTokens.add(BridgeConstant.DIV);
+        if (expression == null) {
+            return tokens;
+        }
+        String[] temp;
+        int i;
+        String t;
+        for (i=0; i<validTokens.size(); i++) {
+            t = validTokens.get(i);
+            temp = BridgeStaticService.splitStringOnLimit(expression, t, -1);
+            if (i == 0) {
+                t = BridgeConstant.OPEN;
+            } else if (i == 1) {
+                t = BridgeConstant.CLOSE;
+            } else if (i == 2) {
                 t = BridgeConstant.PLUS;
-            } else if (i == 4) {
+            } else if (i == 3) {
                 t = BridgeConstant.PROD;
             }
             expression = String.join(","+t+",", temp);
@@ -67,13 +97,18 @@ public class ExpressionEvaluator {
         }
         return tokens;
     }
+    private ArrayList<String> generatePosixBinary(String str) {
+        ArrayList<String> tokens = this.tokenizeBinary(str);
+        BinaryTree binaryTree = BinaryTree.createBinaryTree(tokens);
+        return binaryTree.getPostOrder(binaryTree);
+    }
     private ArrayList<String> generatePosix(String str) {
-        ArrayList<String> tokens = this.tokenize(str);
+        ArrayList<String> tokens = this.tokenizeNumeric(str);
         BinaryTree binaryTree = BinaryTree.createBinaryTree(tokens);
         return binaryTree.getPostOrder(binaryTree);
     }
     public Boolean evaluateBinaryExpression(String expression) {
-        ArrayList<String> binaryPosix = this.generatePosix(expression);
+        ArrayList<String> binaryPosix = this.generatePosixBinary(expression);
         String result = this.evaluateBinaryPosix(binaryPosix);
         if (BridgeConstant.TRUE.equals(result) || BridgeConstant.FALSE.equals(result)) {
             return BridgeConstant.TRUE.equals(result);

@@ -19,7 +19,6 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import java.io.InputStream;
-import java.util.HashMap;
 
 @Path("/api")
 @Produces(MediaType.APPLICATION_JSON)

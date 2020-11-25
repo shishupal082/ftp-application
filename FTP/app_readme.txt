@@ -817,6 +817,69 @@ Display footer link on all pages
     - login, forgot_password, create_password, register, dashboard, change_password, uploadFile
 
 
+    public static BinaryTree createBinaryTreeOld(ArrayList<String> strings) {
+        Stack stack = new Stack();
+        BinaryTree root = new BinaryTree("");
+        stack.push(root);
+        BinaryTree currentTree = root;
+        ArrayList<String> binaryOp = new ArrayList<>();
+        binaryOp.add(BridgeConstant.AND);
+        binaryOp.add(BridgeConstant.OR);
+        binaryOp.add(BridgeConstant.PLUS);
+        binaryOp.add(BridgeConstant.MINUS);
+        binaryOp.add(BridgeConstant.PROD);
+        binaryOp.add(BridgeConstant.DIV);
+        ArrayList<String> unaryOp = new ArrayList<>();
+        unaryOp.add(BridgeConstant.NOT);
+        String temp;
+        BinaryTree oldRight, parent;
+        for (int i=0; i<strings.size(); i++) {
+            temp = strings.get(i);
+            if (BridgeConstant.OPEN.equals(temp)) {
+                if (i < strings.size()-1 && BridgeConstant.NOT.equals(strings.get(i+1))) {
+                    continue;
+                }
+                currentTree.insertLeft(currentTree, "");
+                stack.push(currentTree);
+                currentTree = currentTree.getLeftChild(currentTree);
+            } else if (BridgeConstant.CLOSE.equals(temp)) {
+                if (stack.getTop() >= 0) {
+                    currentTree = (BinaryTree) stack.pop();
+                }
+            } else if (binaryOp.contains(temp)) {
+                if (!BridgeConstant.EMPTY.equals(currentTree.data)) {
+                    oldRight = currentTree.right;
+                    currentTree.insertRight(currentTree, temp);
+                    currentTree = currentTree.getRightChild(currentTree);
+                    currentTree.insertNodeInLeft(currentTree, oldRight);
+                } else {
+                    currentTree.data = temp;
+                }
+                currentTree.insertRight(currentTree, "");
+                stack.push(currentTree);
+                currentTree = currentTree.getRightChild(currentTree);
+            } else if (unaryOp.contains(temp)) {
+                currentTree.data = temp;
+                if (i < strings.size()-1) {
+                    i++;
+                    currentTree.insertLeft(currentTree, strings.get(i));
+                }
+                if (stack.getTop() >= 0) {
+                    parent = (BinaryTree) stack.pop();
+                    currentTree = parent;
+                }
+            } else {
+                currentTree.data = temp;
+                if (stack.getTop() >= 0) {
+                    parent = (BinaryTree) stack.pop();
+                    currentTree = parent;
+                }
+            }
+        }
+        return root;
+    }
+
+
 Future releases
 -------------------
 

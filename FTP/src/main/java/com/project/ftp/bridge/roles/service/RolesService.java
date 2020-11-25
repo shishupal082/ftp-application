@@ -137,7 +137,7 @@ public class RolesService {
             return false;
         }
         ExpressionEvaluator evaluator = new ExpressionEvaluator();
-        ArrayList<String> tokens = evaluator.tokenize(apiRoles);
+        ArrayList<String> tokens = evaluator.tokenizeBinary(apiRoles);
         ArrayList<String> parameters = new ArrayList<>();
         parameters.add(BridgeConstant.OPEN);
         parameters.add(BridgeConstant.CLOSE);

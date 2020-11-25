@@ -2,7 +2,6 @@ package com.project.ftp.obj;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.project.ftp.service.StaticService;
 
 import java.util.Arrays;
 

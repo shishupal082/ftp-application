@@ -65,6 +65,7 @@ public class BinaryTree {
         result.add(root.data);
         return result;
     }
+
     public static BinaryTree createBinaryTree(ArrayList<String> strings) {
         Stack stack = new Stack();
         BinaryTree root = new BinaryTree("");
@@ -84,16 +85,11 @@ public class BinaryTree {
         for (int i=0; i<strings.size(); i++) {
             temp = strings.get(i);
             if (BridgeConstant.OPEN.equals(temp)) {
-                if (i < strings.size()-1 && BridgeConstant.NOT.equals(strings.get(i+1))) {
-                    continue;
-                }
                 currentTree.insertLeft(currentTree, "");
                 stack.push(currentTree);
                 currentTree = currentTree.getLeftChild(currentTree);
             } else if (BridgeConstant.CLOSE.equals(temp)) {
-                if (stack.getTop() >= 0) {
-                    currentTree = (BinaryTree) stack.pop();
-                }
+                currentTree = (BinaryTree) stack.pop();
             } else if (binaryOp.contains(temp)) {
                 if (!BridgeConstant.EMPTY.equals(currentTree.data)) {
                     oldRight = currentTree.right;
@@ -112,16 +108,12 @@ public class BinaryTree {
                     i++;
                     currentTree.insertLeft(currentTree, strings.get(i));
                 }
-                if (stack.getTop() >= 0) {
-                    parent = (BinaryTree) stack.pop();
-                    currentTree = parent;
-                }
+                parent = (BinaryTree) stack.pop();
+                currentTree = parent;
             } else {
                 currentTree.data = temp;
-                if (stack.getTop() >= 0) {
-                    parent = (BinaryTree) stack.pop();
-                    currentTree = parent;
-                }
+                parent = (BinaryTree) stack.pop();
+                currentTree = parent;
             }
         }
         return root;
