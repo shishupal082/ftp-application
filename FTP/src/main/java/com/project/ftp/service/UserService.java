@@ -255,19 +255,21 @@ public class UserService {
     }
 
     public ArrayList<String> getRelatedUsers(String username) {
+        ArrayList<String> relatedUsers;
         if (StaticService.isInValidString(username)) {
-            return new ArrayList<>();
-        }
-        ArrayList<String> relatedUsers = appConfig.getAppToBridge().getRelatedUsers(username);
-        if (relatedUsers == null) {
             relatedUsers = new ArrayList<>();
-        }
-        if (!relatedUsers.contains(username)) {
-            relatedUsers.add(username);
-        }
-        if (!AppConstant.PUBLIC.equals(username.toLowerCase())) {
-            if (!relatedUsers.contains(AppConstant.PUBLIC)) {
-                relatedUsers.add(AppConstant.PUBLIC);
+        } else {
+            relatedUsers = appConfig.getAppToBridge().getRelatedUsers(username);
+            if (relatedUsers == null) {
+                relatedUsers = new ArrayList<>();
+            }
+            if (!relatedUsers.contains(username)) {
+                relatedUsers.add(username);
+            }
+            if (!AppConstant.PUBLIC.equals(username.toLowerCase())) {
+                if (!relatedUsers.contains(AppConstant.PUBLIC)) {
+                    relatedUsers.add(AppConstant.PUBLIC);
+                }
             }
         }
         logger.info("Related users for username:{}, {}", username, relatedUsers);
