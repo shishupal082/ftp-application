@@ -128,17 +128,16 @@ public class FileServiceV2 {
     public ApiResponse scanUserDirectory(LoginUserDetails loginUserDetails) {
         ApiResponse apiResponse;
         ArrayList<ScanResult> scanResults = new ArrayList<>();
-        String dir = appConfig.getFtpConfiguration().getFileSaveDir();
-        String publicDir = dir+AppConstant.PUBLIC+"/";
+        String saveDir = appConfig.getFtpConfiguration().getFileSaveDir(), scanDir;
         String loginUserName = loginUserDetails.getUsername();
         boolean isLoginUserAdmin = userService.isLoginUserAdmin(loginUserDetails);
         if (isLoginUserAdmin) {
-            scanResults.add(fileService.scanDirectory(dir, dir, true));
+            scanResults.add(fileService.scanDirectory(saveDir, saveDir, true));
         } else {
-            dir = dir + loginUserName + "/";
-            scanResults.add(fileService.scanDirectory(dir, dir, false));
-            if (!AppConstant.PUBLIC.equals(loginUserName.toLowerCase())) {
-                scanResults.add(fileService.scanDirectory(publicDir, publicDir, false));
+            ArrayList<String> relatedUsers = userService.getRelatedUsers(loginUserName);
+            for (String username: relatedUsers) {
+                scanDir = saveDir + username + "/";
+                scanResults.add(fileService.scanDirectory(scanDir, scanDir, false));
             }
         }
         ArrayList<String> response = new ArrayList<>();
@@ -247,8 +246,10 @@ public class FileServiceV2 {
                     logger.info("Invalid viewer: {}", viewer);
                     throw new AppException(ErrorCodes.UNAUTHORIZED_USER);
                 }
-                if (!AppConstant.PUBLIC.equals(fileUsername)) {
-                    if (!userService.isLoginUserAdmin(loginUserDetails) && !loginUserName.equals(fileUsername)) {
+                if (!userService.isLoginUserAdmin(loginUserDetails)) {
+                    ArrayList<String> relatedUsers = userService.getRelatedUsers(loginUserName);
+                    // Need not to check public separately
+                    if (!relatedUsers.contains(fileUsername)) {
                         logger.info("Unauthorised access loginUserName: {}, filename: {}",
                                 loginUserName, filename);
                         throw new AppException(ErrorCodes.UNAUTHORIZED_USER);

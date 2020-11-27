@@ -17,6 +17,10 @@ public class RolesResource {
     public ArrayList<String> getAllRoles() {
         return rolesService.getAllRoles();
     }
+
+    public ArrayList<String> getRelatedUsers(String username) {
+        return rolesService.getRelatedUsers(username);
+    }
     // /api/get/roles/config
     public Object getRolesConfig() {
         return null;

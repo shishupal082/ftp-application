@@ -18,6 +18,20 @@ public class TestRoles {
     private final ExpressionEvaluator testRoles = new ExpressionEvaluator();
     private final String rolesFilePath = StaticService.getProjectWorkingDir()+"/meta-data/config-files/roles.yml";
     @Test
+    public void testRelatedUsers() {
+        BridgeConfig bridgeConfig = new BridgeConfig(null, null);
+        RolesFileParser rolesFileParser = new RolesFileParser();
+        RolesService rolesService = new RolesService(bridgeConfig, rolesFilePath);
+        Assert.assertNull(rolesService.getRelatedUsers(null));
+        Assert.assertEquals("U2,U3", String.join(",", rolesService.getRelatedUsers("U1")));
+        Assert.assertEquals("U1", String.join(",", rolesService.getRelatedUsers("U2")));
+        Assert.assertEquals("U1", String.join(",", rolesService.getRelatedUsers("U3")));
+        Assert.assertEquals("U5", String.join(",", rolesService.getRelatedUsers("U4")));
+        Assert.assertEquals("U3,U4", String.join(",", rolesService.getRelatedUsers("U5")));
+        Assert.assertEquals("U7", String.join(",", rolesService.getRelatedUsers("U6")));
+        Assert.assertNull(rolesService.getRelatedUsers("U7"));
+    }
+    @Test
     public void testBinaryTree() {
         ExpressionEvaluator expressionEvaluator = new ExpressionEvaluator();
 

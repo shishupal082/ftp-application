@@ -19,6 +19,7 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import java.io.InputStream;
+import java.util.ArrayList;
 
 @Path("/api")
 @Produces(MediaType.APPLICATION_JSON)
@@ -490,6 +491,7 @@ public class ApiResource {
         }
         ApiResponse response;
         try {
+            authService.isLogin(request);
             LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
             response = userService.isValidPermission(loginUserDetails, verifyPermission);
             eventTracking.trackSuccessEventV2(request, EventName.VERIFY_PERMISSION, comment);
@@ -499,6 +501,27 @@ public class ApiResource {
             response = new ApiResponse(ae.getErrorCode());
         }
         logger.info("verifyPermission : Out, {}", response);
+        return response;
+    }
+
+    @GET
+    @Path("/get_related_users")
+    @UnitOfWork
+    public ApiResponse getRelatedUsers(@Context HttpServletRequest request) {
+        logger.info("getRelatedUsers : In, user: {}", userService.getUserDataForLogging(request));
+        ApiResponse response;
+        try {
+            authService.isLogin(request);
+            LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
+            ArrayList<String> relatedUsers = userService.getRelatedUsers(loginUserDetails.getUsername());
+            response = new ApiResponse(relatedUsers);
+            eventTracking.trackSuccessEventV2(request, EventName.GET_RELATED_USERS, relatedUsers.toString());
+        } catch (AppException ae) {
+            logger.info("Error in getRelatedUsers: {}", ae.getErrorCode().getErrorCode());
+            eventTracking.trackFailureEvent(request, EventName.GET_RELATED_USERS, ae.getErrorCode());
+            response = new ApiResponse(ae.getErrorCode());
+        }
+        logger.info("getRelatedUsers : Out, {}", response);
         return response;
     }
 

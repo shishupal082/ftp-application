@@ -10,6 +10,8 @@ import java.util.HashMap;
 public class Roles {
     private HashMap<String, ArrayList<String>> roleAccess;
     private HashMap<String, String> roleAccessMapping;
+    private HashMap<String, ArrayList<String>> relatedUsers;
+    private HashMap<String, ArrayList<String>> coRelatedUsers;
 
     public HashMap<String, ArrayList<String>> getRoleAccess() {
         return roleAccess;
@@ -27,11 +29,29 @@ public class Roles {
         this.roleAccessMapping = roleAccessMapping;
     }
 
+    public HashMap<String, ArrayList<String>> getRelatedUsers() {
+        return relatedUsers;
+    }
+
+    public void setRelatedUsers(HashMap<String, ArrayList<String>> relatedUsers) {
+        this.relatedUsers = relatedUsers;
+    }
+
+    public HashMap<String, ArrayList<String>> getCoRelatedUsers() {
+        return coRelatedUsers;
+    }
+
+    public void setCoRelatedUsers(HashMap<String, ArrayList<String>> coRelatedUsers) {
+        this.coRelatedUsers = coRelatedUsers;
+    }
+
     @Override
     public String toString() {
         return "Roles{" +
                 "roleAccess=" + roleAccess +
                 ", roleAccessMapping=" + roleAccessMapping +
+                ", relatedUsers=" + relatedUsers +
+                ", coRelatedUsers=" + coRelatedUsers +
                 '}';
     }
 }

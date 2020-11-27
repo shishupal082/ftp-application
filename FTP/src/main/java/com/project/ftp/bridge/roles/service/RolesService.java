@@ -20,9 +20,70 @@ public class RolesService {
             this.bridgeConfig.setRoles(this.getRolesConfigByConfigPath(rolesConfigPath));
         }
     }
+    private void addEntry(Map<String, ArrayList<String>> coRelatedUsers, String user1, String user2) {
+        if (coRelatedUsers == null || user1 == null || user2 == null) {
+            return;
+        }
+        ArrayList<String> user1Group = coRelatedUsers.get(user1);
+        ArrayList<String> user2Group = coRelatedUsers.get(user2);
+        if (user1Group == null) {
+            user1Group = new ArrayList<>();
+        }
+        if (user2Group == null) {
+            user2Group = new ArrayList<>();
+        }
+        if (!user1Group.contains(user2)) {
+            user1Group.add(user2);
+            coRelatedUsers.put(user1, user1Group);
+        }
+        if (!user2Group.contains(user1)) {
+            user2Group.add(user1);
+            coRelatedUsers.put(user2, user2Group);
+        }
+    }
     public Roles getRolesConfigByConfigPath(String rolesConfigPath) {
         RolesFileParser rolesFileParser = new RolesFileParser();
         Roles roles = rolesFileParser.getRolesFileData(rolesConfigPath);
+        HashMap<String, ArrayList<String>> relatedUsers = null;
+        HashMap<String, ArrayList<String>> coRelatedUsers = null;
+        HashMap<String, ArrayList<String>> tempRelatedUsers = new HashMap<>();
+        if (roles != null) {
+            relatedUsers = roles.getRelatedUsers();
+            coRelatedUsers = roles.getCoRelatedUsers();
+        }
+        String username;
+        ArrayList<String> usernames;
+        if (coRelatedUsers != null) {
+            for (Map.Entry<String, ArrayList<String>> el: coRelatedUsers.entrySet()) {
+                username = el.getKey();
+                usernames = el.getValue();
+                for(String str: usernames) {
+                    this.addEntry(tempRelatedUsers, username, str);
+                }
+            }
+        }
+        if (roles!= null && relatedUsers == null) {
+            relatedUsers = new HashMap<>();
+        }
+        ArrayList<String> relatedUsersGroup;
+        for (Map.Entry<String, ArrayList<String>> el: tempRelatedUsers.entrySet()) {
+            username = el.getKey();
+            usernames = el.getValue();
+            relatedUsersGroup = relatedUsers.get(username);
+            if (relatedUsersGroup == null) {
+                relatedUsers.put(username, usernames);
+                continue;
+            }
+            for(String str: usernames) {
+                if (!relatedUsersGroup.contains(str)) {
+                    relatedUsersGroup.add(str);
+                }
+            }
+            relatedUsers.put(username, relatedUsersGroup);
+        }
+        if (roles != null) {
+            roles.setRelatedUsers(relatedUsers);
+        }
         logger.info("roles config data:{}", roles);
         return roles;
     }
@@ -105,6 +166,20 @@ public class RolesService {
             }
         }
         return result;
+    }
+    public ArrayList<String> getRelatedUsers(String username) {
+        if (username == null) {
+            return null;
+        }
+        Roles roles = this.getRolesConfig();
+        if (roles == null) {
+            return null;
+        }
+        HashMap<String, ArrayList<String>> relatedUsers = roles.getRelatedUsers();
+        if (relatedUsers == null) {
+            return null;
+        }
+        return relatedUsers.get(username);
     }
     private String getBooleanEquivalentToRole(String role, String userName, boolean isLogin) {
         if (BridgeStaticService.isInValidString(role)) {

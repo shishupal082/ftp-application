@@ -72,6 +72,10 @@
     "Get all users Data"
   ],
   [
+    "/api/get_related_users",
+    "Get related users name"
+  ],
+  [
     "/api/get_static_file",
     "Get app static file Data"
   ],

@@ -16,3 +16,16 @@ roleAccessMapping:
   inValidRoleEntry: (admin1|dev|isLogin)
   isAdminAndDevUser: (admin&dev)
 #  isLogin: notRequiredAnyRoleAccess
+
+coRelatedUsers:
+  U1:
+    - U2
+    - U3
+  U4:
+    - U5
+
+relatedUsers:
+  U6:
+    - U7
+  U5:
+    - U3

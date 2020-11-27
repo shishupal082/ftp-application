@@ -8,4 +8,5 @@ public interface AppToBridgeInterface {
     void sendCreatePasswordOtpEmail(MysqlUser user);
     boolean isAuthorisedApi(String apiName, String userName, boolean isLogin);
     ArrayList<String> getAllRoles();
+    ArrayList<String> getRelatedUsers(String username);
 }
