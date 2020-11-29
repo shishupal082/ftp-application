@@ -3,10 +3,7 @@ package com.project.ftp;
 import com.project.ftp.bridge.BridgeConstant;
 import com.project.ftp.bridge.config.BridgeConfig;
 import com.project.ftp.bridge.roles.obj.Roles;
-import com.project.ftp.bridge.roles.service.BinaryTree;
-import com.project.ftp.bridge.roles.service.ExpressionEvaluator;
-import com.project.ftp.bridge.roles.service.RolesFileParser;
-import com.project.ftp.bridge.roles.service.RolesService;
+import com.project.ftp.bridge.roles.service.*;
 import com.project.ftp.service.ConfigService;
 import com.project.ftp.service.StaticService;
 import org.junit.Assert;
@@ -30,6 +27,16 @@ public class TestRoles {
         Assert.assertEquals("U3,U4", String.join(",", rolesService.getRelatedUsers("U5")));
         Assert.assertEquals("U7", String.join(",", rolesService.getRelatedUsers("U6")));
         Assert.assertNull(rolesService.getRelatedUsers("U7"));
+    }
+    @Test
+    public void testStack() {
+        Stack stack = new Stack();
+        Assert.assertEquals(-1, stack.getTop());
+        stack.push("Str");
+        Assert.assertEquals(0, stack.getTop());
+        String str = (String) stack.pop();
+        Assert.assertEquals("Str", str);
+        Assert.assertEquals(-1, stack.getTop());
     }
     @Test
     public void testBinaryTree() {
@@ -146,9 +153,12 @@ public class TestRoles {
         Assert.assertFalse(rolesService.isRoleAuthorised(null, "userName", false));
         Assert.assertFalse(rolesService.isRoleAuthorised(null, "userName", true));
         Assert.assertFalse(rolesService.isRoleAuthorised(BridgeConstant.IS_LOGIN, null, false));
-        Assert.assertFalse(rolesService.isRoleAuthorised(BridgeConstant.IS_LOGIN, null, true));
         Assert.assertFalse(rolesService.isRoleAuthorised(BridgeConstant.IS_LOGIN, "username", false));
+        Assert.assertTrue(rolesService.isRoleAuthorised(BridgeConstant.IS_LOGIN, null, true));
         Assert.assertTrue(rolesService.isRoleAuthorised(BridgeConstant.IS_LOGIN, "username", true));
+        Assert.assertFalse(rolesService.isRoleAuthorised("isBooleanTrue", null, true));
+        Assert.assertFalse(rolesService.isRoleAuthorised("isBooleanTrue", null, false));
+        Assert.assertFalse(rolesService.isRoleAuthorised("isBooleanTrue", "username", true));
         Assert.assertFalse(rolesService.isRoleAuthorised("isUploadFileEnable", "username", true));
         Assert.assertFalse(rolesService.isRoleAuthorised("isUploadFileEnable", "username", false));
         Assert.assertFalse(rolesService.isRoleAuthorised("isAddTextEnable", "username", true));
@@ -159,7 +169,7 @@ public class TestRoles {
         Assert.assertNotNull(rolesService.getRolesConfig());
         Assert.assertNotNull(rolesService.getRolesAccess());
         Assert.assertNotNull(rolesService.getApiRolesMapping());
-        Assert.assertEquals(8, rolesService.getAllRoles().size());
+        Assert.assertEquals(10, rolesService.getAllRoles().size());
         Assert.assertNotNull(rolesService.getRolesAccessByRoleId("admin"));
         Assert.assertNull(rolesService.getRolesAccessByRoleId("adminNotFound"));
         Assert.assertNotNull(rolesService.getRolesByApiName("isAdminUser"));
@@ -171,14 +181,24 @@ public class TestRoles {
         Assert.assertFalse(rolesService.isRoleAuthorised("isAdminUser", "userNotFound", true));
         Assert.assertTrue(rolesService.isRoleAuthorised("isDevUser", "U1", false));
         Assert.assertTrue(rolesService.isRoleAuthorised("isDevUser", "U1", true));
+        Assert.assertFalse(rolesService.isRoleAuthorised("isDevUser", null, true));
+        Assert.assertFalse(rolesService.isRoleAuthorised("isDevUser", "", true));
 
-        Assert.assertFalse(rolesService.isRoleAuthorised(BridgeConstant.IS_LOGIN, "", false));
-        Assert.assertFalse(rolesService.isRoleAuthorised(BridgeConstant.IS_LOGIN, "", true));
         Assert.assertFalse(rolesService.isRoleAuthorised(BridgeConstant.IS_LOGIN, null, false));
-        Assert.assertFalse(rolesService.isRoleAuthorised(BridgeConstant.IS_LOGIN, null, true));
+        Assert.assertFalse(rolesService.isRoleAuthorised(BridgeConstant.IS_LOGIN, "", false));
         Assert.assertFalse(rolesService.isRoleAuthorised(BridgeConstant.IS_LOGIN, "U1", false));
+        Assert.assertTrue(rolesService.isRoleAuthorised(BridgeConstant.IS_LOGIN, null, true));
+        Assert.assertTrue(rolesService.isRoleAuthorised(BridgeConstant.IS_LOGIN, "", true));
         Assert.assertTrue(rolesService.isRoleAuthorised(BridgeConstant.IS_LOGIN, "U1", true));
         Assert.assertTrue(rolesService.isRoleAuthorised(BridgeConstant.IS_LOGIN, "InvalidUsername", true));
+
+
+        Assert.assertTrue(rolesService.isRoleAuthorised("isBooleanTrue", null, true));
+        Assert.assertTrue(rolesService.isRoleAuthorised("isBooleanTrue", null, false));
+        Assert.assertTrue(rolesService.isRoleAuthorised("isBooleanTrue", "", true));
+        Assert.assertTrue(rolesService.isRoleAuthorised("isBooleanTrue", "", false));
+        Assert.assertTrue(rolesService.isRoleAuthorised("isBooleanTrue", "username", true));
+        Assert.assertTrue(rolesService.isRoleAuthorised("isBooleanTrue", "username", false));
 
         Assert.assertFalse(rolesService.isRoleAuthorised("isDevUserNotFound", "U1", false));
         Assert.assertFalse(rolesService.isRoleAuthorised("isDevUserNotFound", "U1", true));
@@ -188,6 +208,7 @@ public class TestRoles {
         Assert.assertTrue(rolesService.isRoleAuthorised("isAdminAndDevUser", "adminAndDev", true));
         Assert.assertTrue(rolesService.isRoleAuthorised("isAdminOrDevOrLoginUser", "Admin1", true));
         Assert.assertFalse(rolesService.isRoleAuthorised("inValidRoleEntry", "Admin", true));
+        Assert.assertFalse(rolesService.isRoleAuthorised("inValidRoleEntry2", "Admin", true));
 
 
         Assert.assertTrue(rolesService.isRoleAuthorised("isUploadFileEnable", "username", true));

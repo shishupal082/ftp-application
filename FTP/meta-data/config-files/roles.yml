@@ -5,6 +5,7 @@ roleAccess:
   dev:
     - U1
     - adminAndDev
+#  true: notRequiredAnyUserName
 #  isLogin: notRequiredAnyUserName
 roleAccessMapping:
   isAdminUser: admin
@@ -14,7 +15,9 @@ roleAccessMapping:
   isAdminOrDevUser: (admin|dev)
   isAdminOrDevOrLoginUser: (admin|dev|isLogin)
   inValidRoleEntry: (admin1|dev|isLogin)
+  inValidRoleEntry2: (&dev)
   isAdminAndDevUser: (admin&dev)
+  isBooleanTrue: true
 #  isLogin: notRequiredAnyRoleAccess
 
 coRelatedUsers:

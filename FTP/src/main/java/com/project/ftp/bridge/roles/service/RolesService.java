@@ -145,10 +145,6 @@ public class RolesService {
             logger.info("Invalid roleName:{}", roleName);
             return false;
         }
-        if (BridgeStaticService.isInValidString(userName)) {
-            logger.info("Invalid userName:{}", userName);
-            return false;
-        }
         if (BridgeConstant.IS_LOGIN.equals(roleName)) {
             return isLogin;
         }
@@ -186,16 +182,19 @@ public class RolesService {
             logger.info("Invalid role:{}", role);
             return null;
         }
-        if (BridgeStaticService.isInValidString(userName)) {
-            logger.info("Invalid userName:{}", userName);
-            return null;
-        }
         if (BridgeConstant.IS_LOGIN.equals(role)) {
             if (isLogin) {
                 return BridgeConstant.TRUE;
             } else {
                 return BridgeConstant.FALSE;
             }
+        }
+        if (BridgeConstant.TRUE.equals(role)) {
+            return BridgeConstant.TRUE;
+        }
+        if (BridgeStaticService.isInValidString(userName)) {
+            logger.info("Invalid userName:{}", userName);
+            return null;
         }
         ArrayList<String> roleAccessUsers = this.getRolesAccessByRoleId(role);
         if (roleAccessUsers == null) {

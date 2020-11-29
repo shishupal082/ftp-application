@@ -483,16 +483,14 @@ public class ApiResource {
     @UnitOfWork
     public ApiResponse verifyPermission(@Context HttpServletRequest request,
                                         RequestVerifyPermission verifyPermission) {
-        logger.info("verifyPermission : In, user: {}, request: {}",
-                userService.getUserDataForLogging(request), verifyPermission);
+        LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
+        logger.info("verifyPermission : In, user: {}, request: {}", loginUserDetails, verifyPermission);
         String comment = null;
         if (verifyPermission != null) {
             comment = verifyPermission.toString();
         }
         ApiResponse response;
         try {
-            authService.isLogin(request);
-            LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
             response = userService.isValidPermission(loginUserDetails, verifyPermission);
             eventTracking.trackSuccessEventV2(request, EventName.VERIFY_PERMISSION, comment);
         } catch (AppException ae) {
