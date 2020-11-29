@@ -822,6 +822,13 @@ Added concept of related and coRelated users from role config
 get_files_info will return all the files of relatedUsers
 relatedUsers calculated from coRelatedUsers, relatedUsers, loginUsername and public
 
+Pre defined roleAccess
+    - isLogin
+    - true
+
+Pre defined roleAccessMapping
+    - isLogin
+
 
     public static BinaryTree createBinaryTreeOld(ArrayList<String> strings) {
         Stack stack = new Stack();
