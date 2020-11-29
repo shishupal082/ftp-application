@@ -20,15 +20,31 @@ roleAccessMapping:
   isBooleanTrue: true
 #  isLogin: notRequiredAnyRoleAccess
 
+# Duplicate entry will be removed from coRelatedUsers calculation
+# But not from relatedUsers
+
 coRelatedUsers:
   U1:
     - U2
     - U3
+    - U1
+    - U1
   U4:
     - U5
+  U8:
+  U9:
+    - U9
+  U10:
+  U11:
 
 relatedUsers:
   U6:
     - U7
   U5:
     - U3
+  U9:
+  U10:
+
+# final output
+# relatedUsers={U5=[U3, U5, U4], U6=[U7], U9=[U9], U10=null, U1=[U2, U3, U1], U2=[U2, U3, U1], U3=[U2, U3, U1], U4=[U5, U4]},
+# coRelatedUsers={U8=null, U9=[U9], U11=null, U10=null, U1=[U2, U3, U1, U1], U4=[U5, U4]}}

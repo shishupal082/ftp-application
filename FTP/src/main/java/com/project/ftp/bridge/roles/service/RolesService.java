@@ -57,8 +57,16 @@ public class RolesService {
             for (Map.Entry<String, ArrayList<String>> el: coRelatedUsers.entrySet()) {
                 username = el.getKey();
                 usernames = el.getValue();
+                if (username == null || usernames == null) {
+                    continue;
+                }
+                if (!usernames.contains(username)) {
+                    usernames.add(username);
+                }
                 for(String str: usernames) {
-                    this.addEntry(tempRelatedUsers, username, str);
+                    for(String str1: usernames) {
+                        this.addEntry(tempRelatedUsers, str, str1);
+                    }
                 }
             }
         }
