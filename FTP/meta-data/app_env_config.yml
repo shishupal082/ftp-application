@@ -52,11 +52,11 @@ supportedFileType:
   - jpg
   - png
 
-defaultFileViewer: "self" #self or all
-fileDeleteAccess: "self_admin" #self or admin or self_admin
+
+fileDeleteAccess: "self" #self or admin or self_admin
 permanentlyDeleteFile: false #File will saved in trash folder
 maxFileSize: 10240001 #i.e. #i.e. 2048000 = 2048 kB = 2MB, 10240001 = 10MB
-uploadFileApiVersion: v1 #(v1|v2)
+uploadFileApiVersion: v2 #(v1|v2)
 aesEncryptionPassword: "1234"
 
 emailConfig:
@@ -90,6 +90,7 @@ backendConfig:
   #  forgotPasswordMessage: "Forgot password request submitted, Please check your email."
   forgotPasswordMessage: "Forgot password request submitted, Please create password."
   loadRoleStatusOnPageLoad: "FromRoleConfig" #"isAdminUser" #FromRoleConfig
+  rolesFileName: "roles.yml"
 
 uiBackendConfig:
   forgotPasswordEnable: false

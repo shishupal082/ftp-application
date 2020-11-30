@@ -232,27 +232,6 @@ public class StaticService {
         }
         return userMethod;
     }
-    public static FileViewer getFileViewer(String viewer) {
-        if (viewer == null || viewer.isEmpty()) {
-            return null;
-        }
-        viewer = viewer.toUpperCase();
-        FileViewer fileViewer = null;
-        try {
-            fileViewer = FileViewer.valueOf(viewer);
-        } catch (Exception e) {
-            logger.info("Error in parsing FileViewer enum ({}): {}", viewer, e.getMessage());
-        }
-        return fileViewer;
-    }
-    public static FileViewer getFileViewerV2(AppConfig appConfig, String fileUsername) {
-        String defaultFileViewer = appConfig.getFtpConfiguration().getDefaultFileViewer();
-        FileViewer viewer = StaticService.getFileViewer(defaultFileViewer);
-        if (AppConstant.PUBLIC.equals(fileUsername)) {
-            viewer = FileViewer.ALL;
-        }
-        return viewer;
-    }
     public static FileDeleteAccess getFileDeleteAccess(String fileDeleteAccess) {
         if (fileDeleteAccess == null || fileDeleteAccess.isEmpty()) {
             return null;

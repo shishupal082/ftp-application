@@ -11,6 +11,7 @@ import com.project.ftp.bridge.roles.service.RolesService;
 import com.project.ftp.config.AppConstant;
 import com.project.ftp.event.EventTracking;
 import com.project.ftp.mysql.MysqlUser;
+import com.project.ftp.obj.BackendConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,7 +25,13 @@ public class AppToBridge implements AppToBridgeInterface {
 
     public AppToBridge(FtpConfiguration ftpConfiguration, EventTracking eventTracking) {
         emailConfig = ftpConfiguration.getEmailConfig();
-        String rolesConfigPath = ftpConfiguration.getConfigDataFilePath()+AppConstant.ROLES;
+        String rolesConfigPath = ftpConfiguration.getConfigDataFilePath();
+        String rolesFileName = AppConstant.ROLES;
+        BackendConfig backendConfig = ftpConfiguration.getBackendConfig();
+        if (backendConfig != null && backendConfig.getRolesFileName() != null) {
+            rolesFileName = backendConfig.getRolesFileName();
+        }
+        rolesConfigPath += rolesFileName;
         BridgeConfig bridgeConfig = new BridgeConfig(emailConfig, ftpConfiguration.getCreatePasswordEmailConfig());
         RolesService rolesService = new RolesService(bridgeConfig, rolesConfigPath);
         BridgeToAppInterface bridgeToAppInterface = new BridgeToApp(eventTracking);

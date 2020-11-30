@@ -23,7 +23,6 @@ public class FtpConfiguration extends Configuration {
     private String publicDir;
     private String publicPostDir;
     private String fileDeleteAccess;
-    private String defaultFileViewer;
     private String filenameFormat;
     private String instance;
     private String appRestartCommand;
@@ -124,14 +123,6 @@ public class FtpConfiguration extends Configuration {
 
     public void setFileDeleteAccess(String fileDeleteAccess) {
         this.fileDeleteAccess = fileDeleteAccess;
-    }
-
-    public String getDefaultFileViewer() {
-        return defaultFileViewer;
-    }
-
-    public void setDefaultFileViewer(String defaultFileViewer) {
-        this.defaultFileViewer = defaultFileViewer;
     }
 
     public String getFilenameFormat() {
@@ -286,7 +277,6 @@ public class FtpConfiguration extends Configuration {
                 ", publicDir='" + publicDir + '\'' +
                 ", publicPostDir='" + publicPostDir + '\'' +
                 ", fileDeleteAccess='" + fileDeleteAccess + '\'' +
-                ", defaultFileViewer='" + defaultFileViewer + '\'' +
                 ", filenameFormat='" + filenameFormat + '\'' +
                 ", instance='" + instance + '\'' +
                 ", appRestartCommand='" + appRestartCommand + '\'' +

@@ -2,7 +2,6 @@ package com.project.ftp.obj;
 
 import com.project.ftp.config.AppConstant;
 import com.project.ftp.config.FileDeleteAccess;
-import com.project.ftp.config.FileViewer;
 import com.project.ftp.service.StaticService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,7 +14,6 @@ public class FileDetail {
     private String filename;
     private String uploadedby; // username
     private String deletedby; // username
-    private FileViewer viewer; //self or all
     private FileDeleteAccess deleteAccess; //self or admin or self_admin
     private String subject;
     private String heading;
@@ -31,7 +29,7 @@ public class FileDetail {
             isValid = false;
             return;
         }
-        if (details.size() < 10) {
+        if (details.size() < 9) {
             isValid = false;
             if (details.size() > 1) {
                 logger.info("Invalid fileDetail request: {}", details);
@@ -44,17 +42,16 @@ public class FileDetail {
         filename = details.get(1);
         uploadedby = details.get(2);
         deletedby = details.get(3);
-        viewer = StaticService.getFileViewer(details.get(4));
-        deleteAccess = StaticService.getFileDeleteAccess(details.get(5));
-        subject = StaticService.decodeComma(details.get(6));
-        heading = StaticService.decodeComma(details.get(7));
-        entryType = details.get(8);
-        isDeleted = details.get(9);
+        deleteAccess = StaticService.getFileDeleteAccess(details.get(4));
+        subject = StaticService.decodeComma(details.get(5));
+        heading = StaticService.decodeComma(details.get(6));
+        entryType = details.get(7);
+        isDeleted = details.get(8);
         filepath = uploadedby + "/" +filename;
     }
     //for file upload v1 and for migration
     public FileDetail(String filename, String uploadedby,
-                      FileViewer viewer, FileDeleteAccess deleteAccess,
+                      FileDeleteAccess deleteAccess,
                       String entryType) {
         this.isValid = false;
         if (filename == null || filename.isEmpty()) {
@@ -69,17 +66,16 @@ public class FileDetail {
         this.datetimeStamp = StaticService.getDateStrFromPattern(AppConstant.DateTimeFormat5);
         this.filename = filename;
         this.uploadedby = uploadedby;
-        this.viewer = viewer;
         this.deleteAccess = deleteAccess;
         this.entryType = entryType;
-        this.isDeleted = "false";
+        this.isDeleted = AppConstant.FALSE;
         this.filepath = this.uploadedby + "/" + this.filename;
         // deletedby, subject and heading will be null
     }
     //for file upload v2
     public FileDetail(String filename, String uploadedby,
                       String subject, String heading,
-                      FileViewer viewer, FileDeleteAccess deleteAccess) {
+                      FileDeleteAccess deleteAccess) {
         this.isValid = false;
         if (filename == null || filename.isEmpty()) {
             logger.info("Invalid fileDetail request, invalid filename: {}", filename);
@@ -101,7 +97,6 @@ public class FileDetail {
         this.datetimeStamp = StaticService.getDateStrFromPattern(AppConstant.DateTimeFormat5);
         this.filename = filename;
         this.uploadedby = uploadedby;
-        this.viewer = viewer;
         this.deleteAccess = deleteAccess;
         this.subject = subject;
         this.heading = heading;
@@ -133,7 +128,7 @@ public class FileDetail {
         this.entryType = "delete";
         this.isDeleted = "true";
         this.filepath = this.uploadedby + "/" + this.filename;
-        // heading, subject, viewer, deleteAccess will be copy paste from old data
+        // heading, subject, deleteAccess will be copy paste from old data
     }
     public String generateResponseToSave() {
         String response = "";
@@ -141,7 +136,6 @@ public class FileDetail {
         response += "," + this.filename;
         response += "," + this.uploadedby;
         response += "," + (this.deletedby != null ? this.deletedby : "");
-        response += "," + (this.viewer != null ? this.viewer.getViewer() : "");
         response += "," + (this.deleteAccess != null ? this.deleteAccess.getDeleteAccess() : "");
         response += "," + (this.subject != null ? StaticService.encodeComma(this.subject) : "");
         response += "," + (this.heading != null ? StaticService.encodeComma(this.heading) : "");
@@ -181,14 +175,6 @@ public class FileDetail {
 
     public void setUploadedby(String uploadedby) {
         this.uploadedby = uploadedby;
-    }
-
-    public FileViewer getViewer() {
-        return viewer;
-    }
-
-    public void setViewer(FileViewer viewer) {
-        this.viewer = viewer;
     }
 
     public String getSubject() {
@@ -262,7 +248,6 @@ public class FileDetail {
                 ", filename='" + filename + '\'' +
                 ", uploadedby='" + uploadedby + '\'' +
                 ", deletedby='" + deletedby + '\'' +
-                ", viewer=" + viewer +
                 ", deleteAccess=" + deleteAccess +
                 ", subject='" + subject + '\'' +
                 ", heading='" + heading + '\'' +

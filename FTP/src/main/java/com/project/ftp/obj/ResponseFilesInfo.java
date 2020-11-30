@@ -1,7 +1,9 @@
 package com.project.ftp.obj;
 
 import com.project.ftp.config.FileDeleteAccess;
-import com.project.ftp.config.FileViewer;
+import com.project.ftp.service.StaticService;
+
+import java.util.ArrayList;
 
 public class ResponseFilesInfo {
     private String filepath;
@@ -9,27 +11,22 @@ public class ResponseFilesInfo {
     private boolean deleteOption;
     private String subject;
     private String heading;
-    public ResponseFilesInfo(boolean isLoginUserAdmin, FileDetail fileDetail, LoginUserDetails loginUserDetails) {
+    public ResponseFilesInfo(boolean isLoginUserAdmin, FileDetail fileDetail,
+                             LoginUserDetails loginUserDetails) {
         if (fileDetail == null || loginUserDetails == null) {
             return;
         }
         if (fileDetail.isDeletedTrue()) {
             return;
         }
+        String loginUsername = loginUserDetails.getUsername();
+        if (StaticService.isInValidString(loginUsername)) {
+            return;
+        }
         this.filepath = fileDetail.getFilepath();
         this.subject = fileDetail.getSubject();
         this.heading = fileDetail.getHeading();
-        this.viewOption = false;
-        FileViewer viewer = fileDetail.getViewer();
-        if (isLoginUserAdmin) {
-            this.viewOption = true;
-        } else if (FileViewer.ALL == viewer) {
-            this.viewOption = true;
-        } else if (FileViewer.SELF == viewer) {
-            if (loginUserDetails.getUsername().equals(fileDetail.getUploadedby())) {
-                this.viewOption = true;
-            }
-        }
+        this.viewOption = true;
         this.deleteOption = false;
         FileDeleteAccess deleteAccess = fileDetail.getDeleteAccess();
         if (FileDeleteAccess.ADMIN == deleteAccess) {
@@ -37,11 +34,11 @@ public class ResponseFilesInfo {
                 this.deleteOption = true;
             }
         } else if (FileDeleteAccess.SELF_ADMIN == deleteAccess) {
-            if (isLoginUserAdmin || loginUserDetails.getUsername().equals(fileDetail.getUploadedby())) {
+            if (isLoginUserAdmin || loginUsername.equals(fileDetail.getUploadedby())) {
                 this.deleteOption = true;
             }
         } else if (FileDeleteAccess.SELF == deleteAccess) {
-            if (loginUserDetails.getUsername().equals(fileDetail.getUploadedby())) {
+            if (loginUsername.equals(fileDetail.getUploadedby())) {
                 this.deleteOption = true;
             }
         }

@@ -11,6 +11,8 @@ public class AppConstant {
     public static final String STATUS = "STATUS";
     public static final String SUCCESS = "SUCCESS";
     public static final String FAILURE = "FAILURE";
+    public static final String TRUE = "true";
+    public static final String FALSE = "false";
     public static final String IFRAME = "iframe";
     public static final String FILE_USERNAME = "fileUsername";
     public static final String FILE_NAME_STR = "filenameStr";
@@ -21,7 +23,7 @@ public class AppConstant {
     public static final String ALLOWED_HEADERS= "Access-Control-Allow-Headers";
     public static final String FILE = "FILE";
     public static final String FOLDER = "FOLDER";
-    public static final String AppVersion = "6.0.3";
+    public static final String AppVersion = "6.0.4";
     public static final String server = "server";
     public static final String DATE_FORMAT = "YYYY-MM-dd";
     public static final String TIME_FORMAT = "HHmmss";

@@ -1,6 +1,9 @@
 package com.project.ftp.service;
 
-import com.project.ftp.config.*;
+import com.project.ftp.config.AppConfig;
+import com.project.ftp.config.AppConstant;
+import com.project.ftp.config.FileDeleteAccess;
+import com.project.ftp.config.PathType;
 import com.project.ftp.exceptions.AppException;
 import com.project.ftp.exceptions.ErrorCodes;
 import com.project.ftp.obj.*;
@@ -60,13 +63,6 @@ public class FileServiceV2 {
             }
         }
     }
-    private boolean isFileExist(String filepath) {
-        if (filepath == null) {
-            return false;
-        }
-        String dir = appConfig.getFtpConfiguration().getFileSaveDir();
-        return fileService.isFile(dir+filepath);
-    }
     private ArrayList<ResponseFilesInfo> generateFileInfoResponse(ArrayList<String> res,
                                                                   LoginUserDetails loginUserDetails,
                                                                   boolean isLoginUserAdmin) {
@@ -84,30 +80,20 @@ public class FileServiceV2 {
         String fileUsername, filenameStr;
         for (String filepath: res) {
             fileDetail = fileDetailHashMap.get(filepath);
-            if (fileDetail == null || fileDetail.isDeletedTrue()) {
+            //Update delete access
+            if (fileDetail == null) {
                 parsedData = this.parseRequestedFileStr(filepath);
                 if (AppConstant.SUCCESS.equals(parsedData.get(AppConstant.STATUS))) {
                     fileUsername = parsedData.get(AppConstant.FILE_USERNAME);
                     filenameStr = parsedData.get(AppConstant.FILE_NAME_STR);
-                    fileDetail = this.generateFileDetailsFromFilepath(fileUsername,filenameStr,"getFileSInfo");
+                    fileDetail = new FileDetail(filenameStr, fileUsername,
+                            FileDeleteAccess.SELF, "getFileSInfo");
+                } else {
+                    continue;
                 }
             }
+            fileDetail.setIsDeleted(AppConstant.FALSE);
             finalResponse.add(new ResponseFilesInfo(isLoginUserAdmin, fileDetail, loginUserDetails));
-        }
-        String filepath;
-        for (Map.Entry<String, FileDetail> entry: fileDetailHashMap.entrySet()) {
-            filepath = entry.getKey();
-            if (res.contains(filepath)) {
-                continue;
-            }
-            if (!this.isFileExist(filepath)) {
-                logger.info("filepath: {}, does not exist.", filepath);
-                continue;
-            }
-            ResponseFilesInfo filesInfoResponse = new ResponseFilesInfo(isLoginUserAdmin, entry.getValue(), loginUserDetails);
-            if (filesInfoResponse.isViewOption()) {
-                finalResponse.add(filesInfoResponse);
-            }
         }
         return finalResponse;
     }
@@ -121,7 +107,7 @@ public class FileServiceV2 {
         this.generateApiResponse(scanResults, response);
         logger.info("scanUserDirectory result size: {}", response.size());
         ArrayList<ResponseFilesInfo> filesInfo =
-                this.generateFileInfoResponse(response, loginUserDetails, false);
+                this.generateFileInfoResponse(response, loginUserDetails,false);
         logger.info("final result size: {}", filesInfo.size());
         return new ApiResponse(filesInfo);
     }
@@ -240,20 +226,13 @@ public class FileServiceV2 {
             if (fileDetail.isDeletedTrue()) {
                 logger.info("file deleted entry, but file is there: {}", fileDetail);
             }
-            FileViewer viewer = fileDetail.getViewer();
-            if (FileViewer.ALL != viewer) {
-                if (FileViewer.SELF != viewer) {
-                    logger.info("Invalid viewer: {}", viewer);
+            if (!userService.isLoginUserAdmin(loginUserDetails)) {
+                ArrayList<String> relatedUsers = userService.getRelatedUsers(loginUserName);
+                // Need not to check public separately
+                if (!relatedUsers.contains(fileUsername)) {
+                    logger.info("Unauthorised access loginUserName: {}, filename: {}",
+                            loginUserName, filename);
                     throw new AppException(ErrorCodes.UNAUTHORIZED_USER);
-                }
-                if (!userService.isLoginUserAdmin(loginUserDetails)) {
-                    ArrayList<String> relatedUsers = userService.getRelatedUsers(loginUserName);
-                    // Need not to check public separately
-                    if (!relatedUsers.contains(fileUsername)) {
-                        logger.info("Unauthorised access loginUserName: {}, filename: {}",
-                                loginUserName, filename);
-                        throw new AppException(ErrorCodes.UNAUTHORIZED_USER);
-                    }
                 }
             }
             logger.info("Search result: {}", pathInfo);
@@ -345,7 +324,6 @@ public class FileServiceV2 {
         } else {
             finalFileDetail.setSubject(fileDetail.getSubject());
             finalFileDetail.setHeading(fileDetail.getHeading());
-            finalFileDetail.setViewer(fileDetail.getViewer());
             finalFileDetail.setDeleteAccess(fileDetail.getDeleteAccess());
         }
         if (!fileDetail.isValid()) {
@@ -399,16 +377,15 @@ public class FileServiceV2 {
     // uploadFileV1
     private FileDetail generateFileDetailsFromFilepath(String fileUsername, String filename,
                                                        String entryType) {
-        FileViewer viewer = StaticService.getFileViewerV2(appConfig, fileUsername);
         FileDeleteAccess deleteAccess = StaticService.getFileDeleteAccessV2(appConfig);
-        return new FileDetail(filename, fileUsername, viewer, deleteAccess, entryType);
+        return new FileDetail(filename, fileUsername, deleteAccess, entryType);
     }
     // uploadFileV2
     private void generateFileDetailsFromFilepathV2(String loginUsername, String filename,
                                                        String subject, String heading) {
         FileDeleteAccess deleteAccess = StaticService.getFileDeleteAccessV2(appConfig);
         FileDetail fileDetail = new FileDetail(filename, loginUsername,
-                                    subject, heading, FileViewer.ALL, deleteAccess);
+                                    subject, heading, deleteAccess);
         fileService.saveFileDetails(savedDataFilepath, fileDetail);
     }
     public void deleteRequestFileV2(LoginUserDetails loginUserDetails,

@@ -830,11 +830,15 @@ Pre defined roleAccess
 Pre defined roleAccessMapping
     - isLogin
 
+6.0.4
+-------------------
+config parameter removed
+    - defaultFileViewer (file viewer should always set as self)
+config parameter added
+    - backendConfig.rolesFileName: "roles.yml" (Optional, default value will be "roles.yml")
+
 Future releases
 -------------------
-config parameter to be removed
-    - defaultFileViewer (file viewer should always set as self)
-
 
     public static BinaryTree createBinaryTreeOld(ArrayList<String> strings) {
         Stack stack = new Stack();

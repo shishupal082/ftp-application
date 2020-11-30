@@ -1,4 +1,4 @@
-date time stamp,filename,uploadedby (username),deletedby (username),viewAccess(self|all),deleteAccess(self|admin|self_admin),subject,heading,entryType(upload|delete|migration),isDeleted (true/false)
+date time stamp,filename,uploadedby (username),deletedby (username),deleteAccess(self|admin|self_admin),subject,heading,entryType(upload|delete|migration),isDeleted (true/false)
 
-2020-10-28-12:36,2020-10-28-12-36-hwh-bkp.pdf,U1,,all,self_admin,Test,Test,uploadV2,false
-2020-10-28-12:38,2020-10-28-12-38-bkp-hwh.pdf,U2,,all,self_admin,Test 2,Test 2,uploadV2,false
+2020-10-28-12:36,2020-10-28-12-36-hwh-bkp.pdf,U1,,self_admin,Test,Test,uploadV2,false
+2020-10-28-12:38,2020-10-28-12-38-bkp-hwh.pdf,U2,,self_admin,Test 2,Test 2,uploadV2,false
