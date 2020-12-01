@@ -52,7 +52,7 @@ public class UserService {
         return this.isAuthorised(loginUserDetails, AppConstant.IS_ADMIN_USER);
     }
     public boolean isLoginUserDev(LoginUserDetails loginUserDetails)  {
-        return this.isAuthorised(loginUserDetails, AppConstant.IS_ADMIN_USER);
+        return this.isAuthorised(loginUserDetails, AppConstant.IS_DEV_USER);
     }
 
     public ApiResponse isValidPermission(LoginUserDetails loginUserDetails,
@@ -71,7 +71,11 @@ public class UserService {
         }
         throw new AppException(ErrorCodes.VERIFY_PERMISSION_ERROR);
     }
-    public Users getAllUser() throws AppException {
+    public Users getAllUser(LoginUserDetails loginUserDetails) throws AppException {
+        if (!this.isAuthorised(loginUserDetails, AppConstant.IS_GET_ALL_USERS_ENABLE)) {
+            logger.info(AppConstant.IS_GET_ALL_USERS_ENABLE + " api disabled.");
+            throw new AppException(ErrorCodes.GET_ALL_USERS_DISABLED);
+        }
         Users users = userInterface.getAllUsers();
         if (users == null) {
             logger.info("Error in getting all usersData");
@@ -331,8 +335,6 @@ public class UserService {
             throw new AppException(ErrorCodes.RUNTIME_ERROR);
         }
         sessionService.loginUser(request, user.getUsername());
-        logger.info("register success:{}, {}",
-                StaticService.encryptAesPassword(appConfig, userRegister.getPassword()), user);
     }
     public void changePassword(HttpServletRequest request, RequestChangePassword changePassword) throws AppException {
         inputValidate.validateChangePassword(changePassword);
@@ -366,8 +368,6 @@ public class UserService {
             logger.info("Error in updating password.");
             throw new AppException(ErrorCodes.RUNTIME_ERROR);
         }
-        logger.info("change password success:{}, {}",
-                StaticService.encryptAesPassword(appConfig, newPassword), user);
     }
     public void logoutUser(HttpServletRequest request) {
         LoginUserDetails loginUserDetails = this.getLoginUserDetails(request);

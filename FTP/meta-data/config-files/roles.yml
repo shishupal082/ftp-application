@@ -18,6 +18,7 @@ roleAccessMapping:
   inValidRoleEntry2: (&dev)
   isAdminAndDevUser: (admin&dev)
   isBooleanTrue: true
+  getAllUsersEnable: true
 #  isLogin: notRequiredAnyRoleAccess
 
 # Duplicate entry will be removed from coRelatedUsers calculation

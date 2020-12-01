@@ -153,8 +153,6 @@ public class EventTracking {
         if (requestUserLogin != null) {
             username = requestUserLogin.getUsername();
             commentData.put(uiUserAgent, requestUserLogin.getUser_agent());
-            String encryptedPassword = StaticService.encryptAesPassword(appConfig, requestUserLogin.getPassword());
-            logger.info("Encrypted password: {}", encryptedPassword);
         }
         commentData.put(requestUserAgent, RequestService.getRequestUserAgent(request));
         commentData.put(sessionDataStr, sessionService.getCurrentSessionDataV2(request));

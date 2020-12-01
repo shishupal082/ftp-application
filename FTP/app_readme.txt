@@ -837,6 +837,9 @@ config parameter removed
 config parameter added
     - backendConfig.rolesFileName: "roles.yml" (Optional, default value will be "roles.yml")
 
+New role implemented
+    - getAllUsersEnable
+
 Future releases
 -------------------
 

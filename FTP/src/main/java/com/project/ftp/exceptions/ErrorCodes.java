@@ -13,6 +13,7 @@ public enum ErrorCodes {
     FILE_NOT_FOUND("FILE_NOT_FOUND", "File not found", 402),
     FILE_UPLOAD_DISABLED("FILE_UPLOAD_DISABLED", "File upload disabled", 402),
     ADD_TEXT_DISABLED("ADD_TEXT_DISABLED", "Add text disabled", 402),
+    GET_ALL_USERS_DISABLED("GET_ALL_USERS_DISABLED", "Get all users api disabled", 402),
     ADD_TEXT_ERROR("ADD_TEXT_ERROR", "Error in adding text", 402),
     VERIFY_PERMISSION_ERROR("VERIFY_PERMISSION_ERROR", "Un authorised permission", 402),
     INVALID_QUERY_PARAMS("Invalid query params", "Invalid query params", 403),

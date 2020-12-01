@@ -70,11 +70,12 @@ public class ApiResource {
     @Path("/get_users")
     @UnitOfWork
     public ApiResponse getAllUsers(@Context HttpServletRequest request) {
-        logger.info("getAllUsers : In, {}", userService.getUserDataForLogging(request));
+        LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
+        logger.info("getAllUsers : In, {}", loginUserDetails);
         ApiResponse response;
         try {
             authService.isLoginUserAdmin(request);
-            Users u = userService.getAllUser();
+            Users u = userService.getAllUser(loginUserDetails);
             u = new Users(u.getUserHashMap());
             response = new ApiResponse(u);
             eventTracking.trackSuccessEvent(request, EventName.GET_USERS);

@@ -172,7 +172,7 @@ public class TestRoles {
         Assert.assertNotNull(rolesService.getRolesConfig());
         Assert.assertNotNull(rolesService.getRolesAccess());
         Assert.assertNotNull(rolesService.getApiRolesMapping());
-        Assert.assertEquals(10, rolesService.getAllRoles().size());
+        Assert.assertEquals(11, rolesService.getAllRoles().size());
         Assert.assertNotNull(rolesService.getRolesAccessByRoleId("admin"));
         Assert.assertNull(rolesService.getRolesAccessByRoleId("adminNotFound"));
         Assert.assertNotNull(rolesService.getRolesByApiName("isAdminUser"));

@@ -47,12 +47,8 @@ public class AppConstant {
     public static final String PUBLIC = "public";
     public static final String DEFAULT = "default";
     public static final String UN_AUTHORISED = "un_authorised";
-    public static final String IS_DEV_USER = "isDevUser";
-    public static final String IS_ADMIN_USER = "isAdminUser";
     public static final String FromRoleConfig = "FromRoleConfig";
     public static final String FromEnvConfig = "FromEnvConfig";
-    public static final String IS_ADD_TEXT_ENABLE = "isAddTextEnable";
-    public static final String IS_UPLOAD_FILE_ENABLE = "isUploadFileEnable";
     public static final String V1 = "v1";
     public static final String V2 = "v2";
     public static final String PDF_AUTHOR = "Project Author";
@@ -63,6 +59,14 @@ public class AppConstant {
     public static final String ORIGIN = "origin";
     public static final String MOBILE_REGEX = "[6-9][0-9]{9}";
     public static final String EMAIL_REGEX = "^(.+)@(.+)$"; // only care about @
+
+
+
+    public static final String IS_DEV_USER = "isDevUser";
+    public static final String IS_ADMIN_USER = "isAdminUser";
+    public static final String IS_ADD_TEXT_ENABLE = "isAddTextEnable";
+    public static final String IS_UPLOAD_FILE_ENABLE = "isUploadFileEnable";
+    public static final String IS_GET_ALL_USERS_ENABLE = "getAllUsersEnable";
 }
 
 /*

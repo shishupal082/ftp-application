@@ -16,7 +16,6 @@ import org.slf4j.LoggerFactory;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
 
 public class FileServiceV2 {
     private final static Logger logger = LoggerFactory.getLogger(FileServiceV2.class);

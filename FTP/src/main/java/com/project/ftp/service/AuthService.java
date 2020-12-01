@@ -33,7 +33,13 @@ public class AuthService {
             throw new AppException(ErrorCodes.UNAUTHORIZED_USER);
         }
     }
-
+    /* used for
+     * get_app_config
+     * get_session_config
+     * aes_encrypt
+     * aes_decrypt
+     * md5_encrypt
+    * */
     public void isLoginUserDev(HttpServletRequest request) throws AppException {
         LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
         if (!userService.isLoginUserDev(loginUserDetails)) {

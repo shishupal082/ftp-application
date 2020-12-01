@@ -426,11 +426,6 @@ Template["register"] = [
                                         {
                                             "tag": "span",
                                             "text": "New Password"
-                                        },
-                                        {
-                                            "tag": "span",
-                                            "className": "small pl-5px",
-                                            "text": "(Do not use gmail password here)"
                                         }
                                     ]
                                 },
@@ -686,11 +681,6 @@ Template["change_password"] = [
                                         {
                                             "tag": "span",
                                             "text": "New Password"
-                                        },
-                                        {
-                                            "tag": "span",
-                                            "className": "small pl-5px",
-                                            "text": "(Do not use gmail password here)"
                                         }
                                     ]
                                 },
@@ -809,11 +799,6 @@ Template["create_password"] = [
                                         {
                                             "tag": "span",
                                             "text": "New Password"
-                                        },
-                                        {
-                                            "tag": "span",
-                                            "className": "small pl-5px",
-                                            "text": "(Do not use gmail password here)"
                                         }
                                     ]
                                 },

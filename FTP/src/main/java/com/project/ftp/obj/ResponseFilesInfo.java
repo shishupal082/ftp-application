@@ -3,8 +3,6 @@ package com.project.ftp.obj;
 import com.project.ftp.config.FileDeleteAccess;
 import com.project.ftp.service.StaticService;
 
-import java.util.ArrayList;
-
 public class ResponseFilesInfo {
     private String filepath;
     private boolean viewOption;
