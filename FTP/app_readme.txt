@@ -840,6 +840,10 @@ config parameter added
 New role implemented
     - getAllUsersEnable
 
+
+New api added:
+    - /api/get_roles_config [Get]
+
 Future releases
 -------------------
 

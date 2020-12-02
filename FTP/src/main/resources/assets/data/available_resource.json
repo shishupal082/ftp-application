@@ -72,8 +72,8 @@
     "Get all users Data"
   ],
   [
-    "/api/get_related_users",
-    "Get related users name"
+    "/api/get_roles_config",
+    "Get roles config"
   ],
   [
     "/api/get_static_file",

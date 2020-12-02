@@ -279,6 +279,9 @@ public class UserService {
         logger.info("Related users for username:{}, {}", username, relatedUsers);
         return relatedUsers;
     }
+    public Object getRolesConfig() {
+        return appConfig.getAppToBridge().getRolesConfig();
+    }
     // register
     private MysqlUser isValidRegisterRequest(RequestUserRegister userRegister) throws AppException {
         inputValidate.validateRegister(userRegister);

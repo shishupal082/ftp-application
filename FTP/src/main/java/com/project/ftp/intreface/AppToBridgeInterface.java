@@ -9,4 +9,5 @@ public interface AppToBridgeInterface {
     boolean isAuthorisedApi(String apiName, String userName, boolean isLogin);
     ArrayList<String> getAllRoles();
     ArrayList<String> getRelatedUsers(String username);
+    Object getRolesConfig();
 }

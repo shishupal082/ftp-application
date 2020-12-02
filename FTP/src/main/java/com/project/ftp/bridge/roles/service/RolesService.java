@@ -26,33 +26,59 @@ public class RolesService {
         }
         ArrayList<String> user1Group = coRelatedUsers.get(user1);
         ArrayList<String> user2Group = coRelatedUsers.get(user2);
+        ArrayList<String> combineUserGroup = new ArrayList<>();
+        combineUserGroup.add(user1);
+        if (!combineUserGroup.contains(user2)) {
+            combineUserGroup.add(user2);
+        }
         if (user1Group == null) {
             user1Group = new ArrayList<>();
         }
         if (user2Group == null) {
             user2Group = new ArrayList<>();
         }
-        if (!user1Group.contains(user2)) {
-            user1Group.add(user2);
-            coRelatedUsers.put(user1, user1Group);
+        for(String str: user1Group) {
+            if (!combineUserGroup.contains(str)) {
+                combineUserGroup.add(str);
+            }
         }
-        if (!user2Group.contains(user1)) {
-            user2Group.add(user1);
-            coRelatedUsers.put(user2, user2Group);
+        for(String str: user2Group) {
+            if (!combineUserGroup.contains(str)) {
+                combineUserGroup.add(str);
+            }
         }
+        for(String str: combineUserGroup) {
+            coRelatedUsers.put(str, combineUserGroup);
+        }
+        coRelatedUsers.put(user1, combineUserGroup);
+        coRelatedUsers.put(user2, combineUserGroup);
+    }
+    private ArrayList<String> removeDuplicate(ArrayList<String> entry) {
+        ArrayList<String> result = new ArrayList<>();
+        if (entry == null) {
+            return result;
+        }
+        for (String str: entry) {
+            if (result.contains(str)) {
+                continue;
+            }
+            result.add(str);
+        }
+        return result;
     }
     public Roles getRolesConfigByConfigPath(String rolesConfigPath) {
         RolesFileParser rolesFileParser = new RolesFileParser();
         Roles roles = rolesFileParser.getRolesFileData(rolesConfigPath);
         HashMap<String, ArrayList<String>> relatedUsers = null;
         HashMap<String, ArrayList<String>> coRelatedUsers = null;
-        HashMap<String, ArrayList<String>> tempRelatedUsers = new HashMap<>();
         if (roles != null) {
             relatedUsers = roles.getRelatedUsers();
             coRelatedUsers = roles.getCoRelatedUsers();
         }
         String username;
         ArrayList<String> usernames;
+        /*Mixing co-related user properly */
+        HashMap<String, ArrayList<String>> tempCoRelatedUsers = new HashMap<>();
         if (coRelatedUsers != null) {
             for (Map.Entry<String, ArrayList<String>> el: coRelatedUsers.entrySet()) {
                 username = el.getKey();
@@ -65,16 +91,19 @@ public class RolesService {
                 }
                 for(String str: usernames) {
                     for(String str1: usernames) {
-                        this.addEntry(tempRelatedUsers, str, str1);
+                        this.addEntry(tempCoRelatedUsers, str, str1);
                     }
                 }
             }
         }
-        if (roles!= null && relatedUsers == null) {
+        logger.info("tempCoRelatedUsers:{}", tempCoRelatedUsers);
+        /*Mixing co-related user properly end */
+        if (relatedUsers == null) {
             relatedUsers = new HashMap<>();
         }
+        /* Combining relatedUsers and coRelatedUsers */
         ArrayList<String> relatedUsersGroup;
-        for (Map.Entry<String, ArrayList<String>> el: tempRelatedUsers.entrySet()) {
+        for (Map.Entry<String, ArrayList<String>> el: tempCoRelatedUsers.entrySet()) {
             username = el.getKey();
             usernames = el.getValue();
             relatedUsersGroup = relatedUsers.get(username);
@@ -89,8 +118,26 @@ public class RolesService {
             }
             relatedUsers.put(username, relatedUsersGroup);
         }
+        logger.info("finalRelatedUses before duplicate removal:{}", relatedUsers);
+        /* Combining relatedUsers and coRelatedUsers end */
+        String key;
+        ArrayList<String> value;
+        /* Remove duplicate entry and create relatedUsers properly */
+        HashMap<String, ArrayList<String>> finalRelatedUsers = new HashMap<>();
+        for (Map.Entry<String, ArrayList<String>> el: relatedUsers.entrySet()) {
+            key = el.getKey();
+            value = el.getValue();
+            if (key == null || value == null) {
+                continue;
+            }
+            value.add(key);
+            value = this.removeDuplicate(value);
+            finalRelatedUsers.put(key, value);
+        }
+        /* Remove duplicate entry end */
+        logger.info("finalRelatedUses after duplicate removal:{}", finalRelatedUsers);
         if (roles != null) {
-            roles.setRelatedUsers(relatedUsers);
+            roles.setRelatedUsers(finalRelatedUsers);
         }
         logger.info("roles config data:{}", roles);
         return roles;

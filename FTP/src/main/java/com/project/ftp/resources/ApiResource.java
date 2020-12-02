@@ -504,23 +504,21 @@ public class ApiResource {
     }
 
     @GET
-    @Path("/get_related_users")
+    @Path("/get_roles_config")
     @UnitOfWork
-    public ApiResponse getRelatedUsers(@Context HttpServletRequest request) {
-        logger.info("getRelatedUsers : In, user: {}", userService.getUserDataForLogging(request));
+    public ApiResponse getRolesConfig(@Context HttpServletRequest request) {
+        logger.info("getRolesConfig : In, user: {}", userService.getUserDataForLogging(request));
         ApiResponse response;
         try {
-            authService.isLogin(request);
-            LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
-            ArrayList<String> relatedUsers = userService.getRelatedUsers(loginUserDetails.getUsername());
-            response = new ApiResponse(relatedUsers);
-            eventTracking.trackSuccessEventV2(request, EventName.GET_RELATED_USERS, relatedUsers.toString());
+            authService.isLoginUserDev(request);
+            response = new ApiResponse(userService.getRolesConfig());// data could be null also
+            eventTracking.trackSuccessEvent(request, EventName.GET_ROLES_CONFIG);
         } catch (AppException ae) {
-            logger.info("Error in getRelatedUsers: {}", ae.getErrorCode().getErrorCode());
-            eventTracking.trackFailureEvent(request, EventName.GET_RELATED_USERS, ae.getErrorCode());
+            logger.info("Error in getRolesConfig: {}", ae.getErrorCode().getErrorCode());
+            eventTracking.trackFailureEvent(request, EventName.GET_ROLES_CONFIG, ae.getErrorCode());
             response = new ApiResponse(ae.getErrorCode());
         }
-        logger.info("getRelatedUsers : Out, {}", response);
+        logger.info("getRolesConfig : Out, {}", response);
         return response;
     }
 

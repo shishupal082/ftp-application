@@ -25,7 +25,7 @@ public enum EventName {
     GET_FILES_INFO("get_files_info"),
     GET_CURRENT_USER_FILES_INFO("get_files_info"),
     VERIFY_PERMISSION("verify_permission"),
-    GET_RELATED_USERS("get_related_users"),
+    GET_ROLES_CONFIG("get_roles_config"),
     AES_ENCRYPTION("aes_encryption"),
     AES_DECRYPTION("aes_decryption"),
     MD5_ENCRYPTION("md5_encryption");

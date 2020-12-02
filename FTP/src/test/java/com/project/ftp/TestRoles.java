@@ -19,17 +19,17 @@ public class TestRoles {
         BridgeConfig bridgeConfig = new BridgeConfig(null, null);
         RolesService rolesService = new RolesService(bridgeConfig, rolesFilePath);
         Assert.assertNull(rolesService.getRelatedUsers(null));
-        Assert.assertEquals("U2,U3,U1", String.join(",", rolesService.getRelatedUsers("U1")));
-        Assert.assertEquals("U2,U3,U1", String.join(",", rolesService.getRelatedUsers("U2")));
-        Assert.assertEquals("U2,U3,U1", String.join(",", rolesService.getRelatedUsers("U3")));
-        Assert.assertEquals("U5,U4", String.join(",", rolesService.getRelatedUsers("U4")));
-        Assert.assertEquals("U3,U5,U4", String.join(",", rolesService.getRelatedUsers("U5")));
-        Assert.assertEquals("U7", String.join(",", rolesService.getRelatedUsers("U6")));
+        Assert.assertEquals("U4,U1,U5,U3,U2", String.join(",", rolesService.getRelatedUsers("U1")));
+        Assert.assertEquals("U4,U1,U5,U3,U2", String.join(",", rolesService.getRelatedUsers("U2")));
+        Assert.assertEquals("U4,U1,U5,U3,U2", String.join(",", rolesService.getRelatedUsers("U3")));
+        Assert.assertEquals("U4,U1,U5,U3,U2", String.join(",", rolesService.getRelatedUsers("U4")));
+        Assert.assertEquals("U3,U4,U1,U5,U2", String.join(",", rolesService.getRelatedUsers("U5")));
+        Assert.assertEquals("U7,U6", String.join(",", rolesService.getRelatedUsers("U6")));
         Assert.assertNull(rolesService.getRelatedUsers("U7"));
         Assert.assertNull(rolesService.getRelatedUsers("U8"));
         Assert.assertEquals("U9", String.join(",", rolesService.getRelatedUsers("U9")));
         Assert.assertNull(rolesService.getRelatedUsers("U10"));
-        Assert.assertNull(rolesService.getRelatedUsers("U11"));
+        Assert.assertEquals("U3,U11", String.join(",", rolesService.getRelatedUsers("U11")));
     }
     @Test
     public void testStack() {

@@ -36,6 +36,7 @@ public class AuthService {
     /* used for
      * get_app_config
      * get_session_config
+     * get_roles_config
      * aes_encrypt
      * aes_decrypt
      * md5_encrypt

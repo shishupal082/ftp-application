@@ -21,9 +21,8 @@ public class RolesResource {
     public ArrayList<String> getRelatedUsers(String username) {
         return rolesService.getRelatedUsers(username);
     }
-    // /api/get/roles/config
     public Object getRolesConfig() {
-        return null;
+        return rolesService.getRolesConfig();
     }
     // /api/get/roles/allByRid
     public Object getAllRolesByRolesId() {
