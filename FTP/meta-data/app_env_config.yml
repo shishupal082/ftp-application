@@ -21,7 +21,7 @@ logging:
 
 logFilePath: "F:/ftp-app/log/"
 fileSaveDir: "D:/workspace/project/ftp-app/saved-files/"
-configDataFilePath: "D:/workspace/project/ftp-app/config-files/"
+configDataFilePath: "D:/workspace/project/ftp-app/ftp/config-files/"
 #configDataFilePath: "D:/workspace/ftp-application/FTP/meta-data/config-files/"
 
 server:

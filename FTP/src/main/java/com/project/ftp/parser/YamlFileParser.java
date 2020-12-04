@@ -16,6 +16,8 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 public class YamlFileParser {
     final static Logger logger = LoggerFactory.getLogger(YamlFileParser.class);
@@ -82,6 +84,23 @@ public class YamlFileParser {
             pageConfig404 = objectMapper.readValue(new File(filePath), PageConfig404.class);
         } catch (IOException ioe) {
             logger.info("IOE : for file : {}", filePath);
+        }
+        /* Remove relative path for 404 page mapping fileName */
+        if (pageConfig404 != null) {
+            HashMap<String, Page404Entry> pageMapping404 = pageConfig404.getPageMapping404();
+            if (pageMapping404 != null) {
+                String str;
+                Page404Entry page404Entry;
+                for (Map.Entry<String, Page404Entry> el: pageMapping404.entrySet()) {
+                    page404Entry = el.getValue();
+                    if (page404Entry == null) {
+                        continue;
+                    }
+                    str = StaticService.removeRelativePath(page404Entry.getFileName());
+                    page404Entry.setFileName(str);
+                    el.setValue(page404Entry);
+                }
+            }
         }
         return pageConfig404;
     }

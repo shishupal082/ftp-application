@@ -16,4 +16,18 @@ public class TestStaticService {
         Assert.assertEquals("", strings[0]);
         Assert.assertEquals("/data", strings[1]);
     }
+    @Test
+    public void testRemoveRelativePath() {
+        Assert.assertNull(StaticService.removeRelativePath(null));
+        Assert.assertEquals("/data", StaticService.removeRelativePath("/data"));
+        Assert.assertEquals("/data", StaticService.removeRelativePath("/../data"));
+        Assert.assertEquals("/data", StaticService.removeRelativePath("/.././data"));
+        Assert.assertEquals("/data", StaticService.removeRelativePath("/../data"));
+        Assert.assertEquals("/data/", StaticService.removeRelativePath("/data/..//../"));
+        Assert.assertEquals("/data./", StaticService.removeRelativePath("/../data./.././"));
+        Assert.assertEquals("/data./", StaticService.removeRelativePath("/../data././../"));
+        Assert.assertEquals("/data./", StaticService.removeRelativePath("/../data./././"));
+        Assert.assertEquals("/.data./.", StaticService.removeRelativePath("/.././.data./../../."));
+        Assert.assertEquals("/.data./.", StaticService.removeRelativePath("\\..\\.\\.data.\\..\\..\\."));
+    }
 }

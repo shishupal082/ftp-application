@@ -127,9 +127,24 @@ public class StaticService {
         if (path == null) {
             return null;
         }
+        path = replaceBackSlashToSlash(path);
         path = path + "/";
         path = path.replaceAll("/+", "/");
         return strUtils.replaceLast("/", "", path);
+    }
+    //Test case written for this
+    public static String removeRelativePath(String path) {
+        if (path == null) {
+            return null;
+        }
+        path = replaceBackSlashToSlash(path);
+        if (path.contains("/./")) {
+            return removeRelativePath(path.replaceAll("/./", "/"));
+        }
+        if (path.contains("/../")) {
+            return removeRelativePath(path.replaceAll("/../", "/"));
+        }
+        return path.replaceAll("/+", "/");
     }
     public static String replaceComma(String str) {
         if (str == null) {
