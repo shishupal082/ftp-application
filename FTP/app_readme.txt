@@ -844,6 +844,12 @@ New role implemented
 New api added:
     - /api/get_roles_config [Get]
 
+
+6.0.5
+-------------------
+Reformatted roles data entry for coRelatedUsers and relatedUsers
+
+
 Future releases
 -------------------
 

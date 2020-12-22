@@ -70,8 +70,10 @@ public class RolesService {
         RolesFileParser rolesFileParser = new RolesFileParser();
         Roles roles = rolesFileParser.getRolesFileData(rolesConfigPath);
         HashMap<String, ArrayList<String>> relatedUsers = null;
-        HashMap<String, ArrayList<String>> coRelatedUsers = null;
+        HashMap<String, ArrayList<String>> rolesAccess = null;
+        ArrayList<String> coRelatedUsers = null;
         if (roles != null) {
+            rolesAccess = roles.getRoleAccess();
             relatedUsers = roles.getRelatedUsers();
             coRelatedUsers = roles.getCoRelatedUsers();
         }
@@ -79,67 +81,100 @@ public class RolesService {
         ArrayList<String> usernames;
         /*Mixing co-related user properly */
         HashMap<String, ArrayList<String>> tempCoRelatedUsers = new HashMap<>();
-        if (coRelatedUsers != null) {
-            for (Map.Entry<String, ArrayList<String>> el: coRelatedUsers.entrySet()) {
-                username = el.getKey();
-                usernames = el.getValue();
-                if (username == null || usernames == null) {
-                    continue;
-                }
-                if (!usernames.contains(username)) {
-                    usernames.add(username);
-                }
-                for(String str: usernames) {
-                    for(String str1: usernames) {
-                        this.addEntry(tempCoRelatedUsers, str, str1);
+        if (coRelatedUsers != null && rolesAccess != null) {
+            ArrayList<String> groupUsers;
+            for (String userGroupName: coRelatedUsers) {
+                groupUsers = rolesAccess.get(userGroupName);
+                if (groupUsers != null) {
+                    for(String str: groupUsers) {
+                        for(String str1: groupUsers) {
+                            this.addEntry(tempCoRelatedUsers, str, str1);
+                        }
                     }
                 }
             }
         }
-        logger.info("tempCoRelatedUsers:{}", tempCoRelatedUsers);
+        logger.info("tempCoRelatedUsers: {}", tempCoRelatedUsers);
         /*Mixing co-related user properly end */
         if (relatedUsers == null) {
             relatedUsers = new HashMap<>();
         }
         /* Combining relatedUsers and coRelatedUsers */
-        ArrayList<String> relatedUsersGroup;
-        for (Map.Entry<String, ArrayList<String>> el: tempCoRelatedUsers.entrySet()) {
-            username = el.getKey();
-            usernames = el.getValue();
-            relatedUsersGroup = relatedUsers.get(username);
-            if (relatedUsersGroup == null) {
-                relatedUsers.put(username, usernames);
-                continue;
-            }
-            for(String str: usernames) {
-                if (!relatedUsersGroup.contains(str)) {
-                    relatedUsersGroup.add(str);
+        ArrayList<String> relatedUsersGroupNames;
+        HashMap<String, ArrayList<String>> tempRelatedUsers = new HashMap<>();
+        ArrayList<String> usernamesV2;
+        if (rolesAccess != null) {
+            for (Map.Entry<String, ArrayList<String>> el: relatedUsers.entrySet()) {
+                usernamesV2 = new ArrayList<>();
+                username = el.getKey();
+                relatedUsersGroupNames = el.getValue();
+                if (relatedUsersGroupNames != null) {
+                    for (String groupName: relatedUsersGroupNames) {
+                        usernames = rolesAccess.get(groupName);
+                        if (usernames != null) {
+                            usernamesV2.addAll(usernames);
+                            usernamesV2.add(username);
+                        }
+                    }
+                }
+                if (usernamesV2.size() > 0) {
+                    tempRelatedUsers.put(username, usernamesV2);
                 }
             }
-            relatedUsers.put(username, relatedUsersGroup);
         }
-        logger.info("finalRelatedUses before duplicate removal:{}", relatedUsers);
-        /* Combining relatedUsers and coRelatedUsers end */
-        String key;
-        ArrayList<String> value;
-        /* Remove duplicate entry and create relatedUsers properly */
-        HashMap<String, ArrayList<String>> finalRelatedUsers = new HashMap<>();
-        for (Map.Entry<String, ArrayList<String>> el: relatedUsers.entrySet()) {
-            key = el.getKey();
-            value = el.getValue();
-            if (key == null || value == null) {
+        logger.info("tempRelatedUsers: {}", tempRelatedUsers);
+        /* Combining tempRelatedUsers and tempCoRelatedUsers */
+        for (Map.Entry<String, ArrayList<String>> el: tempRelatedUsers.entrySet()) {
+            username = el.getKey();
+            if (username == null) {
                 continue;
             }
-            value.add(key);
-            value = this.removeDuplicate(value);
-            finalRelatedUsers.put(key, value);
+            usernames = el.getValue();
+            if (usernames == null) {
+                usernames = new ArrayList<>();
+            }
+            usernamesV2 = tempCoRelatedUsers.get(username);
+            if (usernamesV2 == null) {
+                usernamesV2 = new ArrayList<>();
+            }
+            for (String str: usernamesV2) {
+                if (usernames.contains(str)) {
+                    continue;
+                }
+                usernames.add(str);
+            }
         }
-        /* Remove duplicate entry end */
-        logger.info("finalRelatedUses after duplicate removal:{}", finalRelatedUsers);
+        for (Map.Entry<String, ArrayList<String>> el: tempCoRelatedUsers.entrySet()) {
+            username = el.getKey();
+            if (username == null) {
+                continue;
+            }
+            usernames = el.getValue();
+            if (usernames == null || usernames.size() < 1) {
+                continue;
+            }
+            usernamesV2 = tempRelatedUsers.get(username);
+            if (usernamesV2 == null) {
+                usernamesV2 = new ArrayList<>();
+            }
+            for (String str: usernames) {
+                if (usernamesV2.contains(str)) {
+                    continue;
+                }
+                usernamesV2.add(str);
+            }
+            tempRelatedUsers.put(username, usernamesV2);
+        }
+        logger.info("relatedUsers after merging: {}", tempRelatedUsers);
+        HashMap<String, ArrayList<String>> finalRelatedUsers = new HashMap<>();
+        for (Map.Entry<String, ArrayList<String>> el: tempRelatedUsers.entrySet()) {
+            finalRelatedUsers.put(el.getKey(), this.removeDuplicate(el.getValue()));
+        }
+        logger.info("finalRelatedUsers after duplicate removal: {}", finalRelatedUsers);
         if (roles != null) {
             roles.setRelatedUsers(finalRelatedUsers);
         }
-        logger.info("roles config data:{}", roles);
+        logger.info("roles config data: {}", roles);
         return roles;
     }
     public Roles getRolesConfig() {

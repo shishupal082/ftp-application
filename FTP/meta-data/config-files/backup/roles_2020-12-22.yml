@@ -1,0 +1,53 @@
+roleAccess:
+  admin:
+    - Admin
+    - adminAndDev
+  dev:
+    - U1
+    - adminAndDev
+#  true: notRequiredAnyUserName
+#  isLogin: notRequiredAnyUserName
+roleAccessMapping:
+  isAdminUser: admin
+  isDevUser: dev
+  isUploadFileEnable: isLogin
+  isAddTextEnable: isLogin
+  isAdminOrDevUser: (admin|dev)
+  isAdminOrDevOrLoginUser: (admin|dev|isLogin)
+  inValidRoleEntry: (admin1|dev|isLogin)
+  inValidRoleEntry2: (&dev)
+  isAdminAndDevUser: (admin&dev)
+  isBooleanTrue: true
+  getAllUsersEnable: true
+#  isLogin: notRequiredAnyRoleAccess
+
+# Duplicate entry will be removed from final coRelatedUsers and relatedUsers calculation
+
+coRelatedUsers:
+  U1:
+    - U2
+    - U3
+    - U1
+    - U1
+  U4:
+    - U5
+    - U1
+  U8:
+  U9:
+    - U9
+
+relatedUsers:
+  U6:
+    - U7
+  U5:
+    - U3
+    - U3
+  U10:
+  U11:
+    - U3
+
+# final output
+# finalCoRelatedUsers={U5=[U4, U1, U5, U3, U2], U9=[U9], U1=[U4, U1, U5, U3, U2], U2=[U4, U1, U5, U3, U2], U3=[U4, U1, U5, U3, U2], U4=[U4, U1, U5, U3, U2]}
+# finalRelatedUsers={U5=[U3, U4, U1, U5, U2], U6=[U7, U6], U11=[U3, U11], U9=[U9], U1=[U4, U1, U5, U3, U2], U2=[U4, U1, U5, U3, U2], U3=[U4, U1, U5, U3, U2], U4=[U4, U1, U5, U3, U2]}
+
+# Note: no final entry for U8 and U10

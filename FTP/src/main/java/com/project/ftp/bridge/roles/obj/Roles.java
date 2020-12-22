@@ -11,7 +11,7 @@ public class Roles {
     private HashMap<String, ArrayList<String>> roleAccess;
     private HashMap<String, String> roleAccessMapping;
     private HashMap<String, ArrayList<String>> relatedUsers;
-    private HashMap<String, ArrayList<String>> coRelatedUsers;
+    private ArrayList<String> coRelatedUsers;
 
     public HashMap<String, ArrayList<String>> getRoleAccess() {
         return roleAccess;
@@ -37,11 +37,11 @@ public class Roles {
         this.relatedUsers = relatedUsers;
     }
 
-    public HashMap<String, ArrayList<String>> getCoRelatedUsers() {
+    public ArrayList<String> getCoRelatedUsers() {
         return coRelatedUsers;
     }
 
-    public void setCoRelatedUsers(HashMap<String, ArrayList<String>> coRelatedUsers) {
+    public void setCoRelatedUsers(ArrayList<String> coRelatedUsers) {
         this.coRelatedUsers = coRelatedUsers;
     }
 
