@@ -52,7 +52,7 @@ public class FileService {
         TextFileParser textFileParser = new TextFileParser(savedDataFilepath);
         String savedText = fileDetail.generateResponseToSave();
         logger.info("Saving file details data: {}", savedText);
-        textFileParser.addText(savedText);
+        textFileParser.addText(savedText, false);
     }
 
     public PathInfo getPathInfo(String requestedPath) {
@@ -154,7 +154,7 @@ public class FileService {
             dirStr += dirs.get(i) + "/";
         }
         dirStr = StaticService.getProperDirString(dirStr);
-        return dirStr;
+        return dirStr; // It will not contain / in the end
     }
 
     public boolean isDirectory(String path) {
@@ -329,7 +329,7 @@ public class FileService {
         return pathInfo;
     }
 
-    public Boolean deleteFileV2(String filePath) {
+    public boolean deleteFileV2(String filePath) {
         if (filePath == null) {
             return false;
         }

@@ -1,9 +1,6 @@
 package com.project.ftp.service;
 
-import com.project.ftp.config.AppConfig;
-import com.project.ftp.config.AppConstant;
-import com.project.ftp.config.FileDeleteAccess;
-import com.project.ftp.config.PathType;
+import com.project.ftp.config.*;
 import com.project.ftp.exceptions.AppException;
 import com.project.ftp.exceptions.ErrorCodes;
 import com.project.ftp.obj.*;
@@ -133,6 +130,54 @@ public class FileServiceV2 {
         logger.info("final result size: {}", filesInfo.size());
         apiResponse = new ApiResponse(filesInfo);
         return apiResponse;
+    }
+    public PathInfo getUserCsvData(LoginUserDetails loginUserDetails) throws AppException {
+        ArrayList<ScanResult> scanResults = new ArrayList<>();
+        String saveDir = appConfig.getFtpConfiguration().getFileSaveDir(), scanDir;
+        String loginUserName = loginUserDetails.getUsername();
+        boolean isLoginUserAdmin = userService.isLoginUserAdmin(loginUserDetails);
+        if (isLoginUserAdmin) {
+            scanResults.add(fileService.scanDirectory(saveDir, saveDir, true));
+        } else {
+            ArrayList<String> relatedUsers = userService.getRelatedUsers(loginUserName);
+            for (String username: relatedUsers) {
+                scanDir = saveDir + username + "/";
+                scanResults.add(fileService.scanDirectory(scanDir, scanDir, false));
+            }
+        }
+        ArrayList<String> response = new ArrayList<>();
+        this.generateApiResponse(scanResults, response);
+        logger.info("scanUserDirectory result size: {}", response.size());
+        ArrayList<String> csvFiles = new ArrayList<>();
+        String csvData = "";
+        for (String filename: response) {
+            PathInfo pathInfo = fileService.getPathInfoFromFileName(filename);
+            if (FileMimeType.csv.toString().equals(pathInfo.getExtension())) {
+                csvData += new TextFileParser(saveDir+filename).getTextDataV2();
+            }
+        }
+        ArrayList<String> requiredDirs = new ArrayList<>();
+        requiredDirs.add(saveDir);
+        requiredDirs.add(AppConstant.TEMP);
+        requiredDirs.add(loginUserName);
+        String trashV2Folder = fileService.createDir(requiredDirs);
+        if (trashV2Folder == null) {
+            logger.info("Error in creating temp folder for user: {}", requiredDirs);
+            throw new AppException(ErrorCodes.RUNTIME_ERROR);
+        }
+        String responseFilename = StaticService.getProperDirString(String.join("/", requiredDirs))
+                + "/" + loginUserName+".csv";
+        fileService.deleteFileV2(responseFilename);
+        boolean createStatus, addTextStatus = false;
+        createStatus = fileService.createNewFile(responseFilename);
+        if (createStatus) {
+            addTextStatus = new TextFileParser(responseFilename).addText(csvData, true);
+        }
+        if (createStatus && addTextStatus) {
+            return fileService.getPathInfo(responseFilename);
+        }
+        logger.info("Error in creating response file: {}", responseFilename);
+        throw new AppException(ErrorCodes.RUNTIME_ERROR);
     }
 
     private HashMap<String, String> parseRequestedFileStr(String filename) {
@@ -342,7 +387,7 @@ public class FileServiceV2 {
             } else {
                 ArrayList<String> requiredDirs = new ArrayList<>();
                 requiredDirs.add(saveDir);
-                requiredDirs.add("trash");
+                requiredDirs.add(AppConstant.TRASH);
                 requiredDirs.add(fileDetail.getUploadedby());
                 String trashFolder = fileService.createDir(requiredDirs);
                 if (trashFolder == null) {
@@ -712,7 +757,7 @@ public class FileServiceV2 {
         if (fileExist) {
             TextFileParser textFileParser = new TextFileParser(filePath);
             for (String str : textData) {
-                textFileParser.addText(str);
+                textFileParser.addText(str, false);
             }
             return new ApiResponse();
         }

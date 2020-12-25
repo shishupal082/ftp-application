@@ -253,6 +253,13 @@ public class RolesService {
         }
         return result;
     }
+    public HashMap<String, ArrayList<String>> getAllRelatedUsers() {
+        Roles roles = this.getRolesConfig();
+        if (roles == null) {
+            return null;
+        }
+        return roles.getRelatedUsers();
+    }
     public ArrayList<String> getRelatedUsers(String username) {
         if (username == null) {
             return null;

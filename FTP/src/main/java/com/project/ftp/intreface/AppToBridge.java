@@ -3,6 +3,7 @@ package com.project.ftp.intreface;
 import com.project.ftp.FtpConfiguration;
 import com.project.ftp.bridge.BridgeResource;
 import com.project.ftp.bridge.BridgeToAppInterface;
+import com.project.ftp.bridge.BridgeTracking;
 import com.project.ftp.bridge.config.BridgeConfig;
 import com.project.ftp.bridge.config.EmailConfig;
 import com.project.ftp.bridge.obj.BridgeRequestSendCreatePasswordOtp;
@@ -33,10 +34,12 @@ public class AppToBridge implements AppToBridgeInterface {
         }
         rolesConfigPath += rolesFileName;
         BridgeConfig bridgeConfig = new BridgeConfig(emailConfig, ftpConfiguration.getCreatePasswordEmailConfig());
-        RolesService rolesService = new RolesService(bridgeConfig, rolesConfigPath);
         BridgeToAppInterface bridgeToAppInterface = new BridgeToApp(eventTracking);
-        this.bridgeResource = new BridgeResource(bridgeConfig, bridgeToAppInterface);
-        this.rolesResource = new RolesResource(rolesService);
+        BridgeTracking bridgeTracking = new BridgeTracking(bridgeToAppInterface);
+        RolesService rolesService = new RolesService(bridgeConfig, rolesConfigPath);
+        this.bridgeResource = new BridgeResource(bridgeConfig, bridgeToAppInterface, bridgeTracking);
+        this.rolesResource = new RolesResource(rolesService, bridgeTracking);
+        rolesResource.trackRelatedUser();
     }
 
     @Override

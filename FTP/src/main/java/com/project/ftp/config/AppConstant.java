@@ -23,7 +23,7 @@ public class AppConstant {
     public static final String ALLOWED_HEADERS= "Access-Control-Allow-Headers";
     public static final String FILE = "FILE";
     public static final String FOLDER = "FOLDER";
-    public static final String AppVersion = "6.0.5";
+    public static final String AppVersion = "6.0.6";
     public static final String server = "server";
     public static final String DATE_FORMAT = "YYYY-MM-dd";
     public static final String TIME_FORMAT = "HHmmss";
@@ -46,6 +46,8 @@ public class AppConstant {
     public static final String ROLES = "roles.yml";
     public static final String PUBLIC = "public";
     public static final String DEFAULT = "default";
+    public static final String TRASH = "trash";
+    public static final String TEMP = "temp";
     public static final String UN_AUTHORISED = "un_authorised";
     public static final String FromRoleConfig = "FromRoleConfig";
     public static final String FromEnvConfig = "FromEnvConfig";

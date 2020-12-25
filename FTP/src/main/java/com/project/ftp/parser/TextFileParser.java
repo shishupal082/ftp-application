@@ -46,7 +46,32 @@ public class TextFileParser {
         }
         return result;
     }
-    public Boolean addText(String text) {
+    public String getTextDataV2() {
+        ArrayList<String> result = new ArrayList<>();
+        PathInfo pathInfo = StaticService.getPathInfo(filepath);
+        if (!AppConstant.FILE.equals(pathInfo.getType())) {
+            logger.info("Requested file is not found: {}", filepath);
+            return "";
+        }
+        try {
+            File file = new File(filepath);
+            BufferedReader in = new BufferedReader(
+                    new InputStreamReader(
+                            new FileInputStream(file), AppConstant.UTF8));
+            String str;
+            while ((str = in.readLine()) != null) {
+                result.add(str);
+            }
+            in.close();
+            result.add("");
+            logger.info("Text file read success: {}", filepath);
+        } catch (Exception e) {
+            logger.info("Error in reading text file: {}", e.getMessage());
+            throw new AppException(ErrorCodes.INVALID_FILE_DATA);
+        }
+        return String.join("\n", result);
+    }
+    public boolean addText(String text, boolean isNewFile) {
         if (text == null) {
             text = "";
         }
@@ -60,7 +85,9 @@ public class TextFileParser {
             File file = new File(filepath);
             Writer writer = new BufferedWriter(new OutputStreamWriter(
                     new FileOutputStream(file, true), AppConstant.UTF8));
-            writer.append("\n");
+            if (!isNewFile) {
+                writer.append("\n");
+            }
             writer.append(text);
             writer.close();
             logger.info("Text added in: {}", filepath);

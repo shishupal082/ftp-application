@@ -76,6 +76,10 @@
     "Get roles config"
   ],
   [
+    "/api/get_uploaded_csv_data",
+    "Get uploaded CSV data"
+  ],
+  [
     "/api/get_static_file",
     "Get app static file Data"
   ],

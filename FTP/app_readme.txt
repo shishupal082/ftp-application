@@ -850,6 +850,15 @@ New api added:
 Reformatted roles data entry for coRelatedUsers and relatedUsers
 
 
+6.0.6
+-------------------
+new api added
+    - /api/get_uploaded_csv_data [GET]
+It will create temp file in saveDir/temp/Username/Username.csv and return that file
+    - It will delete if exist older temp file before creating new
+
+Added tracking of related users for roles config
+
 Future releases
 -------------------
 

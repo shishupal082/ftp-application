@@ -38,7 +38,7 @@ public class EventFile implements EventInterface {
         eventLog += "," + StaticService.encodeComma(reason);
         eventLog += "," + StaticService.encodeComma(comment);
         TextFileParser textFileParser = new TextFileParser(eventDataFileName);
-        textFileParser.addText(eventLog);
+        textFileParser.addText(eventLog, false);
         logger.info("Event added: {}", eventLog);
     }
 

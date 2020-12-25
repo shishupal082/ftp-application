@@ -20,6 +20,7 @@ public enum EventName {
     GET_LOGIN_USER_DETAILS("get_login_user_details"),
     GET_USERS("get_users"),
     ADD_TEXT("add_text"),
+    GET_UPLOADED_CSV_DATA("get_uploaded_csv_data"),
     GET_APP_CONFIG("get_app_config"),
     GET_SESSION_DATA("get_session_data"),
     GET_FILES_INFO("get_files_info"),

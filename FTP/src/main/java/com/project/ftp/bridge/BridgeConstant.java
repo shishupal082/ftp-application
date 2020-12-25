@@ -6,6 +6,8 @@ public class BridgeConstant {
     public static final String IS_LOGIN = "isLogin";
     public static final String TRUE = "true";
     public static final String FALSE = "false";
+    public static final String SEND_EMAIL = "send_email";
+    public static final String RELATED_USERS = "related_users";
     public static final String AND = "&";
     public static final String OR = "|";
     public static final String ORExp = "\\|";

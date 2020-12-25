@@ -1,6 +1,7 @@
 package com.project.ftp.resources;
 
 import com.project.ftp.config.AppConfig;
+import com.project.ftp.config.AppConstant;
 import com.project.ftp.event.EventName;
 import com.project.ftp.event.EventTracking;
 import com.project.ftp.exceptions.AppException;
@@ -17,7 +18,11 @@ import org.slf4j.LoggerFactory;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
+import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.InputStream;
 
 @Path("/api")
@@ -142,7 +147,8 @@ public class ApiResource {
         // Not putting response in log as it may be very large
         logger.info("getAllV3Data : Out");
         return response;
-    }@GET
+    }
+    @GET
     @Path("/get_current_user_files_info")
     @UnitOfWork
     public ApiResponse getAllV3DataV2(@Context HttpServletRequest request) {
@@ -250,6 +256,36 @@ public class ApiResource {
         }
         logger.info("addText : Out {}", response);
         return response;
+    }
+    @GET
+    @Path("/get_uploaded_csv_data")
+    @UnitOfWork
+    @Produces(MediaType.TEXT_HTML)
+    public Response getUploadedCSVData(@Context HttpServletRequest request) {
+        logger.info("getUploadedCSVData: in, user: {}", userService.getUserDataForLogging(request));
+        PathInfo pathInfo = null;
+        try {
+            authService.isLogin(request);
+            LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
+            pathInfo = fileServiceV2.getUserCsvData(loginUserDetails);
+        } catch (AppException ae) {
+            eventTracking.trackFailureEvent(request, EventName.GET_UPLOADED_CSV_DATA, ae.getErrorCode());
+            logger.info("Error in generating response file: {}", ae.getErrorCode().getErrorCode());
+        }
+        if (pathInfo != null && AppConstant.FILE.equals(pathInfo.getType())) {
+            File file = new File(pathInfo.getPath());
+            try {
+                InputStream inputStream = new FileInputStream(file);
+                Response.ResponseBuilder r = Response.ok(inputStream);
+                r.header(HttpHeaders.CONTENT_TYPE, pathInfo.getMediaType());
+                logger.info("getUploadedCSVData: out");
+                return r.build();
+            } catch (Exception e) {
+                logger.info("Error in loading file: {}", pathInfo);
+            }
+        }
+        logger.info("getUploadedCSVData: out, Error in generating response data");
+        return Response.ok(AppConstant.EmptyParagraph).build();
     }
     @POST
     @Path("/login_user")

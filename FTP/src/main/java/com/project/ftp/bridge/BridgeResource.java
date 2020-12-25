@@ -9,8 +9,9 @@ public class BridgeResource {
     private final static Logger logger = LoggerFactory.getLogger(BridgeResource.class);
     private final BridgeService bridgeService;
     private final BridgeTracking bridgeTracking;
-    public BridgeResource(BridgeConfig bridgeConfig, BridgeToAppInterface bridgeToAppInterface) {
-        this.bridgeTracking = new BridgeTracking(bridgeToAppInterface);
+    public BridgeResource(BridgeConfig bridgeConfig, BridgeToAppInterface bridgeToAppInterface,
+                          BridgeTracking bridgeTracking) {
+        this.bridgeTracking = bridgeTracking;
         this.bridgeService = new BridgeService(bridgeConfig, bridgeTracking);
     }
     public void sendCreatePasswordOtpEmail(BridgeRequestSendCreatePasswordOtp request) {
