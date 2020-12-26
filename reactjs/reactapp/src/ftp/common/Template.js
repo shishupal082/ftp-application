@@ -1270,19 +1270,33 @@ Template["usersControl.row"] = [
         ]
     }
 ];
-Template["noPageFound"] = [{
-    "tag": "center.h1",
-    "text": {
-        "tag": "span",
-        "className": "",
-        "name": "date",
-        "text": "Page not found"
+Template["noPageFound"] = [
+    {
+        "tag": "center.h1",
+        "text": {
+            "tag": "span",
+            "className": "",
+            "name": "date",
+            "text": "Page not found"
+        }
+    },
+    {
+        "tag": "div",
+        "name": "footer",
+        "text": ""
     }
-}];
-Template["noDataFound"] = [{
-    "tag": "center.h1",
-    "text": "No data found"
-}];
+];
+Template["noDataFound"] = [
+    {
+        "tag": "center.h1",
+        "text": "No data found"
+    },
+    {
+        "tag": "div",
+        "name": "footer",
+        "text": ""
+    }
+];
 Template["loading"] = [
     {
         "tag": "div.center",

@@ -166,6 +166,11 @@ public class AppResource {
         return new AppView(request, appViewFtlFileName,"dashboard", userService, appConfig);
     }
     @GET
+    @Path("/users_control")
+    public AppView usersControl(@Context HttpServletRequest request) {
+        return new AppView(request, appViewFtlFileName,"users_control", userService, appConfig);
+    }
+    @GET
     @Path("/login")
     public AppView login(@Context HttpServletRequest request) {
         return new AppView(request, appViewFtlFileName, "login", userService, appConfig);
