@@ -7,6 +7,9 @@ roleAccess:
     - adminAndDev
 #  true: notRequiredAnyUserName
 #  isLogin: notRequiredAnyUserName
+  UsersControlGroup:
+    - Admin
+    - U1
   userGroup1:
     - U1
     - U2
@@ -29,6 +32,7 @@ roleAccessMapping:
   isDevUser: dev
   isUploadFileEnable: isLogin
   isAddTextEnable: isLogin
+  isUsersControlEnable: UsersControlGroup
   isAdminOrDevUser: (admin|dev)
   isAdminOrDevOrLoginUser: (admin|dev|isLogin)
   inValidRoleEntry: (admin1|dev|isLogin)

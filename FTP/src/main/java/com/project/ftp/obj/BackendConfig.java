@@ -4,6 +4,7 @@ public class BackendConfig {
     private String forgotPasswordMessage;
     private String loadRoleStatusOnPageLoad;
     private String rolesFileName;
+    private Integer rateLimitThreshold;// used for register and create_password
 
     public BackendConfig() {}
 
@@ -31,12 +32,21 @@ public class BackendConfig {
         this.rolesFileName = rolesFileName;
     }
 
+    public Integer getRateLimitThreshold() {
+        return rateLimitThreshold;
+    }
+
+    public void setRateLimitThreshold(Integer rateLimitThreshold) {
+        this.rateLimitThreshold = rateLimitThreshold;
+    }
+
     @Override
     public String toString() {
         return "BackendConfig{" +
                 "forgotPasswordMessage='" + forgotPasswordMessage + '\'' +
                 ", loadRoleStatusOnPageLoad='" + loadRoleStatusOnPageLoad + '\'' +
                 ", rolesFileName='" + rolesFileName + '\'' +
+                ", rateLimitThreshold=" + rateLimitThreshold +
                 '}';
     }
 }

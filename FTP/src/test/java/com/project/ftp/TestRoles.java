@@ -25,10 +25,10 @@ public class TestRoles {
         Assert.assertEquals("U5,U4,U1,U3,U2", String.join(",", rolesService.getRelatedUsers("U4")));
         Assert.assertEquals("U1,U2,U3,U5,U4", String.join(",", rolesService.getRelatedUsers("U5")));
         Assert.assertEquals("U3,U6", String.join(",", rolesService.getRelatedUsers("U6")));
-        Assert.assertNull(rolesService.getRelatedUsers("U7"));
-        Assert.assertNull(rolesService.getRelatedUsers("U8"));
+        Assert.assertEquals("", String.join(",", rolesService.getRelatedUsers("U7")));
+        Assert.assertEquals("", String.join(",", rolesService.getRelatedUsers("U8")));
         Assert.assertEquals("U9", String.join(",", rolesService.getRelatedUsers("U9")));
-        Assert.assertNull(rolesService.getRelatedUsers("U10"));
+        Assert.assertEquals("", String.join(",", rolesService.getRelatedUsers("U10")));
         Assert.assertEquals("U3,U11", String.join(",", rolesService.getRelatedUsers("U11")));
     }
     @Test
@@ -172,7 +172,7 @@ public class TestRoles {
         Assert.assertNotNull(rolesService.getRolesConfig());
         Assert.assertNotNull(rolesService.getRolesAccess());
         Assert.assertNotNull(rolesService.getApiRolesMapping());
-        Assert.assertEquals(11, rolesService.getAllRoles().size());
+        Assert.assertEquals(12, rolesService.getAllRoles().size());
         Assert.assertNotNull(rolesService.getRolesAccessByRoleId("admin"));
         Assert.assertNull(rolesService.getRolesAccessByRoleId("adminNotFound"));
         Assert.assertNotNull(rolesService.getRolesByApiName("isAdminUser"));

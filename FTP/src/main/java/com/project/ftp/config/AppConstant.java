@@ -8,6 +8,7 @@ public class AppConstant {
     public static final Long SESSION_TTL = (long) (10*60*1000); // 10min = 10*60*1000 ms
     public static final int MAX_ENTRY_ALLOWED_IN_USER_DATA_FILE = 8;
     public static final int MAX_SEND_EMAIL_LIMIT = 3;
+    public static final int DEFAULT_RATE_LIMIT_THRESHOLD = 3;
     public static final String STATUS = "STATUS";
     public static final String SUCCESS = "SUCCESS";
     public static final String FAILURE = "FAILURE";
@@ -23,7 +24,7 @@ public class AppConstant {
     public static final String ALLOWED_HEADERS= "Access-Control-Allow-Headers";
     public static final String FILE = "FILE";
     public static final String FOLDER = "FOLDER";
-    public static final String AppVersion = "6.0.6";
+    public static final String AppVersion = "6.0.7";
     public static final String server = "server";
     public static final String DATE_FORMAT = "YYYY-MM-dd";
     public static final String TIME_FORMAT = "HHmmss";
@@ -66,6 +67,7 @@ public class AppConstant {
 
     public static final String IS_DEV_USER = "isDevUser";
     public static final String IS_ADMIN_USER = "isAdminUser";
+    public static final String IS_USERS_CONTROL_ENABLE = "isUsersControlEnable";
     public static final String IS_ADD_TEXT_ENABLE = "isAddTextEnable";
     public static final String IS_UPLOAD_FILE_ENABLE = "isUploadFileEnable";
     public static final String IS_GET_ALL_USERS_ENABLE = "getAllUsersEnable";

@@ -1153,6 +1153,123 @@ Template["dashboard.fileinfo"] = [
         ]
     }
 ];
+Template["usersControl"] = [
+    {
+        "tag": "div",
+        "className": "users-control",
+        "text": [
+            {
+                "tag": "div",
+                "className": "container",
+                "text": {
+                    "tag": "table.tbody",
+                    "className": "table",
+                    "name": "usersControl.data",
+                    "text": [
+                        {
+                            "tag": "tr",
+                            "text": [
+                                {
+                                    "tag": "th",
+                                    "text": "S.No."
+                                },
+                                {
+                                    "tag": "th",
+                                    "text": "Username"
+                                },
+                                {
+                                    "tag": "th",
+                                    "text": "Is Valid"
+                                },
+                                {
+                                    "tag": "th",
+                                    "text": "Name"
+                                },
+                                {
+                                    "tag": "th",
+                                    "text": "Email"
+                                },
+                                {
+                                    "tag": "th",
+                                    "text": "Mobile"
+                                },
+                                {
+                                    "tag": "th",
+                                    "text": "Create password otp"
+                                },
+                                {
+                                    "tag": "th",
+                                    "text": "Request count"
+                                },
+                                {
+                                    "tag": "th",
+                                    "text": "Method"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            }
+        ]
+    },
+    {
+        "tag": "div",
+        "name": "footer",
+        "text": ""
+    }
+];
+Template["usersControl.row"] = [
+    {
+        "tag": "tr",
+        "text": [
+            {
+                "tag": "td",
+                "name": "s.no.",
+                "text": ""
+            },
+            {
+                "tag": "td",
+                "name": "username",
+                "text": ""
+            },
+            {
+                "tag": "td",
+                "name": "valid",
+                "text": ""
+            },
+            {
+                "tag": "td",
+                "name": "name",
+                "text": ""
+            },
+            {
+                "tag": "td",
+                "name": "email",
+                "text": ""
+            },
+            {
+                "tag": "td",
+                "name": "mobile",
+                "text": ""
+            },
+            {
+                "tag": "td",
+                "name": "createPasswordOtp",
+                "text": ""
+            },
+            {
+                "tag": "td",
+                "name": "methodRequestCount",
+                "text": ""
+            },
+            {
+                "tag": "td",
+                "name": "method",
+                "text": ""
+            }
+        ]
+    }
+];
 Template["noPageFound"] = [{
     "tag": "center.h1",
     "text": {
@@ -1175,5 +1292,6 @@ Template["loading"] = [
 ];
 
 Template["footerLinkJson"] = {};
+Template["footerLinkJsonAfterLogin"] = {};
 
 export default Template;

@@ -116,7 +116,7 @@ public class FileServiceV2 {
         if (isLoginUserAdmin) {
             scanResults.add(fileService.scanDirectory(saveDir, saveDir, true));
         } else {
-            ArrayList<String> relatedUsers = userService.getRelatedUsers(loginUserName);
+            ArrayList<String> relatedUsers = userService.getRelatedUsers(loginUserName, true);
             for (String username: relatedUsers) {
                 scanDir = saveDir + username + "/";
                 scanResults.add(fileService.scanDirectory(scanDir, scanDir, false));
@@ -139,7 +139,7 @@ public class FileServiceV2 {
         if (isLoginUserAdmin) {
             scanResults.add(fileService.scanDirectory(saveDir, saveDir, true));
         } else {
-            ArrayList<String> relatedUsers = userService.getRelatedUsers(loginUserName);
+            ArrayList<String> relatedUsers = userService.getRelatedUsers(loginUserName, true);
             for (String username: relatedUsers) {
                 scanDir = saveDir + username + "/";
                 scanResults.add(fileService.scanDirectory(scanDir, scanDir, false));
@@ -271,7 +271,7 @@ public class FileServiceV2 {
                 logger.info("file deleted entry, but file is there: {}", fileDetail);
             }
             if (!userService.isLoginUserAdmin(loginUserDetails)) {
-                ArrayList<String> relatedUsers = userService.getRelatedUsers(loginUserName);
+                ArrayList<String> relatedUsers = userService.getRelatedUsers(loginUserName, true);
                 // Need not to check public separately
                 if (!relatedUsers.contains(fileUsername)) {
                     logger.info("Unauthorised access loginUserName: {}, filename: {}",

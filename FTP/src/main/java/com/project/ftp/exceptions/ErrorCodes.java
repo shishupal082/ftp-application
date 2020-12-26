@@ -48,6 +48,7 @@ public enum ErrorCodes {
     REGISTER_PASSCODE_REQUIRED("REGISTER_PASSCODE_REQUIRED", "Passcode required.", 403),
     REGISTER_NAME_REQUIRED("REGISTER_NAME_REQUIRED", "Name required.", 403),
     REGISTER_PASSCODE_NOT_MATCHING("REGISTER_PASSCODE_NOT_MATCHING", "Passcode not matching.", 403),
+    REGISTER_PASSCODE_EXPIRED("REGISTER_PASSCODE_EXPIRED", "Passcode expired. Please contact admin.", 403),
     REGISTER_ALREADY("REGISTER_ALREADY", "User already registered, Try login.", 403),
     // Register, Forgot password
     MOBILE_REQUIRED("MOBILE_REQUIRED", "Mobile number required.", 403),
@@ -61,6 +62,7 @@ public enum ErrorCodes {
     // create password
     CREATE_PASSWORD_OTP_REQUIRED("CREATE_PASSWORD_OTP_REQUIRED", "Create password otp required.", 403),
     CREATE_PASSWORD_OTP_MISMATCH("CREATE_PASSWORD_OTP_MISMATCH", "Create password otp not matching.", 403),
+    CREATE_PASSWORD_OTP_EXPIRED("CREATE_PASSWORD_OTP_EXPIRED", "Create password otp expired. Retry forgot password.", 403),
     CREATE_PASSWORD_NOT_REQUESTED_FORGOT("CREATE_PASSWORD_NOT_REQUESTED_FORGOT", "Forgot password request not found.", 403),
     // create password, change password
     NEW_AND_CONFIRM_PASSWORD_NOT_MATCHING("NEW_AND_CONFIRM_PASSWORD_NOT_MATCHING", "New password and confirm password are not matching.", 403),

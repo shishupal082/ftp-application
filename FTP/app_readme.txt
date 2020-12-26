@@ -859,6 +859,53 @@ It will create temp file in saveDir/temp/Username/Username.csv and return that f
 
 Added tracking of related users for roles config
 
+6.0.7
+-------------------
+Added footerLinkJsonAfterLogin in ftp_view
+
+New role created
+    - isUsersControlEnable
+
+
+Created new react page users_control
+    - users_control will display related users sorted by name (Result it self will be sorted)
+        - S.No., Username, isValid, Name, Email, Mobile, Method, Create Password Otp, Count
+        - This Username shall not be necessarily valid
+        - In case of invalid it will send flag isValid = false otherwise true
+    - event tracking required for page load
+
+Added newApi
+    - /api/get_related_users_data [GET] (Api is control by isUsersControlEnable role)
+        - It will contain (username, email, mobile, name, method, create_password_otp, change_password_count, isValid)
+        - change_password_count will be use for rate limit
+    - For Admin user
+        - First iterate on allRelatedUsers, fill there details with users table
+            - If users is not found in users table
+                - It will be mark as isValid = false
+        - Then, Read all users from user table, if not found in above, add new entry in result
+    - event tracking required for both success and failure
+
+Config added
+    - BackendConfig.rateLimitThreshold (Integer) [Default from AppConstant 3]
+    - rateLimit is only used for create_password and register
+
+Enable forgotPassword for all (email will not be send only data will be updated)
+    - Rate limiting for create_password_failure, register_failure
+        - If user toggle with change_password and create_password
+            - then create new otp for forgot_password
+            - on changePassword create_password_otp will be clear
+    - blocked user can not login or forgot_password or register or change_password
+        - Manual block is possible but not auto blocking
+    - If limit exceed for create_password_error and register_failure
+        - create_password and register will not be possible
+        - Valid message shall be shown to user
+        - rate limit configuration added in backendConfig
+    - If limit exceed for change_password
+        - Valid message will be given
+    - no rate limit for forgot_password
+        - otp shall not be changed
+
+
 Future releases
 -------------------
 
@@ -931,18 +978,6 @@ Integrate sending sms to user for forgot password request otp
 
 on expired user session entry, also put current session data along with old session data
 create string Upload File in such a way that it always come together
-
-
-create user_role.yaml file in config-files dir
-Define role
-    username(Admin)
-        - role(Admin)
-    username(SuperAdmin)
-        - role(All)
-    username(public)
-        - role(?)
-    username(Guest)
-        - role(?)
 
 
 

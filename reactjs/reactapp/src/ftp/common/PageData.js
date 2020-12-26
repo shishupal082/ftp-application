@@ -48,10 +48,14 @@ keys.push("register.password");
 keys.push("register.displayName");
 keys.push("register.mobile");
 keys.push("register.email");
+
+keys.push("users_control.response");
 keys.push("formSubmitStatus"); // in_progress, completed
 CurrentFormData.setKeys(keys);
 
 CurrentFormData.setData("formSubmitStatus", "not_started");
+CurrentFormData.setData("users_control.response", []);
+
 
 PageData = function(arg) {
     return new PageData.fn.init(arg);
@@ -372,12 +376,24 @@ PageData.extend({
                 alert("File saved as: " + response.data.fileName);
                 Config.location.href = "/dashboard";
             }
-        } else if (["login", "register", "create_password"].indexOf(apiName) >= 0) {
+        } else if (["login", "register"].indexOf(apiName) >= 0) {
             if (response.status === "FAILURE") {
                 $S.callMethod(callBack);
                 alert(Config.getAleartMessage(response));
                 if (response.failureCode === "USER_ALREADY_LOGIN") {
                     FTPHelper.pageReload();
+                }
+            } else {
+                FTPHelper.lazyRedirect(Config.loginRedirectUrl, 250);
+            }
+        } else if (["create_password"].indexOf(apiName) >= 0) {
+            if (response.status === "FAILURE") {
+                $S.callMethod(callBack);
+                alert(Config.getAleartMessage(response));
+                if (response.failureCode === "USER_ALREADY_LOGIN") {
+                    FTPHelper.pageReload();
+                } else if (response.failureCode === "CREATE_PASSWORD_OTP_EXPIRED") {
+                    Config.location.href = "/forgot_password";
                 }
             } else {
                 FTPHelper.lazyRedirect(Config.loginRedirectUrl, 250);

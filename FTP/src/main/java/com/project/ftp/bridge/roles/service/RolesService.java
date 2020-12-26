@@ -272,7 +272,12 @@ public class RolesService {
         if (relatedUsers == null) {
             return null;
         }
-        return relatedUsers.get(username);
+        ArrayList<String> finalResult = new ArrayList<>();
+        ArrayList<String> tempResult = relatedUsers.get(username);
+        if (tempResult != null) {
+            finalResult.addAll(tempResult);
+        }
+        return finalResult;
     }
     private String getBooleanEquivalentToRole(String role, String userName, boolean isLogin) {
         if (BridgeStaticService.isInValidString(role)) {

@@ -72,6 +72,10 @@
     "Get all users Data"
   ],
   [
+    "/api/get_related_users_data",
+    "Get related users Data"
+  ],
+  [
     "/api/get_roles_config",
     "Get roles config"
   ],

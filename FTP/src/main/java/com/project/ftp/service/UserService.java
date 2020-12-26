@@ -17,6 +17,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Map;
 
 public class UserService {
     private final static Logger logger = LoggerFactory.getLogger(UserService.class);
@@ -51,6 +52,9 @@ public class UserService {
     public boolean isLoginUserAdmin(LoginUserDetails loginUserDetails)  {
         return this.isAuthorised(loginUserDetails, AppConstant.IS_ADMIN_USER);
     }
+    public boolean isControlGroupUser(LoginUserDetails loginUserDetails)  {
+        return this.isAuthorised(loginUserDetails, AppConstant.IS_USERS_CONTROL_ENABLE);
+    }
     public boolean isLoginUserDev(LoginUserDetails loginUserDetails)  {
         return this.isAuthorised(loginUserDetails, AppConstant.IS_DEV_USER);
     }
@@ -83,6 +87,45 @@ public class UserService {
         }
         return users;
     }
+    public ArrayList<RelatedUserData> getRelatedUsersData(LoginUserDetails loginUserDetails) {
+        ArrayList<RelatedUserData> result = new ArrayList<>();
+        ArrayList<String> relatedUsers = this.getRelatedUsers(loginUserDetails.getUsername(), false);
+        if (relatedUsers == null) {
+            return result;
+        }
+        HashMap<String, RelatedUserData> tempResult = new HashMap<>();
+        RelatedUserData userData;
+        for(String uName: relatedUsers) {
+            userData = new RelatedUserData(uName, false);
+            tempResult.put(uName, userData);
+        }
+        Users users = userInterface.getAllUsers();
+        boolean isAdmin = this.isLoginUserAdmin(loginUserDetails);
+        if (users != null) {
+            HashMap<String, MysqlUser> userHashMap = users.getUserHashMap();
+            if (userHashMap != null) {
+                if (isAdmin) {
+                    for(Map.Entry<String, MysqlUser> data: userHashMap.entrySet()) {
+                        tempResult.put(data.getKey(), new RelatedUserData(data.getValue()));
+                    }
+                } else {
+                    MysqlUser mysqlUser;
+                    String username;
+                    for(Map.Entry<String, RelatedUserData> data: tempResult.entrySet()) {
+                        username = data.getKey();
+                        mysqlUser = userHashMap.get(username);
+                        if (mysqlUser != null) {
+                            tempResult.put(username, new RelatedUserData(mysqlUser));
+                        }
+                    }
+                }
+            }
+        }
+        for(Map.Entry<String, RelatedUserData> data: tempResult.entrySet()) {
+            result.add(data.getValue());
+        }
+        return result;
+    }
     public MysqlUser getUserByName(String username) {
         return userInterface.getUserByName(username);
     }
@@ -91,8 +134,8 @@ public class UserService {
             logger.info("Error in changePassword, user is null");
             return false;
         }
-        user.setMethod(UserMethod.CHANGE_PASSWORD.getUserMethod());
         user.incrementEntryCount();
+        user.setMethod(UserMethod.CHANGE_PASSWORD.getUserMethod());
         user.setCreatePasswordOtp(null);
         return userInterface.saveUser(user);
     }
@@ -105,6 +148,16 @@ public class UserService {
         user.setMethod(UserMethod.REGISTER.getUserMethod());
         user.setCreatePasswordOtp(null);
         return userInterface.saveUser(user);
+    }
+    private void registerError(MysqlUser user) {
+        if (user == null) {
+            logger.info("Error in register, user is null");
+            return;
+        }
+        user.incrementEntryCount();
+        user.setMethod(UserMethod.REGISTER_ERROR.getUserMethod());
+        user.setCreatePasswordOtp(null);
+        userInterface.saveUser(user);
     }
     private void forgotPassword(MysqlUser user) {
         if (user == null) {
@@ -133,6 +186,15 @@ public class UserService {
         user.setChangePasswordCount(0);
         user.setMethod(UserMethod.CREATE_PASSWORD.getUserMethod());
         user.setCreatePasswordOtp(null);
+        userInterface.saveUser(user);
+    }
+    private void createPasswordError(MysqlUser user) {
+        if (user == null) {
+            logger.info("Error in createPassword, user is null");
+            return;
+        }
+        user.incrementEntryCount();
+        user.setMethod(UserMethod.CREATE_PASSWORD_ERROR.getUserMethod());
         userInterface.saveUser(user);
     }
     public String getUserDisplayName(final String username) {
@@ -234,7 +296,7 @@ public class UserService {
             throw new AppException(ErrorCodes.USER_NOT_FOUND);
         }
         UserMethod userMethod = StaticService.getUserMethodValue(user.getMethod());
-        if (userMethod == null || userMethod == UserMethod.NEW_USER) {
+        if (userMethod == null || userMethod == UserMethod.NEW_USER || userMethod == UserMethod.REGISTER_ERROR) {
             logger.info("user not registered: {}", user);
             throw new AppException(ErrorCodes.USER_NOT_REGISTERED);
         }
@@ -258,7 +320,7 @@ public class UserService {
         }
     }
 
-    public ArrayList<String> getRelatedUsers(String username) {
+    public ArrayList<String> getRelatedUsers(String username, boolean addPublic) {
         ArrayList<String> relatedUsers;
         if (StaticService.isInValidString(username)) {
             relatedUsers = new ArrayList<>();
@@ -270,9 +332,11 @@ public class UserService {
             if (!relatedUsers.contains(username)) {
                 relatedUsers.add(username);
             }
-            if (!AppConstant.PUBLIC.equals(username.toLowerCase())) {
-                if (!relatedUsers.contains(AppConstant.PUBLIC)) {
-                    relatedUsers.add(AppConstant.PUBLIC);
+            if (addPublic) {
+                if (!AppConstant.PUBLIC.equals(username.toLowerCase())) {
+                    if (!relatedUsers.contains(AppConstant.PUBLIC)) {
+                        relatedUsers.add(AppConstant.PUBLIC);
+                    }
                 }
             }
         }
@@ -299,15 +363,24 @@ public class UserService {
         MysqlUser user = this.isUserBlocked(username);
 
         String encryptedPassword = StaticService.encryptPassword(user.getPasscode(), inputPassword);
-
         UserMethod userMethod = StaticService.getUserMethodValue(user.getMethod());
-        if (userMethod != null && userMethod != UserMethod.NEW_USER) {
-            logger.info("user already register: {}", user);
-            throw new AppException(ErrorCodes.REGISTER_ALREADY);
+        ArrayList<UserMethod> validMethods = new ArrayList<>();
+        validMethods.add(UserMethod.NEW_USER);
+        validMethods.add(UserMethod.REGISTER_ERROR);
+        if (userMethod != null) {
+            if (!validMethods.contains(userMethod)) {
+                logger.info("user already register: {}", user);
+                throw new AppException(ErrorCodes.REGISTER_ALREADY);
+            }
         }
-
+        int threshold = appConfig.getRateLimitThreshold();
+        if (userMethod == UserMethod.REGISTER_ERROR && user.getChangePasswordCount() > threshold) {
+            logger.info("register limit exceed, threshold:{}, {}", threshold, user);
+            throw new AppException(ErrorCodes.REGISTER_PASSCODE_EXPIRED);
+        }
         if (!passcode.equals(user.getPasscode())) {
             logger.info("passcode: {}, mismatch for user: {}", passcode, user);
+            this.registerError(user);
             throw new AppException(ErrorCodes.REGISTER_PASSCODE_NOT_MATCHING);
         }
         user.setPassword(encryptedPassword);
@@ -317,7 +390,6 @@ public class UserService {
         logger.info("userRegister parameter are ok: {}", userRegister);
         return user;
     }
-
     public LoginUserDetails loginUser(HttpServletRequest request, RequestUserLogin userLogin) throws AppException {
         inputValidate.validateLoginRequest(userLogin);
         MysqlUser user = this.isUserBlocked(userLogin.getUsername());
@@ -423,13 +495,26 @@ public class UserService {
         inputValidate.checkNewPassword(newPassword);
         MysqlUser user = this.isUserBlocked(username);
         this.errorIfNotRegistered(user);
-        if (UserMethod.FORGOT_PASSWORD != StaticService.getUserMethodValue(user.getMethod())) {
+        ArrayList<UserMethod> validMethods = new ArrayList<>();
+        validMethods.add(UserMethod.FORGOT_PASSWORD);
+        validMethods.add(UserMethod.CREATE_PASSWORD_ERROR);
+        UserMethod userMethod = StaticService.getUserMethodValue(user.getMethod());
+        if (!validMethods.contains(userMethod)) {
             logger.info("User not requested forgot password: {}", user);
             throw new AppException(ErrorCodes.CREATE_PASSWORD_NOT_REQUESTED_FORGOT);
+        }
+        int threshold = appConfig.getRateLimitThreshold();
+        if (userMethod == UserMethod.CREATE_PASSWORD_ERROR && user.getChangePasswordCount() > threshold) {
+            logger.info("Create password limit exceed, threshold:{}, {}", threshold, user);
+            throw new AppException(ErrorCodes.CREATE_PASSWORD_OTP_EXPIRED);
         }
         if (!createPasswordOtp.equals(user.getCreatePasswordOtp())) {
             logger.info("Create password otp not matching: {}, {}",
                     createPasswordOtp, user.getCreatePasswordOtp());
+            if (userMethod == UserMethod.FORGOT_PASSWORD) {
+                user.setChangePasswordCount(0);
+            }
+            this.createPasswordError(user);
             throw new AppException(ErrorCodes.CREATE_PASSWORD_OTP_MISMATCH);
         }
         String encryptedNewPassword = StaticService.encryptPassword(createPasswordOtp, newPassword);

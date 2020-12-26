@@ -7,6 +7,7 @@ package com.project.ftp.config;
 
 import com.project.ftp.FtpConfiguration;
 import com.project.ftp.intreface.AppToBridge;
+import com.project.ftp.obj.BackendConfig;
 import com.project.ftp.obj.FtlConfig;
 import com.project.ftp.service.StaticService;
 import com.project.ftp.session.SessionData;
@@ -70,7 +71,16 @@ public class AppConfig {
     public void setFtpConfiguration(FtpConfiguration ftpConfiguration) {
         this.ftpConfiguration = ftpConfiguration;
     }
-
+    public int getRateLimitThreshold() {
+        int rateLimitThreshold = AppConstant.DEFAULT_RATE_LIMIT_THRESHOLD;
+        BackendConfig backendConfig = ftpConfiguration.getBackendConfig();
+        if (backendConfig != null) {
+            if (backendConfig.getRateLimitThreshold() != null) {
+                rateLimitThreshold = backendConfig.getRateLimitThreshold();
+            }
+        }
+        return rateLimitThreshold;
+    }
 //    public ShutdownTask getShutdownTask() {
 //        return shutdownTask;
 //    }

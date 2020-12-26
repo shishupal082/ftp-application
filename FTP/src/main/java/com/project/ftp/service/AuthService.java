@@ -33,6 +33,13 @@ public class AuthService {
             throw new AppException(ErrorCodes.UNAUTHORIZED_USER);
         }
     }
+    public void isControlGroupUser(HttpServletRequest request) throws AppException {
+        LoginUserDetails userDetails = userService.getLoginUserDetails(request);
+        if (!userService.isControlGroupUser(userDetails)) {
+            logger.info("UnAuthorised user trying to access control group user data: {}", userDetails);
+            throw new AppException(ErrorCodes.UNAUTHORIZED_USER);
+        }
+    }
     /* used for
      * get_app_config
      * get_session_config

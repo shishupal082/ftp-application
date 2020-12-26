@@ -24,6 +24,7 @@ import javax.ws.rs.core.Response;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.util.ArrayList;
 
 @Path("/api")
 @Produces(MediaType.APPLICATION_JSON)
@@ -89,6 +90,26 @@ public class ApiResource {
             eventTracking.trackFailureEvent(request, EventName.GET_USERS, ae.getErrorCode());
         }
         logger.info("getAllUsers : Out");
+        return response;
+    }
+    @GET
+    @Path("/get_related_users_data")
+    @UnitOfWork
+    public ApiResponse getRelatedUsersData(@Context HttpServletRequest request) {
+        LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
+        logger.info("getRelatedUsersData : In, {}", loginUserDetails);
+        ApiResponse response;
+        try {
+            authService.isControlGroupUser(request);
+            ArrayList<RelatedUserData> relatedUserData = userService.getRelatedUsersData(loginUserDetails);
+            response = new ApiResponse(relatedUserData);
+            eventTracking.trackSuccessEvent(request, EventName.GET_RELATED_USERS_DATA);
+        } catch (AppException ae) {
+            logger.info("Error in getRelatedUsersData: {}", ae.getErrorCode().getErrorCode());
+            response = new ApiResponse(ae.getErrorCode());
+            eventTracking.trackFailureEvent(request, EventName.GET_RELATED_USERS_DATA, ae.getErrorCode());
+        }
+        logger.info("getRelatedUsersData : Out");
         return response;
     }
 

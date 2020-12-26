@@ -35,6 +35,8 @@
            value="<#if ftlConfig.afterLoginLinkJson??>${ftlConfig.afterLoginLinkJson}<#else></#if>"/>
     <input type="hidden" style="display: none;" name="footerLinkJson" id="footerLinkJson"
            value="<#if ftlConfig.footerLinkJson??>${ftlConfig.footerLinkJson}<#else></#if>"/>
+    <input type="hidden" style="display: none;" name="footerLinkJsonAfterLogin" id="footerLinkJsonAfterLogin"
+           value="<#if ftlConfig.footerLinkJsonAfterLogin??>${ftlConfig.footerLinkJsonAfterLogin}<#else></#if>"/>
     <input type="hidden" style="display: none;" name="loginRedirectUrl" id="loginRedirectUrl"
            value="<#if ftlConfig.loginRedirectUrl??>${ftlConfig.loginRedirectUrl}<#else></#if>"/>
     <input type="hidden" style="display: none;" name="uploadFileInstruction" id="uploadFileInstruction"
@@ -64,6 +66,7 @@ GLOBAL.loginUserDetails = document.getElementById("loginUserDetailsV2Str").value
 GLOBAL.headingJson = document.getElementById("headingJson").value;
 GLOBAL.afterLoginLinkJson = document.getElementById("afterLoginLinkJson").value;
 GLOBAL.footerLinkJson = document.getElementById("footerLinkJson").value;
+GLOBAL.footerLinkJsonAfterLogin = document.getElementById("footerLinkJsonAfterLogin").value;
 GLOBAL.loginRedirectUrl = document.getElementById("loginRedirectUrl").value;
 GLOBAL.uploadFileInstruction = document.getElementById("uploadFileInstruction").value;
 GLOBAL.forgotPasswordPageInstruction = document.getElementById("forgotPasswordPageInstruction").value;

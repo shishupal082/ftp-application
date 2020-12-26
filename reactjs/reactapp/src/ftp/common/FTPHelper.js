@@ -4,6 +4,8 @@ import TemplateHelper from "../../common/TemplateHelper";
 import Config from "./Config";
 import PageData from "./PageData";
 import GATracking from "./GATracking";
+import TemplateHandler from "./TemplateHandler";
+
 
 var FTPHelper = {};
 
@@ -47,7 +49,7 @@ FTP.extend({
         var pageName = Config.getPageData("page", "");
         var isLogin = Data.getData("isLogin", false);
         var redirectStatus = false;
-        if (["dashboard", "upload_file", "change_password", "logout"].indexOf(pageName) >= 0) {
+        if (["dashboard", "upload_file", "change_password", "users_control", "logout"].indexOf(pageName) >= 0) {
             if (!isLogin) {
                 FTPHelper.lazyRedirect("/login", 250);
                 redirectStatus = true;
@@ -214,6 +216,26 @@ FTP.extend({
         }
         TemplateHelper.updateTemplateText(dashboardTemplate, dashboardTemplateData);
         return dashboardTemplate;
+    },
+    getUsersControlField: function(Data, pageName) {
+        var data = PageData.getData("users_control.response", []);
+        if (data.length < 1) {
+            return Data.getTemplate("noDataFound", {});
+        }
+        var template = Data.getTemplate("usersControl", {});
+        var rowTemplate;
+        for (var i=0; i<data.length; i++) {
+            rowTemplate = Data.getTemplate("usersControl.row", {});
+            if (data[i]["valid"]) {
+                data[i]["valid"] = "True";
+            } else {
+                data[i]["valid"] = "False";
+            }
+            data[i]["s.no."] = i+1;
+            TemplateHelper.updateTemplateText(rowTemplate, data[i]);
+            TemplateHelper.addItemInTextArray(template, "usersControl.data", rowTemplate);
+        }
+        return template;
     }
 });
 //getFieldTemplateByPageName
@@ -315,6 +337,9 @@ FTP.extend({
             var dashboardField = FTP.getDashboardField(Data, pageName);
             FTP.displayVisibleItem(dashboardField);
             pageTemplate.push(dashboardField);
+        } else if (pageName === "users_control") {
+            var usersControlField = FTP.getUsersControlField(Data, pageName);
+            pageTemplate.push(usersControlField);
         } else if (pageName === "login") {
             template = Data.getTemplate(pageName, {});
             var isGuestLinkEnable = Config.getPageData("is_guest_enable", "false");
@@ -331,8 +356,14 @@ FTP.extend({
             pageTemplate.push(template);
         }
         var footerTemplate = Data.getTemplate("footerLinkJson", {});
+        var footerTemplateAfterLogin = Data.getTemplate("footerLinkJsonAfterLogin", {});
+        var isLogin = Data.getData("isLogin", false);
+        if (isLogin) {
+            footerTemplate = footerTemplateAfterLogin;
+        }
         var field = TemplateHelper(pageTemplate).searchFieldV2("footer");
         if ($S.isObject(field) && field.name === "footer") {
+            footerTemplate = TemplateHandler.checkUserDependentFooterLink(footerTemplate);
             TemplateHelper.setTemplateAttr(field, "footer", "text", footerTemplate);
         }
         return pageTemplate;
@@ -381,6 +412,19 @@ FTP.extend({
             finalResponse.push({"heading": key, "fieldData": responseByUser[key]});
         }
         return finalResponse;
+    },
+    _generateUsersControlResponse: function(response) {
+        function compare(a, b) {
+            if (a.username < b.username){
+                return -1;
+            }
+            if (a.username > b.username){
+                return 1;
+            }
+            return 0;
+        }
+        response.sort(compare);
+        return response;
     },
     _generateDashboardResponseByDate: function(dashboardApiResponse) {
         var responseByDate = {};
@@ -490,8 +534,9 @@ FTP.extend({
     },
     loadPageData: function(Data, callBack) {
         var pageName = Config.getPageData("page", "");
+        var url;
         if (pageName === "dashboard") {
-            var url = Config.apiMapping["get_files"];
+            url = Config.apiMapping["get_files"];
             $S.loadJsonData(null, [url], function(response, apiName, ajaxDetails) {
                 if ($S.isObject(response) && $S.isArray(response.data)) {
                     var dashboardApiResponse = FTP._generateDashboardResponse(response.data);
@@ -505,6 +550,15 @@ FTP.extend({
                     PageData.setData("dashboard.apiResponse", dashboardApiResponse);
                     PageData.setData("dashboard.apiResponseByUser", FTP._generateDashboardResponseByUser(dashboardApiResponse));
                     PageData.setData("dashboard.apiResponseByDate", apiResponseByDate);
+                }
+            }, function() {
+                $S.callMethod(callBack);
+            }, null, Api.getAjaxApiCallMethod());
+        } else if (pageName === "users_control") {
+            url = Config.apiMapping["get_related_users_data"];
+            $S.loadJsonData(null, [url], function(response, apiName, ajaxDetails) {
+                if ($S.isObject(response) && response.status === "SUCCESS" && $S.isArray(response.data)) {
+                    PageData.setData("users_control.response", FTP._generateUsersControlResponse(response.data));
                 }
             }, function() {
                 $S.callMethod(callBack);

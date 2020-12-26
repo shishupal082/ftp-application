@@ -12,6 +12,7 @@ var basepathname = $$$.basepathname;
 var headingJson = $$$.headingJson;
 var afterLoginLinkJson = $$$.afterLoginLinkJson;
 var footerLinkJson = $$$.footerLinkJson;
+var footerLinkJsonAfterLogin = $$$.footerLinkJsonAfterLogin;
 var loginUserDetails = $$$.loginUserDetails;
 var uploadFileInstruction = $$$.uploadFileInstruction;
 var forgotPasswordPageInstruction = $$$.forgotPasswordPageInstruction;
@@ -39,6 +40,10 @@ try {
     Template["footerLinkJson"] = footerLinkJson;
 } catch(e) {}
 
+try {
+    footerLinkJsonAfterLogin = JSON.parse(footerLinkJsonAfterLogin);
+    Template["footerLinkJsonAfterLogin"] = footerLinkJsonAfterLogin;
+} catch(e) {}
 
 try {
     UserData = JSON.parse(loginUserDetails);
@@ -107,6 +112,7 @@ if ($S.isBooleanTrue($$$.isReactEnv)) {
     hrefPathMapping[basepathname + "/create_password"] = "create_password";
     hrefPathMapping[basepathname + "/upload_file"] = "upload_file";
     hrefPathMapping[basepathname + "/change_password"] = "change_password";
+    hrefPathMapping[basepathname + "/users_control"] = "users_control";
 
     var origin = Config.location.origin;
     var hrefPathArr = hrefPath.split(origin);
@@ -149,6 +155,7 @@ Config.apiMapping["delete_file"] = baseapi + "/api/delete_file?u="+uiUsername;
 Config.apiMapping["track_event"] = baseapi + "/api/track_event?u="+uiUsername;
 
 Config.apiMapping["get_files"] = baseapi + "/api/get_files_info?v=" + RequestId;
+Config.apiMapping["get_related_users_data"] = baseapi + "/api/get_related_users_data?v=" + RequestId;
 
 
 Config.getAleartMessage = function(response) {
