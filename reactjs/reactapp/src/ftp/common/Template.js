@@ -8,7 +8,7 @@ Template["heading"] = [
                 "tag": "td",
                 "text": {
                     "tag": "img",
-                    "className": "logo",
+                    "className": "w-55px",
                     "src": "/assets/static/img/railwayslogo-128.png"
                 }
             },
