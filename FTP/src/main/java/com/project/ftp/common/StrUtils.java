@@ -53,7 +53,6 @@ public class StrUtils {
         try {
             result = Integer.parseInt(str);
         } catch (Exception ignored) {};
-        logger.info("strToInt:{},{}", str, result);
         return result;
     }
 }
