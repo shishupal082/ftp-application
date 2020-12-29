@@ -102,6 +102,6 @@ public class UserFile implements UserInterface {
         String filepath = appConfig.getFtpConfiguration().getConfigDataFilePath() + AppConstant.USER_DATA_FILENAME;
         TextFileParser textFileParser = new TextFileParser(filepath);
         String text = this.getAddTextResponse(user);
-        return textFileParser.addText(text, false);
+        return textFileParser.addText(text);
     }
 }

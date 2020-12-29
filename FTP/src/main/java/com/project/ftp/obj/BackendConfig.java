@@ -5,6 +5,7 @@ public class BackendConfig {
     private String loadRoleStatusOnPageLoad;
     private String rolesFileName;
     private Integer rateLimitThreshold;// used for register and create_password
+    private String eventDataFilenamePattern;
 
     public BackendConfig() {}
 
@@ -40,6 +41,14 @@ public class BackendConfig {
         this.rateLimitThreshold = rateLimitThreshold;
     }
 
+    public String getEventDataFilenamePattern() {
+        return eventDataFilenamePattern;
+    }
+
+    public void setEventDataFilenamePattern(String eventDataFilenamePattern) {
+        this.eventDataFilenamePattern = eventDataFilenamePattern;
+    }
+
     @Override
     public String toString() {
         return "BackendConfig{" +
@@ -47,6 +56,7 @@ public class BackendConfig {
                 ", loadRoleStatusOnPageLoad='" + loadRoleStatusOnPageLoad + '\'' +
                 ", rolesFileName='" + rolesFileName + '\'' +
                 ", rateLimitThreshold=" + rateLimitThreshold +
+                ", eventDataFilenamePattern='" + eventDataFilenamePattern + '\'' +
                 '}';
     }
 }

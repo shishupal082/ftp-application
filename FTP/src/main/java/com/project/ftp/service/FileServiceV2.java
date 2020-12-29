@@ -171,7 +171,7 @@ public class FileServiceV2 {
         boolean createStatus, addTextStatus = false;
         createStatus = fileService.createNewFile(responseFilename);
         if (createStatus) {
-            addTextStatus = new TextFileParser(responseFilename).addText(csvData, true);
+            addTextStatus = new TextFileParser(responseFilename, true).addText(csvData);
         }
         if (createStatus && addTextStatus) {
             return fileService.getPathInfo(responseFilename);
@@ -757,7 +757,7 @@ public class FileServiceV2 {
         if (fileExist) {
             TextFileParser textFileParser = new TextFileParser(filePath);
             for (String str : textData) {
-                textFileParser.addText(str, false);
+                textFileParser.addText(str);
             }
             return new ApiResponse();
         }

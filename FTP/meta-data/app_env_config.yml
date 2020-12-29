@@ -21,8 +21,8 @@ logging:
 
 logFilePath: "F:/ftp-app/log/"
 fileSaveDir: "D:/workspace/project/ftp-app/saved-files/"
-configDataFilePath: "D:/workspace/project/ftp-app/config-files/"
-#configDataFilePath: "D:/workspace/ftp-application/FTP/meta-data/config-files/"
+#configDataFilePath: "D:/workspace/project/ftp-app/config-files/"
+configDataFilePath: "D:/workspace/ftp-application/FTP/meta-data/config-files/"
 
 server:
   type: simple
@@ -91,6 +91,7 @@ backendConfig:
   forgotPasswordMessage: "Forgot password request submitted, Please create password."
   loadRoleStatusOnPageLoad: "FromRoleConfig" #"isAdminUser" #FromRoleConfig
   rolesFileName: "roles.yml"
+  eventDataFilenamePattern: "event_data.csv" # "YYYY-MM-dd-HH-mm'-event_data.csv'"
   rateLimitThreshold: 2
 
 

@@ -861,6 +861,9 @@ Added tracking of related users for roles config
 
 6.0.7
 -------------------
+Optional config parameter added for
+    - backendConfig.eventDataFilenamePattern = "YYYY-MM-dd-HH-mm'-event_data.csv'"
+
 Added footerLinkJsonAfterLogin in ftp_view
 
 New role created

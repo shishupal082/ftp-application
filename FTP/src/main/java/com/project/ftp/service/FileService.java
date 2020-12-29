@@ -52,7 +52,7 @@ public class FileService {
         TextFileParser textFileParser = new TextFileParser(savedDataFilepath);
         String savedText = fileDetail.generateResponseToSave();
         logger.info("Saving file details data: {}", savedText);
-        textFileParser.addText(savedText, false);
+        textFileParser.addText(savedText);
     }
 
     public PathInfo getPathInfo(String requestedPath) {
