@@ -72,12 +72,12 @@ Change config if required
 - supportedFileType (arrayList) (pdf,jpeg,jpg,png)
 - maxFileSize(Integer) (10MB)
 - filenameFormat (string)
-    - username, filename, YYYY-MM-dd, HH-mm-ss-SSS
+    - username, filename, yyyy-MM-dd, HH-mm-ss-SSS
     for example
-        - "YYYY-MM-dd'-username'"
-        - "YYYY-MM-dd'-filename'"
-        - "YYYY-MM-dd'-username-filename'"
-        - "YYYY-MM-dd-HH-mm-ss-SSS"
+        - "yyyy-MM-dd'-username'"
+        - "yyyy-MM-dd'-filename'"
+        - "yyyy-MM-dd'-username-filename'"
+        - "yyyy-MM-dd-HH-mm-ss-SSS"
 - fileSaveDir (string)
     - Example:
         fileSaveDir: D:/workspace/project/ftp-app/saved-files/

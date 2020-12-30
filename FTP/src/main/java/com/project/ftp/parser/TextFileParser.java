@@ -16,21 +16,13 @@ public class TextFileParser {
     private final static Logger logger = LoggerFactory.getLogger(TextFileParser.class);
     private final String filepath;
     private final boolean isNewFile;
-    private final boolean createFileIfNotExist;
     public TextFileParser(final String filepath) {
         this.filepath = filepath;
         this.isNewFile = false;
-        this.createFileIfNotExist = false;
     }
     public TextFileParser(final String filepath, final boolean isNewFile) {
         this.filepath = filepath;
         this.isNewFile = isNewFile;
-        this.createFileIfNotExist = false;
-    }
-    public TextFileParser(final String filepath, final boolean isNewFile, final boolean createFileIfNotExist) {
-        this.filepath = filepath;
-        this.isNewFile = isNewFile;
-        this.createFileIfNotExist = createFileIfNotExist;
     }
     public ArrayList<ArrayList<String>> getTextData() throws AppException {
         ArrayList<ArrayList<String>> result = new ArrayList<>();
@@ -93,9 +85,7 @@ public class TextFileParser {
         PathInfo pathInfo = StaticService.getPathInfo(filepath);
         if (!AppConstant.FILE.equals(pathInfo.getType())) {
             logger.info("Requested file is not found: {}", filepath);
-            if (!createFileIfNotExist) {
-                return false;
-            }
+            return false;
         }
         try {
             File file = new File(filepath);

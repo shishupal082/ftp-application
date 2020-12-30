@@ -91,7 +91,7 @@ backendConfig:
   forgotPasswordMessage: "Forgot password request submitted, Please create password."
   loadRoleStatusOnPageLoad: "FromRoleConfig" #"isAdminUser" #FromRoleConfig
   rolesFileName: "roles.yml"
-  eventDataFilenamePattern: "event_data.csv" # "YYYY-MM-dd-HH-mm'-event_data.csv'"
+  eventDataFilenamePattern: "'event_data/'yyyy-MM-dd-HH-mm'-event_data.csv'"
   rateLimitThreshold: 2
 
 
@@ -118,7 +118,7 @@ ftlConfig:
 
 # Optional parameter
 indexPageReRoute: /login
-filenameFormat: "YYYY-MM-dd-HH-mm'-filename'"
+filenameFormat: "yyyy-MM-dd-HH-mm'-filename'"
 instance: DevComputer
 guestEnable: false
 

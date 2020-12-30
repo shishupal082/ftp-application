@@ -5,6 +5,7 @@ import com.project.ftp.config.AppConfig;
 import com.project.ftp.config.AppConstant;
 import com.project.ftp.obj.BackendConfig;
 import com.project.ftp.parser.TextFileParser;
+import com.project.ftp.service.FileService;
 import com.project.ftp.service.StaticService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,8 +14,10 @@ public class EventFile implements EventInterface {
     private final static Logger logger = LoggerFactory.getLogger(EventFile.class);
     private final AppConfig appConfig;
     private final DateUtilities dateUtilities = new DateUtilities();
+    private final FileService fileService;
     public EventFile(final AppConfig appConfig) {
         this.appConfig = appConfig;
+        this.fileService = new FileService();
     }
     private String getEventDataFileName() {
         String configPath = appConfig.getFtpConfiguration().getConfigDataFilePath();
@@ -52,7 +55,9 @@ public class EventFile implements EventInterface {
         eventLog += "," + timestamp;
         eventLog += "," + StaticService.encodeComma(reason);
         eventLog += "," + StaticService.encodeComma(comment);
-        TextFileParser textFileParser = new TextFileParser(this.getEventDataFileName(), false, true);
+        String eventDataFilepath = this.getEventDataFileName();
+        fileService.createNewFile(eventDataFilepath);
+        TextFileParser textFileParser = new TextFileParser(eventDataFilepath, false);
         textFileParser.addText(eventLog);
         logger.info("Event added: {}", eventLog);
     }

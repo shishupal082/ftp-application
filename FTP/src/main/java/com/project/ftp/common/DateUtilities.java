@@ -13,11 +13,13 @@ public class DateUtilities {
         return dateFormat.format(timeInMs);
     }
     public String getDateStrFromPattern(String pattern) {
+        String result = "";
         if (pattern == null) {
-            return "";
+            return result;
         }
         Date currentDate = new Date();
         DateFormat dateFormat = new SimpleDateFormat(pattern);
-        return dateFormat.format(currentDate);
+        result = dateFormat.format(currentDate);
+        return result;
     }
 }

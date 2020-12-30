@@ -5,7 +5,7 @@
 filename shall always be /username/filename.pdf (i.e. length = 2)
 
 filename saving pattern added in env config (can be added username or filename)
-filenameFormat: "YYYY-MM-dd'-username-filename'"
+filenameFormat: "yyyy-MM-dd'-username-filename'"
 
 configFile change (made optional)
 -----------------------------------
@@ -160,7 +160,7 @@ Change from serial to parallel call for below two api
 stop sending userDisplayName in page rendering as it is required file reading and parsing
     - Also it is not being used till now
 Remove filenameFormat config parameter, put into AppConstant.FILENAME_FORMAT
-    - filenameFormat: "YYYY-MM-dd-HH-mm'-filename'"
+    - filenameFormat: "yyyy-MM-dd-HH-mm'-filename'"
 Adding ?v=appVersion instead of ?appVersion in generating api request call for
     - /api/get_files_info
     - /api/get_static_file
@@ -186,7 +186,7 @@ Bug fix for Error in api call (Enable submit button after failure)
     - api/register
 Add username in each api call (In page load call, login details is already there)
 Adding back filenameFormat config parameter (optional), along with AppConstant.FILENAME_FORMAT
-    - filenameFormat: "YYYY-MM-dd-HH-mm'-filename'"
+    - filenameFormat: "yyyy-MM-dd-HH-mm'-filename'"
     - Because, it may be requirement in future filename should have information of user
 
 Display % completed fileUpload (Between 1% to 99%), sometime 100% also
@@ -862,7 +862,7 @@ Added tracking of related users for roles config
 6.0.7
 -------------------
 Optional config parameter added for
-    - backendConfig.eventDataFilenamePattern = "YYYY-MM-dd-HH-mm'-event_data.csv'"
+    - backendConfig.eventDataFilenamePattern = "yyyy-MM-dd-HH-mm'-event_data.csv'"
 
 Added footerLinkJsonAfterLogin in ftp_view
 
