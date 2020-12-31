@@ -432,6 +432,13 @@ public class FileServiceV2 {
                                     subject, heading, deleteAccess);
         fileService.saveFileDetails(savedDataFilepath, fileDetail);
     }
+    // addText
+    private void generateFileDetailsForAddText(String loginUsername, String filename, String subject, String heading) {
+        FileDeleteAccess deleteAccess = StaticService.getFileDeleteAccessV2(appConfig);
+        FileDetail fileDetail = new FileDetail(filename, loginUsername, deleteAccess,
+                subject, heading);
+        fileService.saveFileDetails(savedDataFilepath, fileDetail);
+    }
     public void deleteRequestFileV2(LoginUserDetails loginUserDetails,
                                     RequestDeleteFile deleteFile) throws AppException {
         HashMap<String, String> parsedFileStr = this.verifyDeleteRequestParameters(deleteFile);
@@ -759,6 +766,7 @@ public class FileServiceV2 {
             for (String str : textData) {
                 textFileParser.addText(str);
             }
+            this.generateFileDetailsForAddText(username, filename, addText.getSubject(), addText.getHeading());
             return new ApiResponse();
         }
         logger.info("Error in adding text filePath: {}, data: {}", filePath, addText);

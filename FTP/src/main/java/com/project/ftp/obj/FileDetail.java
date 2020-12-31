@@ -130,6 +130,31 @@ public class FileDetail {
         this.filepath = this.uploadedby + "/" + this.filename;
         // heading, subject, deleteAccess will be copy paste from old data
     }
+    //for addText
+    public FileDetail(String filename, String uploadedby,
+                      FileDeleteAccess deleteAccess,
+                      String subject, String heading) {
+        this.isValid = false;
+        if (filename == null || filename.isEmpty()) {
+            logger.info("Invalid fileDetail request, invalid filename: {}", filename);
+            return;
+        }
+        if (uploadedby == null || uploadedby.isEmpty()) {
+            logger.info("Invalid fileDetail request, invalid uploadedby: {}", uploadedby);
+            return;
+        }
+
+        this.isValid = true;
+        this.datetimeStamp = StaticService.getDateStrFromPattern(AppConstant.DateTimeFormat5);
+        this.filename = filename;
+        this.uploadedby = uploadedby;
+        this.deleteAccess = deleteAccess;
+        this.subject = subject;
+        this.heading = heading;
+        this.entryType = "addText";
+        this.isDeleted = "false";
+        this.filepath = this.uploadedby + "/" + this.filename;
+    }
     public String generateResponseToSave() {
         String response = "";
         response += this.datetimeStamp;

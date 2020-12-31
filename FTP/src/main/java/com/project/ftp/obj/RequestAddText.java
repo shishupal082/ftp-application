@@ -12,6 +12,10 @@ public class RequestAddText {
     private String[] text;
     @JsonProperty("filename")
     private String filename;
+    @JsonProperty("subject")
+    private String subject;
+    @JsonProperty("heading")
+    private String heading;
 
     public String[] getText() {
         return text;
@@ -29,11 +33,29 @@ public class RequestAddText {
         this.filename = filename;
     }
 
+    public String getSubject() {
+        return subject;
+    }
+
+    public void setSubject(String subject) {
+        this.subject = subject;
+    }
+
+    public String getHeading() {
+        return heading;
+    }
+
+    public void setHeading(String heading) {
+        this.heading = heading;
+    }
+
     @Override
     public String toString() {
         return "RequestAddText{" +
                 "text=" + Arrays.toString(text) +
                 ", filename='" + filename + '\'' +
+                ", subject='" + subject + '\'' +
+                ", heading='" + heading + '\'' +
                 '}';
     }
 }

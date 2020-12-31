@@ -868,7 +868,7 @@ Added footerLinkJsonAfterLogin in ftp_view
 
 New role created
     - isUsersControlEnable
-
+Added Subject and Heading for add_text api
 
 Created new react page users_control
     - users_control will display related users sorted by name (Result it self will be sorted)
