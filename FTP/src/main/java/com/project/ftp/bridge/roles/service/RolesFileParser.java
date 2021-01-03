@@ -135,7 +135,7 @@ public class RolesFileParser {
                 continue;
             }
             temp = "("+temp+"|"+value+")";
-            logger.info("Merged rollAccessMapping: {}", temp);
+            logger.info("Merged rollAccessMapping: {}, key: {}", temp, key);
             roleAccessMapping1.put(key, temp);
         }
     }
