@@ -262,6 +262,27 @@ public class RolesService {
         }
         return roles.getRelatedUsers();
     }
+    public ArrayList<String> getAllRelatedUsersName() {
+        Roles roles = this.getRolesConfig();
+        if (roles == null) {
+            return null;
+        }
+        HashMap<String, ArrayList<String>> allRelatedUsers = roles.getRelatedUsers();
+        if (allRelatedUsers == null) {
+            return null;
+        }
+        ArrayList<String> result = new ArrayList<>();
+        for(Map.Entry<String, ArrayList<String>> entry: allRelatedUsers.entrySet()) {
+            if (entry.getKey() != null) {
+                result.add(entry.getKey());
+            }
+            if (entry.getValue() != null) {
+                result.addAll(entry.getValue());
+            }
+        }
+        result = this.removeDuplicate(result);
+        return result;
+    }
     public ArrayList<String> getRelatedUsers(String username) {
         if (username == null) {
             return null;

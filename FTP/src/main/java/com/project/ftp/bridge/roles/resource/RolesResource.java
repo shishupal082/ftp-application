@@ -23,6 +23,9 @@ public class RolesResource {
     public ArrayList<String> getRelatedUsers(String username) {
         return rolesService.getRelatedUsers(username);
     }
+    public ArrayList<String> getAllRelatedUsersName() {
+        return rolesService.getAllRelatedUsersName();
+    }
 
     public void trackRelatedUser() {
         HashMap<String, ArrayList<String>> allRelatedUsers = rolesService.getAllRelatedUsers();

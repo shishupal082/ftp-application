@@ -92,7 +92,13 @@ public class UserService {
     }
     public ArrayList<RelatedUserData> getRelatedUsersData(LoginUserDetails loginUserDetails) {
         ArrayList<RelatedUserData> result = new ArrayList<>();
-        ArrayList<String> relatedUsers = this.getRelatedUsers(loginUserDetails.getUsername(), false);
+        boolean isAdmin = this.isLoginUserAdmin(loginUserDetails);
+        ArrayList<String> relatedUsers;
+        if (isAdmin) {
+            relatedUsers = this.getAllRelatedUsersName(loginUserDetails.getUsername(), false);
+        } else {
+            relatedUsers = this.getRelatedUsers(loginUserDetails.getUsername(), false);
+        }
         if (relatedUsers == null) {
             return result;
         }
@@ -103,20 +109,22 @@ public class UserService {
             tempResult.put(uName, userData);
         }
         Users users = userInterface.getAllUsers();
-        boolean isAdmin = this.isLoginUserAdmin(loginUserDetails);
         if (users != null) {
             HashMap<String, MysqlUser> userHashMap = users.getUserHashMap();
             if (userHashMap != null) {
+                MysqlUser mysqlUser;
+                String username;
+                for(Map.Entry<String, RelatedUserData> data: tempResult.entrySet()) {
+                    username = data.getKey();
+                    mysqlUser = userHashMap.get(username);
+                    if (mysqlUser != null) {
+                        tempResult.put(username, new RelatedUserData(mysqlUser));
+                    }
+                }
                 if (isAdmin) {
                     for(Map.Entry<String, MysqlUser> data: userHashMap.entrySet()) {
-                        tempResult.put(data.getKey(), new RelatedUserData(data.getValue()));
-                    }
-                } else {
-                    MysqlUser mysqlUser;
-                    String username;
-                    for(Map.Entry<String, RelatedUserData> data: tempResult.entrySet()) {
                         username = data.getKey();
-                        mysqlUser = userHashMap.get(username);
+                        mysqlUser = data.getValue();
                         if (mysqlUser != null) {
                             tempResult.put(username, new RelatedUserData(mysqlUser));
                         }
@@ -322,7 +330,25 @@ public class UserService {
             throw new AppException(passwordMisMatchErrorCode);
         }
     }
-
+    public ArrayList<String> getAllRelatedUsersName(String username, boolean addPublic) {
+        ArrayList<String> relatedUsers;
+        relatedUsers = appConfig.getAppToBridge().getAllRelatedUsersName();
+        if (relatedUsers == null) {
+            relatedUsers = new ArrayList<>();
+        }
+        if (StaticService.isValidString(username) && !relatedUsers.contains(username)) {
+            relatedUsers.add(username);
+        }
+        if (addPublic) {
+            if (!AppConstant.PUBLIC.equals(username.toLowerCase())) {
+                if (!relatedUsers.contains(AppConstant.PUBLIC)) {
+                    relatedUsers.add(AppConstant.PUBLIC);
+                }
+            }
+        }
+        logger.info("Related users for username:{}, {}", username, relatedUsers);
+        return relatedUsers;
+    }
     public ArrayList<String> getRelatedUsers(String username, boolean addPublic) {
         ArrayList<String> relatedUsers;
         if (StaticService.isInValidString(username)) {
@@ -332,7 +358,7 @@ public class UserService {
             if (relatedUsers == null) {
                 relatedUsers = new ArrayList<>();
             }
-            if (!relatedUsers.contains(username)) {
+            if (StaticService.isValidString(username) && !relatedUsers.contains(username)) {
                 relatedUsers.add(username);
             }
             if (addPublic) {
