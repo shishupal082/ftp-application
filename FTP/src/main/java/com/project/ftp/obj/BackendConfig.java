@@ -1,9 +1,11 @@
 package com.project.ftp.obj;
 
+import java.util.ArrayList;
+
 public class BackendConfig {
     private String forgotPasswordMessage;
     private String loadRoleStatusOnPageLoad;
-    private String rolesFileName;
+    private ArrayList<String> rolesFileName;
     private Integer rateLimitThreshold;// used for register and create_password
     private String eventDataFilenamePattern;
 
@@ -25,11 +27,11 @@ public class BackendConfig {
         this.loadRoleStatusOnPageLoad = loadRoleStatusOnPageLoad;
     }
 
-    public String getRolesFileName() {
+    public ArrayList<String> getRolesFileName() {
         return rolesFileName;
     }
 
-    public void setRolesFileName(String rolesFileName) {
+    public void setRolesFileName(ArrayList<String> rolesFileName) {
         this.rolesFileName = rolesFileName;
     }
 

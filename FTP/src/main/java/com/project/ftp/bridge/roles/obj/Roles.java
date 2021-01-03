@@ -12,7 +12,15 @@ public class Roles {
     private HashMap<String, String> roleAccessMapping;
     private HashMap<String, ArrayList<String>> relatedUsers;
     private ArrayList<String> coRelatedUsers;
-
+    public Roles() {}
+    public Roles(boolean isInit) {
+        if (isInit) {
+            roleAccess = new HashMap<>();
+            roleAccessMapping = new HashMap<>();
+            relatedUsers = new HashMap<>();
+            coRelatedUsers = new ArrayList<>();
+        }
+    }
     public HashMap<String, ArrayList<String>> getRoleAccess() {
         return roleAccess;
     }

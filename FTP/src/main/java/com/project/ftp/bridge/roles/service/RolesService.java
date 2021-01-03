@@ -8,13 +8,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
 public class RolesService {
     final static Logger logger = LoggerFactory.getLogger(RolesService.class);
     private final BridgeConfig bridgeConfig;
-    public RolesService(BridgeConfig bridgeConfig, String rolesConfigPath) {
+    public RolesService(BridgeConfig bridgeConfig, ArrayList<String> rolesConfigPath) {
         this.bridgeConfig = bridgeConfig;
         if (bridgeConfig != null) {
             this.bridgeConfig.setRoles(this.getRolesConfigByConfigPath(rolesConfigPath));
@@ -64,11 +65,12 @@ public class RolesService {
             }
             result.add(str);
         }
+        result.sort(Collections.reverseOrder());
         return result;
     }
-    public Roles getRolesConfigByConfigPath(String rolesConfigPath) {
+    public Roles getRolesConfigByConfigPath(ArrayList<String> rolesConfigPath) {
         RolesFileParser rolesFileParser = new RolesFileParser();
-        Roles roles = rolesFileParser.getRolesFileData(rolesConfigPath);
+        Roles roles = rolesFileParser.getAllRolesFileData(rolesConfigPath);
         HashMap<String, ArrayList<String>> relatedUsers = null;
         HashMap<String, ArrayList<String>> rolesAccess = null;
         ArrayList<String> coRelatedUsers = null;

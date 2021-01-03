@@ -26,13 +26,21 @@ public class AppToBridge implements AppToBridgeInterface {
 
     public AppToBridge(FtpConfiguration ftpConfiguration, EventTracking eventTracking) {
         emailConfig = ftpConfiguration.getEmailConfig();
-        String rolesConfigPath = ftpConfiguration.getConfigDataFilePath();
-        String rolesFileName = AppConstant.ROLES;
+        ArrayList<String> rolesConfigPath = new ArrayList<>();
+        String configPath = ftpConfiguration.getConfigDataFilePath();
         BackendConfig backendConfig = ftpConfiguration.getBackendConfig();
         if (backendConfig != null && backendConfig.getRolesFileName() != null) {
-            rolesFileName = backendConfig.getRolesFileName();
+            ArrayList<String> rolesFileName = backendConfig.getRolesFileName();
+            if (rolesFileName.size() > 0) {
+                for (String filename: rolesFileName) {
+                    rolesConfigPath.add(configPath+filename);
+                }
+            } else {
+                rolesConfigPath.add(configPath+AppConstant.ROLES);
+            }
+        } else {
+            rolesConfigPath.add(configPath+AppConstant.ROLES);
         }
-        rolesConfigPath += rolesFileName;
         BridgeConfig bridgeConfig = new BridgeConfig(emailConfig, ftpConfiguration.getCreatePasswordEmailConfig());
         BridgeToAppInterface bridgeToAppInterface = new BridgeToApp(eventTracking);
         BridgeTracking bridgeTracking = new BridgeTracking(bridgeToAppInterface);

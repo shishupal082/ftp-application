@@ -909,6 +909,22 @@ Enable forgotPassword for all (email will not be send only data will be updated)
         - otp shall not be changed
 
 
+6.0.8
+-------------------
+It is required for scaling of ftp application for monitoring purpose
+
+backendConfig.rolesFileName changes from String to ArrayList<String>
+    - i.e. support for adding multiple roles config file
+env_config version changes from 6.0.1 to 6.0.8
+
+Application will not start if
+    - conflicting rolesAccess
+    - conflicting username in related user
+    but it will not check if roles.yml file not found
+If duplicate username is not in multiple roleAccess then no problem
+    - but it will be logged
+
+
 Future releases
 -------------------
 
