@@ -68,6 +68,7 @@ public class AppConstant {
     public static final String IS_DEV_USER = "isDevUser";
     public static final String IS_ADMIN_USER = "isAdminUser";
     public static final String IS_USERS_CONTROL_ENABLE = "isUsersControlEnable";
+    public static final String IS_OTHER_USERS_CONTROL_ENABLE = "isOtherUsersControlEnable";
     public static final String IS_ADD_TEXT_ENABLE = "isAddTextEnable";
     public static final String IS_UPLOAD_FILE_ENABLE = "isUploadFileEnable";
     public static final String IS_GET_ALL_USERS_ENABLE = "getAllUsersEnable";

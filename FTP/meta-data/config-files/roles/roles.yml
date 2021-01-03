@@ -26,6 +26,7 @@ roleAccessMapping:
   isUploadFileEnable: isLogin
   isAddTextEnable: isLogin
   isUsersControlEnable: UsersControlGroup
+  isOtherUsersControlEnable: admin
   isAdminOrDevUser: (admin|dev)
   isAdminOrDevOrLoginUser: (admin|dev|isLogin)
   inValidRoleEntry: (admin1|dev|isLogin)

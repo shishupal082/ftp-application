@@ -924,6 +924,10 @@ Application will not start if
 If duplicate username is not in multiple roleAccess then no problem
     - but it will be logged
 
+New api added
+    /api/get_related_users_data_by_username?username=username
+    It will be control by rolesConfig
+    New role added for this isOtherUsersControlEnable
 
 Future releases
 -------------------
