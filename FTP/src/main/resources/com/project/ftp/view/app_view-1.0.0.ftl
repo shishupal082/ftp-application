@@ -27,7 +27,7 @@
 <noscript>You need to enable JavaScript to run this app.</noscript>
 <div style="display: none;">
     <input type="hidden" style="display: none;" name="pageData" id="pageData"
-           value="page=${pageName},app_version=${appVersion},upload_file_api_version=${uploadFileApiVersion},is_guest_enable=${isGuestEnable},is_forgot_password_enable=${isForgotPasswordEnable}"/>
+           value="page=${pageName},app_version=${appVersion},upload_file_api_version=${uploadFileApiVersion},is_guest_enable=${isGuestEnable}"/>
     <input type="hidden" style="display: none;" name="loginUserDetailsV2Str" id="loginUserDetailsV2Str" value="${loginUserDetailsV2Str}"/>
     <input type="hidden" style="display: none;" name="headingJson" id="headingJson"
             value="<#if ftlConfig.headingJson??>${ftlConfig.headingJson}<#else></#if>"/>
@@ -41,8 +41,6 @@
            value="<#if ftlConfig.loginRedirectUrl??>${ftlConfig.loginRedirectUrl}<#else></#if>"/>
     <input type="hidden" style="display: none;" name="uploadFileInstruction" id="uploadFileInstruction"
             value="<#if ftlConfig.uploadFileInstruction??>${ftlConfig.uploadFileInstruction}<#else></#if>"/>
-    <input type="hidden" style="display: none;" name="forgotPasswordPageInstruction" id="forgotPasswordPageInstruction"
-           value="<#if ftlConfig.forgotPasswordPageInstruction??>${ftlConfig.forgotPasswordPageInstruction}<#else></#if>"/>
     <input type="hidden" style="display: none;" name="createPasswordOtpInstruction" id="createPasswordOtpInstruction"
            value="<#if ftlConfig.createPasswordOtpInstruction??>${ftlConfig.createPasswordOtpInstruction}<#else></#if>"/>
 </div>
@@ -69,7 +67,6 @@ GLOBAL.footerLinkJson = document.getElementById("footerLinkJson").value;
 GLOBAL.footerLinkJsonAfterLogin = document.getElementById("footerLinkJsonAfterLogin").value;
 GLOBAL.loginRedirectUrl = document.getElementById("loginRedirectUrl").value;
 GLOBAL.uploadFileInstruction = document.getElementById("uploadFileInstruction").value;
-GLOBAL.forgotPasswordPageInstruction = document.getElementById("forgotPasswordPageInstruction").value;
 GLOBAL.createPasswordOtpInstruction = document.getElementById("createPasswordOtpInstruction").value;
 window.GLOBAL = GLOBAL;
 </script>

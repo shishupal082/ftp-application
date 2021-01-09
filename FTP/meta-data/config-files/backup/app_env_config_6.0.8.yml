@@ -95,8 +95,10 @@ backendConfig:
     - roles/roles_2.yml
   eventDataFilenamePattern: "'event_data/'yyyy-MM-dd-HH-mm'-event_data.csv'"
   rateLimitThreshold: 2
-  isForgotPasswordEnable: false
 
+
+uiBackendConfig:
+  forgotPasswordEnable: true
 
 ftlConfig:
   description: "FTP Application description"

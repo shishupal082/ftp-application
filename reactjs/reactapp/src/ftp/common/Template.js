@@ -212,61 +212,8 @@ Template["forgot_password"] = [
                 },
                 {
                     "tag": "div",
-                    "name": "forgot_password.old-text",
-                    "className": "form-group pl-10px d-none",
-                    "text": [
-                        {
-                            "tag": "div",
-                            "className": "",
-                            "text": [
-                                {
-                                    "tag": "label",
-                                    "name": "forgot_password.page-instruction",
-                                    "text": "Please contact admin."
-                                }
-                            ]
-                        }
-                    ]
-                },
-                {
-                    "tag": "div",
-                    "name": "forgot_password.old-link",
-                    "className": "form-group d-none",
-                    "text": [
-                        {
-                            "tag": "div",
-                            "className": "pl-5px",
-                            "text": {
-                                "tag": "div",
-                                "text": [
-                                    {
-                                        "tag": "a",
-                                        "href": "/login",
-                                        "className": "p-5px",
-                                        "text": "Login"
-                                    },
-                                    {
-                                        "tag": "a",
-                                        "href": "/register",
-                                        "className": "p-5px",
-                                        "text": "Register"
-                                    },
-                                    {
-                                        "tag": "a",
-                                        "href": "/create_password",
-                                        "className": "p-5px d-none",
-                                        "name": "forgot_password_disable.create_password-link",
-                                        "text": "Create Password"
-                                    }
-                                ]
-                            }
-                        }
-                    ]
-                },
-                {
-                    "tag": "div",
                     "name": "forgot_password.fields",
-                    "className": "form-group d-none",
+                    "className": "form-group",
                     "text": [
                         {
                             "tag": "div",
@@ -318,7 +265,7 @@ Template["forgot_password"] = [
                 {
                     "tag": "div",
                     "name": "forgot_password.links",
-                    "className": "form-group d-none",
+                    "className": "form-group",
                     "text": {
                         "tag": "div",
                         "text": [

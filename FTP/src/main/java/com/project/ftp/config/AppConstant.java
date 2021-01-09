@@ -24,7 +24,7 @@ public class AppConstant {
     public static final String ALLOWED_HEADERS= "Access-Control-Allow-Headers";
     public static final String FILE = "FILE";
     public static final String FOLDER = "FOLDER";
-    public static final String AppVersion = "6.0.8";
+    public static final String AppVersion = "6.0.9";
     public static final String server = "server";
     public static final String DATE_FORMAT = "yyyy-MM-dd";
     public static final String TIME_FORMAT = "HHmmss";
@@ -45,7 +45,6 @@ public class AppConstant {
     public static final String APP_VIEW_FTL_FILENAME = "app_view-1.0.0.ftl";
     public static final String FILE_NOT_FOUND_MAPPING = "file_not_found_config.yml";
     public static final String ROLES = "roles.yml";
-    public static final String PUBLIC = "public";
     public static final String DEFAULT = "default";
     public static final String TRASH = "trash";
     public static final String TEMP = "temp";

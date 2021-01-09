@@ -95,9 +95,9 @@ public class UserService {
         boolean isAdmin = this.isLoginUserAdmin(loginUserDetails);
         ArrayList<String> relatedUsers;
         if (isAdmin) {
-            relatedUsers = this.getAllRelatedUsersName(loginUserDetails.getUsername(), false);
+            relatedUsers = this.getAllRelatedUsersName(loginUserDetails.getUsername());
         } else {
-            relatedUsers = this.getRelatedUsers(loginUserDetails.getUsername(), false);
+            relatedUsers = this.getRelatedUsers(loginUserDetails.getUsername());
         }
         if (relatedUsers == null) {
             return result;
@@ -330,7 +330,7 @@ public class UserService {
             throw new AppException(passwordMisMatchErrorCode);
         }
     }
-    public ArrayList<String> getAllRelatedUsersName(String username, boolean addPublic) {
+    public ArrayList<String> getAllRelatedUsersName(String username) {
         ArrayList<String> relatedUsers;
         relatedUsers = appConfig.getAppToBridge().getAllRelatedUsersName();
         if (relatedUsers == null) {
@@ -339,17 +339,10 @@ public class UserService {
         if (StaticService.isValidString(username) && !relatedUsers.contains(username)) {
             relatedUsers.add(username);
         }
-        if (addPublic) {
-            if (!AppConstant.PUBLIC.equals(username.toLowerCase())) {
-                if (!relatedUsers.contains(AppConstant.PUBLIC)) {
-                    relatedUsers.add(AppConstant.PUBLIC);
-                }
-            }
-        }
         logger.info("Related users for username:{}, {}", username, relatedUsers);
         return relatedUsers;
     }
-    public ArrayList<String> getRelatedUsers(String username, boolean addPublic) {
+    public ArrayList<String> getRelatedUsers(String username) {
         ArrayList<String> relatedUsers;
         if (StaticService.isInValidString(username)) {
             relatedUsers = new ArrayList<>();
@@ -360,13 +353,6 @@ public class UserService {
             }
             if (StaticService.isValidString(username) && !relatedUsers.contains(username)) {
                 relatedUsers.add(username);
-            }
-            if (addPublic) {
-                if (!AppConstant.PUBLIC.equals(username.toLowerCase())) {
-                    if (!relatedUsers.contains(AppConstant.PUBLIC)) {
-                        relatedUsers.add(AppConstant.PUBLIC);
-                    }
-                }
             }
         }
         logger.info("Related users for username:{}, {}", username, relatedUsers);
@@ -482,8 +468,8 @@ public class UserService {
         appConfig.getAppToBridge().sendCreatePasswordOtpEmail(user);
     }
     public void forgotPassword(RequestForgotPassword forgotPassword) throws AppException {
-        UiBackendConfig uiBackendConfig = appConfig.getFtpConfiguration().getUiBackendConfig();
-        if (!uiBackendConfig.isForgotPasswordEnable()) {
+        BackendConfig backendConfig = appConfig.getFtpConfiguration().getBackendConfig();
+        if (backendConfig != null && !backendConfig.isForgotPasswordEnable()) {
             logger.info("ForgotPassword is not enable, requested forgotPassword");
             throw new AppException(ErrorCodes.FORGOT_PASSWORD_NOT_ENABLE);
         }

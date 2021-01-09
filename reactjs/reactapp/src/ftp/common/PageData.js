@@ -78,9 +78,9 @@ PageData.extend({
         return CurrentFormData.getData(key, defaultValue);
     },
     getNavigatorData: function(key) {
-        var uiNavigator = $$$.navigator;
         var result = key;
         try {
+            var uiNavigator = $$$.navigator;
             if ($S.isString(uiNavigator[key])) {
                 result = uiNavigator[key];
             }

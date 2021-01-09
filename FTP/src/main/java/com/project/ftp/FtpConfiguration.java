@@ -7,7 +7,6 @@ import com.project.ftp.bridge.config.CreatePasswordEmailConfig;
 import com.project.ftp.bridge.config.EmailConfig;
 import com.project.ftp.obj.BackendConfig;
 import com.project.ftp.obj.FtlConfig;
-import com.project.ftp.obj.UiBackendConfig;
 import io.dropwizard.Configuration;
 import io.dropwizard.db.DataSourceFactory;
 
@@ -43,7 +42,6 @@ public class FtpConfiguration extends Configuration {
     private ArrayList<String> allowedOrigin;
     private ArrayList<String> supportedFileType;
     private FtlConfig ftlConfig;
-    private UiBackendConfig uiBackendConfig;
     private BackendConfig backendConfig;
     private HashMap<String, String> tempConfig;
 
@@ -246,17 +244,6 @@ public class FtpConfiguration extends Configuration {
         this.guestEnable = guestEnable;
     }
 
-    public UiBackendConfig getUiBackendConfig() {
-        if (uiBackendConfig == null) {
-            return new UiBackendConfig();
-        }
-        return uiBackendConfig;
-    }
-
-    public void setUiBackendConfig(UiBackendConfig uiBackendConfig) {
-        this.uiBackendConfig = uiBackendConfig;
-    }
-
     public BackendConfig getBackendConfig() {
         if (backendConfig == null) {
             return new BackendConfig();
@@ -294,7 +281,6 @@ public class FtpConfiguration extends Configuration {
                 ", allowedOrigin=" + allowedOrigin +
                 ", supportedFileType=" + supportedFileType +
                 ", ftlConfig=" + ftlConfig +
-                ", uiBackendConfig=" + uiBackendConfig +
                 ", backendConfig=" + backendConfig +
                 ", tempConfig=" + tempConfig +
                 '}';

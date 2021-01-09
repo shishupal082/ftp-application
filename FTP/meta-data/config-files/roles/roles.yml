@@ -27,6 +27,7 @@ roleAccessMapping:
   isAddTextEnable: isLogin
   isUsersControlEnable: UsersControlGroup
   isOtherUsersControlEnable: admin
+  isAdminTextDisplayEnable: admin
   isAdminOrDevUser: (admin|dev)
   isAdminOrDevOrLoginUser: (admin|dev|isLogin)
   inValidRoleEntry: (admin1|dev|isLogin)

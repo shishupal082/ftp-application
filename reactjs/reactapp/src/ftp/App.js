@@ -17,7 +17,7 @@ var currentPageName = Config.getPageData("page", "");
 var Data = $S.getDataObj();
 
 var keys = ["FTPTemplate", "userData", "linkTemplate"];
-var userDataKeys = ["isLogin", "userName", "isUserAdmin", "userDisplayName"];
+var userDataKeys = ["isLogin", "userName", "isAdminTextDisplayEnable", "userDisplayName"];
 keys = keys.concat(userDataKeys);
 
 Data.getTemplate = function(key, defaultTemplate) {
@@ -42,18 +42,18 @@ Data.setKeys(keys);
 // Data.initData();
 Data.setData("FTPTemplate", Template);
 var isLogin = Config.getUserData("isLogin") === "true" ? true : false;
-var isUserAdmin = Config.getUserData("isAdminUser") === "true" ? true : false;
+var isAdminTextDisplayEnable = Config.getUserData("isAdminTextDisplayEnable") === "true" ? true : false;
 var userName = Config.getUserData("username", "");
 var userDisplayName = Config.getUserData("displayName", "");
 
 Data.setData("isLogin", isLogin);
 Data.setData("userName", userName);
-Data.setData("isUserAdmin", isUserAdmin);
+Data.setData("isAdminTextDisplayEnable", isAdminTextDisplayEnable);
 Data.setData("userDisplayName", userDisplayName);
 
 PageData.setData("ui.username", userName);
 
-if (!isUserAdmin) {
+if (!isAdminTextDisplayEnable) {
     PageData.setData("dashboard.orderBy", "orderByUsername");
 } else {
     PageData.setData("dashboard.orderBy", "orderByDate");
@@ -65,7 +65,6 @@ function checkAndroid() {
         PageData.setData("platform", "Android");
     }
 }
-
 
 class App extends React.Component {
     constructor(props) {

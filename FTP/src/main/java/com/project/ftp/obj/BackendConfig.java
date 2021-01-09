@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 public class BackendConfig {
     private String forgotPasswordMessage;
+    private boolean isForgotPasswordEnable;
     private String loadRoleStatusOnPageLoad;
     private ArrayList<String> rolesFileName;
     private Integer rateLimitThreshold;// used for register and create_password
@@ -17,6 +18,14 @@ public class BackendConfig {
 
     public void setForgotPasswordMessage(String forgotPasswordMessage) {
         this.forgotPasswordMessage = forgotPasswordMessage;
+    }
+
+    public boolean isForgotPasswordEnable() {
+        return isForgotPasswordEnable;
+    }
+
+    public void setForgotPasswordEnable(boolean forgotPasswordEnable) {
+        isForgotPasswordEnable = forgotPasswordEnable;
     }
 
     public String getLoadRoleStatusOnPageLoad() {
@@ -55,8 +64,9 @@ public class BackendConfig {
     public String toString() {
         return "BackendConfig{" +
                 "forgotPasswordMessage='" + forgotPasswordMessage + '\'' +
+                ", isForgotPasswordEnable=" + isForgotPasswordEnable +
                 ", loadRoleStatusOnPageLoad='" + loadRoleStatusOnPageLoad + '\'' +
-                ", rolesFileName='" + rolesFileName + '\'' +
+                ", rolesFileName=" + rolesFileName +
                 ", rateLimitThreshold=" + rateLimitThreshold +
                 ", eventDataFilenamePattern='" + eventDataFilenamePattern + '\'' +
                 '}';

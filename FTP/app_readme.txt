@@ -929,6 +929,14 @@ New api added
     It will be control by rolesConfig
     New role added for this isOtherUsersControlEnable
 
+6.0.9
+-------------------
+Remove support of public user
+Remove config for forgotPasswordEnable
+    - remove uiBackendConfig
+Add backend rendering for display order by on dashboard page from roles config
+Added backendConfig.isForgotPasswordEnable: true (To control from backend only)
+
 Future releases
 -------------------
 

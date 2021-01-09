@@ -15,7 +15,6 @@ var footerLinkJson = $$$.footerLinkJson;
 var footerLinkJsonAfterLogin = $$$.footerLinkJsonAfterLogin;
 var loginUserDetails = $$$.loginUserDetails;
 var uploadFileInstruction = $$$.uploadFileInstruction;
-var forgotPasswordPageInstruction = $$$.forgotPasswordPageInstruction;
 var createPasswordOtpInstruction = $$$.createPasswordOtpInstruction;
 var loginRedirectUrl = $$$.loginRedirectUrl;
 
@@ -57,11 +56,6 @@ var template;
 if ($S.isString(uploadFileInstruction)) {
     template = Template["upload_file"];
     TemplateHelper.setTemplateAttr(template, "upload_file.message", "text", uploadFileInstruction);
-}
-
-if ($S.isString(forgotPasswordPageInstruction) && forgotPasswordPageInstruction.length > 0) {
-    template = Template["forgot_password"];
-    TemplateHelper.setTemplateAttr(template, "forgot_password.page-instruction", "text", forgotPasswordPageInstruction);
 }
 
 if ($S.isString(createPasswordOtpInstruction) && createPasswordOtpInstruction.length > 0) {

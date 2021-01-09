@@ -32,7 +32,7 @@ FTP.extend({
         var field = TemplateHelper(linkTemplate).searchField("link.loginAs");
         field.text = Data.getData("userName", "");
 
-        var isAdmin = Data.getData("isUserAdmin", false);
+        var isAdmin = Data.getData("isAdminTextDisplayEnable", false);
         if ($S.isBooleanTrue(isAdmin)) {
             TemplateHelper.removeClassTemplate(linkTemplate, "link.is-admin", "d-none");
         } else {
@@ -300,27 +300,6 @@ FTP.extend({
         }
         return template;
     },
-    checkForForgotPasswordEnable: function(pageName, template) {
-        var pageNames = ["login","forgot_password", "register", "create_password"];
-        if (pageNames.indexOf(pageName) < 0) {
-            return true;
-        }
-        var isForgotPasswordEnable = Config.getPageData("is_forgot_password_enable", "false");
-        if (isForgotPasswordEnable === "true") {
-            isForgotPasswordEnable = true;
-        } else {
-            isForgotPasswordEnable = false;
-        }
-        if (["forgot_password"].indexOf(pageName) >= 0) {
-            if (isForgotPasswordEnable) {
-                TemplateHelper.removeClassTemplate(template, "forgot_password.fields", "d-none");
-                TemplateHelper.removeClassTemplate(template, "forgot_password.links", "d-none");
-            } else {
-                TemplateHelper.removeClassTemplate(template, "forgot_password.old-text", "d-none");
-                TemplateHelper.removeClassTemplate(template, "forgot_password.old-link", "d-none");
-            }
-        }
-    },
     getFieldTemplateByPageName: function(Data, pageName) {
         var pageTemplate = [];
         var template = {};
@@ -347,12 +326,10 @@ FTP.extend({
                 TemplateHelper.addClassTemplate(template, "login.guest-login-link", "d-none");
             }
             FTP.uploadSubmitButtonStatus(pageName, template);
-            FTP.checkForForgotPasswordEnable(pageName, template);
             pageTemplate.push(template);
         } else {
             template = Data.getTemplate(pageName, {});
             FTP.uploadSubmitButtonStatus(pageName, template);
-            FTP.checkForForgotPasswordEnable(pageName, template);
             pageTemplate.push(template);
         }
         var footerTemplate = Data.getTemplate("footerLinkJson", {});
