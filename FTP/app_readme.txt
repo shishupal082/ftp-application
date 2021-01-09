@@ -935,7 +935,7 @@ Remove support of public user
 Remove config for forgotPasswordEnable
     - remove uiBackendConfig
 Add backend rendering for display order by on dashboard page from roles config
-Added backendConfig.isForgotPasswordEnable: true (To control from backend only)
+Added backendConfig.forgotPasswordEnable: true (To control from backend only)
 
 Future releases
 -------------------

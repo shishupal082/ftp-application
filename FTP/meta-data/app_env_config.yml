@@ -90,12 +90,12 @@ backendConfig:
   #  forgotPasswordMessage: "Forgot password request submitted, Please check your email."
   forgotPasswordMessage: "Forgot password request submitted, Please create password."
   loadRoleStatusOnPageLoad: "FromRoleConfig" #"isAdminUser" #FromRoleConfig
+  forgotPasswordEnable: false
   rolesFileName:
     - roles/roles.yml
     - roles/roles_2.yml
   eventDataFilenamePattern: "'event_data/'yyyy-MM-dd-HH-mm'-event_data.csv'"
   rateLimitThreshold: 2
-  isForgotPasswordEnable: false
 
 
 ftlConfig:
