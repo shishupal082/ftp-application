@@ -76,6 +76,10 @@
     "Get related users Data"
   ],
   [
+    "/api/get_login_user_details",
+    "Get login user Details"
+  ],
+  [
     "/api/get_related_users_data_by_username?username",
     "Get related users Data By Username"
   ],

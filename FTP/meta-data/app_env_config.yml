@@ -24,6 +24,7 @@ fileSaveDir: "D:/workspace/project/ftp-app/saved-files/"
 #configDataFilePath: "D:/workspace/project/ftp-app/config-files/"
 configDataFilePath: "D:/workspace/ftp-application/FTP/meta-data/config-files/"
 
+
 server:
   type: simple
   applicationContextPath: /
@@ -90,7 +91,7 @@ backendConfig:
   #  forgotPasswordMessage: "Forgot password request submitted, Please check your email."
   forgotPasswordMessage: "Forgot password request submitted, Please create password."
   loadRoleStatusOnPageLoad: "FromRoleConfig" #"isAdminUser" #FromRoleConfig
-  forgotPasswordEnable: false
+  forgotPasswordEnable: true
   rolesFileName:
     - roles/roles.yml
     - roles/roles_2.yml
