@@ -27,6 +27,7 @@ public enum EventName {
     GET_SESSION_DATA("get_session_data"),
     GET_FILES_INFO("get_files_info"),
     GET_CURRENT_USER_FILES_INFO("get_files_info"),
+    UPDATE_ROLES_CONFIG("update_roles_config"),
     VERIFY_PERMISSION("verify_permission"),
     GET_ROLES_CONFIG("get_roles_config"),
     AES_ENCRYPTION("aes_encryption"),

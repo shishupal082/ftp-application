@@ -21,6 +21,16 @@ public class RolesService {
             this.bridgeConfig.setRoles(this.getRolesConfigByConfigPath(rolesConfigPath));
         }
     }
+    public boolean updateRoles(ArrayList<String> rolesConfigPath) {
+        Roles roles = this.getRolesConfigByConfigPath(rolesConfigPath);
+        if (roles != null) {
+            this.bridgeConfig.setRoles(roles);
+            logger.info("Roles update success");
+            return true;
+        }
+        logger.info("Error in updating roles");
+        return false;
+    }
     private void addEntry(Map<String, ArrayList<String>> coRelatedUsers, String user1, String user2) {
         if (coRelatedUsers == null || user1 == null || user2 == null) {
             return;
@@ -74,11 +84,12 @@ public class RolesService {
         HashMap<String, ArrayList<String>> relatedUsers = null;
         HashMap<String, ArrayList<String>> rolesAccess = null;
         ArrayList<String> coRelatedUsers = null;
-        if (roles != null) {
-            rolesAccess = roles.getRoleAccess();
-            relatedUsers = roles.getRelatedUsers();
-            coRelatedUsers = roles.getCoRelatedUsers();
+        if (roles == null) {
+            return null;
         }
+        rolesAccess = roles.getRoleAccess();
+        relatedUsers = roles.getRelatedUsers();
+        coRelatedUsers = roles.getCoRelatedUsers();
         String username;
         ArrayList<String> usernames;
         /*Mixing co-related user properly */
@@ -173,9 +184,7 @@ public class RolesService {
             finalRelatedUsers.put(el.getKey(), this.removeDuplicate(el.getValue()));
         }
         logger.info("finalRelatedUsers after duplicate removal: {}", finalRelatedUsers);
-        if (roles != null) {
-            roles.setRelatedUsers(finalRelatedUsers);
-        }
+        roles.setRelatedUsers(finalRelatedUsers);
         logger.info("roles config data: {}", roles);
         return roles;
     }

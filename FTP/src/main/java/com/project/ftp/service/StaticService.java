@@ -172,6 +172,24 @@ public class StaticService {
         AesEncryption aesEncryption = new AesEncryption(salt);
         return aesEncryption.encrypt(password);
     }
+    public static ArrayList<String> getRolesConfigPath(final FtpConfiguration ftpConfiguration) {
+        String configDir = ftpConfiguration.getConfigDataFilePath();
+        BackendConfig backendConfig = ftpConfiguration.getBackendConfig();
+        ArrayList<String> rolesConfigPath = new ArrayList<>();
+        if (backendConfig != null && backendConfig.getRolesFileName() != null) {
+            ArrayList<String> rolesFileName = backendConfig.getRolesFileName();
+            if (rolesFileName.size() > 0) {
+                for (String filename: rolesFileName) {
+                    rolesConfigPath.add(configDir+filename);
+                }
+            } else {
+                rolesConfigPath.add(configDir+AppConstant.ROLES);
+            }
+        } else {
+            rolesConfigPath.add(configDir+AppConstant.ROLES);
+        }
+        return rolesConfigPath;
+    }
     public static String decryptAesPassword(AppConfig appConfig, String encryptedPassword) {
         String salt = appConfig.getFtpConfiguration().getAesEncryptionPassword();
         if (strUtils.isInValidString(salt) || strUtils.isInValidString(encryptedPassword)) {

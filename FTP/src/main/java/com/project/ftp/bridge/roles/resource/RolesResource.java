@@ -2,11 +2,14 @@ package com.project.ftp.bridge.roles.resource;
 
 import com.project.ftp.bridge.BridgeTracking;
 import com.project.ftp.bridge.roles.service.RolesService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 
 public class RolesResource {
+    private final static Logger logger = LoggerFactory.getLogger(RolesResource.class);
     private final RolesService rolesService;
     private final BridgeTracking bridgeTracking;
     public RolesResource(RolesService rolesService, BridgeTracking bridgeTracking) {
@@ -33,6 +36,11 @@ public class RolesResource {
     }
     public Object getRolesConfig() {
         return rolesService.getRolesConfig();
+    }
+    public boolean updateRoles(ArrayList<String> rolesConfigPath) {
+        boolean status = rolesService.updateRoles(rolesConfigPath);
+        this.trackRelatedUser();
+        return status;
     }
     // /api/get/roles/allByRid
     public Object getAllRolesByRolesId() {

@@ -61,6 +61,14 @@ public class UserService {
     public boolean isLoginUserDev(LoginUserDetails loginUserDetails)  {
         return this.isAuthorised(loginUserDetails, AppConstant.IS_DEV_USER);
     }
+    public void updateUserRoles() throws AppException {
+        ArrayList<String> rolesConfigPath = StaticService.getRolesConfigPath(appConfig.getFtpConfiguration());
+        boolean status = appConfig.getAppToBridge().updateUserRoles(rolesConfigPath);
+        if (!status) {
+            logger.info("Error in updating user roles.");
+            throw new AppException(ErrorCodes.CONFIG_ERROR);
+        }
+    }
 
     public ApiResponse isValidPermission(LoginUserDetails loginUserDetails,
                                   RequestVerifyPermission verifyPermission) throws AppException  {

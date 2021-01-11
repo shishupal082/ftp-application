@@ -1,11 +1,14 @@
 package com.project.ftp.bridge;
 
 import com.project.ftp.bridge.obj.BridgeRequestSendCreatePasswordOtp;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 
 public class BridgeTracking {
+    private final static Logger logger = LoggerFactory.getLogger(BridgeTracking.class);
     private final BridgeToAppInterface bridgeToAppInterface;
 
     public BridgeTracking(BridgeToAppInterface bridgeToAppInterface) {
@@ -24,16 +27,18 @@ public class BridgeTracking {
     public void trackAllRelatedUsers(HashMap<String, ArrayList<String>> allRelatedUsers) {
         String finalResult = allRelatedUsers.toString();
         if (finalResult == null) {
-            bridgeToAppInterface.trackEvent(null, BridgeConstant.RELATED_USERS,
-                    BridgeConstant.SUCCESS, null, null);
+//            bridgeToAppInterface.trackEvent(null, BridgeConstant.RELATED_USERS,
+//                    BridgeConstant.SUCCESS, null, null);
+            logger.info("relatedUserTracking: null");
             return;
         }
         int size = 500; // Max length of comment field is 511 char
         String[] tokens = finalResult.split("(?<=\\G.{" + size + "})");
         int count = 1;
         for (String token : tokens) {
-            bridgeToAppInterface.trackEvent(null, BridgeConstant.RELATED_USERS,
-                    BridgeConstant.SUCCESS, Integer.toString(count++), token);
+            logger.info("relatedUserTracking: {}, {}", Integer.toString(count++), token);
+//            bridgeToAppInterface.trackEvent(null, BridgeConstant.RELATED_USERS,
+//                    BridgeConstant.SUCCESS, Integer.toString(count++), token);
         }
     }
 }

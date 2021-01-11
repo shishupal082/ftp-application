@@ -12,7 +12,7 @@ import com.project.ftp.bridge.roles.service.RolesService;
 import com.project.ftp.config.AppConstant;
 import com.project.ftp.event.EventTracking;
 import com.project.ftp.mysql.MysqlUser;
-import com.project.ftp.obj.BackendConfig;
+import com.project.ftp.service.StaticService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,21 +26,7 @@ public class AppToBridge implements AppToBridgeInterface {
 
     public AppToBridge(FtpConfiguration ftpConfiguration, EventTracking eventTracking) {
         emailConfig = ftpConfiguration.getEmailConfig();
-        ArrayList<String> rolesConfigPath = new ArrayList<>();
-        String configPath = ftpConfiguration.getConfigDataFilePath();
-        BackendConfig backendConfig = ftpConfiguration.getBackendConfig();
-        if (backendConfig != null && backendConfig.getRolesFileName() != null) {
-            ArrayList<String> rolesFileName = backendConfig.getRolesFileName();
-            if (rolesFileName.size() > 0) {
-                for (String filename: rolesFileName) {
-                    rolesConfigPath.add(configPath+filename);
-                }
-            } else {
-                rolesConfigPath.add(configPath+AppConstant.ROLES);
-            }
-        } else {
-            rolesConfigPath.add(configPath+AppConstant.ROLES);
-        }
+        ArrayList<String> rolesConfigPath = StaticService.getRolesConfigPath(ftpConfiguration);
         BridgeConfig bridgeConfig = new BridgeConfig(emailConfig, ftpConfiguration.getCreatePasswordEmailConfig());
         BridgeToAppInterface bridgeToAppInterface = new BridgeToApp(eventTracking);
         BridgeTracking bridgeTracking = new BridgeTracking(bridgeToAppInterface);
@@ -49,7 +35,10 @@ public class AppToBridge implements AppToBridgeInterface {
         this.rolesResource = new RolesResource(rolesService, bridgeTracking);
         rolesResource.trackRelatedUser();
     }
-
+    @Override
+    public boolean updateUserRoles(ArrayList<String> rolesConfigPath) {
+        return rolesResource.updateRoles(rolesConfigPath);
+    }
     @Override
     public void sendCreatePasswordOtpEmail(MysqlUser user) {
         if (user == null) {

@@ -88,6 +88,10 @@
     "Get roles config"
   ],
   [
+    "/api/update_roles_config",
+    "Update roles config [GET]"
+  ],
+  [
     "/api/get_uploaded_csv_data",
     "Get uploaded CSV data"
   ],

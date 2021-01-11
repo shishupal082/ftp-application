@@ -495,6 +495,26 @@ public class ApiResource {
         logger.info("createPassword : Out");
         return response;
     }
+    @GET
+    @Path("/update_roles_config")
+    @UnitOfWork
+    public ApiResponse updateRolesConfig(@Context HttpServletRequest request) {
+        logger.info("updateRolesConfig : In, user: {}",
+                userService.getUserDataForLogging(request));
+        ApiResponse response;
+        try {
+            authService.isLoginUserAdmin(request);
+            userService.updateUserRoles();
+            response = new ApiResponse();
+            eventTracking.trackSuccessEvent(request, EventName.UPDATE_ROLES_CONFIG);
+        } catch (AppException ae) {
+            logger.info("Error in updateRolesConfig: {}", ae.getErrorCode().getErrorCode());
+            eventTracking.trackFailureEvent(request, EventName.UPDATE_ROLES_CONFIG, ae.getErrorCode());
+            response = new ApiResponse(ae.getErrorCode());
+        }
+        logger.info("updateRolesConfig : Out");
+        return response;
+    }
     @POST
     @Path("/aes_encrypt")
     @UnitOfWork
