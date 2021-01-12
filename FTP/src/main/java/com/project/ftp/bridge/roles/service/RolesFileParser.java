@@ -139,6 +139,37 @@ public class RolesFileParser {
             roleAccessMapping1.put(key, temp);
         }
     }
+    private void updateGroupRelatedUsers(Roles preFinalRoles, Roles tempRoles) {
+        if (preFinalRoles == null || preFinalRoles.getGroupRelatedUsers() == null) {
+            logger.info("preFinalRoles or its groupRelatedUsers in null");
+            return;
+        }
+        HashMap<String, ArrayList<String>> groupRelatedUsers1 = preFinalRoles.getGroupRelatedUsers();
+        HashMap<String, ArrayList<String>> groupRelatedUsers2 = null;
+        if (tempRoles != null) {
+            groupRelatedUsers2 = tempRoles.getGroupRelatedUsers();
+        }
+        if (groupRelatedUsers2 == null) {
+            return;
+        }
+        String key;
+        ArrayList<String> value, temp;
+        for(Map.Entry<String, ArrayList<String>> entry: groupRelatedUsers2.entrySet()) {
+            key = entry.getKey();
+            value = entry.getValue();
+            if (key == null || value == null) {
+                continue;
+            }
+            temp = groupRelatedUsers1.get(key);
+            if (temp == null) {
+                groupRelatedUsers1.put(key, value);
+            } else {
+                value.addAll(temp);
+                logger.info("Merged groupRelatedUsers: {}, value: {}", key, value);
+            }
+            groupRelatedUsers1.put(key, value);
+        }
+    }
     private void updateCoRelatedUsers(Roles preFinalRoles, Roles tempRoles) {
         if (preFinalRoles == null || preFinalRoles.getCoRelatedUsers() == null) {
             logger.info("preFinalRoles or its coRelatedUsers in null");
@@ -179,12 +210,14 @@ public class RolesFileParser {
                 this.updateRoleAccessMapping(preFinalRole, roles1);
                 this.updateCoRelatedUsers(preFinalRole, roles1);
                 this.updateRelatedUsers(preFinalRole, roles1);
+                this.updateGroupRelatedUsers(preFinalRole, roles1);
             }
         }
         if (preFinalRole == null || preFinalRole.getRoleAccess() == null ||
                 preFinalRole.getRelatedUsers() == null ||
                 preFinalRole.getCoRelatedUsers() == null ||
-                preFinalRole.getRoleAccessMapping() == null) {
+                preFinalRole.getRoleAccessMapping() == null ||
+                preFinalRole.getGroupRelatedUsers() == null) {
             logger.info("ERROR found in roles file merging.");
             return null;
         }

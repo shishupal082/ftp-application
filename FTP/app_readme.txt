@@ -938,6 +938,7 @@ Add backend rendering for display order by on dashboard page from roles config
 Added backendConfig.forgotPasswordEnable: true (To control from backend only)
 Added new api
     - /api/update_roles_config [GET]
+Added support of groupRelatedUsers in roles
 
 Future releases
 -------------------

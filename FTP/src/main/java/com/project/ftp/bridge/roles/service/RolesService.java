@@ -64,6 +64,28 @@ public class RolesService {
         coRelatedUsers.put(user1, combineUserGroup);
         coRelatedUsers.put(user2, combineUserGroup);
     }
+    private void addGroupEntry(Map<String, ArrayList<String>> coRelatedUsers,
+                               ArrayList<String> users1, ArrayList<String> users2) {
+        if (coRelatedUsers == null || users1 == null || users2 == null) {
+            return;
+        }
+        ArrayList<String> temp;
+        for (String username: users1) {
+            temp = coRelatedUsers.get(username);
+            if (temp == null) {
+                coRelatedUsers.put(username, users2);
+                continue;
+            }
+            temp = new ArrayList<>(temp);
+            for (String username2: users2) {
+                if (temp.contains(username2)) {
+                    continue;
+                }
+                temp.add(username2);
+            }
+            coRelatedUsers.put(username, temp);
+        }
+    }
     private ArrayList<String> removeDuplicate(ArrayList<String> entry) {
         ArrayList<String> result = new ArrayList<>();
         if (entry == null) {
@@ -82,6 +104,7 @@ public class RolesService {
         RolesFileParser rolesFileParser = new RolesFileParser();
         Roles roles = rolesFileParser.getAllRolesFileData(rolesConfigPath);
         HashMap<String, ArrayList<String>> relatedUsers = null;
+        HashMap<String, ArrayList<String>> groupRelatedUsers = null;
         HashMap<String, ArrayList<String>> rolesAccess = null;
         ArrayList<String> coRelatedUsers = null;
         if (roles == null) {
@@ -90,6 +113,7 @@ public class RolesService {
         rolesAccess = roles.getRoleAccess();
         relatedUsers = roles.getRelatedUsers();
         coRelatedUsers = roles.getCoRelatedUsers();
+        groupRelatedUsers = roles.getGroupRelatedUsers();
         String username;
         ArrayList<String> usernames;
         /*Mixing co-related user properly */
@@ -109,6 +133,27 @@ public class RolesService {
         }
         logger.info("tempCoRelatedUsers: {}", tempCoRelatedUsers);
         /*Mixing co-related user properly end */
+        /*Mixing co-related user and group related users properly */
+        String groupName1;
+        ArrayList<String> relatedGroups, userByGroupName1, userByGroupName2;
+        if (groupRelatedUsers != null && rolesAccess != null) {
+            for (Map.Entry<String, ArrayList<String>> el: groupRelatedUsers.entrySet()) {
+                groupName1 = el.getKey();
+                relatedGroups = el.getValue();
+                if (groupName1 == null || relatedGroups == null) {
+                    continue;
+                }
+                userByGroupName1 = rolesAccess.get(groupName1);
+                for (String ignored : userByGroupName1) {
+                    for (String groupName2: relatedGroups) {
+                        userByGroupName2 = rolesAccess.get(groupName2);
+                        this.addGroupEntry(tempCoRelatedUsers, userByGroupName1, userByGroupName2);
+                    }
+                }
+            }
+        }
+        logger.info("tempCoRelatedUsers after group user merging: {}", tempCoRelatedUsers);
+        /*Mixing co-related user and group related users end */
         if (relatedUsers == null) {
             relatedUsers = new HashMap<>();
         }
@@ -180,8 +225,13 @@ public class RolesService {
         }
         logger.info("relatedUsers after merging: {}", tempRelatedUsers);
         HashMap<String, ArrayList<String>> finalRelatedUsers = new HashMap<>();
+        String username1;
+        ArrayList<String> usernameList;
         for (Map.Entry<String, ArrayList<String>> el: tempRelatedUsers.entrySet()) {
-            finalRelatedUsers.put(el.getKey(), this.removeDuplicate(el.getValue()));
+            username1 = el.getKey();
+            usernameList = el.getValue();
+            usernameList.add(username1);
+            finalRelatedUsers.put(username1, this.removeDuplicate(usernameList));
         }
         logger.info("finalRelatedUsers after duplicate removal: {}", finalRelatedUsers);
         roles.setRelatedUsers(finalRelatedUsers);

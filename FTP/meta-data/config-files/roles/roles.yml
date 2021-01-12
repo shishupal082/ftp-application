@@ -18,6 +18,12 @@ roleAccess:
     - U1
     - U4
     - U5
+  userGroup4:
+    - U15
+    - U16
+  userGroup5:
+    - U17
+    - U18
   individualUser3:
     - U3
 roleAccessMapping:
@@ -42,6 +48,12 @@ roleAccessMapping:
 coRelatedUsers:
   - userGroup1
   - userGroup2
+groupRelatedUsers:
+  userGroup4:
+    - userGroup5
+  userGroup5:
+    - userGroup1
+    - userGroup4
 relatedUsers:
   U6:
     - individualUser3

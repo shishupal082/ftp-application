@@ -22,6 +22,8 @@ public class TestRoles {
         rolesFilePath.add(StaticService.getProjectWorkingDir()+"/meta-data/config-files/roles/roles_2.yml");
         RolesService rolesService = new RolesService(bridgeConfig, rolesFilePath);
         Assert.assertNull(rolesService.getRelatedUsers(null));
+        Assert.assertNotNull(rolesService.getAllRelatedUsers());
+        Assert.assertEquals("U9,U6,U5,U4,U3,U2,U18,U17,U16,U15,U14,U13,U12,U11,U1", String.join(",", rolesService.getAllRelatedUsersName()));
         Assert.assertEquals("U5,U4,U3,U2,U1", String.join(",", rolesService.getRelatedUsers("U1")));
         Assert.assertEquals("U5,U4,U3,U2,U1", String.join(",", rolesService.getRelatedUsers("U2")));
         Assert.assertEquals("U5,U4,U3,U2,U1", String.join(",", rolesService.getRelatedUsers("U3")));
@@ -33,6 +35,10 @@ public class TestRoles {
         Assert.assertEquals("U9", String.join(",", rolesService.getRelatedUsers("U9")));
         Assert.assertEquals("", String.join(",", rolesService.getRelatedUsers("U10")));
         Assert.assertEquals("U3,U11", String.join(",", rolesService.getRelatedUsers("U11")));
+        Assert.assertEquals("U18,U17,U15", String.join(",", rolesService.getRelatedUsers("U15")));
+        Assert.assertEquals("U18,U17,U16", String.join(",", rolesService.getRelatedUsers("U16")));
+        Assert.assertEquals("U3,U2,U17,U16,U15,U1", String.join(",", rolesService.getRelatedUsers("U17")));
+        Assert.assertEquals("U3,U2,U18,U16,U15,U1", String.join(",", rolesService.getRelatedUsers("U18")));
     }
     @Test
     public void testRoleFileEntry() {
@@ -88,7 +94,7 @@ public class TestRoles {
         ArrayList<String> rolesFilePath = new ArrayList<>();
         rolesFilePath.add(StaticService.getProjectWorkingDir()+"/meta-data/config-files/roles/roles.yml");
         rolesFilePath.add(StaticService.getProjectWorkingDir()+"/meta-data/config-files/roles/roles_2.yml");
-        rolesService = new RolesService(bridgeConfig, rolesFilePath);
+        rolesService.updateRoles(rolesFilePath);
         Assert.assertNotNull(rolesService.getRolesConfig());
         Assert.assertNotNull(rolesService.getRolesAccess());
         Assert.assertNotNull(rolesService.getApiRolesMapping());
