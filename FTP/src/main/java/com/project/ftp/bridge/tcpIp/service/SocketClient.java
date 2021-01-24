@@ -68,6 +68,7 @@ public class SocketClient {
 //            dataOutputStream.writeBytes(request);
             dataOutputStream.write(request.getBytes(charsetName));
         } else {
+            logger.info("Sending request : {}", request);
             PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
             out.println(request);
         }
