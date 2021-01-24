@@ -943,9 +943,18 @@ Added support of groupRelatedUsers in roles
 Add backend rendering for display order by on dashboard page from roles config using role
     - isAdminTextDisplayEnable
 
+7.0.0
+-------------------
+Adding TCP-IP communication support
+
+Added api [GET]
+    - /api/socket?protocol=byte&ip=ip&port=port&query=query
+
 Future releases
 -------------------
-
+Implement api for loading data from public dir
+    - /api/public-file?filename=file.txt
+    It shall have provision of permission
 
     public static BinaryTree createBinaryTreeOld(ArrayList<String> strings) {
         Stack stack = new Stack();

@@ -1,5 +1,6 @@
 package com.project.ftp.resources;
 
+import com.project.ftp.bridge.tcpIp.resource.SocketResource;
 import com.project.ftp.config.AppConfig;
 import com.project.ftp.config.AppConstant;
 import com.project.ftp.event.EventName;
@@ -619,7 +620,25 @@ public class ApiResource {
         logger.info("getRolesConfig : Out, {}", response);
         return response;
     }
-
+    @Path("/socket")
+    @GET
+    public ApiResponse getSocketResponse(@Context HttpServletRequest request,
+                                         @QueryParam("protocol") String protocol,
+                                         @QueryParam("ip") String ip,
+                                         @QueryParam("port") String port,
+                                         @QueryParam("query") String query) {
+        logger.info("getSocketResponse in, request: {},{}", protocol+","+ip+":"+port,query);
+        ArrayList<String> socketRequest = new ArrayList<>();
+        socketRequest.add(query);
+        SocketResource socketResource = new SocketResource(protocol);
+        ArrayList<String> socketResponse = socketResource.getSocketResponse(ip, port, socketRequest);
+        ApiResponse apiResponse = new ApiResponse(socketResponse);
+        if (socketResponse == null) {
+            apiResponse.setStatus(AppConstant.FAILURE);
+        }
+        logger.info("getSocketResponse out: {}", apiResponse);
+        return apiResponse;
+    }
     @Path("{default: .*}")
     @GET
     @Produces(MediaType.TEXT_HTML)

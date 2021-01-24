@@ -88,6 +88,10 @@
     "Get roles config"
   ],
   [
+    "/api/socket?protocol=byte&ip=ip&port=port&query=query",
+    "Get socket response"
+  ],
+  [
     "/api/update_roles_config",
     "Update roles config [GET]"
   ],
