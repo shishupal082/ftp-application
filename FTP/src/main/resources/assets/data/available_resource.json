@@ -61,7 +61,7 @@
   ],
   [
     "/api/get_app_config",
-    "App config data"
+    "Get AppConfig data"
   ],
   [
     "/api/get_session_config",
@@ -73,7 +73,11 @@
   ],
   [
     "/api/get_related_users_data",
-    "Get related users Data"
+    "[GET] Get related users Data"
+  ],
+  [
+    "/api/get_related_users_data_v2",
+    "[GET] Get related users Data v2"
   ],
   [
     "/api/get_login_user_details",
@@ -86,10 +90,6 @@
   [
     "/api/get_roles_config",
     "Get roles config"
-  ],
-  [
-    "/api/socket?protocol=byte&ip=ip&port=port&query=query",
-    "Get socket response"
   ],
   [
     "/api/update_roles_config",

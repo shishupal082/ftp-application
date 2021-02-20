@@ -145,6 +145,53 @@ public class UserService {
         }
         return result;
     }
+    public ArrayList<RelatedUserDataV2> getRelatedUsersDataV2(LoginUserDetails loginUserDetails) {
+        ArrayList<RelatedUserDataV2> result = new ArrayList<>();
+        boolean isAdmin = this.isLoginUserAdmin(loginUserDetails);
+        ArrayList<String> relatedUsers;
+        if (isAdmin) {
+            relatedUsers = this.getAllRelatedUsersName(loginUserDetails.getUsername());
+        } else {
+            relatedUsers = this.getRelatedUsers(loginUserDetails.getUsername());
+        }
+        if (relatedUsers == null) {
+            return result;
+        }
+        HashMap<String, RelatedUserDataV2> tempResult = new HashMap<>();
+        RelatedUserDataV2 userData;
+        for(String uName: relatedUsers) {
+            userData = new RelatedUserDataV2(uName, false);
+            tempResult.put(uName, userData);
+        }
+        Users users = userInterface.getAllUsers();
+        if (users != null) {
+            HashMap<String, MysqlUser> userHashMap = users.getUserHashMap();
+            if (userHashMap != null) {
+                MysqlUser mysqlUser;
+                String username;
+                for(Map.Entry<String, RelatedUserDataV2> data: tempResult.entrySet()) {
+                    username = data.getKey();
+                    mysqlUser = userHashMap.get(username);
+                    if (mysqlUser != null) {
+                        tempResult.put(username, new RelatedUserDataV2(mysqlUser));
+                    }
+                }
+                if (isAdmin) {
+                    for(Map.Entry<String, MysqlUser> data: userHashMap.entrySet()) {
+                        username = data.getKey();
+                        mysqlUser = data.getValue();
+                        if (mysqlUser != null) {
+                            tempResult.put(username, new RelatedUserDataV2(mysqlUser));
+                        }
+                    }
+                }
+            }
+        }
+        for(Map.Entry<String, RelatedUserDataV2> data: tempResult.entrySet()) {
+            result.add(data.getValue());
+        }
+        return result;
+    }
     public MysqlUser getUserByName(String username) {
         return userInterface.getUserByName(username);
     }

@@ -946,9 +946,17 @@ Add backend rendering for display order by on dashboard page from roles config u
 7.0.0
 -------------------
 Adding TCP-IP communication support
-
-Added api [GET]
+Added api [GET] -- deleted
     - /api/socket?protocol=byte&ip=ip&port=port&query=query
+
+Above two (api and bridge) changes reverted as TCP ip not required to be part of it
+    - for TCP ip separate java communication project added
+New api added [GET]
+    - /api/get_related_users_data_v2
+    - it is same as get_related_users_data with following changes
+        - It does not check roles config for AuthService.isControlGroupUser
+        - Its response does not contain method, createPasswordOtp, methodRequestCount, name, email, mobile
+            - i.e. it only contains username and valid
 
 Future releases
 -------------------

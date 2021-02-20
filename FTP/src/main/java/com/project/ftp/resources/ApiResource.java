@@ -1,6 +1,5 @@
 package com.project.ftp.resources;
 
-import com.project.ftp.bridge.tcpIp.resource.SocketResource;
 import com.project.ftp.config.AppConfig;
 import com.project.ftp.config.AppConstant;
 import com.project.ftp.event.EventName;
@@ -111,6 +110,25 @@ public class ApiResource {
             eventTracking.trackFailureEvent(request, EventName.GET_RELATED_USERS_DATA, ae.getErrorCode());
         }
         logger.info("getRelatedUsersData : Out");
+        return response;
+    }
+    @GET
+    @Path("/get_related_users_data_v2")
+    @UnitOfWork
+    public ApiResponse getRelatedUsersDataV2(@Context HttpServletRequest request) {
+        LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
+        logger.info("getRelatedUsersDataV2 : In, {}", loginUserDetails);
+        ApiResponse response;
+        try {
+            ArrayList<RelatedUserDataV2> relatedUserData = userService.getRelatedUsersDataV2(loginUserDetails);
+            response = new ApiResponse(relatedUserData);
+//            eventTracking.trackSuccessEvent(request, EventName.GET_RELATED_USERS_DATA_V2);
+        } catch (AppException ae) {
+            logger.info("Error in getRelatedUsersDataV2: {}", ae.getErrorCode().getErrorCode());
+            response = new ApiResponse(ae.getErrorCode());
+            eventTracking.trackFailureEvent(request, EventName.GET_RELATED_USERS_DATA_V2, ae.getErrorCode());
+        }
+        logger.info("getRelatedUsersDataV2 : Out");
         return response;
     }
     @GET
@@ -620,25 +638,7 @@ public class ApiResource {
         logger.info("getRolesConfig : Out, {}", response);
         return response;
     }
-    @Path("/socket")
-    @GET
-    public ApiResponse getSocketResponse(@Context HttpServletRequest request,
-                                         @QueryParam("protocol") String protocol,
-                                         @QueryParam("ip") String ip,
-                                         @QueryParam("port") String port,
-                                         @QueryParam("query") String query) {
-        logger.info("getSocketResponse in, request: {},{}", protocol+","+ip+":"+port,query);
-        ArrayList<String> socketRequest = new ArrayList<>();
-        socketRequest.add(query);
-        SocketResource socketResource = new SocketResource(protocol);
-        ArrayList<String> socketResponse = socketResource.getSocketResponse(ip, port, socketRequest);
-        ApiResponse apiResponse = new ApiResponse(socketResponse);
-        if (socketResponse == null) {
-            apiResponse.setStatus(AppConstant.FAILURE);
-        }
-        logger.info("getSocketResponse out: {}", apiResponse);
-        return apiResponse;
-    }
+
     @Path("{default: .*}")
     @GET
     @Produces(MediaType.TEXT_HTML)
