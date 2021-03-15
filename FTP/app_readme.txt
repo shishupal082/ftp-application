@@ -958,6 +958,16 @@ New api added [GET]
         - Its response does not contain method, createPasswordOtp, methodRequestCount, name, email, mobile
             - i.e. it only contains username and valid
 
+
+7.0.0.1
+-------------------
+New api added [GET]
+    - /api/get_uploaded_data_by_filename_pattern?pattern=pattern
+    - It will help to use pagination for loading uploaded data
+
+ConfigService change
+    - set saveDir as publicDir + "/saved-files/" only when calculated publicDir is valid dir
+
 Future releases
 -------------------
 Implement api for loading data from public dir

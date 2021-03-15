@@ -21,6 +21,7 @@ public enum EventName {
     GET_USERS("get_users"),
     ADD_TEXT("add_text"),
     GET_UPLOADED_CSV_DATA("get_uploaded_csv_data"),
+    GET_UPLOADED_DATA_BY_FILENAME_PATTERN("get_uploaded_data_by_filename_pattern"),
     GET_RELATED_USERS_DATA("get_related_users_data"),
     GET_RELATED_USERS_DATA_V2("get_related_users_data_v2"),
     GET_OTHER_USER_RELATED_DATA("get_other_user_related_data"),

@@ -15,6 +15,8 @@ import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class StaticService {
     private final static Logger logger = LoggerFactory.getLogger(StaticService.class);
@@ -122,6 +124,17 @@ public class StaticService {
         * for limit = 3, result = []:  [, d, workspace/project//ftp/application/],3
         * */
         return str.split(regex, limit);
+    }
+    public static boolean isPatternMatching(String str, String pattern) {
+        if (str == null || pattern == null) {
+            return false;
+        }
+        if (str.isEmpty() || pattern.trim().isEmpty()) {
+            return false;
+        }
+        Pattern regexPattern = Pattern.compile(pattern, Pattern.CASE_INSENSITIVE);
+        Matcher matcher = regexPattern.matcher(str);
+        return matcher.find();
     }
     public static String getProperDirString(String path) {
         if (path == null) {

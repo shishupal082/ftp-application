@@ -221,6 +221,9 @@ public class FileService {
     public ScanResult scanDirectory(String folderPath, String staticFolderPath, boolean isRecursive) {
         //folderPath and staticFolderPath should contain / in the end
         ScanResult finalFileScanResult = new ScanResult(staticFolderPath, folderPath);
+        if (folderPath == null || staticFolderPath == null) {
+            return finalFileScanResult;
+        }
         ScanResult fileScanResult = null;
         try {
             File folder = new File(folderPath);

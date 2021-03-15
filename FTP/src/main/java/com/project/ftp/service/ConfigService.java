@@ -56,17 +56,29 @@ public class ConfigService {
         String configPublicDir = appConfig.getFtpConfiguration().getPublicDir();
         String configPublicPostDir = appConfig.getFtpConfiguration().getPublicPostDir();
         String setPublicDir = this.getValidPublicDir(systemDir, configPublicDir, configPublicPostDir);
-        logger.info("Calculated PublicDir: {}", setPublicDir);
-        if (configPublicDir != null) {
+        PathInfo publicDirPathInfo = StaticService.getPathInfo(setPublicDir);
+        if (!AppConstant.FOLDER.equals(publicDirPathInfo.getType())) {
+            logger.info("calculated publicDir is not a folder: {}", setPublicDir);
+            configPublicDir = null;
+        } else {
+            logger.info("calculated publicDir: {}", setPublicDir);
+        }
+        if (configPublicDir != null && AppConstant.FOLDER.equals(publicDirPathInfo.getType())) {
             appConfig.setPublicDir(setPublicDir);
         } else {
             logger.info("appConfig publicDir set skip.");
         }
         String fileSaveDir = appConfig.getFtpConfiguration().getFileSaveDir();
-        PathInfo pathInfo = StaticService.getPathInfo(fileSaveDir);
-        if (!AppConstant.FOLDER.equals(pathInfo.getType())) {
-            logger.info("File save directory is not a folder: {}, setting as publicDir + /saved-files/", fileSaveDir);
-            appConfig.getFtpConfiguration().setFileSaveDir(setPublicDir + "/saved-files/");
+        PathInfo saveDirPathInfo = StaticService.getPathInfo(fileSaveDir);
+        if (!AppConstant.FOLDER.equals(saveDirPathInfo.getType())) {
+            logger.info("File save directory is not a folder: {}", fileSaveDir);
+            if (AppConstant.FOLDER.equals(publicDirPathInfo.getType())) {
+                logger.info("setting fileSaveDir as publicDir + /saved-files/");
+                appConfig.getFtpConfiguration().setFileSaveDir(setPublicDir + "/saved-files/");
+            } else {
+                logger.info("publicDir is also not a folder, setting fileSaveDir as: null");
+                appConfig.getFtpConfiguration().setFileSaveDir(null);
+            }
         } else {
             logger.info("File save directory is a folder: {}", fileSaveDir);
         }

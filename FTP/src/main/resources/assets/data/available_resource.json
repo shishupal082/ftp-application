@@ -53,43 +53,43 @@
   ],
   [
     "/api/get_files_info",
-    "Scan directory based on user login"
+    "Scan directory based on user login [GET]"
   ],
   [
     "/api/get_current_user_files_info",
-    "Scan only current user directory"
+    "Scan only current user directory [GET]"
   ],
   [
     "/api/get_app_config",
-    "Get AppConfig data"
+    "Get appConfig data [GET]"
   ],
   [
     "/api/get_session_config",
-    "Session config data"
+    "Get session config data [GET]"
   ],
   [
     "/api/get_users",
-    "Get all users Data"
+    "Get all users data [GET]"
   ],
   [
     "/api/get_related_users_data",
-    "[GET] Get related users Data"
+    "Get related users data [GET]"
   ],
   [
     "/api/get_related_users_data_v2",
-    "[GET] Get related users Data v2"
+    "Get related users data v2 [GET]"
   ],
   [
     "/api/get_login_user_details",
-    "Get login user Details"
+    "Get login user Details [GET]"
   ],
   [
     "/api/get_related_users_data_by_username?username",
-    "Get related users Data By Username"
+    "Get related users Data By Username [GET]"
   ],
   [
     "/api/get_roles_config",
-    "Get roles config"
+    "Get roles config [GET]"
   ],
   [
     "/api/update_roles_config",
@@ -97,11 +97,15 @@
   ],
   [
     "/api/get_uploaded_csv_data",
-    "Get uploaded CSV data"
+    "Get uploaded CSV data [GET]"
+  ],
+  [
+    "/api/get_uploaded_data_by_filename_pattern?pattern=[.]txt$",
+    "Get uploaded data by filename pattern [GET]"
   ],
   [
     "/api/get_static_file",
-    "Get app static file Data"
+    "Get app static file Data [GET]"
   ],
   [
     "/api/register_user",

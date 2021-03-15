@@ -13,6 +13,8 @@ import org.slf4j.LoggerFactory;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class FileServiceV2 {
     private final static Logger logger = LoggerFactory.getLogger(FileServiceV2.class);
@@ -33,6 +35,10 @@ public class FileServiceV2 {
             return null;
         }
         String dir = appConfig.getFtpConfiguration().getFileSaveDir();
+        if (dir == null) {
+            logger.info("fileSaveDir is: null");
+            return null;
+        }
         String[] fileNameArr = fileName.split(dir);
         if(fileNameArr.length == 2) {
             if (fileNameArr[1].split("/").length == 2) {
@@ -93,9 +99,13 @@ public class FileServiceV2 {
         }
         return finalResponse;
     }
-    public ApiResponse scanCurrentUserDirectory(LoginUserDetails loginUserDetails) {
+    public ApiResponse scanCurrentUserDirectory(LoginUserDetails loginUserDetails) throws AppException {
         ArrayList<ScanResult> scanResults = new ArrayList<>();
         String dir = appConfig.getFtpConfiguration().getFileSaveDir();
+        if (dir == null) {
+            logger.info("fileSaveDir is: null");
+            throw new AppException(ErrorCodes.CONFIG_ERROR);
+        }
         String loginUserName = loginUserDetails.getUsername();
         dir = dir + loginUserName + "/";
         scanResults.add(fileService.scanDirectory(dir, dir, false));
@@ -107,10 +117,15 @@ public class FileServiceV2 {
         logger.info("final result size: {}", filesInfo.size());
         return new ApiResponse(filesInfo);
     }
-    public ApiResponse scanUserDirectory(LoginUserDetails loginUserDetails) {
+    public ApiResponse scanUserDirectory(LoginUserDetails loginUserDetails) throws AppException {
         ApiResponse apiResponse;
         ArrayList<ScanResult> scanResults = new ArrayList<>();
-        String saveDir = appConfig.getFtpConfiguration().getFileSaveDir(), scanDir;
+        String saveDir = appConfig.getFtpConfiguration().getFileSaveDir();
+        if (saveDir == null) {
+            logger.info("fileSaveDir is: null");
+            throw new AppException(ErrorCodes.CONFIG_ERROR);
+        }
+        String scanDir;
         String loginUserName = loginUserDetails.getUsername();
         boolean isLoginUserAdmin = userService.isLoginUserAdmin(loginUserDetails);
         if (isLoginUserAdmin) {
@@ -132,8 +147,19 @@ public class FileServiceV2 {
         return apiResponse;
     }
     public PathInfo getUserCsvData(LoginUserDetails loginUserDetails) throws AppException {
+        ArrayList<String> responseFilenames = this.getUsersFilePath(loginUserDetails);
+        ArrayList<String> filterFilenames = this.filterFilename(responseFilenames, "\\.csv$");//[.]csv$
+        return this.getFinalPathInfo(loginUserDetails, filterFilenames);
+    }
+    private ArrayList<String> getUsersFilePath(LoginUserDetails loginUserDetails) {
         ArrayList<ScanResult> scanResults = new ArrayList<>();
-        String saveDir = appConfig.getFtpConfiguration().getFileSaveDir(), scanDir;
+        String saveDir = appConfig.getFtpConfiguration().getFileSaveDir();
+        ArrayList<String> response = new ArrayList<>();
+        if (saveDir == null) {
+            logger.info("fileSaveDir is: null");
+            return response;
+        }
+        String scanDir;
         String loginUserName = loginUserDetails.getUsername();
         boolean isLoginUserAdmin = userService.isLoginUserAdmin(loginUserDetails);
         if (isLoginUserAdmin) {
@@ -145,17 +171,26 @@ public class FileServiceV2 {
                 scanResults.add(fileService.scanDirectory(scanDir, scanDir, false));
             }
         }
-        ArrayList<String> response = new ArrayList<>();
         this.generateApiResponse(scanResults, response);
         logger.info("scanUserDirectory result size: {}", response.size());
-        ArrayList<String> csvFiles = new ArrayList<>();
-        String csvData = "";
-        for (String filename: response) {
-            PathInfo pathInfo = fileService.getPathInfoFromFileName(filename);
-            if (FileMimeType.csv.toString().equals(pathInfo.getExtension())) {
-                csvData += new TextFileParser(saveDir+filename).getTextDataV2();
-            }
+        return response;
+    }
+    private PathInfo getFinalPathInfo(LoginUserDetails loginUserDetails,
+                                      ArrayList<String> responseFilenames) throws AppException {
+        if (responseFilenames == null) {
+            throw new AppException(ErrorCodes.RUNTIME_ERROR);
         }
+        logger.info("scanUserDirectory result size: {}", responseFilenames.size());
+        String saveDir = appConfig.getFtpConfiguration().getFileSaveDir();
+        if (saveDir == null) {
+            logger.info("fileSaveDir is: null");
+            throw new AppException(ErrorCodes.CONFIG_ERROR);
+        }
+        StringBuilder textData = new StringBuilder();
+        for (String filename: responseFilenames) {
+            textData.append(new TextFileParser(saveDir + filename).getTextDataV2());
+        }
+        String loginUserName = loginUserDetails.getUsername();
         ArrayList<String> requiredDirs = new ArrayList<>();
         requiredDirs.add(saveDir);
         requiredDirs.add(AppConstant.TEMP);
@@ -166,18 +201,42 @@ public class FileServiceV2 {
             throw new AppException(ErrorCodes.RUNTIME_ERROR);
         }
         String responseFilename = StaticService.getProperDirString(String.join("/", requiredDirs))
-                + "/" + loginUserName+".csv";
+                + "/" + loginUserName+".txt";
         fileService.deleteFileV2(responseFilename);
         boolean createStatus, addTextStatus = false;
         createStatus = fileService.createNewFile(responseFilename);
         if (createStatus) {
-            addTextStatus = new TextFileParser(responseFilename, true).addText(csvData);
+            addTextStatus = new TextFileParser(responseFilename, true).addText(textData.toString());
         }
         if (createStatus && addTextStatus) {
             return fileService.getPathInfo(responseFilename);
         }
         logger.info("Error in creating response file: {}", responseFilename);
         throw new AppException(ErrorCodes.RUNTIME_ERROR);
+    }
+    private ArrayList<String> filterFilename(ArrayList<String> responseFilenames, String pattern) {
+        ArrayList<String> filterFileName = new ArrayList<>();
+        if (responseFilenames == null) {
+            return filterFileName;
+        }
+        for (String filename: responseFilenames) {
+            if (filename == null) {
+                continue;
+            }
+            String[] fileNameArr = filename.split("/");
+            if(fileNameArr.length == 2) {
+                if (StaticService.isPatternMatching(fileNameArr[1], pattern)) {
+                    filterFileName.add(filename);
+                }
+            }
+        }
+        return filterFileName;
+    }
+    public PathInfo getUserDataByFilenamePattern(LoginUserDetails loginUserDetails, String pattern)
+            throws AppException {
+        ArrayList<String> responseFilenames = this.getUsersFilePath(loginUserDetails);
+        ArrayList<String> filterFileName = this.filterFilename(responseFilenames, pattern);
+        return this.getFinalPathInfo(loginUserDetails, filterFileName);
     }
 
     private HashMap<String, String> parseRequestedFileStr(String filename) {
@@ -250,6 +309,10 @@ public class FileServiceV2 {
         HashMap<String, String> parsedFileStr = this.parseRequestedFileStr(filename);
         String loginUserName = loginUserDetails.getUsername();
         String filePath = appConfig.getFtpConfiguration().getFileSaveDir();
+        if (filePath == null) {
+            logger.info("fileSaveDir is: null");
+            throw new AppException(ErrorCodes.CONFIG_ERROR);
+        }
         PathInfo pathInfo;
         if (AppConstant.SUCCESS.equals(parsedFileStr.get(AppConstant.STATUS))) {
             filePath += filename;
@@ -377,6 +440,10 @@ public class FileServiceV2 {
     }
     private void deleteFileV3(FileDetail fileDetail) throws AppException {
         String saveDir = appConfig.getFtpConfiguration().getFileSaveDir();
+        if (saveDir == null) {
+            logger.info("fileSaveDir is: null");
+            throw new AppException(ErrorCodes.CONFIG_ERROR);
+        }
         PathInfo pathInfo = fileService.getPathInfo(saveDir + fileDetail.getFilepath());
         boolean permanentlyDeleteFile = appConfig.getFtpConfiguration().isPermanentlyDeleteFile();
         Boolean fileDeleteStatus;
@@ -443,7 +510,12 @@ public class FileServiceV2 {
                                     RequestDeleteFile deleteFile) throws AppException {
         HashMap<String, String> parsedFileStr = this.verifyDeleteRequestParameters(deleteFile);
         String deleteFileReq = deleteFile.getFilename();
-        String filepath = appConfig.getFtpConfiguration().getFileSaveDir() + deleteFileReq;
+        String saveDir = appConfig.getFtpConfiguration().getFileSaveDir();
+        if (saveDir == null) {
+            logger.info("fileSaveDir is null");
+            throw new AppException(ErrorCodes.CONFIG_ERROR);
+        }
+        String filepath = saveDir + deleteFileReq;
         // file not found
         if (!fileService.isFile(filepath)) {
             logger.info("requested delete file not found: {}", filepath);
@@ -630,6 +702,11 @@ public class FileServiceV2 {
 
     private PathInfo uploadFile(String loginUserName,
                                InputStream uploadedInputStream, String fileName) throws AppException {
+        String saveDir = appConfig.getFtpConfiguration().getFileSaveDir();
+        if (saveDir == null) {
+            logger.info("fileSaveDir is: null");
+            throw new AppException(ErrorCodes.CONFIG_ERROR);
+        }
         PathInfo pathInfo = fileService.getPathInfoFromFileName(fileName);
         logger.info("PathInfo generated from request filename: {}, {}", fileName, pathInfo);
         String ext = pathInfo.getExtension();
@@ -642,7 +719,6 @@ public class FileServiceV2 {
             logger.info("File extension '{}', is not supported", ext);
             throw new AppException(ErrorCodes.UNSUPPORTED_FILE_TYPE);
         }
-        String saveDir = appConfig.getFtpConfiguration().getFileSaveDir();
         HashMap<String, String> values = new HashMap<>();
         values.put("username", loginUserName);
         values.put("filename", pathInfo.getFilenameWithoutExt());
@@ -737,6 +813,10 @@ public class FileServiceV2 {
         }
         String username = userDetails.getUsername();
         String saveDir = appConfig.getFtpConfiguration().getFileSaveDir();
+        if (saveDir == null) {
+            logger.info("fileSaveDir is: null");
+            throw new AppException(ErrorCodes.CONFIG_ERROR);
+        }
         String userDir = saveDir + username + "/";
         String filePath = userDir + filename;
         String userFilename = this.parseUserFileName(filePath);

@@ -349,6 +349,38 @@ public class ApiResource {
         logger.info("getUploadedCSVData: out, Error in generating response data");
         return Response.ok(AppConstant.EmptyParagraph).build();
     }
+    @GET
+    @Path("/get_uploaded_data_by_filename_pattern")
+    @UnitOfWork
+    @Produces(MediaType.TEXT_HTML)
+    public Response getUploadedDataByFilenamePattern(@Context HttpServletRequest request,
+                                                     @QueryParam("pattern") String pattern) {
+        logger.info("getUploadedDataByFilenamePattern: in, user: {}, pattern: {}",
+                userService.getUserDataForLogging(request), pattern);
+        PathInfo pathInfo = null;
+        try {
+            authService.isLogin(request);
+            LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
+            pathInfo = fileServiceV2.getUserDataByFilenamePattern(loginUserDetails, pattern);
+        } catch (AppException ae) {
+            eventTracking.trackFailureEvent(request, EventName.GET_UPLOADED_DATA_BY_FILENAME_PATTERN, ae.getErrorCode());
+            logger.info("Error in generating response file: {}", ae.getErrorCode().getErrorCode());
+        }
+        if (pathInfo != null && AppConstant.FILE.equals(pathInfo.getType())) {
+            File file = new File(pathInfo.getPath());
+            try {
+                InputStream inputStream = new FileInputStream(file);
+                Response.ResponseBuilder r = Response.ok(inputStream);
+                r.header(HttpHeaders.CONTENT_TYPE, pathInfo.getMediaType());
+                logger.info("getUploadedDataByFilenamePattern: out");
+                return r.build();
+            } catch (Exception e) {
+                logger.info("Error in loading file: {}", pathInfo);
+            }
+        }
+        logger.info("getUploadedDataByFilenamePattern: out, Error in generating response data");
+        return Response.ok(AppConstant.EmptyParagraph).build();
+    }
     @POST
     @Path("/login_user")
     @UnitOfWork
