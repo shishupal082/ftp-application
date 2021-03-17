@@ -61,7 +61,7 @@ public class AppConstant {
     public static final String ORIGIN = "origin";
     public static final String MOBILE_REGEX = "[6-9][0-9]{9}";
     public static final String CSV_FILENAME_REGEX = "\\.csv$"; //[.]csv$
-    public static final String ALL_STRING_REGEX = "\\.";
+    public static final String ALL_STRING_REGEX = ".";
     public static final String EMAIL_REGEX = "^(.+)@(.+)$"; // only care about @
 
 
