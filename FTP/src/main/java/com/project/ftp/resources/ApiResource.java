@@ -211,6 +211,29 @@ public class ApiResource {
         return response;
     }
     @GET
+    @Path("/get_files_info_by_filename_pattern")
+    @UnitOfWork
+    public ApiResponse getAllV4Data(@Context HttpServletRequest request,
+                                    @QueryParam("filename") String filename,
+                                    @QueryParam("username") String username) {
+        logger.info("getAllV4Data : In, user: {}, filenamePattern+usernamePattern: {}",
+                userService.getUserDataForLogging(request), filename+username);
+        ApiResponse response;
+        try {
+            authService.isLogin(request);
+            LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
+            response = fileServiceV2.scanUserDirectoryByPattern(loginUserDetails, filename, username);
+//            eventTracking.trackSuccessEvent(request, EventName.GET_FILES_INFO);
+        } catch (AppException ae) {
+            logger.info("Error in scanning user directory: {}", ae.getErrorCode().getErrorString());
+            response = new ApiResponse(ae.getErrorCode());
+            eventTracking.trackFailureEvent(request, EventName.GET_FILES_INFO_BY_FILENAME_PATTERN, ae.getErrorCode());
+        }
+        // Not putting response in log as it may be very large
+        logger.info("getAllV4Data : Out");
+        return response;
+    }
+    @GET
     @Path("/get_current_user_files_info")
     @UnitOfWork
     public ApiResponse getAllV3DataV2(@Context HttpServletRequest request) {
@@ -354,14 +377,15 @@ public class ApiResource {
     @UnitOfWork
     @Produces(MediaType.TEXT_HTML)
     public Response getUploadedDataByFilenamePattern(@Context HttpServletRequest request,
-                                                     @QueryParam("pattern") String pattern) {
-        logger.info("getUploadedDataByFilenamePattern: in, user: {}, pattern: {}",
-                userService.getUserDataForLogging(request), pattern);
+                                                     @QueryParam("filename") String filename,
+                                                     @QueryParam("username") String username) {
+        logger.info("getUploadedDataByFilenamePattern: in, user: {}, filename+username: {}",
+                userService.getUserDataForLogging(request), filename+username);
         PathInfo pathInfo = null;
         try {
             authService.isLogin(request);
             LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
-            pathInfo = fileServiceV2.getUserDataByFilenamePattern(loginUserDetails, pattern);
+            pathInfo = fileServiceV2.getUserDataByFilenamePattern(loginUserDetails, filename, username);
         } catch (AppException ae) {
             eventTracking.trackFailureEvent(request, EventName.GET_UPLOADED_DATA_BY_FILENAME_PATTERN, ae.getErrorCode());
             logger.info("Error in generating response file: {}", ae.getErrorCode().getErrorCode());

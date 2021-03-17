@@ -1,6 +1,9 @@
 package com.project.ftp.service;
 
-import com.project.ftp.config.*;
+import com.project.ftp.config.AppConfig;
+import com.project.ftp.config.AppConstant;
+import com.project.ftp.config.FileDeleteAccess;
+import com.project.ftp.config.PathType;
 import com.project.ftp.exceptions.AppException;
 import com.project.ftp.exceptions.ErrorCodes;
 import com.project.ftp.obj.*;
@@ -13,8 +16,6 @@ import org.slf4j.LoggerFactory;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class FileServiceV2 {
     private final static Logger logger = LoggerFactory.getLogger(FileServiceV2.class);
@@ -146,9 +147,17 @@ public class FileServiceV2 {
         apiResponse = new ApiResponse(filesInfo);
         return apiResponse;
     }
+    public ApiResponse scanUserDirectoryByPattern(LoginUserDetails loginUserDetails,
+                                                  String filenamePattern, String usernamePattern)
+            throws AppException {
+        ArrayList<String> responseFilenames = this.getUsersFilePath(loginUserDetails);
+        ArrayList<String> filterFileName = this.filterFilename(responseFilenames, filenamePattern, usernamePattern);
+        return new ApiResponse(filterFileName);
+    }
     public PathInfo getUserCsvData(LoginUserDetails loginUserDetails) throws AppException {
         ArrayList<String> responseFilenames = this.getUsersFilePath(loginUserDetails);
-        ArrayList<String> filterFilenames = this.filterFilename(responseFilenames, "\\.csv$");//[.]csv$
+        ArrayList<String> filterFilenames =
+                this.filterFilename(responseFilenames, AppConstant.CSV_FILENAME_REGEX, AppConstant.ALL_STRING_REGEX);
         return this.getFinalPathInfo(loginUserDetails, filterFilenames);
     }
     private ArrayList<String> getUsersFilePath(LoginUserDetails loginUserDetails) {
@@ -214,7 +223,8 @@ public class FileServiceV2 {
         logger.info("Error in creating response file: {}", responseFilename);
         throw new AppException(ErrorCodes.RUNTIME_ERROR);
     }
-    private ArrayList<String> filterFilename(ArrayList<String> responseFilenames, String pattern) {
+    private ArrayList<String> filterFilename(ArrayList<String> responseFilenames,
+                                             String filenamePattern, String usernamePattern) {
         ArrayList<String> filterFileName = new ArrayList<>();
         if (responseFilenames == null) {
             return filterFileName;
@@ -225,17 +235,20 @@ public class FileServiceV2 {
             }
             String[] fileNameArr = filename.split("/");
             if(fileNameArr.length == 2) {
-                if (StaticService.isPatternMatching(fileNameArr[1], pattern)) {
-                    filterFileName.add(filename);
+                if (StaticService.isPatternMatching(fileNameArr[1], filenamePattern)) {
+                    if (StaticService.isPatternMatching(fileNameArr[0], usernamePattern)) {
+                        filterFileName.add(filename);
+                    }
                 }
             }
         }
         return filterFileName;
     }
-    public PathInfo getUserDataByFilenamePattern(LoginUserDetails loginUserDetails, String pattern)
+    public PathInfo getUserDataByFilenamePattern(LoginUserDetails loginUserDetails,
+                                                 String filenamePattern, String usernamePattern)
             throws AppException {
         ArrayList<String> responseFilenames = this.getUsersFilePath(loginUserDetails);
-        ArrayList<String> filterFileName = this.filterFilename(responseFilenames, pattern);
+        ArrayList<String> filterFileName = this.filterFilename(responseFilenames, filenamePattern, usernamePattern);
         return this.getFinalPathInfo(loginUserDetails, filterFileName);
     }
 

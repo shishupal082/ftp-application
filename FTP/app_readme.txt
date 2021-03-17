@@ -962,11 +962,15 @@ New api added [GET]
 7.0.0.1
 -------------------
 New api added [GET]
-    - /api/get_uploaded_data_by_filename_pattern?pattern=pattern
+    - /api/get_uploaded_data_by_filename_pattern?pattern=pattern&username=.
     - It will help to use pagination for loading uploaded data
+New api added [GET]
+    - /api/get_files_info_by_filename_pattern?pattern=pattern&username=.
+    - It will help to load particular types of file of a particular user
 
 ConfigService change
     - set saveDir as publicDir + "/saved-files/" only when calculated publicDir is valid dir
+
 
 Future releases
 -------------------

@@ -56,6 +56,10 @@
     "Scan directory based on user login [GET]"
   ],
   [
+    "/api/get_files_info_by_filename_pattern?filename=[.]txt&username=.",
+    "Scan directory based on query parameter username and filename pattern [GET]"
+  ],
+  [
     "/api/get_current_user_files_info",
     "Scan only current user directory [GET]"
   ],
@@ -100,8 +104,8 @@
     "Get uploaded CSV data [GET]"
   ],
   [
-    "/api/get_uploaded_data_by_filename_pattern?pattern=[.]txt$",
-    "Get uploaded data by filename pattern [GET]"
+    "/api/get_uploaded_data_by_filename_pattern?filename=[.]txt$&username=.",
+    "Get uploaded data by query parameter username and filename pattern [GET]"
   ],
   [
     "/api/get_static_file",
