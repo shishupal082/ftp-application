@@ -3,6 +3,7 @@ package com.project.ftp.intreface;
 import com.project.ftp.config.AppConfig;
 import com.project.ftp.config.AppConstant;
 import com.project.ftp.exceptions.AppException;
+import com.project.ftp.helper.AppConfigHelper;
 import com.project.ftp.mysql.MysqlUser;
 import com.project.ftp.obj.Users;
 import com.project.ftp.parser.TextFileParser;
@@ -77,7 +78,8 @@ public class UserFile implements UserInterface {
     }
     public Users getAllUsers() {
         Users users = null;
-        String filepath = appConfig.getFtpConfiguration().getConfigDataFilePath() + AppConstant.USER_DATA_FILENAME;
+        String filepath = appConfig.getFtpConfiguration().getConfigDataFilePath()
+                + AppConfigHelper.getUserDataFilename(appConfig);
         TextFileParser textFileParser = new TextFileParser(filepath);
         ArrayList<ArrayList<String>> fileData;
         try {
@@ -94,12 +96,16 @@ public class UserFile implements UserInterface {
             return null;
         }
         Users users = this.getAllUsers();
-        MysqlUser user = users.searchUserByName(username);
-        logger.info("User data for username: {}, is: {}", username, user);
-        return user;
+        if (users != null) {
+            MysqlUser user = users.searchUserByName(username);
+            logger.info("User data for username: {}, is: {}", username, user);
+            return user;
+        }
+        return null;
     }
     public boolean saveUser(MysqlUser user) {
-        String filepath = appConfig.getFtpConfiguration().getConfigDataFilePath() + AppConstant.USER_DATA_FILENAME;
+        String filepath = appConfig.getFtpConfiguration().getConfigDataFilePath()
+                + AppConfigHelper.getUserDataFilename(appConfig);
         TextFileParser textFileParser = new TextFileParser(filepath);
         String text = this.getAddTextResponse(user);
         return textFileParser.addText(text);

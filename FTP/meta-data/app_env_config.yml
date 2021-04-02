@@ -96,6 +96,10 @@ backendConfig:
     - roles/roles.yml
     - roles/roles_2.yml
   eventDataFilenamePattern: "'event_data/'yyyy-MM-dd-HH-mm'-event_data.csv'"
+  userDataFilename: "user_data.csv"
+  fileDataFilename: "file_details.csv"
+  fileNotFoundMapping: "file_not_found_config.yml"
+  staticDataFilename: "app_static_data.json"
   rateLimitThreshold: 2
 
 

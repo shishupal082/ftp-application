@@ -306,9 +306,9 @@ public class StaticService {
         if (AppConstant.FILE.equals(pathInfo.getType())) {
             String newLogFilePath = pathInfo.getParentFolder() + "/" + pathInfo.getFilenameWithoutExt() +
                     "-" + dateUtilities.getDateStrFromPattern(AppConstant.DateTimeFormat4) + "." + pathInfo.getExtension();
-            Boolean copyStatus = fileService.copyFileV2(logFilePath, newLogFilePath);
+            boolean copyStatus = fileService.copyFileV2(logFilePath, newLogFilePath);
             if (copyStatus) {
-                Boolean deleteStatus = fileService.deleteFileV2(logFilePath);
+                boolean deleteStatus = fileService.deleteFileV2(logFilePath);
                 if (!deleteStatus) {
                     sysUtils.printLog("Error in deleting old log file: " + logFilePath);
                 }
@@ -396,7 +396,6 @@ public class StaticService {
         }
         return version;
     }
-
     public static String joinWithComma(String str1, String str2) {
         if (StaticService.isInValidString(str2)) {
             return str1;

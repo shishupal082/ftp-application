@@ -6,9 +6,13 @@ public class BackendConfig {
     private String forgotPasswordMessage;
     private boolean forgotPasswordEnable;
     private String loadRoleStatusOnPageLoad;
+    private String eventDataFilenamePattern;
+    private String userDataFilename;
+    private String fileDataFilename;
+    private String fileNotFoundMapping;
+    private String staticDataFilename;
     private ArrayList<String> rolesFileName;
     private Integer rateLimitThreshold;// used for register and create_password
-    private String eventDataFilenamePattern;
 
     public BackendConfig() {}
 
@@ -60,15 +64,51 @@ public class BackendConfig {
         this.eventDataFilenamePattern = eventDataFilenamePattern;
     }
 
+    public String getUserDataFilename() {
+        return userDataFilename;
+    }
+
+    public void setUserDataFilename(String userDataFilename) {
+        this.userDataFilename = userDataFilename;
+    }
+
+    public String getFileDataFilename() {
+        return fileDataFilename;
+    }
+
+    public void setFileDataFilename(String fileDataFilename) {
+        this.fileDataFilename = fileDataFilename;
+    }
+
+    public String getFileNotFoundMapping() {
+        return fileNotFoundMapping;
+    }
+
+    public void setFileNotFoundMapping(String fileNotFoundMapping) {
+        this.fileNotFoundMapping = fileNotFoundMapping;
+    }
+
+    public String getStaticDataFilename() {
+        return staticDataFilename;
+    }
+
+    public void setStaticDataFilename(String staticDataFilename) {
+        this.staticDataFilename = staticDataFilename;
+    }
+
     @Override
     public String toString() {
         return "BackendConfig{" +
                 "forgotPasswordMessage='" + forgotPasswordMessage + '\'' +
                 ", forgotPasswordEnable=" + forgotPasswordEnable +
                 ", loadRoleStatusOnPageLoad='" + loadRoleStatusOnPageLoad + '\'' +
+                ", eventDataFilenamePattern='" + eventDataFilenamePattern + '\'' +
+                ", userDataFilename='" + userDataFilename + '\'' +
+                ", fileDataFilename='" + fileDataFilename + '\'' +
+                ", fileNotFoundMapping='" + fileNotFoundMapping + '\'' +
+                ", staticDataFilename='" + staticDataFilename + '\'' +
                 ", rolesFileName=" + rolesFileName +
                 ", rateLimitThreshold=" + rateLimitThreshold +
-                ", eventDataFilenamePattern='" + eventDataFilenamePattern + '\'' +
                 '}';
     }
 }

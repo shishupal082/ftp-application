@@ -6,6 +6,7 @@ import com.project.ftp.config.FileDeleteAccess;
 import com.project.ftp.config.PathType;
 import com.project.ftp.exceptions.AppException;
 import com.project.ftp.exceptions.ErrorCodes;
+import com.project.ftp.helper.AppConfigHelper;
 import com.project.ftp.obj.*;
 import com.project.ftp.parser.TextFileParser;
 import com.project.ftp.parser.YamlFileParser;
@@ -28,7 +29,7 @@ public class FileServiceV2 {
         this.fileService = new FileService();
         this.userService = userService;
         savedDataFilepath = appConfig.getFtpConfiguration().getConfigDataFilePath()
-                + AppConstant.FILE_DATA_FILENAME;
+                + AppConfigHelper.getFileDataFilename(appConfig);
     }
     private String parseUserFileName(String fileName) {
         String userFilename = null;

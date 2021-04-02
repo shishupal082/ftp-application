@@ -971,6 +971,18 @@ New api added [GET]
 ConfigService change
     - set saveDir as publicDir + "/saved-files/" only when calculated publicDir is valid dir
 
+7.0.0.2 (2021-04-02)
+---------------------
+Fixed null pointer exception when user_data.csv not found
+
+Config added in env_config.yaml
+  backendConfig:
+      userDataFilename: "user_data.csv"
+      fileDataFilename: "file_details.csv"
+      fileNotFoundMapping: "file_not_found_config.yml"
+      staticDataFilename: "app_static_data.json"
+  - All these parameters are optional (If not found then it will read from AppConstant)
+
 
 Future releases
 -------------------

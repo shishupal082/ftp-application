@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.project.ftp.FtpConfiguration;
 import com.project.ftp.config.AppConfig;
-import com.project.ftp.config.AppConstant;
+import com.project.ftp.helper.AppConfigHelper;
 import com.project.ftp.obj.LoginUserDetails;
 import com.project.ftp.obj.Page404Entry;
 import com.project.ftp.obj.PageConfig404;
@@ -77,7 +77,7 @@ public class YamlFileParser {
         if (StaticService.isInValidString(filePath)) {
             return null;
         }
-        filePath += AppConstant.FILE_NOT_FOUND_MAPPING;
+        filePath += AppConfigHelper.getFileNotFoundMapping(appConfig);
         PageConfig404 pageConfig404 = null;
         ObjectMapper objectMapper = new ObjectMapper(new YAMLFactory());
         try {
