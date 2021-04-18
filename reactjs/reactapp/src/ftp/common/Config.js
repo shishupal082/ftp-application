@@ -18,6 +18,7 @@ var uploadFileInstruction = $$$.uploadFileInstruction;
 var createPasswordOtpInstruction = $$$.createPasswordOtpInstruction;
 var loginRedirectUrl = $$$.loginRedirectUrl;
 
+
 if (!$S.isString(loginRedirectUrl) || loginRedirectUrl.length < 1) {
     loginRedirectUrl = "/dashboard";
 }
@@ -131,6 +132,10 @@ Config.getUserData = function(key, defaultValue) {
         return UserData[key];
     }
     return defaultValue;
+};
+
+Config.getAllUserData = function(key, defaultValue) {
+    return UserData;
 };
 
 var uiUsername = Config.getUserData("username", "");

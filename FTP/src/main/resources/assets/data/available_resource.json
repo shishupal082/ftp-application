@@ -108,6 +108,10 @@
     "Get uploaded data by query parameter username and filename pattern [GET]"
   ],
   [
+    "/api/get_data_by_filename_list",
+    "Get uploaded data by filename list [POST]"
+  ],
+  [
     "/api/get_static_file",
     "Get app static file Data [GET]"
   ],

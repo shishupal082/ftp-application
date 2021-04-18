@@ -984,76 +984,68 @@ Config added in env_config.yaml
   - All these parameters are optional (If not found then it will read from AppConstant)
 
 
+
+7.0.0.3 (2021-04-18)
+---------------------
+Only UI change
+    - display footer link based on role dynamically
+
 Future releases
 -------------------
+
+Add new role called
+New role implemented
+    - isDeleteFileEnable
+        - It will be send in response for each file deleteOption: true
+
+change backendConfig.fileNotFoundMapping: string
+    - from string to array
+    - save into memory and do read for each request of public directory
+    - update during roles config update
+
+Added new api
+    - /api/get_data_by_filename_list [Post]
+    - it will be used in pagination
+    - It will internally use /view/file/<User1>/<Filename>?u=User2
+
+Pagination will be implemented using
+    - /api/get_files_info_by_filename_pattern?filename=[.]txt&username=. and
+    - /api/get_data_by_filename_list
+
+
+Remove following log  /api/get_uploaded_csv_data
+
+c.p.f.s.UserService - Related users for username
+as it is no moning
+
+c.p.f.p.TextFileParser - Text file read success: C:/Users/Shishupal/Dropbox/app-data/saved-files/Ranjit/2020-12-22-report.csv
+Put 1 single line commenct file read complete for user xyz
+
+Improve log for scanning all folder
+    No files found in folder : C:/Users/Shishupal/Dropbox/app-data/saved-files/Vicky/, listOfFiles=null
+    Scan complete for folder : C:/Users/Shishupal/Dropbox/app-data/saved-files/Vicky/
+
+c.p.f.s.FileServiceV2 - scanUserDirectory result size: 1128
+c.p.f.s.FileServiceV2 - scanUserDirectory result size: 1067
+c.p.f.p.TextFileParser - Text file read success: C:/Users/Shishupal/Dropbox/app-data/saved-files/Vivek/2020-12-25-report.csv
+
+/api/get_login_user_details
+
+.f.b.r.s.RolesService - isRoleAuthorised check response:false (Too many permission checking) for each request
+
+
+
+/api/get_files_info
+
+c.p.f.s.FileService Scan complete for folder : C:/Users/Shishupal/Dropbox/app-data/saved-files/Sudhir/
+
+
+
+
+
 Implement api for loading data from public dir
     - /api/public-file?filename=file.txt
     It shall have provision of permission
-
-    public static BinaryTree createBinaryTreeOld(ArrayList<String> strings) {
-        Stack stack = new Stack();
-        BinaryTree root = new BinaryTree("");
-        stack.push(root);
-        BinaryTree currentTree = root;
-        ArrayList<String> binaryOp = new ArrayList<>();
-        binaryOp.add(BridgeConstant.AND);
-        binaryOp.add(BridgeConstant.OR);
-        binaryOp.add(BridgeConstant.PLUS);
-        binaryOp.add(BridgeConstant.MINUS);
-        binaryOp.add(BridgeConstant.PROD);
-        binaryOp.add(BridgeConstant.DIV);
-        ArrayList<String> unaryOp = new ArrayList<>();
-        unaryOp.add(BridgeConstant.NOT);
-        String temp;
-        BinaryTree oldRight, parent;
-        for (int i=0; i<strings.size(); i++) {
-            temp = strings.get(i);
-            if (BridgeConstant.OPEN.equals(temp)) {
-                if (i < strings.size()-1 && BridgeConstant.NOT.equals(strings.get(i+1))) {
-                    continue;
-                }
-                currentTree.insertLeft(currentTree, "");
-                stack.push(currentTree);
-                currentTree = currentTree.getLeftChild(currentTree);
-            } else if (BridgeConstant.CLOSE.equals(temp)) {
-                if (stack.getTop() >= 0) {
-                    currentTree = (BinaryTree) stack.pop();
-                }
-            } else if (binaryOp.contains(temp)) {
-                if (!BridgeConstant.EMPTY.equals(currentTree.data)) {
-                    oldRight = currentTree.right;
-                    currentTree.insertRight(currentTree, temp);
-                    currentTree = currentTree.getRightChild(currentTree);
-                    currentTree.insertNodeInLeft(currentTree, oldRight);
-                } else {
-                    currentTree.data = temp;
-                }
-                currentTree.insertRight(currentTree, "");
-                stack.push(currentTree);
-                currentTree = currentTree.getRightChild(currentTree);
-            } else if (unaryOp.contains(temp)) {
-                currentTree.data = temp;
-                if (i < strings.size()-1) {
-                    i++;
-                    currentTree.insertLeft(currentTree, strings.get(i));
-                }
-                if (stack.getTop() >= 0) {
-                    parent = (BinaryTree) stack.pop();
-                    currentTree = parent;
-                }
-            } else {
-                currentTree.data = temp;
-                if (stack.getTop() >= 0) {
-                    parent = (BinaryTree) stack.pop();
-                    currentTree = parent;
-                }
-            }
-        }
-        return root;
-    }
-
-
-
 
 Integrate sending sms to user for forgot password request otp
 

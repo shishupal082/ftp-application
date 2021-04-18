@@ -20,9 +20,13 @@ $S.extendObject(TemplateHandler);
 
 TemplateHandler.extend({
     checkUserDependentFooterLink: function(template) {
-        var isUsersControlEnable = Config.getUserData("isUsersControlEnable", "false");
-        if (isUsersControlEnable === "true") {
-            TemplateHelper.removeClassTemplate(template, "footerLink.users_control", "d-none");
+        var userData = Config.getAllUserData();
+        if ($S.isObject(userData)) {
+            for(var linkName in userData) {
+                if (userData[linkName] === "true") {
+                    TemplateHelper.removeClassTemplate(template, linkName, "d-none");
+                }
+            }
         }
         return template;
     }

@@ -139,7 +139,7 @@ function addElAt(arr, index, el) {
     return 0;
 }
 function capitalize(str) {
-    if (isString(str)) {
+    if (isString(str) && str.length > 0) {
         return str.replace(/^./, str[0].toUpperCase());
     }
     return str;
@@ -1575,6 +1575,23 @@ Stack.extend({
             return  t;
         });
         return result;
+    },
+    findParam: function(availableItems, key, defaultValue) {
+        if (!isArray(availableItems)) {
+            return defaultValue;
+        }
+        if (!isString(key) || key.length === 0) {
+            return defaultValue;
+        }
+        for (var i = 0; i < availableItems.length; i++) {
+            if (!isObject(availableItems[i])) {
+                continue;
+            }
+            if (!isUndefined(availableItems[i][key])) {
+                return availableItems[i][key]
+            }
+        }
+        return defaultValue;
     }
 });
 
