@@ -1,4 +1,4 @@
-package com.project.ftp.obj;
+package com.project.ftp.obj.yamlObj;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
@@ -13,7 +13,6 @@ public class FtlConfig {
     private String afterLoginLinkJson;
     private String footerLinkJson;
     private String footerLinkJsonAfterLogin;
-    private String uploadFileInstruction;
     private String loginRedirectUrl;
     private String gaTrackingId;
     private String forgotPasswordPageInstruction;
@@ -95,14 +94,6 @@ public class FtlConfig {
         this.footerLinkJsonAfterLogin = footerLinkJsonAfterLogin;
     }
 
-    public String getUploadFileInstruction() {
-        return uploadFileInstruction;
-    }
-
-    public void setUploadFileInstruction(String uploadFileInstruction) {
-        this.uploadFileInstruction = uploadFileInstruction;
-    }
-
     public boolean isGaTrackingEnable() {
         return gaTrackingEnable;
     }
@@ -158,7 +149,6 @@ public class FtlConfig {
                 ", afterLoginLinkJson='" + afterLoginLinkJson + '\'' +
                 ", footerLinkJson='" + footerLinkJson + '\'' +
                 ", footerLinkJsonAfterLogin='" + footerLinkJsonAfterLogin + '\'' +
-                ", uploadFileInstruction='" + uploadFileInstruction + '\'' +
                 ", loginRedirectUrl='" + loginRedirectUrl + '\'' +
                 ", gaTrackingId='" + gaTrackingId + '\'' +
                 ", forgotPasswordPageInstruction='" + forgotPasswordPageInstruction + '\'' +

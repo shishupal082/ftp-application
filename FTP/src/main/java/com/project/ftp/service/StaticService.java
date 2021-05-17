@@ -5,8 +5,8 @@ import com.project.ftp.common.*;
 import com.project.ftp.config.*;
 import com.project.ftp.event.EventTracking;
 import com.project.ftp.exceptions.ErrorCodes;
-import com.project.ftp.obj.BackendConfig;
 import com.project.ftp.obj.PathInfo;
+import com.project.ftp.obj.yamlObj.BackendConfig;
 import com.project.ftp.parser.YamlFileParser;
 import com.project.ftp.pdf.TextToPdfService;
 import org.slf4j.Logger;
@@ -51,7 +51,7 @@ public class StaticService {
     public static String createUUIDNumber() {
         return sysUtils.createUUIDNumber();
     }
-    public static void initApplication(final AppConfig appConfig) {
+    public static void initApplication(final AppConfig appConfig, String relativeConfigFilePath) {
         FtpConfiguration ftpConfiguration = appConfig.getFtpConfiguration();
         ConfigService configService = new ConfigService(appConfig);
         configService.setPublicDir();
@@ -61,7 +61,8 @@ public class StaticService {
         }
         ftpConfiguration.setIndexPageReRoute(indexPageReRoute);
         TextToPdfService textToPdfService = new TextToPdfService();
-        if (ftpConfiguration.isCreateReadmePdf()) {
+        Boolean createReadMePdf = ftpConfiguration.isCreateReadmePdf();
+        if (createReadMePdf != null && createReadMePdf) {
             String textFilename, pdfFilename, pdfTitle, pdfSubject;
             textFilename = "readme.txt";
             pdfFilename = "readme.pdf";
@@ -79,7 +80,6 @@ public class StaticService {
             pdfSubject = "Help to use application.";
             textToPdfService.createPdf(textFilename, pdfFilename, pdfTitle, pdfSubject);
         }
-        String relativeConfigFilePath = appConfig.getConfigPath();
         if (relativeConfigFilePath == null || relativeConfigFilePath.isEmpty()) {
             logger.info("Relative config path is null or empty: {}", relativeConfigFilePath);
             return;
@@ -189,6 +189,9 @@ public class StaticService {
         String configDir = ftpConfiguration.getConfigDataFilePath();
         BackendConfig backendConfig = ftpConfiguration.getBackendConfig();
         ArrayList<String> rolesConfigPath = new ArrayList<>();
+        if (configDir == null) {
+            return rolesConfigPath;
+        }
         if (backendConfig != null && backendConfig.getRolesFileName() != null) {
             ArrayList<String> rolesFileName = backendConfig.getRolesFileName();
             if (rolesFileName.size() > 0) {
@@ -319,10 +322,14 @@ public class StaticService {
             sysUtils.printLog("logFilePath is not a file: {} " + pathInfo);
         }
     }
-    public static boolean isMysqlEnable(final String relativeConfigPath) {
-        String configFilePath = sysUtils.getProjectWorkingDir() + "/" + relativeConfigPath;
-        configFilePath = strUtils.replaceBackSlashToSlash(configFilePath);
-        return ymlFileParser.isMysqlEnable(configFilePath);
+    public static boolean isMysqlEnable(final ArrayList<String> commandLineArg) {
+        if (commandLineArg == null) {
+            return  false;
+        }
+        if (commandLineArg.size() < AppConstant.CMD_LINE_ARG_MIN_SIZE) {
+            return  false;
+        }
+        return AppConstant.TRUE.equals(commandLineArg.get(AppConstant.CMD_LINE_ARG_IS_MYSQL_ENABLE));
     }
     public static String getProjectWorkingDir() {
         String projectWorkingDirectory = sysUtils.getProjectWorkingDir();
@@ -439,7 +446,7 @@ public class StaticService {
         ErrorCodes errorCodes = ErrorCodes.FORGOT_PASSWORD_REPEAT_REQUEST;
         String message = errorCodes.getErrorString();
         BackendConfig backendConfig = appConfig.getFtpConfiguration().getBackendConfig();
-        if (StaticService.isValidString(backendConfig.getForgotPasswordMessage())) {
+        if (backendConfig != null && StaticService.isValidString(backendConfig.getForgotPasswordMessage())) {
             message = backendConfig.getForgotPasswordMessage();
         }
         return message;

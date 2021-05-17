@@ -990,6 +990,69 @@ Config added in env_config.yaml
 Only UI change
     - display footer link based on role dynamically
 
+
+8.0.0.1 (2021-05-15)
+---------------------
+Read isMySqlEnable parameter (true or false) from command line
+    - removed it from env_config.yml
+
+Added support for adding multiple config files
+    - read all config files and merge into FtpConfiguration config
+
+Command line argument
+java -jar meta-data/FTP-*-SNAPSHOT.jar <serverName> <isMySqlEnable> <config file 1> <config file 2> ...
+
+Config parameter which are required in 1st config file
+    - logFilePath
+    - server
+    - database
+
+Removed configParameter
+isMySqlEnable: true/false
+ftlConfig:
+    uploadFileInstruction: "Instruction"
+    #  uploadFileInstruction: "(Supported type: pdf,jpeg,jpg and png, max size < 10MB)"
+
+Added configParameter
+loginRedirectMapping:
+  isAdminUser: "/view/resource"
+  isDevUser: "/dashboard"
+backendConfig:
+    addTextV2TimeStamp: "yyyy-MM-dd HH:mm:ss.SSS','"
+
+Changed configParameter
+backendConfig:
+    fileNotFoundMapping: changed from string to array
+
+
+Now loginRedirectUrl link will go along with login request
+
+Sending loginUserDetails in following api
+    - login_user
+    - register_user
+    - create_password
+    - change_password
+
+Added api
+    - /api/add_text_v2 [Post]
+    - Add array text in file given by user and insert current timestamp in each line
+
+Removed page view (This can be implemented using pageNotFoundConfig)
+    - /dashboard
+    - /upload_file
+    - /users_control
+
+Now available pages in AppResource
+    - /login
+    - /logout
+    - /register
+    - /change_password
+    - /create_password
+    - /forgot_password
+    - /view/resource
+    - /view/file/{username}/{filename2}
+    - /download/file/{username}/{filename2}
+
 Future releases
 -------------------
 

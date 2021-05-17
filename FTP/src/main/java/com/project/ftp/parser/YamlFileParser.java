@@ -6,9 +6,9 @@ import com.project.ftp.FtpConfiguration;
 import com.project.ftp.config.AppConfig;
 import com.project.ftp.helper.AppConfigHelper;
 import com.project.ftp.obj.LoginUserDetails;
-import com.project.ftp.obj.Page404Entry;
-import com.project.ftp.obj.PageConfig404;
 import com.project.ftp.obj.PreRunConfig;
+import com.project.ftp.obj.yamlObj.Page404Entry;
+import com.project.ftp.obj.yamlObj.PageConfig404;
 import com.project.ftp.service.StaticService;
 import com.project.ftp.service.UserService;
 import org.slf4j.Logger;
@@ -16,6 +16,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -45,15 +46,20 @@ public class YamlFileParser {
         }
         return null;
     }
-    public boolean isMysqlEnable(String configFilePath) {
-        if (configFilePath == null) {
-            return false;
+    public FtpConfiguration getFtpConfigurationFromPath(String relativeConfigPath) {
+        String projectWorkingDir = StaticService.getProjectWorkingDir();
+        if (relativeConfigPath == null) {
+            return null;
         }
-        PreRunConfig preRunConfig = this.getPreRunConfig(configFilePath);
-        if (preRunConfig != null) {
-            return preRunConfig.isMysqlEnable();
+        FtpConfiguration ftpConfiguration = null;
+        ObjectMapper objectMapper = new ObjectMapper(new YAMLFactory());
+        String pathname = projectWorkingDir + "/" + relativeConfigPath;
+        try {
+            ftpConfiguration = objectMapper.readValue(new File(pathname), FtpConfiguration.class);
+        } catch (IOException ioe) {
+            StaticService.printLog("IOE : for file : " + pathname);
         }
-        return false;
+        return ftpConfiguration;
     }
     private String get404Filename(UserService userService, LoginUserDetails userDetails, Page404Entry page404Entry) {
         String filename = null;
@@ -71,13 +77,10 @@ public class YamlFileParser {
         }
         return filename;
     }
-    public PageConfig404 getPageConfig404(AppConfig appConfig) {
-        FtpConfiguration ftpConfiguration = appConfig.getFtpConfiguration();
-        String filePath = ftpConfiguration.getConfigDataFilePath();
+    private PageConfig404 getPageConfig404ByFilepath(String filePath) {
         if (StaticService.isInValidString(filePath)) {
             return null;
         }
-        filePath += AppConfigHelper.getFileNotFoundMapping(appConfig);
         PageConfig404 pageConfig404 = null;
         ObjectMapper objectMapper = new ObjectMapper(new YAMLFactory());
         try {
@@ -101,6 +104,21 @@ public class YamlFileParser {
                     el.setValue(page404Entry);
                 }
             }
+        }
+        return pageConfig404;
+    }
+    public PageConfig404 getPageConfig404(AppConfig appConfig) {
+        FtpConfiguration ftpConfiguration = appConfig.getFtpConfiguration();
+        String configDataFilePath = ftpConfiguration.getConfigDataFilePath();
+        if (StaticService.isInValidString(configDataFilePath)) {
+            return null;
+        }
+        ArrayList<String> fileNotFoundConfigFiles = AppConfigHelper.getFileNotFoundMapping(appConfig);
+        PageConfig404 pageConfig404 = new PageConfig404();
+        PageConfig404 tempPageConfig404;
+        for(int i=0; i<fileNotFoundConfigFiles.size(); i++) {
+            tempPageConfig404 = this.getPageConfig404ByFilepath(configDataFilePath + fileNotFoundConfigFiles.get(i));
+            pageConfig404.update(tempPageConfig404);
         }
         return pageConfig404;
     }

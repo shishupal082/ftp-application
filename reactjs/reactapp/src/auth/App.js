@@ -4,7 +4,7 @@ import $S from "../interface/stack.js";
 
 import Template from "./common/Template";
 import Config from "./common/Config";
-import FTPHelper from "./common/FTPHelper";
+import FTPHelper from "./common/AuthHelper";
 import PageData from "./common/PageData";
 
 import RenderComponent from "./component/RenderComponent";
@@ -53,12 +53,6 @@ Data.setData("userDisplayName", userDisplayName);
 
 PageData.setData("ui.username", userName);
 
-if (!isAdminTextDisplayEnable) {
-    PageData.setData("dashboard.orderBy", "orderByUsername");
-} else {
-    PageData.setData("dashboard.orderBy", "orderByDate");
-}
-
 function checkAndroid() {
     var isAndroid = PageData.isAndroid();
     if (isAndroid) {
@@ -98,13 +92,7 @@ class App extends React.Component {
         PageData.handleInputChange(e);
     }
     dropDownChange(e) {
-        // alert(e.currentTarget.value);
-        var self = this;
-        PageData.handleDropDownChange(e, Data, function(setRenderField) {
-            if ($S.isBooleanTrue(setRenderField)) {
-                self.setRenderField();
-            }
-        });
+        // var self = this;
     }
     setRenderField(isLoading) {
         var renderField = [];
@@ -130,21 +118,7 @@ class App extends React.Component {
         if (redirectStatus) {
             return;
         }
-        // var renderField = [];
-        // renderField.push(Data.getTemplate("loading", {}));
-        // this.setState({renderField: renderField});
-        var self = this;
-        self.setRenderField(true);
-        /**
-        if (currentPageName === "upload_file") {
-            FTPHelper.loadStaticData(Data, function() {
-                self.setRenderField();
-            });
-        }
-        */
-        FTPHelper.loadPageData(Data, function() {
-            self.setRenderField();
-        });
+        this.setRenderField();
     }
     render() {
         var renderFieldRow = this.state.renderField;

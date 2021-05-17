@@ -8,8 +8,10 @@ import com.project.ftp.exceptions.AppException;
 import com.project.ftp.exceptions.ErrorCodes;
 import com.project.ftp.helper.AppConfigHelper;
 import com.project.ftp.obj.*;
+import com.project.ftp.obj.yamlObj.BackendConfig;
+import com.project.ftp.obj.yamlObj.Page404Entry;
+import com.project.ftp.obj.yamlObj.PageConfig404;
 import com.project.ftp.parser.TextFileParser;
-import com.project.ftp.parser.YamlFileParser;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -459,10 +461,10 @@ public class FileServiceV2 {
             throw new AppException(ErrorCodes.CONFIG_ERROR);
         }
         PathInfo pathInfo = fileService.getPathInfo(saveDir + fileDetail.getFilepath());
-        boolean permanentlyDeleteFile = appConfig.getFtpConfiguration().isPermanentlyDeleteFile();
+        Boolean permanentlyDeleteFile = appConfig.getFtpConfiguration().isPermanentlyDeleteFile();
         Boolean fileDeleteStatus;
         if (AppConstant.FILE.equals(pathInfo.getType())) {
-            if (permanentlyDeleteFile) {
+            if (permanentlyDeleteFile != null && permanentlyDeleteFile) {
                 logger.info("Permanently deleting file: {}", fileDetail);
                 fileDeleteStatus = fileService.deleteFileV2(pathInfo.getPath());
             } else {
@@ -630,8 +632,7 @@ public class FileServiceV2 {
         if (filePath == null) {
             return null;
         }
-        YamlFileParser yamlFileParser = new YamlFileParser();
-        PageConfig404 pageConfig404 = yamlFileParser.getPageConfig404(appConfig);
+        PageConfig404 pageConfig404 = appConfig.getPageConfig404();
         Page404Entry page404Entry;
         if (pageConfig404 != null) {
             page404Entry = this.getFileNotFoundMapping(pageConfig404, filePath);
@@ -805,7 +806,18 @@ public class FileServiceV2 {
                 pathInfo.getFileName(), subject, heading);
         return new ApiResponse(pathInfo);
     }
-    public ApiResponse addText(LoginUserDetails userDetails, RequestAddText addText) throws AppException {
+    private String getAddTextV2TimeStamp() {
+        String timeStampPattern;
+        BackendConfig backendConfig = appConfig.getFtpConfiguration().getBackendConfig();
+        if (backendConfig != null) {
+            timeStampPattern = backendConfig.getAddTextV2TimeStamp();
+            if (timeStampPattern != null && !timeStampPattern.isEmpty()) {
+                return timeStampPattern;
+            }
+        }
+        return AppConstant.DateTimeFormat7;
+    }
+    public ApiResponse addText(LoginUserDetails userDetails, RequestAddText addText, boolean isV2) throws AppException {
         if (addText == null) {
             logger.info("Invalid addText request: null");
             throw new AppException(ErrorCodes.BAD_REQUEST_ERROR);
@@ -857,8 +869,15 @@ public class FileServiceV2 {
         }
         if (fileExist) {
             TextFileParser textFileParser = new TextFileParser(filePath);
+            String currentTimeStamp, timeStampPattern;
+            timeStampPattern = this.getAddTextV2TimeStamp();
             for (String str : textData) {
-                textFileParser.addText(str);
+                if (isV2) {
+                    currentTimeStamp = StaticService.getDateStrFromPattern(timeStampPattern);
+                    textFileParser.addText(currentTimeStamp + str);
+                } else {
+                    textFileParser.addText(str);
+                }
             }
             this.generateFileDetailsForAddText(username, filename, addText.getSubject(), addText.getHeading());
             return new ApiResponse();

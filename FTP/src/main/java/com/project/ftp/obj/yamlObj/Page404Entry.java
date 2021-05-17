@@ -1,4 +1,4 @@
-package com.project.ftp.obj;
+package com.project.ftp.obj.yamlObj;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 

@@ -18,12 +18,7 @@ logging:
 #      maxFileSize: 1MB
       archivedFileCount: 5 #Number of day archived file to be present
 
-
 logFilePath: "F:/ftp-app/log/"
-fileSaveDir: "D:/workspace/project/ftp-app/saved-files/"
-#configDataFilePath: "D:/workspace/project/ftp-app/config-files/"
-configDataFilePath: "D:/workspace/ftp-application/FTP/meta-data/config-files/"
-
 
 server:
   type: simple
@@ -34,48 +29,6 @@ server:
     type: http
   rootPath: /*
 
-cookieName: "ftp-cookie-8080"
-
-supportedFileType:
-  - pdf
-  - txt
-  - docx
-  - doc
-  - xlsx
-  - xls
-  - pptx
-  - ppt
-  - mp3
-  - 3gp
-  - mp4
-  - exe
-  - jpeg
-  - jpg
-  - png
-
-
-fileDeleteAccess: "self" #self or admin or self_admin
-permanentlyDeleteFile: false #File will saved in trash folder
-maxFileSize: 10240001 #i.e. #i.e. 2048000 = 2048 kB = 2MB, 10240001 = 10MB
-uploadFileApiVersion: v2 #(v1|v2)
-aesEncryptionPassword: "1234"
-
-emailConfig:
-  enable: false
-  senderEmail: "username@gmail.com"
-  senderPassword: "password"
-
-createPasswordEmailConfig:
-  createPasswordLink: "http://localhost:8080/create_password"
-  createPasswordSubject: "Forgot your password?"
-  createPasswordMessage: '<div>
-                                <div>Dear <b>%s</b>,</div>
-                                <br></br><div>Please find OTP for creating new password: <b>%s</b></div>
-                                <br></br><div><a href="%s">Click here</a> for creating new password or, open %s</div>
-                                <br></br><div>Please do not reply to this email.</div>
-                             </div>'
-
-mysqlEnable: true
 # Database settings.
 database:
   # the name of the JDBC driver, mysql in our case
@@ -87,59 +40,3 @@ database:
   # the JDBC URL; the database is called DWGettingStarted
   url: jdbc:mysql://localhost:3306/ftpapp?autoReconnect=true&useSSL=false&allowPublicKeyRetrieval=true
 
-backendConfig:
-  #  forgotPasswordMessage: "Forgot password request submitted, Please check your email."
-  forgotPasswordMessage: "Forgot password request submitted, Please create password."
-  loadRoleStatusOnPageLoad: "FromRoleConfig" #"isAdminUser" #FromRoleConfig
-  forgotPasswordEnable: true
-  rolesFileName:
-    - roles/roles.yml
-    - roles/roles_2.yml
-  eventDataFilenamePattern: "'event_data/'yyyy-MM-dd-HH-mm'-event_data.csv'"
-  userDataFilename: "user_data.csv"
-  fileDataFilename: "file_details.csv"
-  fileNotFoundMapping: "file_not_found_config.yml"
-  staticDataFilename: "app_static_data.json"
-  rateLimitThreshold: 2
-
-
-ftlConfig:
-  description: "FTP Application description"
-  keywords: "FTP Application, File upload, PDF, JPEG, JPG, PNG"
-  author: "FTP Application Author"
-  title: "FTP Application"
-  loginRedirectUrl: "/dashboard"
-  gaTrackingId: "UA-177553408-1" # for development
-  gaTrackingEnable: true
-  uploadFileInstruction: "(Supported type: pdf,jpeg,jpg and png, max size < 10MB)"
-#  forgotPasswordPageInstruction: "Please contact admin."
-  forgotPasswordPageInstruction: "Please contact admin to get create password otp."
-  createPasswordOtpInstruction: "(Receive from admin)"
-#  createPasswordOtpInstruction: "(Check your email)"
-  headingJson: '[{"tag":"div.center.table.tbody.tr","className":"heading","text":[{"tag":"td","text":{"tag":"img","className":"w-55px","src":"/assets/static/img/railwayslogo-128.png"}},{"tag":"td","className":"text-center pl-5px","text":[{"tag":"div","text":"Heading Line 1 (config)"},{"tag":"div","text":"Larger Heading Line 2 Row"}]}]}]'
-  afterLoginLinkJson: '[{"tag":"div.center","text":[{"tag":"a","href":"/dashboard","name":"link.dashboard","className":"p-5px","text":"Dashboard"},{"tag":"a","href":"/change_password","name":"link.change_password","className":"p-5px","text":"Change Password"},{"tag":"a","href":"/upload_file","name":"link.upload_file","className":"p-5px","text":"Upload File"},{"tag":"a","name":"link.logout","href":"/logout","className":"p-5px","text":"Logout"}]},{"tag":"div.center","text":[{"tag":"span","text":"Login as(Config)"},{"tag":"span","className":"small","name":"link.is-admin","text":" (Admin)"},{"tag":"span","className":"","text":":"},{"tag":"b","name":"link.loginAs","text":""}]}]'
-  footerLinkJson: '[{"tag":"div.center","text":[{"tag":"a","href":"/users_control","name":"footerLink.users_control","className":"p-5px d-none","text":"Users Control"}]}]'
-  footerLinkJsonAfterLogin: '[{"tag":"div.center","text":[{"tag":"a","href":"/users_control","name":"footerLink.users_control","className":"p-5px d-none","text":"Users Control"}]}]'
-
-# Optional parameter
-indexPageReRoute: /login
-filenameFormat: "yyyy-MM-dd-HH-mm'-filename'"
-instance: DevComputer
-guestEnable: false
-
-# Only for development purpose
-createReadmePdf: true
-appRestartCommand: "sh app_run.bat" # not required for now
-publicDir: "../.."
-publicPostDir: "/project"
-allowedOrigin:
-  - http://localhost
-  - http://127.0.0.1:9000
-  - http://127.0.0.1:8080
-  - http://localhost:9000
-  - http://localhost:8080
-  - http://localhost:9080
-  - chrome-extension://fhbjgbiflinjbdggehcddcbncdddomop
-
-tempConfig:
-  username: U1

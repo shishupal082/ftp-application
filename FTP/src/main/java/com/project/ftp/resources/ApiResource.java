@@ -332,7 +332,7 @@ public class ApiResource {
         try {
             authService.isLogin(request);
             LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
-            response = fileServiceV2.addText(loginUserDetails, addText);
+            response = fileServiceV2.addText(loginUserDetails, addText, false);
             eventTracking.trackSuccessEventV2(request, EventName.ADD_TEXT, comment);
         } catch (AppException ae) {
             logger.info("Error in addText: {}", ae.getErrorCode().getErrorCode());
@@ -340,6 +340,29 @@ public class ApiResource {
             eventTracking.trackFailureEventV2(request, EventName.ADD_TEXT, ae.getErrorCode(), comment);
         }
         logger.info("addText : Out {}", response);
+        return response;
+    }
+    @POST
+    @Path("/add_text_v2")
+    @UnitOfWork
+    public ApiResponse addTextV2(@Context HttpServletRequest request, RequestAddText addText) {
+        logger.info("addTextV2: In, data: {}, user: {}", addText, userService.getUserDataForLogging(request));
+        String comment = null;
+        if (addText != null) {
+            comment = addText.toString();
+        }
+        ApiResponse response;
+        try {
+            authService.isLogin(request);
+            LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
+            response = fileServiceV2.addText(loginUserDetails, addText, true);
+            eventTracking.trackSuccessEventV2(request, EventName.ADD_TEXT_V2, comment);
+        } catch (AppException ae) {
+            logger.info("Error in addTextV2: {}", ae.getErrorCode().getErrorCode());
+            response = new ApiResponse(ae.getErrorCode());
+            eventTracking.trackFailureEventV2(request, EventName.ADD_TEXT_V2, ae.getErrorCode(), comment);
+        }
+        logger.info("addTextV2 : Out {}", response);
         return response;
     }
     @GET
@@ -433,7 +456,6 @@ public class ApiResource {
             eventTracking.trackLoginFailure(httpServletRequest, userLogin, ae.getErrorCode());
             response = new ApiResponse(ae.getErrorCode());
         }
-        response.setData(username);
         logger.info("loginUser : Out: {}", response);
         return response;
     }
@@ -458,15 +480,14 @@ public class ApiResource {
             return response;
         }
         try {
-            userService.userRegister(httpServletRequest, userRegister);
-            response = new ApiResponse();
+            LoginUserDetails loginUserDetails = userService.userRegister(httpServletRequest, userRegister);
+            response = new ApiResponse(loginUserDetails);
             eventTracking.addSuccessRegister(httpServletRequest, userRegister);
         } catch (AppException ae) {
             logger.info("Error in register user: {}", ae.getErrorCode().getErrorCode());
             eventTracking.trackRegisterFailure(httpServletRequest, userRegister, ae.getErrorCode());
             response = new ApiResponse(ae.getErrorCode());
         }
-        response.setData(username);
         logger.info("registerUser : Out: {}", response);
         return response;
     }
@@ -502,8 +523,8 @@ public class ApiResource {
         ApiResponse response;
         try {
             authService.isLogin(httpServletRequest);
-            userService.changePassword(httpServletRequest, request);
-            response = new ApiResponse();
+            LoginUserDetails loginUserDetails = userService.changePassword(httpServletRequest, request);
+            response = new ApiResponse(loginUserDetails);
             eventTracking.trackChangePasswordSuccess(httpServletRequest, uiUsername);
         } catch (AppException ae) {
             logger.info("Error in change password: {}", ae.getErrorCode().getErrorCode());
@@ -558,16 +579,15 @@ public class ApiResource {
             return response;
         }
         try {
-            userService.createPassword(request, requestCreatePassword);
-            response = new ApiResponse();
+            LoginUserDetails loginUserDetails = userService.createPassword(request, requestCreatePassword);
+            response = new ApiResponse(loginUserDetails);
             eventTracking.trackCreatePasswordSuccess(request, requestCreatePassword);
         } catch (AppException ae) {
             logger.info("Error in change password: {}", ae.getErrorCode().getErrorCode());
             eventTracking.trackCreatePasswordFailure(request, requestCreatePassword, ae.getErrorCode());
             response = new ApiResponse(ae.getErrorCode());
         }
-        response.setData(username);
-        logger.info("createPassword : Out");
+        logger.info("createPassword : Out: {}", response);
         return response;
     }
     @GET

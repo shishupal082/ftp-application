@@ -2,10 +2,12 @@ package com.project.ftp.helper;
 
 import com.project.ftp.config.AppConfig;
 import com.project.ftp.config.AppConstant;
-import com.project.ftp.obj.BackendConfig;
+import com.project.ftp.obj.yamlObj.BackendConfig;
 import com.project.ftp.service.StaticService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.ArrayList;
 
 public class AppConfigHelper {
     private final static Logger logger = LoggerFactory.getLogger(AppConfigHelper.class);
@@ -48,17 +50,16 @@ public class AppConfigHelper {
         }
         return AppConstant.FILE_DATA_FILENAME;
     }
-    public static String getFileNotFoundMapping(final AppConfig appConfig) {
+    public static ArrayList<String> getFileNotFoundMapping(final AppConfig appConfig) {
         BackendConfig backendConfig = appConfig.getFtpConfiguration().getBackendConfig();
-        String resultFilename = null;
-        boolean isValidFilename = false;
+        ArrayList<String> result = null;
         if (backendConfig != null) {
-            resultFilename = backendConfig.getFileNotFoundMapping();
-            isValidFilename = StaticService.isValidString(resultFilename);
+            result = backendConfig.getFileNotFoundMapping();
         }
-        if (isValidFilename) {
-            return resultFilename;
+        if (result == null) {
+            result = new ArrayList<>();
+            result.add(AppConstant.FILE_NOT_FOUND_MAPPING);
         }
-        return AppConstant.FILE_NOT_FOUND_MAPPING;
+        return result;
     }
 }

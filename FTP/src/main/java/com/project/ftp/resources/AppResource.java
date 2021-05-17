@@ -161,16 +161,6 @@ public class AppResource {
         return new CommonView("page_not_found_404.ftl", appConfig);
     }
     @GET
-    @Path("/dashboard")
-    public AppView dashboard(@Context HttpServletRequest request) {
-        return new AppView(request, appViewFtlFileName,"dashboard", userService, appConfig);
-    }
-    @GET
-    @Path("/users_control")
-    public AppView usersControl(@Context HttpServletRequest request) {
-        return new AppView(request, appViewFtlFileName,"users_control", userService, appConfig);
-    }
-    @GET
     @Path("/login")
     public AppView login(@Context HttpServletRequest request) {
         return new AppView(request, appViewFtlFileName, "login", userService, appConfig);
@@ -189,11 +179,6 @@ public class AppResource {
     public AppView register(@Context HttpServletRequest request) {
         eventTracking.trackLandingPage(request, EventName.REGISTER);
         return new AppView(request, appViewFtlFileName, "register", userService, appConfig);
-    }
-    @GET
-    @Path("/upload_file")
-    public AppView uploadFile(@Context HttpServletRequest request) {
-        return new AppView(request, appViewFtlFileName, "upload_file", userService, appConfig);
     }
     @GET
     @Path("/change_password")

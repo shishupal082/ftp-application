@@ -1525,6 +1525,62 @@ Stack.extend({
         }
         return str;
     },
+    sortResult: function(requestedArray, sortableValue, sortableName, searchName, defaultValue) {
+        if (!isString(searchName)) {
+            searchName = "";
+        }
+        if (!isNumber(defaultValue)) {
+            defaultValue = "";
+        }
+        if (isArray(requestedArray) && isString(sortableName) && isString(sortableValue) && sortableName.length > 0 && sortableValue.length > 0) {
+            requestedArray = requestedArray.sort(function(a, b) {
+                var i, aName = null, bName = null, temp;
+                if (isArray(a)) {
+                    for (i=0; i<a.length; i++) {
+                        if (sortableName === a[i][searchName]) {
+                            aName = a[i]["value"];
+                            break;
+                        }
+                    }
+                } else if (isObject(a)) {
+                    aName = a[sortableName];
+                } else {
+                    aName = a;
+                }
+                if (isUndefined(aName)) {
+                    aName = defaultValue;
+                }
+                if (isArray(b)) {
+                    for (i=0; i<b.length; i++) {
+                        if (sortableName === b[i][searchName]) {
+                            bName = b[i]["value"];
+                            break;
+                        }
+                    }
+                } else if (isObject(b)) {
+                    bName = b[sortableName];
+                } else {
+                    bName = b;
+                }
+                if (isUndefined(bName)) {
+                    bName = defaultValue;
+                }
+                if (sortableValue === "ascending") {
+                    temp = aName;
+                    aName = bName;
+                    bName = temp;
+                }
+                if (aName < bName) {
+                    return 1;
+                } else if (aName > bName) {
+                    return -1;
+                } else {
+                    return 0;
+                }
+            });
+        }
+        return requestedArray;
+    },
     searchItems: function(searchingPattern, allData, searchByPattern, isRevert, modifier, isTrue) {
         if (!isArray(searchingPattern) || !isArray(allData)) {
             return [];
@@ -1576,18 +1632,28 @@ Stack.extend({
         });
         return result;
     },
-    findParam: function(availableItems, key, defaultValue) {
+    findParam: function(availableItems, key, defaultValue, searchName, searchValue) {
         if (!isArray(availableItems)) {
             return defaultValue;
         }
         if (!isString(key) || key.length === 0) {
             return defaultValue;
         }
+        if (!isString(searchName) || searchName.length === 0) {
+            searchName = "";
+        }
+        if (!isString(searchValue) || searchValue.length === 0) {
+            searchValue = "";
+        }
         for (var i = 0; i < availableItems.length; i++) {
             if (!isObject(availableItems[i])) {
                 continue;
             }
-            if (!isUndefined(availableItems[i][key])) {
+            if (searchName !== "" && searchValue !== "") {
+                if (availableItems[i][searchName] === key) {
+                    return availableItems[i][searchValue];
+                }
+            } else if (!isUndefined(availableItems[i][key])) {
                 return availableItems[i][key]
             }
         }

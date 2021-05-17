@@ -1,6 +1,10 @@
-package com.project.ftp.obj;
+package com.project.ftp.obj.yamlObj;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import java.util.ArrayList;
+
+@JsonIgnoreProperties(ignoreUnknown = true)
 
 public class BackendConfig {
     private String forgotPasswordMessage;
@@ -9,10 +13,11 @@ public class BackendConfig {
     private String eventDataFilenamePattern;
     private String userDataFilename;
     private String fileDataFilename;
-    private String fileNotFoundMapping;
     private String staticDataFilename;
+    private String addTextV2TimeStamp;
+    private ArrayList<String> fileNotFoundMapping;
     private ArrayList<String> rolesFileName;
-    private Integer rateLimitThreshold;// used for register and create_password
+    private int rateLimitThreshold;// used for register and create_password
 
     public BackendConfig() {}
 
@@ -48,11 +53,11 @@ public class BackendConfig {
         this.rolesFileName = rolesFileName;
     }
 
-    public Integer getRateLimitThreshold() {
+    public int getRateLimitThreshold() {
         return rateLimitThreshold;
     }
 
-    public void setRateLimitThreshold(Integer rateLimitThreshold) {
+    public void setRateLimitThreshold(int rateLimitThreshold) {
         this.rateLimitThreshold = rateLimitThreshold;
     }
 
@@ -80,11 +85,19 @@ public class BackendConfig {
         this.fileDataFilename = fileDataFilename;
     }
 
-    public String getFileNotFoundMapping() {
+    public String getAddTextV2TimeStamp() {
+        return addTextV2TimeStamp;
+    }
+
+    public void setAddTextV2TimeStamp(String addTextV2TimeStamp) {
+        this.addTextV2TimeStamp = addTextV2TimeStamp;
+    }
+
+    public ArrayList<String> getFileNotFoundMapping() {
         return fileNotFoundMapping;
     }
 
-    public void setFileNotFoundMapping(String fileNotFoundMapping) {
+    public void setFileNotFoundMapping(ArrayList<String> fileNotFoundMapping) {
         this.fileNotFoundMapping = fileNotFoundMapping;
     }
 
@@ -105,8 +118,9 @@ public class BackendConfig {
                 ", eventDataFilenamePattern='" + eventDataFilenamePattern + '\'' +
                 ", userDataFilename='" + userDataFilename + '\'' +
                 ", fileDataFilename='" + fileDataFilename + '\'' +
-                ", fileNotFoundMapping='" + fileNotFoundMapping + '\'' +
                 ", staticDataFilename='" + staticDataFilename + '\'' +
+                ", addTextV2TimeStamp='" + addTextV2TimeStamp + '\'' +
+                ", fileNotFoundMapping=" + fileNotFoundMapping +
                 ", rolesFileName=" + rolesFileName +
                 ", rateLimitThreshold=" + rateLimitThreshold +
                 '}';

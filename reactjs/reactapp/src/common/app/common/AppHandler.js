@@ -34,6 +34,16 @@ AppHandler.extend({
         } else {
             window.location.href = url;
         }
+    },
+    LazyReload: function(delay) {
+        // standard value of delay = 250 (i.e. 250ms)
+        if ($S.isNumber(delay)) {
+            window.setTimeout(function() {
+                window.location.reload();
+            }, delay);
+        } else {
+            window.location.reload();
+        }
     }
 });
 AppHandler.extend({
@@ -98,6 +108,7 @@ AppHandler.extend({
             allDate = allDateStr;
         }
         var i, temp, heading, startDate, endDate;
+        var isDateHeadingChanged;
         /*Daily Date Selection*/
         for (i=0; i<allDate.length; i++) {
             temp = allDate[i];
@@ -109,18 +120,24 @@ AppHandler.extend({
         for (i=0; i<allDate.length; i++) {
             dObj = DT.getDateObj(allDate[i]);
             if (dObj !== null) {
-                dObj.setDate(1);
                 heading = DT.formateDateTime("MMM/ /YYYY", "/", dObj);
-                startDate = DT.formateDateTime("YYYY/-/MM/-/DD/ 00:00", "/", dObj);
-                dObj.setMonth(dObj.getMonth()+1);
-                dObj.setDate(0);
                 endDate = DT.formateDateTime("YYYY/-/MM/-/DD/ 23:59", "/", dObj);
+                if (temp.indexOf(heading) < 0) {
+                    isDateHeadingChanged = true;
+                } else {
+                    isDateHeadingChanged = false;
+                }
+                if (isDateHeadingChanged) {
+                    startDate = DT.formateDateTime("YYYY/-/MM/-/DD/ 00:00", "/", dObj);
+                }
             } else {
                 continue;
             }
             if (temp.indexOf(heading) < 0) {
                 monthlyDateSelection.push({"dateRange": [startDate, endDate], "dateHeading": heading});
                 temp.push(heading);
+            } else {
+                monthlyDateSelection[monthlyDateSelection.length-1]["dateRange"][1] = endDate;
             }
         }
         /*Yearly Date Selection*/
@@ -128,16 +145,24 @@ AppHandler.extend({
         for (i=0; i<allDate.length; i++) {
             dObj = DT.getDateObj(allDate[i]);
             if (dObj !== null) {
-                dObj.setDate(1);
                 heading = DT.formateDateTime("YYYY", "/", dObj);
-                startDate = heading +"-01-01 00:00";
-                endDate = heading +"-12-31 23:59";
+                endDate = DT.formateDateTime("YYYY/-/MM/-/DD/ 23:59", "/", dObj);
+                if (temp.indexOf(heading) < 0) {
+                    isDateHeadingChanged = true;
+                } else {
+                    isDateHeadingChanged = false;
+                }
+                if (isDateHeadingChanged) {
+                    startDate = DT.formateDateTime("YYYY/-/MM/-/DD/ 00:00", "/", dObj);
+                }
             } else {
                 continue;
             }
             if (temp.indexOf(heading) < 0) {
                 yearlyDateSelection.push({"dateRange": [startDate, endDate], "dateHeading": heading});
                 temp.push(heading);
+            } else {
+                yearlyDateSelection[yearlyDateSelection.length-1]["dateRange"][1] = endDate;
             }
         }
         /*All Date Selection*/
@@ -152,7 +177,16 @@ AppHandler.extend({
         return combinedDateSelectionParameter;
     }
 });
-
+AppHandler.extend({
+    HandleToggleClick: function(appStateCallback, appDataCallback, oldValue) {
+        var newValue = true;
+        if ($S.isBooleanTrue(oldValue)) {
+            newValue = false;
+        }
+        appDataCallback("disableFooterV2", newValue);
+        appStateCallback();
+    }
+});
 AppHandler.extend({
     // single select filter data
     getFilterData: function(selectionOptions) {
@@ -377,7 +411,6 @@ AppHandler.extend({
     }
 });
 
-
 AppHandler.extend({
     LoadDataFromRequestApi: function(request, callback) {
         if (!$S.isArray(request) || request.length < 1) {
@@ -448,6 +481,7 @@ AppHandler.extend({
                         request[j].response.push(response);
                     }
                 }
+                // fireCallback();
             }, function() {
                 fireCallback();
             }, request[i].apiName, request[i].requestMethod);
@@ -668,7 +702,7 @@ AppHandler.extend({
                 temp = temp.trim();
                 temp2 = getFilterText(csvData[i], tempFilterOptions[filterKeys[j]].dataDisplay);
                 if (!$S.isString(temp2)) {
-                    temp2 = temp;
+                    temp2 = $S.capitalize(temp);
                 }
                 if (tempFilterOptions[filterKeys[j]].possibleIds.indexOf(temp) < 0) {
                     tempFilterOptions[filterKeys[j]].possibleIds.push(temp);

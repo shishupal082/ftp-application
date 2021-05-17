@@ -23,7 +23,7 @@
     -->
     <title>React App FTP</title>
     <link rel="stylesheet" type="text/css" href="/assets/static/libs/bootstrap-v4.4.1.css">
-    <link rel="stylesheet" type="text/css" href="/assets/static/dist-ftp-app/style.css">
+    <link rel="stylesheet" type="text/css" href="/assets/static/dist-auth-app/style.css">
     <script async src="https://www.googletagmanager.com/gtag/js?id=UA-177553408-1"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
@@ -36,15 +36,13 @@
     <noscript>You need to enable JavaScript to run this app.</noscript>
     <div style="display: none;">
       <input type="hidden" style="display: none;" name="pageData" id="pageData"
-        value="page=dashboard,app_version=x.y.z.p,upload_file_api_version=v1,is_guest_enable=false,is_forgot_password_enable=true,display_create_password_link=true"/>
+        value="page=change_password,app_version=x.y.z.p,is_guest_enable=false,is_forgot_password_enable=true,display_create_password_link=true"/>
       <input type="hidden" style="display: none;" name="loginUserDetailsV2Str" id="loginUserDetailsV2Str" value='{"username":"XYZ","isLogin":"true","displayName":"","isAdminTextDisplayEnable":"true", "isAddTextEnable":"true","isUploadFileEnable":"true","isUsersControlEnable":"true","attendanceUser":"true"}'/>
       <input type="hidden" style="display: none;" name="headingJson" id="headingJson" value="Loading from env_config"/>
       <input type="hidden" style="display: none;" name="afterLoginLinkJson" id="afterLoginLinkJson" value='Loading from env_config'/>
       <input type="hidden" style="display: none;" name="footerLinkJson" id="footerLinkJson" value='[{"tag": "div.center", "text": "Footer link before login"}]'/>
       <input type="hidden" style="display: none;" name="footerLinkJsonAfterLogin" id="footerLinkJsonAfterLogin" value='[{"tag":"div.center","text":[{"tag":"a","href":"/users_control","name":"isUsersControlEnable","className":"p-5px d-none","text":"Users Control"},{"tag":"a","href":"/app/attendancev2","name":"attendanceUser","className":"p-5px d-none","text":"Attendance"}]}]'/>
-      <input type="hidden" style="display: none;" name="loginRedirectUrl" id="loginRedirectUrl" value="/dashboard"/>
-      <input type="hidden" style="display: none;" name="uploadFileInstruction" id="uploadFileInstruction"
-        value="(Supported type: pdf,jpeg,jpg and png, max size < 10MB)"/>
+      <input type="hidden" style="display: none;" name="loginRedirectUrl" id="loginRedirectUrl" value="/view/resource"/>
       <input type="hidden" style="display: none;" name="forgotPasswordPageInstruction" id="forgotPasswordPageInstruction" value=""/>
       <input type="hidden" style="display: none;" name="createPasswordOtpInstruction" id="createPasswordOtpInstruction" value=""/>
   </div>
@@ -78,7 +76,6 @@ GLOBAL.afterLoginLinkJson = document.getElementById("afterLoginLinkJson").value;
 GLOBAL.footerLinkJson = document.getElementById("footerLinkJson").value;
 GLOBAL.footerLinkJsonAfterLogin = document.getElementById("footerLinkJsonAfterLogin").value;
 GLOBAL.loginRedirectUrl = document.getElementById("loginRedirectUrl").value;
-GLOBAL.uploadFileInstruction = document.getElementById("uploadFileInstruction").value;
 GLOBAL.forgotPasswordPageInstruction = document.getElementById("forgotPasswordPageInstruction").value;
 GLOBAL.createPasswordOtpInstruction = document.getElementById("createPasswordOtpInstruction").value;
 window.GLOBAL = GLOBAL;

@@ -9,6 +9,8 @@ import com.project.ftp.exceptions.ErrorCodes;
 import com.project.ftp.intreface.UserInterface;
 import com.project.ftp.mysql.MysqlUser;
 import com.project.ftp.obj.*;
+import com.project.ftp.obj.yamlObj.BackendConfig;
+import com.project.ftp.obj.yamlObj.FtlConfig;
 import com.project.ftp.session.SessionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -63,8 +65,9 @@ public class UserService {
     }
     public void updateUserRoles() throws AppException {
         ArrayList<String> rolesConfigPath = StaticService.getRolesConfigPath(appConfig.getFtpConfiguration());
-        boolean status = appConfig.getAppToBridge().updateUserRoles(rolesConfigPath);
-        if (!status) {
+        boolean rolesUpdateStatus = appConfig.getAppToBridge().updateUserRoles(rolesConfigPath);
+        appConfig.updatePageConfig404();
+        if (!rolesUpdateStatus) {
             logger.info("Error in updating user roles.");
             throw new AppException(ErrorCodes.CONFIG_ERROR);
         }
@@ -344,6 +347,35 @@ public class UserService {
         }
         return loginUserDetailsV2;
     }
+    public String getLoginRedirectUrl(LoginUserDetailsV2 loginUserDetailsV2, String defaultUrlRedirect) {
+        String loginRedirectUrl = "";
+        if (defaultUrlRedirect != null) {
+            loginRedirectUrl = defaultUrlRedirect;
+        }
+        HashMap<String, String> loginRedirectMapping = appConfig.getFtpConfiguration().getLoginRedirectMapping();
+        String value;
+        if (loginRedirectMapping != null && loginUserDetailsV2.isLogin()) {
+            for(Map.Entry<String, String> entry: loginRedirectMapping.entrySet()) {
+                if (this.isAuthorisedV2(loginUserDetailsV2, entry.getKey())) {
+                    value = entry.getValue();
+                    if (value != null && !value.isEmpty()) {
+                        loginRedirectUrl = value;
+                        break;
+                    }
+                }
+            }
+        }
+        return loginRedirectUrl;
+    }
+    public String getLoginRedirectUrlV2(LoginUserDetails loginUserDetails) {
+        String defaultUrlRedirect = "";
+        FtlConfig ftlConfig = appConfig.getFtpConfiguration().getFtlConfig();
+        if (ftlConfig != null && ftlConfig.getLoginRedirectUrl() != null) {
+            defaultUrlRedirect = ftlConfig.getLoginRedirectUrl();
+        }
+        LoginUserDetailsV2 loginUserDetailsV2 = new LoginUserDetailsV2(loginUserDetails);
+        return this.getLoginRedirectUrl(loginUserDetailsV2, defaultUrlRedirect);
+    }
     private MysqlUser isUserBlocked(String username) throws AppException {
         MysqlUser user = this.getUserByName(username);
         if (user == null) {
@@ -469,10 +501,11 @@ public class UserService {
         this.isUserPasswordMatch(user, encryptedPassword, ErrorCodes.PASSWORD_NOT_MATCHING);
         sessionService.loginUser(request, user.getUsername());
         LoginUserDetails loginUserDetails = this.getLoginUserDetails(request);
+        this.addLoginRedirectUrl(loginUserDetails);
         logger.info("loginUser success: {}", loginUserDetails);
         return loginUserDetails;
     }
-    public void userRegister(HttpServletRequest request, RequestUserRegister userRegister) throws AppException {
+    public LoginUserDetails userRegister(HttpServletRequest request, RequestUserRegister userRegister) throws AppException {
         MysqlUser user = this.isValidRegisterRequest(userRegister);
         boolean createUserStatus = this.register(user);
         if (!createUserStatus) {
@@ -480,8 +513,16 @@ public class UserService {
             throw new AppException(ErrorCodes.RUNTIME_ERROR);
         }
         sessionService.loginUser(request, user.getUsername());
+        LoginUserDetails loginUserDetails = this.getLoginUserDetails(request);
+        this.addLoginRedirectUrl(loginUserDetails);
+        return loginUserDetails;
     }
-    public void changePassword(HttpServletRequest request, RequestChangePassword changePassword) throws AppException {
+    public void addLoginRedirectUrl(LoginUserDetails loginUserDetails) {
+        if (loginUserDetails.getLogin()) {
+            loginUserDetails.setLoginRedirectUrl(this.getLoginRedirectUrlV2(loginUserDetails));
+        }
+    }
+    public LoginUserDetails changePassword(HttpServletRequest request, RequestChangePassword changePassword) throws AppException {
         inputValidate.validateChangePassword(changePassword);
         String oldPassword = changePassword.getOld_password();
         String newPassword = changePassword.getNew_password();
@@ -513,6 +554,8 @@ public class UserService {
             logger.info("Error in updating password.");
             throw new AppException(ErrorCodes.RUNTIME_ERROR);
         }
+        this.addLoginRedirectUrl(loginUserDetails);
+        return loginUserDetails;
     }
     public void logoutUser(HttpServletRequest request) {
         LoginUserDetails loginUserDetails = this.getLoginUserDetails(request);
@@ -556,7 +599,7 @@ public class UserService {
         this.sendCreatePasswordOtpEmail(user);
     }
 
-    public void createPassword(HttpServletRequest request, RequestCreatePassword createPassword) throws AppException {
+    public LoginUserDetails createPassword(HttpServletRequest request, RequestCreatePassword createPassword) throws AppException {
         inputValidate.validateCreatePassword(createPassword);
         String username = createPassword.getUsername();
         String createPasswordOtp = createPassword.getCreatePasswordOtp();
@@ -594,5 +637,8 @@ public class UserService {
         user.setPasscode(createPasswordOtp);
         this.createPassword(user);
         sessionService.loginUser(request, user.getUsername());
+        LoginUserDetails loginUserDetails = this.getLoginUserDetails(request);
+        this.addLoginRedirectUrl(loginUserDetails);
+        return loginUserDetails;
     }
 }

@@ -4,6 +4,7 @@ public class AppConstant {
     public static final String X_SESSION_ID = "X-Session-Id";
     public static final String X_REQUEST_ID = "X-Request-Id";
     public static final String COOKIE_NAME = "ftp-cookie";
+    public static final String SERVER = "server";
     public static final String SESSION_COOKIE_DATA = "SESSION_COOKIE_DATA";
     public static final Long SESSION_TTL = (long) (10*60*1000); // 10min = 10*60*1000 ms
     public static final int MAX_ENTRY_ALLOWED_IN_USER_DATA_FILE = 8;
@@ -24,8 +25,7 @@ public class AppConstant {
     public static final String ALLOWED_HEADERS= "Access-Control-Allow-Headers";
     public static final String FILE = "FILE";
     public static final String FOLDER = "FOLDER";
-    public static final String AppVersion = "7.0.0.3";
-    public static final String server = "server";
+    public static final String AppVersion = "8.0.0.1";
     public static final String DATE_FORMAT = "yyyy-MM-dd";
     public static final String TIME_FORMAT = "HHmmss";
     public static final String FILENAME_FORMAT = "yyyy-MM-dd-HH-mm'-filename'";
@@ -35,6 +35,7 @@ public class AppConstant {
     public static final String DateTimeFormat4 = "yyyy-MM-dd-HH-mm-ss"; // used for log file copy
     public static final String DateTimeFormat5 = "yyyy-MM-dd-HH:mm"; // used for file_details.csv data generation
     public static final String DateTimeFormat6 = "yyyy-MM-dd HH:mm:ss"; // used for timestamp in UserFile interface
+    public static final String DateTimeFormat7 = "yyyy-MM-dd HH:mm:ss.SSS','"; // used for timestamp in add_text_v2
     public static final String UTF8 = "UTF-8";
     public static final String FAVICON_ICO_PATH = "favicon.ico";
     public static final String INDEX_PAGE_RE_ROUTE = "/login";
@@ -73,6 +74,10 @@ public class AppConstant {
     public static final String IS_ADD_TEXT_ENABLE = "isAddTextEnable";
     public static final String IS_UPLOAD_FILE_ENABLE = "isUploadFileEnable";
     public static final String IS_GET_ALL_USERS_ENABLE = "getAllUsersEnable";
+
+    public static final int CMD_LINE_ARG_IS_MYSQL_ENABLE = 0;
+    public static final int CMD_LINE_ARG_1st_CONFIG_FILE = 1;
+    public static final int CMD_LINE_ARG_MIN_SIZE = 2;
 }
 
 /*

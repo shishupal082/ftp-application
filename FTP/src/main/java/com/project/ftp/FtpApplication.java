@@ -50,7 +50,7 @@ public class FtpApplication  extends Application<FtpConfiguration> {
         super.initialize(bootstrap);
         bootstrap.addBundle(new ViewBundle<>());
         bootstrap.addBundle(new AssetsBundle("/assets/", "/assets"));
-        if (StaticService.isMysqlEnable(arguments.get(0))) {
+        if (StaticService.isMysqlEnable(arguments)) {
             bootstrap.addBundle(hibernateBundle);
         }
     }
@@ -58,11 +58,13 @@ public class FtpApplication  extends Application<FtpConfiguration> {
     public void run(FtpConfiguration ftpConfiguration, Environment environment) {
         LOGGER.info("commandLineArguments: " + arguments.toString());
         AppConfig appConfig = new AppConfig();
-        appConfig.setConfigPath(arguments.get(0));
+        appConfig.setConfigPath(arguments);
+        appConfig.generateFinalFtpConfiguration(ftpConfiguration);
 //        ShutdownTask shutdownTask = new ShutdownTask(appConfig);
 //        appConfig.setShutdownTask(shutdownTask);
         appConfig.setFtpConfiguration(ftpConfiguration);
-        StaticService.initApplication(appConfig);
+        StaticService.initApplication(appConfig, arguments.get(AppConstant.CMD_LINE_ARG_1st_CONFIG_FILE));
+        appConfig.updatePageConfig404();
         LOGGER.info("appConfig: {}", appConfig);
 
         EventInterface eventInterface;
@@ -97,8 +99,11 @@ public class FtpApplication  extends Application<FtpConfiguration> {
         eventTracking.trackApplicationStart(ftpConfiguration.getInstance());
     }
     public static void main(String[] args) throws Exception {
-        StaticService.renameOldLogFile(args[0]);
+        // java -jar meta-data/FTP-*-SNAPSHOT.jar <serverName> <isMySqlEnable> <config file 1> <config file 2> ...
         arguments.addAll(Arrays.asList(args));
-        new FtpApplication().run(AppConstant.server, args[0]);
+        if (arguments.size() >= AppConstant.CMD_LINE_ARG_MIN_SIZE) {
+            StaticService.renameOldLogFile(args[AppConstant.CMD_LINE_ARG_1st_CONFIG_FILE]);
+            new FtpApplication().run(AppConstant.SERVER, args[AppConstant.CMD_LINE_ARG_1st_CONFIG_FILE]);
+        }
     }
 }

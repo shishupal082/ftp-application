@@ -2,7 +2,7 @@ package com.project.ftp.view;
 
 import com.project.ftp.config.AppConfig;
 import com.project.ftp.config.AppConstant;
-import com.project.ftp.obj.FtlConfig;
+import com.project.ftp.obj.yamlObj.FtlConfig;
 import io.dropwizard.views.View;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

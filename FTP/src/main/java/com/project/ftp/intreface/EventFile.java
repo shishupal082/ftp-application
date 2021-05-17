@@ -3,7 +3,7 @@ package com.project.ftp.intreface;
 import com.project.ftp.common.DateUtilities;
 import com.project.ftp.config.AppConfig;
 import com.project.ftp.config.AppConstant;
-import com.project.ftp.obj.BackendConfig;
+import com.project.ftp.obj.yamlObj.BackendConfig;
 import com.project.ftp.parser.TextFileParser;
 import com.project.ftp.service.FileService;
 import com.project.ftp.service.StaticService;

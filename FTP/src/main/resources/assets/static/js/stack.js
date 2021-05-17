@@ -139,7 +139,7 @@ function addElAt(arr, index, el) {
     return 0;
 }
 function capitalize(str) {
-    if (isString(str)) {
+    if (isString(str) && str.length > 0) {
         return str.replace(/^./, str[0].toUpperCase());
     }
     return str;
@@ -202,57 +202,96 @@ function getRandomNumber(minVal, maxVal) {
     return random;
 }
 var Data = (function() {
-    var keys = [];
-    var localData = {};
-    function isValidKey(key) {
+    function isValidKey(keys, key) {
         if (keys.indexOf(key) >= 0) {
             return true;
         }
         return false;
     }
-    function Data() {}
+    function Data() {
+        this.name = "DataObj";
+        this.keys = [];
+        this.localData = {};
+    }
     Data.prototype.setKeys = function(keysArray) {
+        var keys = this.keys;
         if (Stack.isArray(keysArray)) {
             for (var i = 0; i < keysArray.length; i++) {
                 if (Stack.isString(keysArray[i])) {
                     keys.push(keysArray[i]);
-                    localData[keys[i]] = null;
+                    this.localData[keys[i]] = null;
                 }
             }
         }
         return 1;
     };
     Data.prototype.resetKeys = function(keysArray) {
-        keys = [];
+        this.keys = [];
         return 0;
     };
     Data.prototype.getKeys = function() {
-        return Stack.clone(keys);
+        return Stack.clone(this.keys);
     };
     Data.prototype.resetData = function() {
+        var keys = this.keys;
         for (var i = 0; i < keys.length; i++) {
-            localData[keys[i]] = null;
+            this.localData[keys[i]] = null;
         }
         return 0;
     };
-    Data.prototype.setData = function(key, value) {
-        if (isValidKey(key)) {
-            localData[key] = Stack.clone(value);
+    Data.prototype.initData = function(bypassKeys) {
+        if (!isArray(bypassKeys)) {
+            return;
+        }
+        var keys = this.getKeys();
+        var allData = this.getAllData();
+        var key, defaultData;
+        for (var i = 0; i < keys.length; i++) {
+            key = keys[i];
+            if (bypassKeys.indexOf(key) >= 0) {
+                continue;
+            }
+            defaultData = null;
+            if (isObject(allData[key])) {
+                defaultData = {};
+            } else if (isArray(allData[key])) {
+                defaultData = [];
+            } else if (isString(allData[key])) {
+                defaultData = "";
+            }
+            this.setData(key, defaultData);
+        }
+    };
+    Data.prototype.setData = function(key, value, isDirect) {
+        if (isValidKey(this.keys, key)) {
+            if (Stack.isBooleanTrue(isDirect)) {
+                this.localData[key] = value;
+            } else {
+                this.localData[key] = Stack.clone(value);
+            }
         } else {
             console.log("Invalid key: "+key);
         }
-        return this.getData(key, null);
+        return this.getData(key, null, isDirect);
     };
-    Data.prototype.getData = function(key, defaultData) {
-        if (isValidKey(key)) {
-            return localData[key] === null ? defaultData : Stack.clone(localData[key]);
+    Data.prototype.getData = function(key, defaultData, isDirect) {
+        if (isValidKey(this.keys, key)) {
+            if (this.localData[key] === null) {
+                return defaultData;
+            }
+            // Fix for storing file upload data
+            if (Stack.isBooleanTrue(isDirect)) {
+                return this.localData[key];
+            } else {
+                return Stack.clone(this.localData[key]);
+            }
         } else {
             console.log("Invalid key: "+key);
         }
         return defaultData;
     };
     Data.prototype.getAllData = function() {
-        return Stack.clone(localData);
+        return Stack.clone(this.localData);
     };
     return Data;
 })();
@@ -262,6 +301,7 @@ var DT = (function() {
     var dateTime;
     // var YYYY, MM, DD, hh, mm, ss, ms, mr; //mr = meridian (AM/PM)
     var MMMList = ["JAN", "FEB", "MARCH", "APRIL", "MAY", "JUNE", "JULY", "AUG", "SEP", "OCT", "NOV", "DEC"];
+    var DDDList = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"];
     function isDateObject(dateObj) {
         if (dateObj && dateObj.constructor && dateObj.constructor.name === "Date") {
             if (isNumber(dateObj.getDate())) {
@@ -308,6 +348,7 @@ var DT = (function() {
         formatedValue["MM"] = month <= 9 ? "0"+month : month;
         formatedValue["MMM"] = MMMList[month-1];
         formatedValue["DD"] = date <= 9 ? "0"+date : date;
+        formatedValue["DDD"] = DDDList[currentDateTime.getDay()];
         formatedValue["hh"] = horus <= 9 ? "0"+horus : horus;
         formatedValue["mm"] = minutes <= 9 ? "0"+minutes : minutes;
         formatedValue["ss"] = seconds <= 9 ? "0" + seconds : seconds;
@@ -352,6 +393,13 @@ var DT = (function() {
             if (isDateObject(dateObj)) {
                 return dateObj;
             }
+        }
+        return null;
+    };
+    DateTime.prototype.addDate = function(dateObj, count) {
+        if (isDateObject(dateObj) && isNumber(count)) {
+            dateObj = new Date(dateObj.setDate(dateObj.getDate() + count));
+            return dateObj;
         }
         return null;
     };
@@ -981,7 +1029,9 @@ Filter.fn = Filter.prototype = {
         if (!isString(className)) {
             className = "";
         }
-        this.className += " " + className;
+        if (!this.hasClass(className)) {
+            this.className += " " + className;
+        }
         return this;
     },
     removeClass: function(className) {
@@ -1463,6 +1513,151 @@ Stack.extend({
     },
     getPlatform: function() {
         return Platform;
+    },
+    replaceString: function(str, find, replace) {
+        var temp;
+        if (isString(str) && isString(find) && isString(replace) && find !== replace) {
+            temp = str.split(find);
+            if (temp.length > 1) {
+                str = temp.join(replace);
+                return this.replaceString(str, find, replace);
+            }
+        }
+        return str;
+    },
+    sortResult: function(requestedArray, sortableValue, sortableName, searchName, defaultValue) {
+        if (!isString(searchName)) {
+            searchName = "";
+        }
+        if (!isNumber(defaultValue)) {
+            defaultValue = "";
+        }
+        if (isArray(requestedArray) && isString(sortableName) && isString(sortableValue) && sortableName.length > 0 && sortableValue.length > 0) {
+            requestedArray = requestedArray.sort(function(a, b) {
+                var i, aName = null, bName = null, temp;
+                if (isArray(a)) {
+                    for (i=0; i<a.length; i++) {
+                        if (sortableName === a[i][searchName]) {
+                            aName = a[i]["value"];
+                            break;
+                        }
+                    }
+                } else if (isObject(a)) {
+                    aName = a[sortableName];
+                } else {
+                    aName = a;
+                }
+                if (isUndefined(aName)) {
+                    aName = defaultValue;
+                }
+                if (isArray(b)) {
+                    for (i=0; i<b.length; i++) {
+                        if (sortableName === b[i][searchName]) {
+                            bName = b[i]["value"];
+                            break;
+                        }
+                    }
+                } else if (isObject(b)) {
+                    bName = b[sortableName];
+                } else {
+                    bName = b;
+                }
+                if (isUndefined(bName)) {
+                    bName = defaultValue;
+                }
+                if (sortableValue === "ascending") {
+                    temp = aName;
+                    aName = bName;
+                    bName = temp;
+                }
+                if (aName < bName) {
+                    return 1;
+                } else if (aName > bName) {
+                    return -1;
+                } else {
+                    return 0;
+                }
+            });
+        }
+        return requestedArray;
+    },
+    searchItems: function(searchingPattern, allData, searchByPattern, isRevert, modifier, isTrue) {
+        if (!isArray(searchingPattern) || !isArray(allData)) {
+            return [];
+        }
+        if (Stack.isBooleanTrue(searchByPattern)) {
+            searchByPattern = true;
+        } else {
+            searchByPattern = false;
+        }
+        if (Stack.isBooleanTrue(isRevert)) {
+            isRevert = true;
+        } else {
+            isRevert = false;
+        }
+        if (modifier === "g") {
+            modifier = 'g';
+        } else {
+            modifier = 'i';
+        }
+        var j, temp1;
+        function isTrue1(el, i, arr) {
+            if (isFunction(isTrue)) {
+                var b = isTrue(searchingPattern, el, i, arr, searchByPattern, isRevert, modifier);
+                return Stack.isBooleanTrue(b);
+            }
+            if (!isString(el)) {
+                return false;
+            }
+            if (!searchByPattern) {
+                return searchingPattern.indexOf(el) >= 0;
+            }
+            for(j=0; j<searchingPattern.length; j++) {
+                if (!isString(searchingPattern[j])) {
+                    continue;
+                }
+                temp1 = new RegExp(searchingPattern[j], modifier);
+                if (el.search(temp1) >= 0) {
+                    return true;
+                }
+            }
+            return false;
+        }
+        var result = allData.filter(function(el, i, arr) {
+            var t = isTrue1(el, i, arr);
+            if (isRevert) {
+                t = !t;
+            }
+            return  t;
+        });
+        return result;
+    },
+    findParam: function(availableItems, key, defaultValue, searchName, searchValue) {
+        if (!isArray(availableItems)) {
+            return defaultValue;
+        }
+        if (!isString(key) || key.length === 0) {
+            return defaultValue;
+        }
+        if (!isString(searchName) || searchName.length === 0) {
+            searchName = "";
+        }
+        if (!isString(searchValue) || searchValue.length === 0) {
+            searchValue = "";
+        }
+        for (var i = 0; i < availableItems.length; i++) {
+            if (!isObject(availableItems[i])) {
+                continue;
+            }
+            if (searchName !== "" && searchValue !== "") {
+                if (availableItems[i][searchName] === key) {
+                    return availableItems[i][searchValue];
+                }
+            } else if (!isUndefined(availableItems[i][key])) {
+                return availableItems[i][key]
+            }
+        }
+        return defaultValue;
     }
 });
 
@@ -1493,6 +1688,36 @@ Stack.extend({
             return target;
         }
         return source;
+    },
+    updateDataObj: function(dataObj, key, value, type) {
+        if (isObject(dataObj) && isString(key) && key.length > 0) {
+            if (type === "checkType") {
+                if (typeof dataObj[key] === typeof value) {
+                    if (typeof value === "object") {
+                        if (Stack.isArray(value) === Stack.isArray(dataObj[key])) {
+                            dataObj[key] = value;
+                        } else if (Stack.isObject(value) === Stack.isObject(dataObj[key])) {
+                            dataObj[key] = value;
+                        } else {
+                            Stack.log("dataObj not updated: " + type + ":" + key);
+                        }
+                    } else {
+                        dataObj[key] = value;
+                    }
+                } else {
+                    Stack.log("dataObj not updated: " + type + ":" + key);
+                }
+            } else if (type === "checkUndefined") {
+                if (isUndefined(dataObj[key])) {
+                    dataObj[key] = value;
+                }
+            } else {
+                dataObj[key] = value;
+            }
+        } else {
+            Stack.log("dataObj is invalid: " + key);
+        }
+        return dataObj;
     }
 });
 
@@ -1716,6 +1941,56 @@ Stack.extend({
     },
 });
 Stack.extend({
+    _fireCallBack: function(callBack, ajax, status, response) {
+        if (Stack.isFunction(callBack)) {
+            callBack(ajax, status, response);
+        }
+    },
+    _send: function(JQ, options, callBack) {
+        options["success"] = function(res, textStatus) {
+            Stack._fireCallBack(callBack, options, "SUCCESS", res);
+        };
+        options["error"] = function(xhr, textStatus, errorThrown) {
+            Stack._fireCallBack(callBack, options, "FAILURE", null);
+        };
+        JQ.ajax(options);
+    },
+    sendPostRequest: function(JQ, url, data, callBack) {
+        var reqOption = {};
+        reqOption["url"] = url;
+        reqOption["type"] = "POST";
+        reqOption["data"] = JSON.stringify(data);
+        reqOption["dataType"] = "json";
+        reqOption["headers"] = {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        };
+        Stack._send(JQ, reqOption, callBack);
+    },
+    uploadFile: function(JQ, url, formData, callBack, percentageCompleteCallBack) {
+        var reqOption = {};
+        reqOption["url"] = url;
+        reqOption["type"] = "POST";
+        reqOption["data"] = formData;
+        reqOption["processData"] = false;
+        reqOption["contentType"] = false;
+        if (Stack.isFunction(percentageCompleteCallBack)) {
+            reqOption["xhr"] = function() {
+                var xhr = new window.XMLHttpRequest();
+                xhr.upload.addEventListener("progress", function(evt) {
+                    if (evt.lengthComputable) {
+                        var percentComplete = evt.loaded / evt.total;
+                        percentComplete = parseInt(percentComplete * 100);
+                        percentageCompleteCallBack(percentComplete);
+                    }
+                }, false);
+                return xhr;
+            }
+        }
+        Stack._send(JQ, reqOption, callBack);
+    }
+});
+Stack.extend({
     callMethod: function(method) {
         if (Stack.isFunction(method)) {
             method();
@@ -1916,6 +2191,64 @@ Stack.extend({
             }
         }
         return words.reverse().join(' ');
+    },
+    numberToFixed: function(num, decimal) {
+        if (isNumeric(num) && isNumber(decimal)) {
+            num = num.toFixed(2)*1;
+        }
+        return num;
+    }
+});
+//GATracking push event
+Stack.extend({
+    pushGAEvent: function(Gtag, action, category, label) {
+        if (!Stack.isString(action)) {
+            action = "not-string";
+        } else if (action.length === 0) {
+            action = "empty-string";
+        }
+        if (!Stack.isString(category)) {
+            category = "not-string";
+        } else if (category.length === 0) {
+            category = "empty-string";
+        }
+        if (!Stack.isString(label)) {
+            label = "not-string";
+        } else if (label.length === 0) {
+            label = "empty-string";
+        }
+        if (Stack.isDefined(Gtag) && Gtag !== null) {
+            Gtag('event', action, {
+              'event_category' : category,
+              'event_label' : label
+            });
+        } else {
+            Stack.log("Gtag is Invalid");
+        }
+    },
+    convertRowToColumn: function(data) {
+        var rows = [];
+        var maxRowLen = 0, i, j;
+        if (isArray(data)) {
+            for (i = 0; i < data.length; i++) {
+                if (isArray(data[i])) {
+                    if (data[i].length > maxRowLen) {
+                        maxRowLen = data[i].length;
+                    }
+                }
+            }
+            for (i = 0; i < maxRowLen; i++) {
+                rows.push([]);
+            }
+            for (i = 0; i < data.length; i++) {
+                if (isArray(data[i])) {
+                    for(j=0; j<data[i].length; j++) {
+                        rows[j].push(data[i][j]);
+                    }
+                }
+            }
+        }
+        return rows;
     }
 });
 /*End of direct access of methods*/

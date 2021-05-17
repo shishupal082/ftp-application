@@ -41,19 +41,26 @@ public class EmailService {
         properties.setProperty("mail.smtp.auth", "true");
         properties.setProperty("mail.smtp.host", "smtp.gmail.com");
         properties.setProperty("mail.smtp.port", "587");
-        String senderEmail = this.emailConfig.getSenderEmail();
-        String senderPassword = this.emailConfig.getSenderPassword();
-        return Session.getDefaultInstance(properties,
-                new javax.mail.Authenticator() {
-                    protected PasswordAuthentication getPasswordAuthentication() {
-                        return new PasswordAuthentication(senderEmail, senderPassword);
-                    }
-                });
+        if (emailConfig != null) {
+            return Session.getDefaultInstance(properties,
+                    new javax.mail.Authenticator() {
+                        protected PasswordAuthentication getPasswordAuthentication() {
+                            return new PasswordAuthentication(
+                                    emailConfig.getSenderEmail(), emailConfig.getSenderPassword());
+                        }
+                    });
+        }
+        return null;
     }
     private Message prepareCreatePasswordMessage(Session session, String email, String name,  String otp) throws BridgeException {
-        String subject = createPasswordEmailConfig.getCreatePasswordSubject();
-        String messageStr = createPasswordEmailConfig.getCreatePasswordMessage();
-        String createPasswordLink = createPasswordEmailConfig.getCreatePasswordLink();
+        String subject = null;
+        String messageStr = null;
+        String createPasswordLink = null;
+        if (createPasswordEmailConfig != null) {
+            subject = createPasswordEmailConfig.getCreatePasswordSubject();
+            messageStr = createPasswordEmailConfig.getCreatePasswordMessage();
+            createPasswordLink = createPasswordEmailConfig.getCreatePasswordLink();
+        }
         if (messageStr == null) {
             messageStr = "%s, %s, <a href=\"%s\">Click Here</a> or open %s";
         }
@@ -74,7 +81,7 @@ public class EmailService {
         if (name == null) {
             name = "";
         }
-        if (this.emailConfig.getSenderEmail() == null) {
+        if (emailConfig == null || emailConfig.getSenderEmail() == null) {
             // otherwise it will generate error in setFrom: new InternetAddress
             logger.info("Error in preparing message: sender email is null");
             throw new BridgeException(BridgeErrorCode.CONFIG_ERROR_INVALID_EMAIL);
@@ -99,7 +106,7 @@ public class EmailService {
         }
     }
     public void sendCreatePasswordOtpEmail(BridgeRequestSendCreatePasswordOtp request) throws BridgeException {
-        if (!emailConfig.isEnable()) {
+        if (emailConfig == null || !emailConfig.isEnable()) {
             logger.info("EmailConfig is not enable: {}", emailConfig);
             return;
         }
@@ -107,6 +114,10 @@ public class EmailService {
         String name = request.getName();
         String otp = request.getOtp();
         Session session = this.getGmailSmtpSession();
+        if (session == null) {
+            logger.info("Error in generating GmailSmtpSession.");
+            return;
+        }
         Message message = this.prepareCreatePasswordMessage(session, email, name, otp);
         try {
             String str = request.toString();

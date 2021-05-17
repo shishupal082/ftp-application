@@ -3,9 +3,7 @@ package com.project.ftp.obj;
 public class LoginUserDetails {
     private String username;
     private boolean isLogin;
-    /* Why added displayName?
-    * It will be required for api/get_login_user_details (Right now it is not used)
-    * */
+    private String loginRedirectUrl;
     public LoginUserDetails() {
         username = "";
         isLogin = false;
@@ -26,11 +24,20 @@ public class LoginUserDetails {
         isLogin = login;
     }
 
+    public String getLoginRedirectUrl() {
+        return loginRedirectUrl;
+    }
+
+    public void setLoginRedirectUrl(String loginRedirectUrl) {
+        this.loginRedirectUrl = loginRedirectUrl;
+    }
+
     @Override
     public String toString() {
         return "LoginUserDetails{" +
                 "username='" + username + '\'' +
                 ", isLogin=" + isLogin +
+                ", loginRedirectUrl='" + loginRedirectUrl + '\'' +
                 '}';
     }
 }

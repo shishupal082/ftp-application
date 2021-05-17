@@ -12,10 +12,6 @@
     "View Resource"
   ],
   [
-    "/dashboard",
-    "Dashboard View"
-  ],
-  [
     "/login",
     "Login View"
   ],
@@ -38,10 +34,6 @@
   [
     "/create_password",
     "Create Password View"
-  ],
-  [
-    "/upload_file",
-    "Upload File View"
   ],
   [
     "/view/file/{username}/{filename}?u=requested_username&iframe=true",
@@ -97,7 +89,7 @@
   ],
   [
     "/api/update_roles_config",
-    "Update roles config [GET]"
+    "Update roles and page404 config [GET]"
   ],
   [
     "/api/get_uploaded_csv_data",
@@ -150,6 +142,10 @@
   [
     "/api/add_text",
     "Add array text in file given by user [POST]"
+  ],
+  [
+    "/api/add_text_v2",
+    "Add array text in file given by user and insert current timestamp in each line [POST]"
   ],
   [
     "/api/aes_encrypt",

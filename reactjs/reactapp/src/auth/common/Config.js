@@ -14,13 +14,12 @@ var afterLoginLinkJson = $$$.afterLoginLinkJson;
 var footerLinkJson = $$$.footerLinkJson;
 var footerLinkJsonAfterLogin = $$$.footerLinkJsonAfterLogin;
 var loginUserDetails = $$$.loginUserDetails;
-var uploadFileInstruction = $$$.uploadFileInstruction;
 var createPasswordOtpInstruction = $$$.createPasswordOtpInstruction;
 var loginRedirectUrl = $$$.loginRedirectUrl;
 
 
 if (!$S.isString(loginRedirectUrl) || loginRedirectUrl.length < 1) {
-    loginRedirectUrl = "/dashboard";
+    loginRedirectUrl = "/view/resource";
 }
 
 Config.loginRedirectUrl = loginRedirectUrl;
@@ -54,31 +53,10 @@ try {
 
 var template;
 
-if ($S.isString(uploadFileInstruction)) {
-    template = Template["upload_file"];
-    TemplateHelper.setTemplateAttr(template, "upload_file.message", "text", uploadFileInstruction);
-}
-
 if ($S.isString(createPasswordOtpInstruction) && createPasswordOtpInstruction.length > 0) {
     template = Template["create_password"];
     TemplateHelper.setTemplateAttr(template, "create_password.otp-instruction", "text", createPasswordOtpInstruction);
 }
-
-/**
-var ApiConfig = {};
-Config.setApiConfig = function(apiConfig) {
-    if ($S.isObject(apiConfig)) {
-        ApiConfig = apiConfig;
-    }
-}
-Config.getApiConfig = function(key, defaultValue) {
-    if ($S.isDefined(ApiConfig[key])) {
-        return ApiConfig[key];
-    }
-    return defaultValue;
-}
-*/
-
 Config.JQ = $$$.JQ;
 Config.location = $$$.location;
 Config.baseapi = baseapi;
@@ -99,15 +77,12 @@ if ($S.isString(currentPageData)) {
 if ($S.isBooleanTrue($$$.isReactEnv)) {
     var hrefPath = $S.getUrlAttribute(Config.location.href, "hrefPath", "");
     var hrefPathMapping = {};
-    hrefPathMapping[basepathname + "/dashboard"] = "dashboard";
     hrefPathMapping[basepathname + "/login"] = "login";
     hrefPathMapping[basepathname + "/logout"] = "logout";
     hrefPathMapping[basepathname + "/register"] = "register";
     hrefPathMapping[basepathname + "/forgot_password"] = "forgot_password";
     hrefPathMapping[basepathname + "/create_password"] = "create_password";
-    hrefPathMapping[basepathname + "/upload_file"] = "upload_file";
     hrefPathMapping[basepathname + "/change_password"] = "change_password";
-    hrefPathMapping[basepathname + "/users_control"] = "users_control";
 
     var origin = Config.location.origin;
     var hrefPathArr = hrefPath.split(origin);
@@ -139,9 +114,8 @@ Config.getAllUserData = function(key, defaultValue) {
 };
 
 var uiUsername = Config.getUserData("username", "");
-var RequestId = Config.getPageData("app_version", "");
+// var RequestId = Config.getPageData("app_version", "");
 Config.apiMapping = {};
-Config.apiMapping["static_file"] = baseapi + "/api/get_static_file?v=" + RequestId;
 
 Config.apiMapping["login"] = baseapi + "/api/login_user";
 Config.apiMapping["register"] = baseapi + "/api/register_user";
@@ -149,13 +123,7 @@ Config.apiMapping["forgot_password"] = baseapi + "/api/forgot_password";
 Config.apiMapping["create_password"] = baseapi + "/api/create_password";
 Config.apiMapping["change_password"] = baseapi + "/api/change_password?u="+uiUsername;
 
-Config.apiMapping["upload_file"] = baseapi + "/api/upload_file?u="+uiUsername;
-Config.apiMapping["delete_file"] = baseapi + "/api/delete_file?u="+uiUsername;
 Config.apiMapping["track_event"] = baseapi + "/api/track_event?u="+uiUsername;
-
-Config.apiMapping["get_files"] = baseapi + "/api/get_files_info?v=" + RequestId;
-Config.apiMapping["get_related_users_data"] = baseapi + "/api/get_related_users_data?v=" + RequestId;
-
 
 Config.getAleartMessage = function(response) {
     var messageMap = {};

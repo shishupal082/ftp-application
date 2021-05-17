@@ -49,7 +49,7 @@ public class AppToBridge implements AppToBridgeInterface {
         String email = user.getEmail();
         String name = user.getName();
         String otp = user.getCreatePasswordOtp();
-        if (emailConfig.isEnable()) {
+        if (emailConfig != null && emailConfig.isEnable()) {
             int count = user.getChangePasswordCount();
             int limit = AppConstant.MAX_SEND_EMAIL_LIMIT;
             if (count > limit) {

@@ -7,25 +7,31 @@ package com.project.ftp.config;
 
 import com.project.ftp.FtpConfiguration;
 import com.project.ftp.intreface.AppToBridge;
-import com.project.ftp.obj.BackendConfig;
-import com.project.ftp.obj.FtlConfig;
+import com.project.ftp.obj.yamlObj.BackendConfig;
+import com.project.ftp.obj.yamlObj.FtlConfig;
+import com.project.ftp.obj.yamlObj.PageConfig404;
+import com.project.ftp.parser.YamlFileParser;
 import com.project.ftp.service.StaticService;
 import com.project.ftp.session.SessionData;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 
 public class AppConfig {
+    private final static Logger logger = LoggerFactory.getLogger(AppConfig.class);
     private String publicDir;
     private String configDate;
     private final String appVersion = AppConstant.AppVersion;
 //    private ShutdownTask shutdownTask;
-    private String configPath;
+    private ArrayList<String> configPath;
     private String logFilePath;
     private int requestCount = 0;
     private ArrayList<String> logFiles;
     private HashMap<String, SessionData> sessionData;
     private FtpConfiguration ftpConfiguration;
+    private PageConfig404 pageConfig404;
 
     private AppToBridge appToBridge;
     public AppConfig() {
@@ -75,7 +81,7 @@ public class AppConfig {
         int rateLimitThreshold = AppConstant.DEFAULT_RATE_LIMIT_THRESHOLD;
         BackendConfig backendConfig = ftpConfiguration.getBackendConfig();
         if (backendConfig != null) {
-            if (backendConfig.getRateLimitThreshold() != null) {
+            if (backendConfig.getRateLimitThreshold() > 0) {
                 rateLimitThreshold = backendConfig.getRateLimitThreshold();
             }
         }
@@ -101,11 +107,11 @@ public class AppConfig {
         return appVersion;
     }
 
-    public String getConfigPath() {
+    public ArrayList<String> getConfigPath() {
         return configPath;
     }
 
-    public void setConfigPath(String configPath) {
+    public void setConfigPath(ArrayList<String> configPath) {
         this.configPath = configPath;
     }
 
@@ -141,18 +147,53 @@ public class AppConfig {
         return ftlConfig;
     }
 
+    public PageConfig404 getPageConfig404() {
+        return pageConfig404;
+    }
+
+    public void setPageConfig404(PageConfig404 pageConfig404) {
+        this.pageConfig404 = pageConfig404;
+    }
+
+    public void generateFinalFtpConfiguration(final FtpConfiguration ftpConfiguration) {
+        if (configPath == null) {
+            return;
+        }
+        if (configPath.size() <= AppConstant.CMD_LINE_ARG_MIN_SIZE) {
+            return;
+        }
+        if (StaticService.isMysqlEnable(configPath)) {
+            ftpConfiguration.setMysqlEnable(true);
+        } else {
+            ftpConfiguration.setMysqlEnable(false);
+        }
+        FtpConfiguration temp;
+        YamlFileParser yamlFileParser = new YamlFileParser();
+        for (int i=AppConstant.CMD_LINE_ARG_MIN_SIZE; i<configPath.size(); i++) {
+            temp = yamlFileParser.getFtpConfigurationFromPath(configPath.get(i));
+            ftpConfiguration.updateFtpConfig(temp);
+        }
+        logger.info("FTP configuration generate complete: {}", ftpConfiguration);
+    }
+    public void updatePageConfig404() {
+        YamlFileParser yamlFileParser = new YamlFileParser();
+        pageConfig404 = yamlFileParser.getPageConfig404(this);
+        logger.info("PageConfig404 update complete: {}", pageConfig404);
+    }
     @Override
     public String toString() {
         return "AppConfig{" +
                 "publicDir='" + publicDir + '\'' +
                 ", configDate='" + configDate + '\'' +
                 ", appVersion='" + appVersion + '\'' +
-                ", configPath='" + configPath + '\'' +
+                ", configPath=" + configPath +
                 ", logFilePath='" + logFilePath + '\'' +
                 ", requestCount=" + requestCount +
-                ", logFiles=" + "*****" +
+                ", logFiles='" + "*****" + '\'' +
                 ", sessionData=" + sessionData +
                 ", ftpConfiguration=" + ftpConfiguration +
+                ", pageConfig404=" + pageConfig404 +
+                ", appToBridge=" + appToBridge +
                 '}';
     }
 }
