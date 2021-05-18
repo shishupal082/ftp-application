@@ -9,8 +9,10 @@ import com.project.ftp.exceptions.ErrorCodes;
 import com.project.ftp.helper.AppConfigHelper;
 import com.project.ftp.obj.*;
 import com.project.ftp.obj.yamlObj.BackendConfig;
+import com.project.ftp.obj.yamlObj.FtlConfig;
 import com.project.ftp.obj.yamlObj.Page404Entry;
 import com.project.ftp.obj.yamlObj.PageConfig404;
+import com.project.ftp.parser.JsonFileParser;
 import com.project.ftp.parser.TextFileParser;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.slf4j.Logger;
@@ -884,5 +886,24 @@ public class FileServiceV2 {
         }
         logger.info("Error in adding text filePath: {}, data: {}", filePath, addText);
         throw new AppException(ErrorCodes.ADD_TEXT_ERROR);
+    }
+    public ApiResponse getStaticData() {
+        JsonFileParser jsonFileParser = new JsonFileParser(appConfig);
+        AppStaticData appStaticData = new AppStaticData();
+        try {
+            appStaticData.setJsonFileData(jsonFileParser.getJsonObject());
+        } catch (AppException ae) {
+            logger.info("Error in reading app static file: {}", ae.getErrorCode().getErrorCode());
+        }
+        appStaticData.setAppVersion(AppConstant.AppVersion);
+        appStaticData.setUploadFileApiVersion(appConfig.getFtpConfiguration().getUploadFileApiVersion());
+        FtlConfig ftlConfig = appConfig.getFtpConfiguration().getFtlConfig();
+        if (ftlConfig != null) {
+            appStaticData.setHeadingJson(ftlConfig.getHeadingJson());
+            appStaticData.setAfterLoginLinkJson(ftlConfig.getAfterLoginLinkJson());
+            appStaticData.setFooterLinkJson(ftlConfig.getFooterLinkJson());
+            appStaticData.setFooterLinkJsonAfterLogin(ftlConfig.getFooterLinkJsonAfterLogin());
+        }
+        return new ApiResponse(appStaticData);
     }
 }

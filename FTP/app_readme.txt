@@ -1053,6 +1053,19 @@ Now available pages in AppResource
     - /view/file/{username}/{filename2}
     - /download/file/{username}/{filename2}
 
+
+8.0.0.2 (2021-05-18)
+---------------------
+Api name changed from /api/get_static_file to /api/get_static_data
+Final response for /api/get_static_data as below
+    - appVersion
+    - uploadFileApiVersion
+    - headingJson
+    - afterLoginLinkJson
+    - footerLinkJson
+    - footerLinkJsonAfterLogin
+    - jsonFileData
+
 Future releases
 -------------------
 

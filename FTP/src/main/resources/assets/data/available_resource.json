@@ -104,8 +104,8 @@
     "Get uploaded data by filename list [POST]"
   ],
   [
-    "/api/get_static_file",
-    "Get app static file Data [GET]"
+    "/api/get_static_data",
+    "Get app static Data [GET]"
   ],
   [
     "/api/register_user",

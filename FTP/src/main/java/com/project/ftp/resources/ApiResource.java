@@ -7,7 +7,6 @@ import com.project.ftp.event.EventTracking;
 import com.project.ftp.exceptions.AppException;
 import com.project.ftp.exceptions.ErrorCodes;
 import com.project.ftp.obj.*;
-import com.project.ftp.parser.JsonFileParser;
 import com.project.ftp.service.*;
 import io.dropwizard.hibernate.UnitOfWork;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
@@ -56,17 +55,10 @@ public class ApiResource {
         return requestService.handleDefaultUrl(request);
     }
     @GET
-    @Path("/get_static_file")
+    @Path("/get_static_data")
     public ApiResponse getJsonData(@Context HttpServletRequest request) {
         logger.info("getJsonData : In, user: {}", userService.getUserDataForLogging(request));
-        ApiResponse response;
-        try {
-            JsonFileParser jsonFileParser = new JsonFileParser(appConfig);
-            response = new ApiResponse(jsonFileParser.getJsonObject());
-        } catch (AppException ae) {
-            logger.info("Error in reading app static file: {}", ae.getErrorCode().getErrorCode());
-            response = new ApiResponse(ae.getErrorCode());
-        }
+        ApiResponse response = fileServiceV2.getStaticData();
         // Not putting response in log as it may be very large
         logger.info("getJsonData : Out");
         return response;
