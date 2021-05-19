@@ -901,6 +901,7 @@ public class FileServiceV2 {
         if (ftlConfig != null) {
             appStaticData.setHeadingJson(ftlConfig.getHeadingJson());
             appStaticData.setAfterLoginLinkJson(ftlConfig.getAfterLoginLinkJson());
+            appStaticData.setPageNotFoundJson(ftlConfig.getPageNotFoundJson());
             appStaticData.setFooterLinkJson(ftlConfig.getFooterLinkJson());
             appStaticData.setFooterLinkJsonAfterLogin(ftlConfig.getFooterLinkJsonAfterLogin());
         }

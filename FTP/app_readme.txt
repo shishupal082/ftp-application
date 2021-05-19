@@ -1056,11 +1056,16 @@ Now available pages in AppResource
 
 8.0.0.2 (2021-05-18)
 ---------------------
+Added config parameter
+ftlConfig:
+    pageNotFoundJson: jsonString
+
 Api name changed from /api/get_static_file to /api/get_static_data
 Final response for /api/get_static_data as below
     - appVersion
     - uploadFileApiVersion
     - headingJson
+    - pageNotFoundJson
     - afterLoginLinkJson
     - footerLinkJson
     - footerLinkJsonAfterLogin

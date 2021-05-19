@@ -5,6 +5,7 @@ public class AppStaticData {
     private String uploadFileApiVersion;
     private String headingJson;
     private String afterLoginLinkJson;
+    private String pageNotFoundJson;
     private String footerLinkJson;
     private String footerLinkJsonAfterLogin;
     private Object jsonFileData;
@@ -31,6 +32,14 @@ public class AppStaticData {
 
     public void setAfterLoginLinkJson(String afterLoginLinkJson) {
         this.afterLoginLinkJson = afterLoginLinkJson;
+    }
+
+    public String getPageNotFoundJson() {
+        return pageNotFoundJson;
+    }
+
+    public void setPageNotFoundJson(String pageNotFoundJson) {
+        this.pageNotFoundJson = pageNotFoundJson;
     }
 
     public String getFooterLinkJson() {
@@ -72,6 +81,7 @@ public class AppStaticData {
                 ", uploadFileApiVersion='" + uploadFileApiVersion + '\'' +
                 ", headingJson='" + headingJson + '\'' +
                 ", afterLoginLinkJson='" + afterLoginLinkJson + '\'' +
+                ", pageNotFoundJson='" + pageNotFoundJson + '\'' +
                 ", footerLinkJson='" + footerLinkJson + '\'' +
                 ", footerLinkJsonAfterLogin='" + footerLinkJsonAfterLogin + '\'' +
                 ", jsonFileData=" + jsonFileData +
