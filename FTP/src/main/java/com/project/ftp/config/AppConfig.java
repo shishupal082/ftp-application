@@ -25,7 +25,7 @@ public class AppConfig {
     private String configDate;
     private final String appVersion = AppConstant.AppVersion;
 //    private ShutdownTask shutdownTask;
-    private ArrayList<String> configPath;
+    private ArrayList<String> cmdArguments;
     private String logFilePath;
     private int requestCount = 0;
     private ArrayList<String> logFiles;
@@ -107,12 +107,12 @@ public class AppConfig {
         return appVersion;
     }
 
-    public ArrayList<String> getConfigPath() {
-        return configPath;
+    public ArrayList<String> getCmdArguments() {
+        return cmdArguments;
     }
 
-    public void setConfigPath(ArrayList<String> configPath) {
-        this.configPath = configPath;
+    public void setCmdArguments(ArrayList<String> cmdArguments) {
+        this.cmdArguments = cmdArguments;
     }
 
     public String getLogFilePath() {
@@ -156,21 +156,23 @@ public class AppConfig {
     }
 
     public void generateFinalFtpConfiguration(final FtpConfiguration ftpConfiguration) {
-        if (configPath == null) {
-            return;
-        }
-        if (configPath.size() <= AppConstant.CMD_LINE_ARG_MIN_SIZE) {
-            return;
-        }
-        if (StaticService.isMysqlEnable(configPath)) {
+        if (StaticService.isMysqlEnable(cmdArguments)) {
             ftpConfiguration.setMysqlEnable(true);
         } else {
             ftpConfiguration.setMysqlEnable(false);
         }
+        if (cmdArguments == null) {
+            logger.info("FTP configuration generate complete 1: {}", ftpConfiguration);
+            return;
+        }
+        if (cmdArguments.size() <= AppConstant.CMD_LINE_ARG_MIN_SIZE) {
+            logger.info("FTP configuration generate complete 2: {}", ftpConfiguration);
+            return;
+        }
         FtpConfiguration temp;
         YamlFileParser yamlFileParser = new YamlFileParser();
-        for (int i=AppConstant.CMD_LINE_ARG_MIN_SIZE; i<configPath.size(); i++) {
-            temp = yamlFileParser.getFtpConfigurationFromPath(configPath.get(i));
+        for (int i = AppConstant.CMD_LINE_ARG_MIN_SIZE; i< cmdArguments.size(); i++) {
+            temp = yamlFileParser.getFtpConfigurationFromPath(cmdArguments.get(i));
             ftpConfiguration.updateFtpConfig(temp);
         }
         logger.info("FTP configuration generate complete: {}", ftpConfiguration);
@@ -186,7 +188,7 @@ public class AppConfig {
                 "publicDir='" + publicDir + '\'' +
                 ", configDate='" + configDate + '\'' +
                 ", appVersion='" + appVersion + '\'' +
-                ", configPath=" + configPath +
+                ", cmdArguments=" + cmdArguments +
                 ", logFilePath='" + logFilePath + '\'' +
                 ", requestCount=" + requestCount +
                 ", logFiles='" + "*****" + '\'' +

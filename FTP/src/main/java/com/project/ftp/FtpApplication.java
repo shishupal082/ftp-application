@@ -58,7 +58,7 @@ public class FtpApplication  extends Application<FtpConfiguration> {
     public void run(FtpConfiguration ftpConfiguration, Environment environment) {
         LOGGER.info("commandLineArguments: " + arguments.toString());
         AppConfig appConfig = new AppConfig();
-        appConfig.setConfigPath(arguments);
+        appConfig.setCmdArguments(arguments);
         appConfig.generateFinalFtpConfiguration(ftpConfiguration);
 //        ShutdownTask shutdownTask = new ShutdownTask(appConfig);
 //        appConfig.setShutdownTask(shutdownTask);
