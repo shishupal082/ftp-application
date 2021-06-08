@@ -39,6 +39,7 @@ public class FtpConfiguration extends Configuration {
     private Boolean permanentlyDeleteFile;
     private boolean mysqlEnable;
     private Boolean guestEnable;
+    private Boolean androidCheckEnable;
     private ArrayList<String> allowedOrigin;
     private ArrayList<String> supportedFileType;
     private FtlConfig ftlConfig;
@@ -247,6 +248,14 @@ public class FtpConfiguration extends Configuration {
         this.guestEnable = guestEnable;
     }
 
+    public Boolean getAndroidCheckEnable() {
+        return androidCheckEnable;
+    }
+
+    public void setAndroidCheckEnable(Boolean androidCheckEnable) {
+        this.androidCheckEnable = androidCheckEnable;
+    }
+
     public BackendConfig getBackendConfig() {
         return backendConfig;
     }
@@ -330,6 +339,10 @@ public class FtpConfiguration extends Configuration {
         if (guestEnable != null) {
             this.guestEnable = guestEnable;
         }
+        Boolean androidCheckEnable = tempFtpConfiguration.getAndroidCheckEnable();
+        if (androidCheckEnable != null) {
+            this.androidCheckEnable = androidCheckEnable;
+        }
         ArrayList<String> allowedOrigin = tempFtpConfiguration.getAllowedOrigin();
         if (allowedOrigin != null && allowedOrigin.size() > 0) {
             this.allowedOrigin = allowedOrigin;
@@ -378,6 +391,7 @@ public class FtpConfiguration extends Configuration {
                 ", permanentlyDeleteFile=" + permanentlyDeleteFile +
                 ", mysqlEnable=" + mysqlEnable +
                 ", guestEnable=" + guestEnable +
+                ", androidCheckEnable=" + androidCheckEnable +
                 ", allowedOrigin=" + allowedOrigin +
                 ", supportedFileType=" + supportedFileType +
                 ", ftlConfig=" + ftlConfig +

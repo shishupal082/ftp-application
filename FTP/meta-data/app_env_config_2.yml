@@ -89,7 +89,7 @@ indexPageReRoute: /login
 filenameFormat: "yyyy-MM-dd-HH-mm'-filename'"
 instance: DevComputer
 guestEnable: false
-
+androidCheckEnable: true
 # Only for development purpose
 createReadmePdf: true
 appRestartCommand: "sh app_run.bat" # not required for now

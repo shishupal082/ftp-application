@@ -17,11 +17,11 @@ import javax.servlet.http.HttpServletRequest;
 public class AppView extends View {
     private final static Logger logger = LoggerFactory.getLogger(AppView.class);
     private final String appVersion;
-    private final String pageName;
     private final String isGuestEnable;
     private final String loginRedirectUrl;
     private final FtlConfig ftlConfig;
     private final String loginUserDetailsV2Str;
+    private final String androidCheckEnable;
     public AppView(HttpServletRequest request, String ftl, String pageName,
                    UserService userService, AppConfig appConfig) {
         super(ftl);
@@ -30,11 +30,15 @@ public class AppView extends View {
                 AppConstant.FromEnvConfig);
         this.loginRedirectUrl = userService.getLoginRedirectUrl(loginUserDetailsV2,
                 ftlConfig.getLoginRedirectUrl());
-        this.pageName = pageName;
         Boolean isGuestEnableTemp = appConfig.getFtpConfiguration().isGuestEnable();
         if (isGuestEnableTemp == null) {
             isGuestEnableTemp = false;
         }
+        Boolean androidCheckEnableTemp = appConfig.getFtpConfiguration().getAndroidCheckEnable();
+        if (androidCheckEnableTemp == null) {
+            androidCheckEnableTemp = false;
+        }
+        this.androidCheckEnable = Boolean.toString(androidCheckEnableTemp);
         this.isGuestEnable = Boolean.toString(isGuestEnableTemp);
         this.appVersion = AppConstant.AppVersion;
         this.loginUserDetailsV2Str = loginUserDetailsV2.toJsonString();
@@ -43,10 +47,6 @@ public class AppView extends View {
 
     public String getAppVersion() {
         return appVersion;
-    }
-
-    public String getPageName() {
-        return pageName;
     }
 
     public String getIsGuestEnable() {
@@ -63,5 +63,9 @@ public class AppView extends View {
 
     public String getLoginRedirectUrl() {
         return loginRedirectUrl;
+    }
+
+    public String getAndroidCheckEnable() {
+        return androidCheckEnable;
     }
 }

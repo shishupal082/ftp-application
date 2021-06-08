@@ -364,6 +364,13 @@ var DT = (function() {
         var currentDateTime = new Date();
         return this.formateDateTime(format, seprator, currentDateTime);
     };
+    DateTime.prototype.getDateTimeV2 = function(dateTimeStr, format, seprator) {
+        var currentDateTime = this.getDateObj(dateTimeStr);
+        if (currentDateTime === null) {
+            currentDateTime = new Date();
+        }
+        return this.formateDateTime(format, seprator, currentDateTime);
+    };
     DateTime.prototype.getDayNumberTimeFromSeconds = function(seconds, format, seprator) {
         var response = "";
         var formatKeys = format ? format.split(seprator) : [];
@@ -1474,6 +1481,13 @@ Stack.extend({
     isString: function(value) {
         return isString(value);
     },
+    isStringV2: function(value) {
+        var temp = isString(value);
+        if (temp) {
+            return value.trim().length > 0;
+        }
+        return false;
+    },
     capitalize: function(str) {
         return capitalize(str);
     },
@@ -1526,13 +1540,32 @@ Stack.extend({
         return str;
     },
     sortResult: function(requestedArray, sortableValue, sortableName, searchName, defaultValue) {
+        // sortableValue: "ascending" or "descending"
+        // sortableName: used for [{},{}]
+        // serachName: used for [[{},{}], [{},{}]]
         if (!isString(searchName)) {
             searchName = "";
         }
         if (!isNumber(defaultValue)) {
             defaultValue = "";
         }
+        var isNumericData = false;
         if (isArray(requestedArray) && isString(sortableName) && isString(sortableValue) && sortableName.length > 0 && sortableValue.length > 0) {
+            for (var p = 0; p < requestedArray.length; p++) {
+                if (isObject(requestedArray[p])) {
+                    isNumericData = Stack.isBooleanTrue(requestedArray[p].isNumericData);
+                    break;
+                } else if (isArray(requestedArray[p])) {
+                    for (var q=0; q<requestedArray[p].length; q++) {
+                        if (isObject(requestedArray[p][q])) {
+                            if (sortableName === requestedArray[p][q][searchName]) {
+                                isNumericData = Stack.isBooleanTrue(requestedArray[p][q].isNumericData);
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
             requestedArray = requestedArray.sort(function(a, b) {
                 var i, aName = null, bName = null, temp;
                 if (isArray(a)) {
@@ -1565,10 +1598,20 @@ Stack.extend({
                 if (isUndefined(bName)) {
                     bName = defaultValue;
                 }
+                if (isNumericData) {
+                    if (isNumeric(aName)) {
+                        aName = aName * 1;
+                    }
+                    if (isNumeric(bName)) {
+                        bName = bName * 1;
+                    }
+                }
                 if (sortableValue === "ascending") {
                     temp = aName;
                     aName = bName;
                     bName = temp;
+                } else if (sortableValue !== "descending") {
+                    return 0;
                 }
                 if (aName < bName) {
                     return 1;
@@ -1578,6 +1621,17 @@ Stack.extend({
                     return 0;
                 }
             });
+        }
+        return requestedArray;
+    },
+    sortResultV2: function(requestedArray, sortingFields, searchName, defaultValue) {
+        if (isArray(sortingFields)) {
+            for(var i=0; i<sortingFields.length; i++) {
+                if (!isObject(sortingFields[i])) {
+                    continue;
+                }
+                requestedArray = Stack.sortResult(requestedArray, sortingFields[i].value, sortingFields[i].name, searchName, defaultValue);
+            }
         }
         return requestedArray;
     },
@@ -2251,6 +2305,31 @@ Stack.extend({
         return rows;
     }
 });
+Stack.extend({
+    getNavigatorData: function(uiNavigator, key) {
+        // uiNavigator = window.navigator
+        var result = key;
+        try {
+            if (!isObject(uiNavigator)) {
+                return result;
+            }
+            if (isString(uiNavigator[key])) {
+                result = uiNavigator[key];
+            }
+        } catch(err) {
+            result = "error in " + key;
+        }
+        return result;
+    },
+    getUserAgentTrackingData: function(uiNavigator) {
+        var trackingData = [];
+        var trackingKey = ["platform","appVersion","appCodeName","appName"];
+        for(var i=0; i<trackingKey.length; i++) {
+            trackingData.push(this.getNavigatorData(uiNavigator, trackingKey[i]));
+        }
+        return trackingData.join(",");
+    }
+})
 /*End of direct access of methods*/
 if (Platform === "Window") {
     window.$S = Stack;

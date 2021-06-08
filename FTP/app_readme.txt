@@ -1071,6 +1071,14 @@ Final response for /api/get_static_data as below
     - footerLinkJsonAfterLogin
     - jsonFileData
 
+8.0.0.3 (2021-06-06)
+---------------------
+Re written react code for auth
+Added androidCheckEnable (Boolean) in ftpConfiguration
+    - it is used for login, register, change_password, create_password, forgot_password
+        in ui
+Removed page=${pageName} parameter from app_view-1.0.0.ftl
+
 Future releases
 -------------------
 

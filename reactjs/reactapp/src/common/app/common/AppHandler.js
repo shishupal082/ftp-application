@@ -8,6 +8,7 @@ var AppHandler;
 (function($S){
 var DT = $S.getDT();
 var requestId = $S.getRequestId();
+var configGtag = false;
 
 AppHandler = function(arg) {
     return new AppHandler.fn.init(arg);
@@ -22,6 +23,9 @@ AppHandler.fn = AppHandler.prototype = {
 };
 $S.extendObject(AppHandler);
 AppHandler.extend({
+    setGtag: function(gtag) {
+        configGtag = gtag;
+    },
     getPageUrl: function(pageName) {
         return window.location.pathname;
     },
@@ -59,7 +63,7 @@ AppHandler.extend({
     },
     getFieldValue: function(e) {
         var tagName = this.getTagName(e);
-        if ($S.isString(tagName) && tagName === "span") {
+        if ($S.isString(tagName) && ["span", "form"].indexOf(tagName) >= 0) {
             return e.currentTarget.getAttribute("value");
         }
         return e.currentTarget.value;
@@ -69,15 +73,20 @@ AppHandler.extend({
     isValidDateStr: function(dateStr) {
         var p1Formate = "YYYY/-/MM/-/DD";
         var p2Formate = "YYYY/-/MM/-/DD/ /hh/:/mm";
+        var p3Formate = "YYYY/-/MM/-/DD/ /hh/:/mm/:/ss/./ms";
         //2020-05-31
         var p1 = /[1-9]{1}[0-9]{3}-[0-1][0-9]-[0-3][0-9]/i;
         //2020-05-31 00:00
         var p2 = /[1-9]{1}[0-9]{3}-[0-1][0-9]-[0-3][0-9] [0-2][0-9]:[0-5][0-9]/i;
+        //2021-05-26 00:00:09.987
+        var p3 = /[1-9]{1}[0-9]{3}-[0-1][0-9]-[0-3][0-9] [0-2][0-9]:[0-5][0-9]:[0-5][0-9].[0-9]{3}/i;
         var dateObj;
-        if ($S.isString(dateStr) && (dateStr.length === 16 || dateStr.length === 10)) {
+        if ($S.isString(dateStr) && (dateStr.length === 16 || dateStr.length === 10 || dateStr.length === 23)) {
             dateObj = DT.getDateObj(dateStr);
             if (dateObj !== null) {
-                if (dateStr.search(p2) >= 0 && dateStr === DT.formateDateTime(p2Formate, "/", dateObj)) {
+                if (dateStr.search(p3) >= 0 && dateStr === DT.formateDateTime(p3Formate, "/", dateObj)) {
+                    return true;
+                } else if (dateStr.search(p2) >= 0 && dateStr === DT.formateDateTime(p2Formate, "/", dateObj)) {
                     return true;
                 } else if (dateStr.search(p1) >= 0 && dateStr === DT.formateDateTime(p1Formate, "/", dateObj)) {
                     return true;
@@ -87,6 +96,9 @@ AppHandler.extend({
         return false;
     },
     isDateLiesInRange: function(startDate, endDate, fieldDate) {
+        if ($S.isString(fieldDate) && fieldDate.length === 10) {
+            fieldDate += " 00:00";
+        }
         startDate = DT.getDateObj(startDate);
         endDate = DT.getDateObj(endDate);
         fieldDate = DT.getDateObj(fieldDate);
@@ -362,11 +374,21 @@ AppHandler.extend({
         if (!this.isValidDateStr(endLimit)) {
             endLimit = endDateStr;
         }
+        if ($S.isString(startLimit) && startLimit.length === 10) {
+            startLimit += " 00:00";
+        }
+        if ($S.isString(endLimit) && endLimit.length === 10) {
+            endLimit += " 23:59";
+        }
         var dateArr = [];
         var startDateObj = DT.getDateObj(startDateStr);
         var endDateObj = DT.getDateObj(endDateStr);
         var startLimitDateObj = DT.getDateObj(startLimit);
         var endLimitDateObj = DT.getDateObj(endLimit);
+        endLimitDateObj.setHours(23);
+        endLimitDateObj.setMinutes(59);
+        endDateObj.setHours(23);
+        endDateObj.setMinutes(59);
         if (startDateObj > endDateObj) {
             startDateObj = endDateObj;
             endDateObj = DT.getDateObj(startDateStr);
@@ -386,7 +408,11 @@ var userDetails = {"username": "", "displayName": "", "login": false, "roles": {
 
 AppHandler.extend({
     GetUserDetails: function() {
-        return userDetails;
+        return $S.clone(userDetails);
+    },
+    SetUserDetails: function(tempUserDetails) {
+        userDetails = $S.clone(tempUserDetails);
+        return true;
     },
     GetUserData: function(key, defaultValue) {
         if ($S.isString(userDetails[key]) || key === "login") {
@@ -397,6 +423,13 @@ AppHandler.extend({
             return userDetails["roles"][key];
         }
         return defaultValue;
+    },
+    GetTrackUsername: function() {
+        var username = this.GetUserData("username", "");
+        if (!$S.isString(username) || username.length < 1) {
+            username = "empty-username";
+        }
+        return username;
     },
     LoadLoginUserDetails: function(url, callback) {
         if (!$S.isString(url)) {
@@ -420,15 +453,19 @@ var staticData = {"appVersion": "", "uploadFileApiVersion": "",
 
 AppHandler.extend({
     GetAllStaticDetails: function() {
-        return staticData;
+        return $S.clone(staticData);
+    },
+    SetStaticData: function(tempStaticData) {
+        staticData = $S.clone(tempStaticData);
+        return true;
     },
     GetStaticData: function(key, defaultValue) {
         if ($S.isString(staticData[key])) {
-            return staticData[key];
+            return $S.clone(staticData[key]);
         } else if ($S.isObject(staticData[key])) {
-            return staticData[key];
+            return $S.clone(staticData[key]);
         } else if ($S.isArray(staticData[key])) {
-            return staticData[key];
+            return $S.clone(staticData[key]);
         }
         return defaultValue;
     },
@@ -540,6 +577,27 @@ AppHandler.extend({
         }
         return headingText;
     },
+    _addAppId: function(response) {
+        var metaData = {};
+        var appControlData = [];
+        if ($S.isObject(response)) {
+            if ($S.isArray(response.list1Data)) {
+                appControlData = response.list1Data;
+            }
+            if ($S.isObject(response.metaData)) {
+                metaData = response.metaData;
+            }
+        } else if ($S.isArray(response)) {
+            appControlData = response;
+        }
+        appControlData.map(function(el, i, arr) {
+            if ($S.isObject(el)) {
+                el.id = "app-id-" + i;
+            }
+            return el;
+        });
+        return {"appControlData": appControlData, "metaData": metaData};
+    },
     loadAppControlData: function(appControlApi, baseApi, appControlDataPath, validAppControl, callback) {
         if ($S.isString(baseApi) && $S.isString(appControlDataPath) && $S.isArray(validAppControl)) {
             for(var i=0; i<validAppControl.length; i++) {
@@ -558,150 +616,79 @@ AppHandler.extend({
                             "apiName": "appControlData",
                             "requestMethod": Api.getAjaxApiCallMethod()};
         request.push(appControlRequest);
-        var appControlData = [];
+        var result, fileResponse;
         AppHandler.LoadDataFromRequestApi(request, function() {
             if ($S.isArray(request[0].response) && request[0].response.length > 0) {
-                if ($S.isArray(request[0].response[0])) {
-                    request[0].response[0].map(function(el, i, arr) {
-                        if ($S.isObject(el)) {
-                            el.id = "app-id-" + i;
-                        }
-                        return el;
-                    });
-                    appControlData = request[0].response[0];
-                }
+                fileResponse = request[0].response[0];
             }
             if ($S.isFunction(callback)) {
-                callback(appControlData);
+                result = AppHandler._addAppId(fileResponse);
+                callback(result.appControlData, result.metaData);
             }
         });
     }
 });
 AppHandler.extend({
-    getSearchByPattern: function(filterOption, selectedValue) {
+    getSearchByPattern: function(filterOption, selectedValue, isRevert) {
         if (!$S.isString(selectedValue) || selectedValue.length === 0) {
             return false;
+        }
+        if ($S.isBooleanTrue(isRevert)) {
+            isRevert = true;
+        } else {
+            isRevert = false;
         }
         if ($S.isArray(filterOption)) {
             for(var i=0; i<filterOption.length; i++) {
                 if (!$S.isObject(filterOption[i])) {
                     continue;
                 }
-                if (filterOption[i].value === selectedValue) {
+                if (isRevert) {
+                    if (filterOption[i].value === "~" + selectedValue) {
+                        return $S.isBooleanTrue(filterOption[i].searchByPattern);
+                    }
+                } else if (filterOption[i].value === selectedValue) {
                     return $S.isBooleanTrue(filterOption[i].searchByPattern);
                 }
             }
         }
         return false;
     },
-    generateFilterDataOld: function(metaData, csvData, filterSelectedValues) {
-        if (!$S.isArray(csvData)) {
-            return [];
+    _getRequiredMetaData: function(currentAppData, metaData) {
+        var preFilter = $S.findParam([currentAppData, metaData], "preFilter", {});
+        var filterKeys = $S.findParam([currentAppData, metaData], "filterKeys", []);
+        if (!$S.isObject(preFilter)) {
+            preFilter = {};
         }
-        if (!$S.isObject(filterSelectedValues)) {
-            filterSelectedValues = {};
+        if (!$S.isArray(filterKeys)) {
+            filterKeys = [];
         }
-        var filterKeys = [], i, j, temp;
-        var preFilter = {};
-        if ($S.isObject(metaData) && $S.isArray(metaData.filterKeys)) {
-            for(i=0; i<metaData.filterKeys.length; i++) {
-                if (!$S.isString(metaData.filterKeys[i])) {
-                    continue;
-                }
-                filterKeys.push(metaData.filterKeys[i]);
-            }
-            if ($S.isObject(metaData.preFilter)) {
-                preFilter = metaData.preFilter;
-            }
-        }
-        var tempFilterOptions = {};
-        for(i=0; i<filterKeys.length; i++) {
-            tempFilterOptions[filterKeys[i]] = {
-                "selectName": filterKeys[i]+"Selected",
-                "dataKey": filterKeys[i],
-                "dataDisplay": filterKeys[i]+"Display",
-                "possibleIds": [],
-                "filterOption": [],
-                "preFilter": preFilter[filterKeys[i]]
-            };
-        }
-        var resetButton = [{"name": "reset-filter", "value": "reset-filter", "display": "Reset"}];
-        for(i=0; i<csvData.length; i++) {
-            for(j=0; j<filterKeys.length; j++) {
-                temp = csvData[i][tempFilterOptions[filterKeys[j]].dataKey];
-                if (!$S.isString(temp) || temp.trim().length < 1) {
-                    continue;
-                }
-                temp = temp.trim();
-                if (tempFilterOptions[filterKeys[j]].possibleIds.indexOf(temp) < 0) {
-                    tempFilterOptions[filterKeys[j]].possibleIds.push(temp);
-                    tempFilterOptions[filterKeys[j]].filterOption.push({"value": temp, "option": csvData[i][tempFilterOptions[filterKeys[j]].dataDisplay]});
-                }
-            }
-        }
-        for(temp in tempFilterOptions) {
-            tempFilterOptions[temp].filterOption.sort(function(a, b) {
-                return a.option > b.option ? 1 : -1;
-            });
-            if ($S.isArray(tempFilterOptions[temp].preFilter)) {
-                for (i=tempFilterOptions[temp].preFilter.length-1; i>=0; i--) {
-                    if ($S.isObject(tempFilterOptions[temp].preFilter[i]) && $S.isString(tempFilterOptions[temp].preFilter[i].value)) {
-                        if (tempFilterOptions[temp].possibleIds.indexOf(tempFilterOptions[temp].preFilter[i].value) < 0) {
-                            tempFilterOptions[temp].possibleIds.push(tempFilterOptions[temp].preFilter[i].value);
-                        }
-                        $S.addElAt(tempFilterOptions[temp].filterOption, 0, tempFilterOptions[temp].preFilter[i]);
-                    }
-                }
-            } else if (tempFilterOptions[temp].filterOption.length > 0) {
-                $S.addElAt(tempFilterOptions[temp].filterOption, 0, {"value": "", "option": "All"});
-            }
-        }
-        var selectionOptions = [];
-        var selectedValue;
-        for(i=0; i<filterKeys.length; i++) {
-            if (filterKeys[i] === "reset") {
-                selectionOptions.push({"type": "buttons", "buttons": resetButton, "selectedValue": ""});
+        var finalKeys = [], temp, temp2;
+        for(var i=0; i<filterKeys.length; i++) {
+            if (!$S.isString(filterKeys[i]) || filterKeys[i].length < 1) {
                 continue;
             }
-            selectedValue = filterSelectedValues[tempFilterOptions[filterKeys[i]].selectName];
-            if (!$S.isString(selectedValue)) {
-                selectedValue = "";
-            }
-            if (tempFilterOptions[filterKeys[i]].possibleIds.indexOf(selectedValue) < 0) {
-                selectedValue = "";
-            }
-            if (tempFilterOptions[filterKeys[i]].filterOption.length > 0) {
-                selectionOptions.push({"type": "dropdown",
-                    "text": tempFilterOptions[filterKeys[i]].filterOption,
-                    "selectName": tempFilterOptions[filterKeys[i]].selectName,
-                    "dataKey": tempFilterOptions[filterKeys[i]].dataKey,
-                    "possibleIds": tempFilterOptions[filterKeys[i]].possibleIds,
-                    "selectedValue": selectedValue
-                });
+            temp = filterKeys[i];
+            finalKeys.push(temp);
+            temp2 = $S.findParam([currentAppData, metaData], temp + "Prefilter", []);
+            if ($S.isArray(temp2) && temp2.length > 0) {
+                preFilter[temp] = temp2;
             }
         }
-        return selectionOptions;
+        return {"preFilter": preFilter, "filterKeys": finalKeys};
     },
-    generateFilterData: function(metaData, csvData, filterSelectedValues, searchParam) {
+    generateFilterData: function(currentAppData, metaData, csvData, filterSelectedValues, searchParam) {
         if (!$S.isArray(csvData)) {
             return [];
         }
         if (!$S.isObject(filterSelectedValues)) {
             filterSelectedValues = {};
         }
-        var filterKeys = [], i, j, temp, temp2;
-        var preFilter = {};
-        if ($S.isObject(metaData) && $S.isArray(metaData.filterKeys)) {
-            for(i=0; i<metaData.filterKeys.length; i++) {
-                if (!$S.isString(metaData.filterKeys[i])) {
-                    continue;
-                }
-                filterKeys.push(metaData.filterKeys[i]);
-            }
-            if ($S.isObject(metaData.preFilter)) {
-                preFilter = metaData.preFilter;
-            }
-        }
+        var metaDataTemp = this._getRequiredMetaData(currentAppData, metaData);
+        var filterKeys = metaDataTemp["filterKeys"];
+        var preFilter = metaDataTemp["preFilter"];
+        var i, j, temp, temp2;
+
         var tempFilterOptions = {};
         for(i=0; i<filterKeys.length; i++) {
             tempFilterOptions[filterKeys[i]] = {
@@ -789,9 +776,10 @@ AppHandler.extend({
         }
         return selectionOptions;
     },
-    getFilteredData: function(metaData, csvData, filterOptions, searchParam) {
+    getFilteredData: function(currentAppData, metaData, csvData, filterOptions, searchParam) {
         var reportData = csvData;
-        var preFilter = $S.isObject(metaData) ? metaData.preFilter : {};
+        var metaDataTemp = this._getRequiredMetaData(currentAppData, metaData);
+        var preFilter = metaDataTemp["preFilter"];
         var temp, temp2, temp3, i, j, k, l, filterIndex, filterValue, searchByPattern;
         var isRevert;
         function _isResultRevert(filterIndex, filterValue) {
@@ -835,7 +823,7 @@ AppHandler.extend({
             for (i = 0; i < reportData.length; i++) {
                 temp = reportData[i];
                 if ($S.isObject(temp) && $S.isString(temp[filterIndex])) {
-                    searchByPattern = this.getSearchByPattern(filterOptions[k].text, filterValue);
+                    searchByPattern = this.getSearchByPattern(filterOptions[k].text, filterValue, isRevert);
                     temp2 = $S.searchItems([filterValue], [temp[filterIndex]], searchByPattern, isRevert);
                     if (temp2.length > 0) {
                         temp3.push(temp);
@@ -846,7 +834,7 @@ AppHandler.extend({
                             continue;
                         }
                         if (temp[j][searchParam] === filterIndex) {
-                            searchByPattern = this.getSearchByPattern(filterOptions[k].text, filterValue);
+                            searchByPattern = this.getSearchByPattern(filterOptions[k].text, filterValue, isRevert);
                             temp2 = $S.searchItems([filterValue], [temp[j]["value"]], searchByPattern, isRevert);
                             if (temp2.length > 0) {
                                 temp3.push(temp);
@@ -954,6 +942,46 @@ AppHandler.extend({
         }
         return defaultTemplate;
     },
+});
+
+AppHandler.extend({
+    Track: function(trackingAction, eventCategory, eventLabel) {
+        if (configGtag) {
+            $S.pushGAEvent(configGtag, eventCategory, trackingAction, eventLabel);
+        }
+    },
+    TrackApiRequest: function(requestName, requestStatus) {
+        var username = this.GetTrackUsername();
+        this.Track(username, requestName+":"+requestStatus, this.getPageUrl());
+    },
+    TrackDebug: function(content) {
+        if (!$S.isString(content) || content.length < 1) {
+            content = "empty-content";
+        }
+        var username = this.GetTrackUsername();
+        this.Track(username, "Debug:"+content, $S.getUserAgentTrackingData());
+    },
+    TrackPageView: function(pageName) {
+        if (!$S.isString(pageName) || pageName.length < 1) {
+            pageName = "empty-pageName";
+        }
+        var username = this.GetTrackUsername();
+        this.Track(username, "pageView:"+pageName, this.getPageUrl());
+    },
+    TrackDropdownChange: function(listName, value) {
+        if (!$S.isString(value) || value.length < 1) {
+            value = "empty-value";
+        }
+        if (!$S.isStringV2(listName)) {
+            listName = "emptyList"
+        }
+        var username = this.GetTrackUsername();
+        this.Track(username, listName+"Change:"+value, this.getPageUrl());
+    },
+    TrackEvent: function(event) {
+        var username = this.GetTrackUsername();
+        this.Track(username, event, this.getPageUrl());
+    }
 });
 })($S);
 

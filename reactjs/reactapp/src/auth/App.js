@@ -1,136 +1,137 @@
 import React from 'react';
+import {BrowserRouter, Route, Switch} from 'react-router-dom';
 import $S from "../interface/stack.js";
-// import Api from "../common/Api";
 
-import Template from "./common/Template";
+import AppHandler from "../common/app/common/AppHandler";
+
+import AppComponent from "../common/app/components/AppComponent";
+
+import DataHandler from "./common/DataHandler";
 import Config from "./common/Config";
-import FTPHelper from "./common/AuthHelper";
-import PageData from "./common/PageData";
 
-import RenderComponent from "./component/RenderComponent";
-
-
-// var RequestId = $S.getRequestId();
-// var DT = $S.getDT();
-// var baseapi = Config.baseapi;
-var currentPageName = Config.getPageData("page", "");
-var Data = $S.getDataObj();
-
-var keys = ["FTPTemplate", "userData", "linkTemplate"];
-var userDataKeys = ["isLogin", "userName", "isAdminTextDisplayEnable", "userDisplayName"];
-keys = keys.concat(userDataKeys);
-
-Data.getTemplate = function(key, defaultTemplate) {
-    var allTemplate = Data.getData("FTPTemplate", {});
-    if ($S.isObject(allTemplate)) {
-        if ($S.isDefined(allTemplate[key])) {
-            return allTemplate[key];
-        }
-    }
-    return defaultTemplate;
-};
-// Data.initData = function() {
-//     for (var i = 0; i < keys.length; i++) {
-//         if (["FTPTemplate", "userData"].indexOf(keys[i]) >= 0) {
-//             continue;
-//         }
-//         Data.setData(keys[i], null);
-//     }
-// };
-
-Data.setKeys(keys);
-// Data.initData();
-Data.setData("FTPTemplate", Template);
-var isLogin = Config.getUserData("isLogin") === "true" ? true : false;
-var isAdminTextDisplayEnable = Config.getUserData("isAdminTextDisplayEnable") === "true" ? true : false;
-var userName = Config.getUserData("username", "");
-var userDisplayName = Config.getUserData("displayName", "");
-
-Data.setData("isLogin", isLogin);
-Data.setData("userName", userName);
-Data.setData("isAdminTextDisplayEnable", isAdminTextDisplayEnable);
-Data.setData("userDisplayName", userDisplayName);
-
-PageData.setData("ui.username", userName);
-
-function checkAndroid() {
-    var isAndroid = PageData.isAndroid();
-    if (isAndroid) {
-        PageData.setData("platform", "Android");
-    }
-}
-
+DataHandler.handlePageLoad();
 class App extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            renderField: []
+            isLoaded: false
         };
-        this.dropDownChange = this.dropDownChange.bind(this);
+        this.appData = {
+            "addContainerClass": false,
+            "firstTimeDataLoadStatus": "",
+            "appHeading": [{"tag": "center.h2", "text": "Loading..."}],
+            "hidePageTab": true,
+            "renderFieldRow": []
+        };
         this.onClick = this.onClick.bind(this);
+        this.onChange = this.onChange.bind(this);
+        this.dropDownChange = this.dropDownChange.bind(this);
         this.onFormSubmit = this.onFormSubmit.bind(this);
+        /* methods used in selectFilter end */
+        this.appStateCallback = this.appStateCallback.bind(this);
+        this.appDataCallback = this.appDataCallback.bind(this);
+        this.pageComponentDidMount = this.pageComponentDidMount.bind(this);
+        this.getTabDisplayText = this.getTabDisplayText.bind(this);
+        this.registerChildAttribute = this.registerChildAttribute.bind(this);
+        this.childAttribute = {};
+        this.methods = {
+            onClick: this.onClick,
+            onChange: this.onChange,
+            dropDownChange: this.dropDownChange,
+            onFormSubmit: this.onFormSubmit,
+            pageComponentDidMount: this.pageComponentDidMount,
+            getTabDisplayText: this.getTabDisplayText,
+            registerChildAttribute: this.registerChildAttribute
+        };
     }
-    onFormSubmit(e) {
-        var self = this;
-        e.preventDefault();
-        PageData.handleFormSubmit(e, Data, function() {
-            self.setRenderField();
-        });
-        return false;
+    registerChildAttribute(name, method) {
+        $S.updateDataObj(this.childAttribute, name, method, "checkUndefined");
+    }
+    gotoPage(pageName) {
     }
     onClick(e) {
-        //On button click
-        var self = this;
-        PageData.handleButtonClick(e, Data, function(setRenderField) {
-            if ($S.isBooleanTrue(setRenderField)) {
-                self.setRenderField();
-            }
-        });
+        var name = AppHandler.getFieldName(e);
+        var value = AppHandler.getFieldValue(e);
+        DataHandler.OnButtonClick(this.appStateCallback, this.appDataCallback, name, value);
     }
+    // for input and textarea
     onChange(e) {
-        // var terget = e.currentTarget;
-        PageData.handleInputChange(e);
+        var name = e.currentTarget.name;
+        var value = e.currentTarget.value;
+        DataHandler.OnInputChange(this.appStateCallback, this.appDataCallback, name, value);
+    }
+    onFormSubmit(e) {
+        e.preventDefault();
+        var name = AppHandler.getFieldName(e);
+        var value = AppHandler.getFieldValue(e);
+        DataHandler.OnFormSubmit(this.appStateCallback, this.appDataCallback, name, value);
     }
     dropDownChange(e) {
-        // var self = this;
     }
-    setRenderField(isLoading) {
-        var renderField = [];
-        renderField.push(Data.getTemplate("heading", {}));
-        if (isLoading) {
-            renderField.push(Data.getTemplate("loading", {}));
-            this.setState({renderField: renderField});
-            return;
-        }
-        var isLogin = Data.getData("isLogin", false);
-        if (isLogin) {
-            FTPHelper.setLinkTemplate(Data);
-            renderField.push(Data.getData("linkTemplate", {}));
-            renderField.push(FTPHelper.getFieldTemplateByPageName(Data, currentPageName));
-        } else {
-            renderField.push(FTPHelper.getFieldTemplateByPageName(Data, currentPageName));
-        }
-        this.setState({renderField: renderField});
+    appStateCallback() {
+        $S.log("App:appStateCallback");
+        this.setState({isLoaded: true});
+    }
+    appDataCallback(name, data) {
+        $S.updateDataObj(this.appData, name, data, "checkType");
+    }
+    pageComponentDidMount(pageName) {
+        DataHandler.PageComponentDidMount(this.appStateCallback, this.appDataCallback, pageName);
     }
     componentDidMount() {
-        checkAndroid();
-        var redirectStatus = FTPHelper.checkForRedirect(Data);
-        if (redirectStatus) {
-            return;
-        }
-        this.setRenderField();
+        $S.log("App:componentDidMount");
+        var appDataCallback = this.appDataCallback;
+        var appStateCallback = this.appStateCallback;
+        DataHandler.AppDidMount(appStateCallback, appDataCallback);
+    }
+    removeTab(pageName) {
+    }
+    addTab(pageName) {
+    }
+    getTabDisplayText(tabName) {
     }
     render() {
-        var renderFieldRow = this.state.renderField;
-        return(
-            <RenderComponent renderFieldRow={renderFieldRow}
-                onFormSubmit={this.onFormSubmit}
-                onClick={this.onClick}
-                onChange={this.onChange}
-                dropDownChange={this.dropDownChange}
-            />
-        );
+        var methods = this.methods;
+        var commonData = this.appData;
+        var pages = Config.pages;
+        const login = (props) => (<AppComponent {...props}
+                            data={commonData} methods={methods} renderFieldRow={this.appData.renderFieldRow}
+                            currentPageName={Config.login}/>);
+        const logout = (props) => (<AppComponent {...props}
+                            data={commonData} methods={methods} renderFieldRow={this.appData.renderFieldRow}
+                            currentPageName={Config.logout}/>);
+        const register = (props) => (<AppComponent {...props}
+                            data={commonData} methods={methods} renderFieldRow={this.appData.renderFieldRow}
+                            currentPageName={Config.register}/>);
+        const change_password = (props) => (<AppComponent {...props}
+                            data={commonData} methods={methods} renderFieldRow={this.appData.renderFieldRow}
+                            currentPageName={Config.change_password}/>);
+        const forgot_password = (props) => (<AppComponent {...props}
+                            data={commonData} methods={methods} renderFieldRow={this.appData.renderFieldRow}
+                            currentPageName={Config.forgot_password}/>);
+        const create_password = (props) => (<AppComponent {...props}
+                            data={commonData} methods={methods} renderFieldRow={this.appData.renderFieldRow}
+                            currentPageName={Config.create_password}/>);
+        const noMatch = (props) => (<AppComponent {...props}
+                            data={commonData} methods={methods} renderFieldRow={this.appData.renderFieldRow}
+                            currentPageName={Config.noMatch}/>);
+
+        return (<BrowserRouter>
+            <Switch>
+                <Route path={pages.login} component={login}/>
+                <Route path={pages.logout} component={logout}/>
+                <Route path={pages.register} component={register}/>
+                <Route path={pages.change_password} component={change_password}/>
+                <Route path={pages.forgot_password} component={forgot_password}/>
+                <Route path={pages.create_password} component={create_password}/>
+                <Route component={noMatch}/>
+            </Switch>
+        </BrowserRouter>);
+        // return (
+        //     <AppComponent data={commonData} methods={methods} renderFieldRow={this.appData.renderFieldRow}/>
+        // );
     }
 }
 
 export default App;
+

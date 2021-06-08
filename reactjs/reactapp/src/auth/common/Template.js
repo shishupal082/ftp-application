@@ -108,6 +108,8 @@ Template["login"] = [
         "text": {
             "tag": "form",
             "id": "login_form",
+            "name": "login_form",
+            "value": "login_form",
             "text": [
                 {
                     "tag": "div.h1",
@@ -187,7 +189,7 @@ Template["login"] = [
                         },
                         {
                             "tag": "div",
-                            "className": "text-center",
+                            "className": "text-center d-none",
                             "name": "login.guest-login-link",
                             "text": [
                                 {
@@ -209,6 +211,12 @@ Template["login"] = [
         "text": ""
     }
 ];
+Template["logout"] = [
+    {
+        "tag": "div.center",
+        "text": ""
+    }
+];
 Template["forgot_password"] = [
     {
         "tag": "div.div",
@@ -216,6 +224,8 @@ Template["forgot_password"] = [
         "text": {
             "tag": "form",
             "id": "forgot_password",
+            "name": "forgot_password_form",
+            "value": "forgot_password_form",
             "text": [
                 {
                     "tag": "div.h1",
@@ -325,6 +335,8 @@ Template["register"] = [
         "text": {
             "tag": "form",
             "id": "register_form",
+            "name": "register_form",
+            "value": "register_form",
             "text": [
                 {
                     "tag": "div.h1",
@@ -499,6 +511,8 @@ Template["change_password"] = [
         "text": {
             "tag": "form",
             "id": "change_password",
+            "name": "change_password_form",
+            "value": "change_password_form",
             "text": [
                 {
                     "tag": "div.h1",
@@ -590,6 +604,8 @@ Template["create_password"] = [
         "text": {
             "tag": "form",
             "id": "create_password",
+            "name": "create_password_form",
+            "value": "create_password_form",
             "text": [
                 {
                     "tag": "div.h1",

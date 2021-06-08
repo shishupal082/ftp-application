@@ -16,7 +16,8 @@ var footerLinkJsonAfterLogin = $$$.footerLinkJsonAfterLogin;
 var loginUserDetails = $$$.loginUserDetails;
 var createPasswordOtpInstruction = $$$.createPasswordOtpInstruction;
 var loginRedirectUrl = $$$.loginRedirectUrl;
-
+Config.gtag = $$$.gtag;
+Config.navigator = $$$.navigator;
 
 if (!$S.isString(loginRedirectUrl) || loginRedirectUrl.length < 1) {
     loginRedirectUrl = "/view/resource";
@@ -47,6 +48,25 @@ try {
 try {
     UserData = JSON.parse(loginUserDetails);
 } catch(e) {}
+
+var pages = {
+    "login": basepathname+"/login",
+    "logout": basepathname+"/logout",
+    "register": basepathname+"/register",
+    "change_password": basepathname+"/change_password",
+    "forgot_password": basepathname+"/forgot_password",
+    "create_password": basepathname+"/create_password"
+};
+
+Config.pages = pages;
+
+Config.login = "login";
+Config.logout = "logout";
+Config.register = "register";
+Config.change_password = "change_password";
+Config.forgot_password = "forgot_password";
+Config.create_password = "create_password";
+Config.noMatch = "noMatch";
 
 
 
@@ -95,54 +115,14 @@ if ($S.isBooleanTrue($$$.isReactEnv)) {
     }
 }
 
-Config.getPageData = function(key, defaultValue) {
-    if ($S.isString(PageData[key])) {
-        return PageData[key];
-    }
-    return defaultValue;
-};
-
-Config.getUserData = function(key, defaultValue) {
-    if ($S.isString(UserData[key])) {
-        return UserData[key];
-    }
-    return defaultValue;
-};
-
-Config.getAllUserData = function(key, defaultValue) {
-    return UserData;
-};
-
-var uiUsername = Config.getUserData("username", "");
-// var RequestId = Config.getPageData("app_version", "");
+Config.UserData = UserData;
+Config.PageData = PageData;
 Config.apiMapping = {};
-
 Config.apiMapping["login"] = baseapi + "/api/login_user";
 Config.apiMapping["register"] = baseapi + "/api/register_user";
 Config.apiMapping["forgot_password"] = baseapi + "/api/forgot_password";
 Config.apiMapping["create_password"] = baseapi + "/api/create_password";
-Config.apiMapping["change_password"] = baseapi + "/api/change_password?u="+uiUsername;
-
-Config.apiMapping["track_event"] = baseapi + "/api/track_event?u="+uiUsername;
-
-Config.getAleartMessage = function(response) {
-    var messageMap = {};
-    if (!$S.isObject(response)) {
-        return response;
-    }
-    var messageCode = response.failureCode;
-    var error = response.error;
-    if ($S.isString(messageMap[messageCode])) {
-        return messageMap[messageCode];
-    }
-    return error;
-};
-
-Config.getSuccessMessage = function(response) {
-    if ($S.isString(response.data)) {
-        return response.data;
-    }
-    return "SUCCESS";
-};
+Config.apiMapping["change_password"] = baseapi + "/api/change_password";
+Config.apiMapping["track_event"] = baseapi + "/api/track_event";
 
 export default Config;
