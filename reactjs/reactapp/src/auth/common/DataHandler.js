@@ -74,7 +74,7 @@ DataHandler.extend({
             return false;
         }
         var event = "android_check";
-        var platform = $S.getNavigatorData(Config.navigatorm, "platform");
+        var platform = $S.getNavigatorData(Config.navigator, "platform");
         var appVersion = $S.getNavigatorData(Config.navigator, "appVersion");
         var isLinuxArmv = platform.search(/linux armv/i) >= 0;
         var isLinuxAndroid = appVersion.search(/linux; android/i) >= 0;
