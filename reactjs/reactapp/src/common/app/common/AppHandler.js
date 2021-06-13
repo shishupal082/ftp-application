@@ -73,6 +73,7 @@ AppHandler.extend({
     isValidDateStr: function(dateStr) {
         var p1Formate = "YYYY/-/MM/-/DD";
         var p2Formate = "YYYY/-/MM/-/DD/ /hh/:/mm";
+        var p4Formate = "YYYY/-/MM/-/DD/ /hh/:/mm/:/ss";
         var p3Formate = "YYYY/-/MM/-/DD/ /hh/:/mm/:/ss/./ms";
         //2020-05-31
         var p1 = /[1-9]{1}[0-9]{3}-[0-1][0-9]-[0-3][0-9]/i;
@@ -80,11 +81,14 @@ AppHandler.extend({
         var p2 = /[1-9]{1}[0-9]{3}-[0-1][0-9]-[0-3][0-9] [0-2][0-9]:[0-5][0-9]/i;
         //2021-05-26 00:00:09.987
         var p3 = /[1-9]{1}[0-9]{3}-[0-1][0-9]-[0-3][0-9] [0-2][0-9]:[0-5][0-9]:[0-5][0-9].[0-9]{3}/i;
+        var p4 = /[1-9]{1}[0-9]{3}-[0-1][0-9]-[0-3][0-9] [0-2][0-9]:[0-5][0-9]:[0-5][0-9]/i;
         var dateObj;
-        if ($S.isString(dateStr) && (dateStr.length === 16 || dateStr.length === 10 || dateStr.length === 23)) {
+        if ($S.isString(dateStr) && (dateStr.length === 16 || dateStr.length === 10 || dateStr.length === 23 || dateStr.length === 19)) {
             dateObj = DT.getDateObj(dateStr);
             if (dateObj !== null) {
                 if (dateStr.search(p3) >= 0 && dateStr === DT.formateDateTime(p3Formate, "/", dateObj)) {
+                    return true;
+                } else if (dateStr.search(p4) >= 0 && dateStr === DT.formateDateTime(p4Formate, "/", dateObj)) {
                     return true;
                 } else if (dateStr.search(p2) >= 0 && dateStr === DT.formateDateTime(p2Formate, "/", dateObj)) {
                     return true;
@@ -96,8 +100,17 @@ AppHandler.extend({
         return false;
     },
     isDateLiesInRange: function(startDate, endDate, fieldDate) {
-        if ($S.isString(fieldDate) && fieldDate.length === 10) {
+        if (!$S.isString(startDate) || !$S.isString(endDate) || !$S.isString(fieldDate)) {
+            return false;
+        }
+        if (fieldDate.length === 10) {
             fieldDate += " 00:00";
+        }
+        if (startDate.length === 10) {
+            startDate += " 00:00";
+        }
+        if (endDate.length === 10) {
+            endDate += " 23:59";
         }
         startDate = DT.getDateObj(startDate);
         endDate = DT.getDateObj(endDate);
@@ -107,6 +120,20 @@ AppHandler.extend({
         }
         if (startDate.getTime() <= fieldDate.getTime() && endDate.getTime() >= fieldDate.getTime()) {
             return true;
+        }
+        return false;
+    },
+    isDateLiesInRangeV2: function(dateRange, fieldDate) {
+        if ($S.isArray(dateRange) && dateRange.length === 2) {
+            return this.isDateLiesInRange(dateRange[0], dateRange[1], fieldDate);
+        }
+        return false;
+    },
+    isDateLiesInRangeV3: function(dateStr, fieldDate) {
+        // dateStr = 2021-06-11
+        // fieldDate = 2021-06-11 09:19
+        if ($S.isString(dateStr)) {
+            return this.isDateLiesInRange(dateStr, dateStr, fieldDate);
         }
         return false;
     },
@@ -657,11 +684,15 @@ AppHandler.extend({
     _getRequiredMetaData: function(currentAppData, metaData) {
         var preFilter = $S.findParam([currentAppData, metaData], "preFilter", {});
         var filterKeys = $S.findParam([currentAppData, metaData], "filterKeys", []);
+        var onlyPreFilterKeys = $S.findParam([currentAppData, metaData], "onlyPreFilterKeys", []);
         if (!$S.isObject(preFilter)) {
             preFilter = {};
         }
         if (!$S.isArray(filterKeys)) {
             filterKeys = [];
+        }
+        if (!$S.isArray(onlyPreFilterKeys)) {
+            onlyPreFilterKeys = [];
         }
         var finalKeys = [], temp, temp2;
         for(var i=0; i<filterKeys.length; i++) {
@@ -675,7 +706,7 @@ AppHandler.extend({
                 preFilter[temp] = temp2;
             }
         }
-        return {"preFilter": preFilter, "filterKeys": finalKeys};
+        return {"preFilter": preFilter, "filterKeys": finalKeys, "onlyPreFilterKeys": onlyPreFilterKeys};
     },
     generateFilterData: function(currentAppData, metaData, csvData, filterSelectedValues, searchParam) {
         if (!$S.isArray(csvData)) {
@@ -687,6 +718,7 @@ AppHandler.extend({
         var metaDataTemp = this._getRequiredMetaData(currentAppData, metaData);
         var filterKeys = metaDataTemp["filterKeys"];
         var preFilter = metaDataTemp["preFilter"];
+        var onlyPreFilterKeys = metaDataTemp["onlyPreFilterKeys"];
         var i, j, temp, temp2;
 
         var tempFilterOptions = {};
@@ -718,6 +750,9 @@ AppHandler.extend({
         }
         for(i=0; i<csvData.length; i++) {
             for(j=0; j<filterKeys.length; j++) {
+                if (onlyPreFilterKeys.indexOf(filterKeys[j]) >= 0) {
+                    continue;
+                }
                 temp = getFilterText(csvData[i], tempFilterOptions[filterKeys[j]].dataKey);//csvData[i][tempFilterOptions[filterKeys[j]].dataKey];
                 if (!$S.isString(temp) || temp.trim().length < 1) {
                     continue;

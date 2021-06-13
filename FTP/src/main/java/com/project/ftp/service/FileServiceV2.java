@@ -163,7 +163,7 @@ public class FileServiceV2 {
         ArrayList<String> responseFilenames = this.getUsersFilePath(loginUserDetails);
         ArrayList<String> filterFilenames =
                 this.filterFilename(responseFilenames, AppConstant.CSV_FILENAME_REGEX, AppConstant.ALL_STRING_REGEX);
-        return this.getFinalPathInfo(loginUserDetails, filterFilenames);
+        return this.getFinalPathInfo(loginUserDetails, filterFilenames, AppConstant.EmptyStr);
     }
     private ArrayList<String> getUsersFilePath(LoginUserDetails loginUserDetails) {
         ArrayList<ScanResult> scanResults = new ArrayList<>();
@@ -190,7 +190,8 @@ public class FileServiceV2 {
         return response;
     }
     private PathInfo getFinalPathInfo(LoginUserDetails loginUserDetails,
-                                      ArrayList<String> responseFilenames) throws AppException {
+                                      ArrayList<String> responseFilenames,
+                                      String tempFileName) throws AppException {
         if (responseFilenames == null) {
             throw new AppException(ErrorCodes.RUNTIME_ERROR);
         }
@@ -215,7 +216,7 @@ public class FileServiceV2 {
             throw new AppException(ErrorCodes.RUNTIME_ERROR);
         }
         String responseFilename = StaticService.getProperDirString(String.join("/", requiredDirs))
-                + "/" + loginUserName+".txt";
+                + "/" + loginUserName + tempFileName +".txt";
         fileService.deleteFileV2(responseFilename);
         boolean createStatus, addTextStatus = false;
         createStatus = fileService.createNewFile(responseFilename);
@@ -250,11 +251,12 @@ public class FileServiceV2 {
         return filterFileName;
     }
     public PathInfo getUserDataByFilenamePattern(LoginUserDetails loginUserDetails,
-                                                 String filenamePattern, String usernamePattern)
+                                                 String filenamePattern, String usernamePattern,
+                                                 String tempFileName)
             throws AppException {
         ArrayList<String> responseFilenames = this.getUsersFilePath(loginUserDetails);
         ArrayList<String> filterFileName = this.filterFilename(responseFilenames, filenamePattern, usernamePattern);
-        return this.getFinalPathInfo(loginUserDetails, filterFileName);
+        return this.getFinalPathInfo(loginUserDetails, filterFileName, tempFileName);
     }
 
     private HashMap<String, String> parseRequestedFileStr(String filename) {

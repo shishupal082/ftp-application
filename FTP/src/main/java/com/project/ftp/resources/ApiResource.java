@@ -393,14 +393,18 @@ public class ApiResource {
     @Produces(MediaType.TEXT_HTML)
     public Response getUploadedDataByFilenamePattern(@Context HttpServletRequest request,
                                                      @QueryParam("filename") String filename,
-                                                     @QueryParam("username") String username) {
+                                                     @QueryParam("username") String username,
+                                                     @QueryParam("temp_file_name") String tempFileName) {
         logger.info("getUploadedDataByFilenamePattern: in, user: {}, filename+username: {}",
-                userService.getUserDataForLogging(request), filename+username);
+                userService.getUserDataForLogging(request), filename+username+tempFileName);
+        if (tempFileName == null) {
+            tempFileName = "";
+        }
         PathInfo pathInfo = null;
         try {
             authService.isLogin(request);
             LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
-            pathInfo = fileServiceV2.getUserDataByFilenamePattern(loginUserDetails, filename, username);
+            pathInfo = fileServiceV2.getUserDataByFilenamePattern(loginUserDetails, filename, username, tempFileName);
         } catch (AppException ae) {
             eventTracking.trackFailureEvent(request, EventName.GET_UPLOADED_DATA_BY_FILENAME_PATTERN, ae.getErrorCode());
             logger.info("Error in generating response file: {}", ae.getErrorCode().getErrorCode());

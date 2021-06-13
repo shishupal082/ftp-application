@@ -1079,6 +1079,11 @@ Added androidCheckEnable (Boolean) in ftpConfiguration
         in ui
 Removed page=${pageName} parameter from app_view-1.0.0.ftl
 
+8.0.0.4 (2021-06-13)
+---------------------
+Added new query parameter for /api/get_uploaded_data_by_filename_pattern
+    - temp_file_name
+
 Future releases
 -------------------
 

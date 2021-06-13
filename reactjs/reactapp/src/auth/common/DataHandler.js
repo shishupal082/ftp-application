@@ -77,8 +77,9 @@ DataHandler.extend({
         var platform = $S.getNavigatorData(Config.navigator, "platform");
         var appVersion = $S.getNavigatorData(Config.navigator, "appVersion");
         var isLinuxArmv = platform.search(/linux armv/i) >= 0;
+        var isLinuxAarch = platform.search(/linux aarch/i) >= 0;
         var isLinuxAndroid = appVersion.search(/linux; android/i) >= 0;
-        if (isLinuxArmv && isLinuxAndroid) {
+        if ((isLinuxArmv || isLinuxAarch) && isLinuxAndroid) {
             // DataHandler.setData("platform", "Android");
             platform = "Android";
             AppHandler.Track(username, event, platform);
@@ -87,9 +88,9 @@ DataHandler.extend({
         var status = "FAILURE";
         var reason = "";
         var comment = "";
-        if (isLinuxArmv) {
+        if (isLinuxArmv || isLinuxAarch) {
             comment = $S.getUserAgentTrackingData(Config.navigator);
-            reason = "LINUX_ARMV_NOT_ANDROID";
+            reason = "LINUX_ARMV_OR_AARCH_NOT_ANDROID";
         } else if (isLinuxAndroid) {
             comment = $S.getUserAgentTrackingData(Config.navigator);
             reason = "ANDROID_NOT_LINUX_ARMV";

@@ -25,7 +25,7 @@ public class AppConstant {
     public static final String ALLOWED_HEADERS= "Access-Control-Allow-Headers";
     public static final String FILE = "FILE";
     public static final String FOLDER = "FOLDER";
-    public static final String AppVersion = "8.0.0.3";
+    public static final String AppVersion = "8.0.0.4";
     public static final String DATE_FORMAT = "yyyy-MM-dd";
     public static final String TIME_FORMAT = "HHmmss";
     public static final String FILENAME_FORMAT = "yyyy-MM-dd-HH-mm'-filename'";
@@ -57,6 +57,7 @@ public class AppConstant {
     public static final String PDF_AUTHOR = "Project Author";
     public static final String PDF_CREATOR = "Project Creator";
     public static final String EmptyParagraph = " ";
+    public static final String EmptyStr = "";
     public static final String EXPIRED_USER_SESSION = "EXPIRED_USER_SESSION";
     public static final String REQUEST_USER_AGENT = "User-Agent";
     public static final String ORIGIN = "origin";
