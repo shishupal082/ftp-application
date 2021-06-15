@@ -18,6 +18,7 @@ public class FtlConfig {
     private String gaTrackingId;
     private String forgotPasswordPageInstruction;
     private String createPasswordOtpInstruction;
+    private boolean displayCreatePasswordLinkEnable;
     // It is used locally
     private String tempGaEnable;
     private boolean gaTrackingEnable;
@@ -131,6 +132,16 @@ public class FtlConfig {
         this.forgotPasswordPageInstruction = forgotPasswordPageInstruction;
     }
 
+    public boolean isDisplayCreatePasswordLinkEnable() {
+        return displayCreatePasswordLinkEnable;
+    }
+
+    public void setDisplayCreatePasswordLinkEnable(boolean displayCreatePasswordLinkEnable) {
+        this.displayCreatePasswordLinkEnable = displayCreatePasswordLinkEnable;
+    }
+    public String getDisplayCreatePasswordLinkEnable() {
+        return Boolean.toString(displayCreatePasswordLinkEnable);
+    }
     public String getCreatePasswordOtpInstruction() {
         return createPasswordOtpInstruction;
     }

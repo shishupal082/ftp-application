@@ -8,6 +8,7 @@ public class AppStaticData {
     private String pageNotFoundJson;
     private String footerLinkJson;
     private String footerLinkJsonAfterLogin;
+    private String displayCreatePasswordLinkEnable;
     private Object jsonFileData;
 
     public String getAppVersion() {
@@ -66,6 +67,14 @@ public class AppStaticData {
         this.uploadFileApiVersion = uploadFileApiVersion;
     }
 
+    public String getDisplayCreatePasswordLinkEnable() {
+        return displayCreatePasswordLinkEnable;
+    }
+
+    public void setDisplayCreatePasswordLinkEnable(String displayCreatePasswordLinkEnable) {
+        this.displayCreatePasswordLinkEnable = displayCreatePasswordLinkEnable;
+    }
+
     public Object getJsonFileData() {
         return jsonFileData;
     }
@@ -84,6 +93,7 @@ public class AppStaticData {
                 ", pageNotFoundJson='" + pageNotFoundJson + '\'' +
                 ", footerLinkJson='" + footerLinkJson + '\'' +
                 ", footerLinkJsonAfterLogin='" + footerLinkJsonAfterLogin + '\'' +
+                ", displayCreatePasswordLinkEnable='" + displayCreatePasswordLinkEnable + '\'' +
                 ", jsonFileData=" + jsonFileData +
                 '}';
     }

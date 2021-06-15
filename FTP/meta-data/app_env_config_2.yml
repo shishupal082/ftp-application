@@ -2,6 +2,7 @@ fileSaveDir: "D:/workspace/project/ftp-app/saved-files/"
 #configDataFilePath: "D:/workspace/project/ftp-app/config-files/"
 configDataFilePath: "D:/workspace/ftp-application/FTP/meta-data/config-files/"
 
+
 backendConfig:
   #  forgotPasswordMessage: "Forgot password request submitted, Please check your email."
   forgotPasswordMessage: "Forgot password request submitted, Please create password."
@@ -10,15 +11,21 @@ backendConfig:
   rolesFileName:
     - roles/roles.yml
     - roles/roles_2.yml
-  eventDataFilenamePattern: "'event_data/'yyyy-MM-dd-HH-mm'-event_data.csv'"
-  userDataFilename: "user_data.csv"
-  fileDataFilename: "file_details.csv"
   fileNotFoundMapping:
     - "file_not_found_config.yml"
     - "file_not_found_config_2.yml"
   staticDataFilename: "app_static_data.json"
   rateLimitThreshold: 2
   addTextV2TimeStamp: "yyyy-MM-dd HH:mm:ss.SSS','"
+  enableMysqlTableName:
+    - users
+    - event_data
+
+
+backendConfigV2:
+  eventDataFilenamePattern: "'event_data/'yyyy-MM-dd-HH-mm'-event_data.csv'"
+  userDataFilename: "user_data.csv"
+  fileDataFilename: "file_details.csv"
 
 
 cookieName: "ftp-cookie-8080"
@@ -74,6 +81,7 @@ ftlConfig:
   loginRedirectUrl: "/dashboard"
   gaTrackingId: "UA-177553408-1" # for development
   gaTrackingEnable: true
+  displayCreatePasswordLinkEnable: true
 #  forgotPasswordPageInstruction: "Please contact admin."
   forgotPasswordPageInstruction: "Please contact admin to get create password otp."
   createPasswordOtpInstruction: "(Receive from admin)"

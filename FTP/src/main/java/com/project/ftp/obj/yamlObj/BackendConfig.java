@@ -10,11 +10,9 @@ public class BackendConfig {
     private String forgotPasswordMessage;
     private boolean forgotPasswordEnable;
     private String loadRoleStatusOnPageLoad;
-    private String eventDataFilenamePattern;
-    private String userDataFilename;
-    private String fileDataFilename;
     private String staticDataFilename;
     private String addTextV2TimeStamp;
+    private ArrayList<String> enableMysqlTableName;
     private ArrayList<String> fileNotFoundMapping;
     private ArrayList<String> rolesFileName;
     private int rateLimitThreshold;// used for register and create_password
@@ -61,36 +59,20 @@ public class BackendConfig {
         this.rateLimitThreshold = rateLimitThreshold;
     }
 
-    public String getEventDataFilenamePattern() {
-        return eventDataFilenamePattern;
-    }
-
-    public void setEventDataFilenamePattern(String eventDataFilenamePattern) {
-        this.eventDataFilenamePattern = eventDataFilenamePattern;
-    }
-
-    public String getUserDataFilename() {
-        return userDataFilename;
-    }
-
-    public void setUserDataFilename(String userDataFilename) {
-        this.userDataFilename = userDataFilename;
-    }
-
-    public String getFileDataFilename() {
-        return fileDataFilename;
-    }
-
-    public void setFileDataFilename(String fileDataFilename) {
-        this.fileDataFilename = fileDataFilename;
-    }
-
     public String getAddTextV2TimeStamp() {
         return addTextV2TimeStamp;
     }
 
     public void setAddTextV2TimeStamp(String addTextV2TimeStamp) {
         this.addTextV2TimeStamp = addTextV2TimeStamp;
+    }
+
+    public ArrayList<String> getEnableMysqlTableName() {
+        return enableMysqlTableName;
+    }
+
+    public void setEnableMysqlTableName(ArrayList<String> enableMysqlTableName) {
+        this.enableMysqlTableName = enableMysqlTableName;
     }
 
     public ArrayList<String> getFileNotFoundMapping() {
@@ -115,11 +97,9 @@ public class BackendConfig {
                 "forgotPasswordMessage='" + forgotPasswordMessage + '\'' +
                 ", forgotPasswordEnable=" + forgotPasswordEnable +
                 ", loadRoleStatusOnPageLoad='" + loadRoleStatusOnPageLoad + '\'' +
-                ", eventDataFilenamePattern='" + eventDataFilenamePattern + '\'' +
-                ", userDataFilename='" + userDataFilename + '\'' +
-                ", fileDataFilename='" + fileDataFilename + '\'' +
                 ", staticDataFilename='" + staticDataFilename + '\'' +
                 ", addTextV2TimeStamp='" + addTextV2TimeStamp + '\'' +
+                ", enableMysqlTableName=" + enableMysqlTableName +
                 ", fileNotFoundMapping=" + fileNotFoundMapping +
                 ", rolesFileName=" + rolesFileName +
                 ", rateLimitThreshold=" + rateLimitThreshold +

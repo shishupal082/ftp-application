@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.project.ftp.bridge.config.CreatePasswordEmailConfig;
 import com.project.ftp.bridge.config.EmailConfig;
 import com.project.ftp.obj.yamlObj.BackendConfig;
+import com.project.ftp.obj.yamlObj.BackendConfigV2;
 import com.project.ftp.obj.yamlObj.FtlConfig;
 import io.dropwizard.Configuration;
 import io.dropwizard.db.DataSourceFactory;
@@ -44,6 +45,7 @@ public class FtpConfiguration extends Configuration {
     private ArrayList<String> supportedFileType;
     private FtlConfig ftlConfig;
     private BackendConfig backendConfig;
+    private BackendConfigV2 backendConfigV2;
     private HashMap<String, String> loginRedirectMapping;
     private HashMap<String, String> tempConfig;
 
@@ -263,6 +265,15 @@ public class FtpConfiguration extends Configuration {
     public void setBackendConfig(BackendConfig backendConfig) {
         this.backendConfig = backendConfig;
     }
+
+    public BackendConfigV2 getBackendConfigV2() {
+        return backendConfigV2;
+    }
+
+    public void setBackendConfigV2(BackendConfigV2 backendConfigV2) {
+        this.backendConfigV2 = backendConfigV2;
+    }
+
     public void updateFtpConfig(final FtpConfiguration tempFtpConfiguration) {
         if (tempFtpConfiguration == null) {
             return;
@@ -359,6 +370,10 @@ public class FtpConfiguration extends Configuration {
         if (backendConfig != null) {
             this.backendConfig = backendConfig;
         }
+        BackendConfigV2 backendConfigV2 = tempFtpConfiguration.getBackendConfigV2();
+        if (backendConfig != null) {
+            this.backendConfigV2 = backendConfigV2;
+        }
         HashMap<String, String> tempConfig = tempFtpConfiguration.getTempConfig();
         if (tempConfig != null) {
             this.tempConfig = tempConfig;
@@ -396,6 +411,7 @@ public class FtpConfiguration extends Configuration {
                 ", supportedFileType=" + supportedFileType +
                 ", ftlConfig=" + ftlConfig +
                 ", backendConfig=" + backendConfig +
+                ", backendConfigV2=" + backendConfigV2 +
                 ", loginRedirectMapping=" + loginRedirectMapping +
                 ", tempConfig=" + tempConfig +
                 '}';

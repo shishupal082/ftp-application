@@ -3,6 +3,7 @@ package com.project.ftp.helper;
 import com.project.ftp.config.AppConfig;
 import com.project.ftp.config.AppConstant;
 import com.project.ftp.obj.yamlObj.BackendConfig;
+import com.project.ftp.obj.yamlObj.BackendConfigV2;
 import com.project.ftp.service.StaticService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,11 +26,11 @@ public class AppConfigHelper {
         return AppConstant.APP_STATIC_DATA_FILENAME;
     }
     public static String getUserDataFilename(final AppConfig appConfig) {
-        BackendConfig backendConfig = appConfig.getFtpConfiguration().getBackendConfig();
+        BackendConfigV2 backendConfigV2 = appConfig.getFtpConfiguration().getBackendConfigV2();
         String resultFilename = null;
         boolean isValidFilename = false;
-        if (backendConfig != null) {
-            resultFilename = backendConfig.getUserDataFilename();
+        if (backendConfigV2 != null) {
+            resultFilename = backendConfigV2.getUserDataFilename();
             isValidFilename = StaticService.isValidString(resultFilename);
         }
         if (isValidFilename) {
@@ -38,11 +39,11 @@ public class AppConfigHelper {
         return AppConstant.USER_DATA_FILENAME;
     }
     public static String getFileDataFilename(final AppConfig appConfig) {
-        BackendConfig backendConfig = appConfig.getFtpConfiguration().getBackendConfig();
+        BackendConfigV2 backendConfigV2 = appConfig.getFtpConfiguration().getBackendConfigV2();
         String resultFilename = null;
         boolean isValidFilename = false;
-        if (backendConfig != null) {
-            resultFilename = backendConfig.getFileDataFilename();
+        if (backendConfigV2 != null) {
+            resultFilename = backendConfigV2.getFileDataFilename();
             isValidFilename = StaticService.isValidString(resultFilename);
         }
         if (isValidFilename) {

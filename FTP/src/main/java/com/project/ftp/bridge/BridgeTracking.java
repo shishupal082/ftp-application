@@ -25,7 +25,10 @@ public class BridgeTracking {
                 BridgeConstant.SUCCESS, null, request.createTrackingComment());
     }
     public void trackAllRelatedUsers(HashMap<String, ArrayList<String>> allRelatedUsers) {
-        String finalResult = allRelatedUsers.toString();
+        String finalResult = null;
+        if (allRelatedUsers != null) {
+            finalResult = allRelatedUsers.toString();
+        }
         if (finalResult == null) {
 //            bridgeToAppInterface.trackEvent(null, BridgeConstant.RELATED_USERS,
 //                    BridgeConstant.SUCCESS, null, null);
@@ -36,7 +39,7 @@ public class BridgeTracking {
         String[] tokens = finalResult.split("(?<=\\G.{" + size + "})");
         int count = 1;
         for (String token : tokens) {
-            logger.info("relatedUserTracking: {}, {}", Integer.toString(count++), token);
+            logger.info("relatedUserTracking: {}, {}", (count++), token);
 //            bridgeToAppInterface.trackEvent(null, BridgeConstant.RELATED_USERS,
 //                    BridgeConstant.SUCCESS, Integer.toString(count++), token);
         }

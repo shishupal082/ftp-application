@@ -66,6 +66,8 @@ public class AppConstant {
     public static final String ALL_STRING_REGEX = ".";
     public static final String EMAIL_REGEX = "^(.+)@(.+)$"; // only care about @
 
+    public static final String TABLE_NAME_EVENT = "event_data";
+    public static final String TABLE_NAME_USER = "users";
 
 
     public static final String IS_DEV_USER = "isDevUser";

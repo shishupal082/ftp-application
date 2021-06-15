@@ -67,6 +67,7 @@ public class UserService {
         ArrayList<String> rolesConfigPath = StaticService.getRolesConfigPath(appConfig.getFtpConfiguration());
         boolean rolesUpdateStatus = appConfig.getAppToBridge().updateUserRoles(rolesConfigPath);
         appConfig.updatePageConfig404();
+        appConfig.updateFinalFtpConfiguration(appConfig.getFtpConfiguration());
         if (!rolesUpdateStatus) {
             logger.info("Error in updating user roles.");
             throw new AppException(ErrorCodes.CONFIG_ERROR);

@@ -85,7 +85,7 @@ Template["link"] = [
             {
                 "tag": "span",
                 "className": "small",
-                "name": "link.is-admin",
+                "name": "isAdminTextDisplayEnable",
                 "text": " (Admin)"
             },
             {
@@ -171,13 +171,6 @@ Template["login"] = [
                                     "href": "/forgot_password",
                                     "className": "p-5px",
                                     "text": "Forgot Password"
-                                },
-                                {
-                                    "tag": "a",
-                                    "name": "login.create_password-link",
-                                    "href": "/create_password",
-                                    "className": "p-5px d-none",
-                                    "text": "Create Password"
                                 },
                                 {
                                     "tag": "a",
@@ -313,7 +306,7 @@ Template["forgot_password"] = [
                                 "tag": "a",
                                 "href": "/create_password",
                                 "className": "p-5px d-none",
-                                "name": "forgot_password.create_password-link",
+                                "name": "displayCreatePasswordLinkEnable",
                                 "text": "Create Password"
                             }
                         ]
@@ -483,13 +476,6 @@ Template["register"] = [
                                     "href": "/forgot_password",
                                     "className": "p-5px",
                                     "text": "Forgot Password"
-                                },
-                                {
-                                    "tag": "a",
-                                    "name": "register.create_password-link",
-                                    "href": "/create_password",
-                                    "className": "p-5px d-none",
-                                    "text": "Create Password"
                                 }
                             ]
                         }

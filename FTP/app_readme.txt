@@ -1084,6 +1084,27 @@ Removed page=${pageName} parameter from app_view-1.0.0.ftl
 Added new query parameter for /api/get_uploaded_data_by_filename_pattern
     - temp_file_name
 
+8.0.0.5 (2021-06-15)
+---------------------
+Config change
+Added (even though mysql is enable but there tables can be disabled)
+1) backendConfig.enableMysqlTableName (ArrayList)
+    - users
+    - event_data
+2) ftlConfig.displayCreatePasswordLinkEnable: boolean
+3) env_config parameter
+    androidCheckEnable: boolean
+4) move 3 parameter from backendConfig to backendConfigV2 (new config file)
+    - eventDataFilenamePattern (write filename)
+    - userDataFilename (read / write filename)
+    - fileDataFilename (read / write filename)
+5) Change api name from update_roles_config to update_config
+    - Now it will update
+        - rolesConfig
+        - page404Config
+        - envConfig
+
+
 Future releases
 -------------------
 

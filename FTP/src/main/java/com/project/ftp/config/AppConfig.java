@@ -155,7 +155,7 @@ public class AppConfig {
         this.pageConfig404 = pageConfig404;
     }
 
-    public void generateFinalFtpConfiguration(final FtpConfiguration ftpConfiguration) {
+    public void updateFinalFtpConfiguration(final FtpConfiguration ftpConfiguration) {
         if (StaticService.isMysqlEnable(cmdArguments)) {
             ftpConfiguration.setMysqlEnable(true);
         } else {

@@ -901,6 +901,7 @@ public class FileServiceV2 {
         appStaticData.setUploadFileApiVersion(appConfig.getFtpConfiguration().getUploadFileApiVersion());
         FtlConfig ftlConfig = appConfig.getFtpConfiguration().getFtlConfig();
         if (ftlConfig != null) {
+            appStaticData.setDisplayCreatePasswordLinkEnable(ftlConfig.getDisplayCreatePasswordLinkEnable());
             appStaticData.setHeadingJson(ftlConfig.getHeadingJson());
             appStaticData.setAfterLoginLinkJson(ftlConfig.getAfterLoginLinkJson());
             appStaticData.setPageNotFoundJson(ftlConfig.getPageNotFoundJson());

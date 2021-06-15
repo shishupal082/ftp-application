@@ -88,8 +88,8 @@
     "Get roles config [GET]"
   ],
   [
-    "/api/update_roles_config",
-    "Update roles and page404 config [GET]"
+    "/api/update_config",
+    "Update roles, page404 and env_config parameter [GET]"
   ],
   [
     "/api/get_uploaded_csv_data",

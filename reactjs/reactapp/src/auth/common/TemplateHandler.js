@@ -22,11 +22,11 @@ TemplateHandler.fn = TemplateHandler.prototype = {
 $S.extendObject(TemplateHandler);
 
 TemplateHandler.extend({
-    checkUserDependentFooterLink: function(template) {
+    checkUserDependentLink: function(template) {
         var userData = AppHandler.GetUserDetails();
-        if ($S.isObject(userData)) {
-            for(var linkName in userData) {
-                if ($S.isBooleanTrue(userData[linkName])) {
+        if ($S.isObject(userData) && $S.isObject(userData.roles)) {
+            for(var linkName in userData.roles) {
+                if ($S.isBooleanTrue(userData.roles[linkName])) {
                     TemplateHelper.removeClassTemplate(template, linkName, "d-none");
                 }
             }
@@ -37,12 +37,7 @@ TemplateHandler.extend({
         var linkTemplate = AppHandler.getTemplate(Template, "link", {});
         var field = TemplateHelper(linkTemplate).searchField("link.loginAs");
         field.text = AppHandler.GetUserData("username", "");
-        var isAdmin = AppHandler.GetUserData("isAdminTextDisplayEnable", false);
-        if ($S.isBooleanTrue(isAdmin)) {
-            TemplateHelper.removeClassTemplate(linkTemplate, "link.is-admin", "d-none");
-        } else {
-            TemplateHelper.addClassTemplate(linkTemplate, "link.is-admin", "d-none");
-        }
+        linkTemplate = this.checkUserDependentLink(linkTemplate);
         return linkTemplate;
     }
 });
@@ -55,6 +50,7 @@ TemplateHandler.extend({
         var fieldsValue = renderData.fieldsValue;
         var submitBtnName = renderData.submitBtnName;
         var formSubmitStatus = renderData.formSubmitStatus;
+        var displayCreatePasswordLinkEnable;
         if (!$S.isObject(fieldsValue)) {
             fieldsValue = {};
         }
@@ -62,10 +58,16 @@ TemplateHandler.extend({
             case "login":
             case "logout":
             case "register":
-            case "forgot_password":
             case "change_password":
             case "create_password":
                 renderFieldRow = AppHandler.getTemplate(Template, pageName, "Page Not Found");
+            break;
+            case "forgot_password":
+                renderFieldRow = AppHandler.getTemplate(Template, pageName, "Page Not Found");
+                displayCreatePasswordLinkEnable = AppHandler.GetStaticData("displayCreatePasswordLinkEnable");
+                if (displayCreatePasswordLinkEnable === "true") {
+                    TemplateHelper.removeClassTemplate(renderFieldRow, "displayCreatePasswordLinkEnable", "d-none");
+                }
             break;
             case "noMatch":
             default:
@@ -93,7 +95,7 @@ TemplateHandler.extend({
         }
         var field = TemplateHelper(renderFieldRow).searchFieldV2("footer");
         if ($S.isObject(field) && field.name === "footer") {
-            footerTemplate = TemplateHandler.checkUserDependentFooterLink(footerTemplate);
+            footerTemplate = TemplateHandler.checkUserDependentLink(footerTemplate);
             TemplateHelper.setTemplateAttr(field, "footer", "text", footerTemplate);
         }
         var renderField = [];

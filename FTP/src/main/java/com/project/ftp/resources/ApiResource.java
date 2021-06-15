@@ -587,10 +587,10 @@ public class ApiResource {
         return response;
     }
     @GET
-    @Path("/update_roles_config")
+    @Path("/update_config")
     @UnitOfWork
-    public ApiResponse updateRolesConfig(@Context HttpServletRequest request) {
-        logger.info("updateRolesConfig : In, user: {}",
+    public ApiResponse updateConfigParameter(@Context HttpServletRequest request) {
+        logger.info("updateConfig : In, user: {}",
                 userService.getUserDataForLogging(request));
         ApiResponse response;
         try {
@@ -599,11 +599,11 @@ public class ApiResource {
             response = new ApiResponse();
             eventTracking.trackSuccessEvent(request, EventName.UPDATE_ROLES_CONFIG);
         } catch (AppException ae) {
-            logger.info("Error in updateRolesConfig: {}", ae.getErrorCode().getErrorCode());
+            logger.info("Error in updateConfig: {}", ae.getErrorCode().getErrorCode());
             eventTracking.trackFailureEvent(request, EventName.UPDATE_ROLES_CONFIG, ae.getErrorCode());
             response = new ApiResponse(ae.getErrorCode());
         }
-        logger.info("updateRolesConfig : Out");
+        logger.info("updateConfig : Out");
         return response;
     }
     @POST

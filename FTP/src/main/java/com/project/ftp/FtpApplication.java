@@ -10,6 +10,7 @@ import com.project.ftp.filters.ResponseFilter;
 import com.project.ftp.intreface.*;
 import com.project.ftp.mysql.DbDAO;
 import com.project.ftp.mysql.MysqlUser;
+import com.project.ftp.obj.yamlObj.BackendConfig;
 import com.project.ftp.resources.ApiResource;
 import com.project.ftp.resources.AppResource;
 import com.project.ftp.resources.FaviconResource;
@@ -59,26 +60,49 @@ public class FtpApplication  extends Application<FtpConfiguration> {
         LOGGER.info("commandLineArguments: " + arguments.toString());
         AppConfig appConfig = new AppConfig();
         appConfig.setCmdArguments(arguments);
-        appConfig.generateFinalFtpConfiguration(ftpConfiguration);
+        appConfig.updateFinalFtpConfiguration(ftpConfiguration);
 //        ShutdownTask shutdownTask = new ShutdownTask(appConfig);
 //        appConfig.setShutdownTask(shutdownTask);
         appConfig.setFtpConfiguration(ftpConfiguration);
         StaticService.initApplication(appConfig, arguments.get(AppConstant.CMD_LINE_ARG_1st_CONFIG_FILE));
         appConfig.updatePageConfig404();
         LOGGER.info("appConfig: {}", appConfig);
-
-        EventInterface eventInterface;
-        UserInterface userInterface;
+        EventInterface eventInterface = null;
+        UserInterface userInterface = null;
         if (appConfig.getFtpConfiguration().isMysqlEnable()) {
-            DbDAO dbDAO = new DbDAO(hibernateBundle.getSessionFactory(), ftpConfiguration.getDataSourceFactory());
-            eventInterface = new EventDb(dbDAO);
-            userInterface = new UserDb(dbDAO);
-            LOGGER.info("user interface configured from database");
+            LOGGER.info("mysql config enable");
+            BackendConfig backendConfig = appConfig.getFtpConfiguration().getBackendConfig();
+            ArrayList<String> enableMysqlTable = null;
+            if (backendConfig != null) {
+                enableMysqlTable = backendConfig.getEnableMysqlTableName();
+            }
+            if (enableMysqlTable != null) {
+                DbDAO dbDAO = new DbDAO(hibernateBundle.getSessionFactory(), ftpConfiguration.getDataSourceFactory());
+                if (enableMysqlTable.contains(AppConstant.TABLE_NAME_EVENT)) {
+                    eventInterface = new EventDb(dbDAO);
+                    LOGGER.info("eventInterface configured from mysql");
+                } else {
+                    LOGGER.info("eventInterface not configured from mysql");
+                }
+                if (enableMysqlTable.contains(AppConstant.TABLE_NAME_USER)) {
+                    userInterface = new UserDb(dbDAO);
+                    LOGGER.info("userInterface configured from mysql");
+                } else {
+                    LOGGER.info("userInterface not configured from mysql");
+                }
+            }
         } else {
-            eventInterface = new EventFile(appConfig);
-            userInterface = new UserFile(appConfig);
-            LOGGER.info("mysql is not enabled, configure user interface from file");
+            LOGGER.info("mysql config not enabled, interface configure from file");
         }
+        if (eventInterface == null) {
+            eventInterface = new EventFile(appConfig);
+            LOGGER.info("eventInterface configured from file");
+        }
+        if (userInterface == null) {
+            userInterface = new UserFile(appConfig);
+            LOGGER.info("userInterface configured from file");
+        }
+
         UserService userService = new UserService(appConfig, userInterface);
         AuthService authService = new AuthService(userService);
         EventTracking eventTracking = new EventTracking(appConfig, userService, eventInterface);

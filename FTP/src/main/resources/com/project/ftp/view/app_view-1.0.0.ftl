@@ -27,7 +27,7 @@
 <noscript>You need to enable JavaScript to run this app.</noscript>
 <div style="display: none;">
     <input type="hidden" style="display: none;" name="pageData" id="pageData"
-           value="app_version=${appVersion},is_guest_enable=${isGuestEnable},android_check_enable=${androidCheckEnable}"/>
+           value="app_version=${appVersion},is_guest_enable=${isGuestEnable},android_check_enable=${androidCheckEnable},displayCreatePasswordLinkEnable=${displayCreatePasswordLinkEnable}"/>
     <input type="hidden" style="display: none;" name="loginUserDetailsV2Str" id="loginUserDetailsV2Str" value="${loginUserDetailsV2Str}"/>
     <input type="hidden" style="display: none;" name="headingJson" id="headingJson"
             value="<#if ftlConfig.headingJson??>${ftlConfig.headingJson}<#else></#if>"/>
