@@ -19,7 +19,7 @@ class App extends React.Component {
         this.appData = {
             "addContainerClass": false,
             "firstTimeDataLoadStatus": "",
-            "appHeading": [{"tag": "center.h2", "text": "Loading..."}],
+            "appHeading": [{"tag": "div", "text": ""}],
             "hidePageTab": true,
             "renderFieldRow": []
         };
