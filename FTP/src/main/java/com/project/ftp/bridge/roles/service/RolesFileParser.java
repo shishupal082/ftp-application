@@ -65,15 +65,9 @@ public class RolesFileParser {
         /*finding duplicate username entry in roleAccessGroup*/
         temp = new ArrayList<>();
         for (Map.Entry<String, ArrayList<String>> entry: roleAccess1.entrySet()) {
-            key = entry.getKey();
             value = entry.getValue();
             if (value != null) {
-                for (String username: value) {
-                    if (temp.contains(username)) {
-                        logger.info("username: '{}', is also found in rollAccessGroup: {}", username, key);
-                    }
-                    temp.add(username);
-                }
+                temp.addAll(value);
             }
         }
         /*end finding duplicate username entry in roleAccessGroup*/

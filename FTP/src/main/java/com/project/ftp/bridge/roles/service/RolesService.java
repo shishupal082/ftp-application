@@ -272,6 +272,7 @@ public class RolesService {
             }
             logger.info("Invalid rolesAccess:{}, for roleId:{}", null, roleId);
         }
+        logger.info("roleId not found: {}", roleId);
         return null;
     }
     public String getRolesByApiName(String apiName) {
@@ -382,6 +383,7 @@ public class RolesService {
         }
         ArrayList<String> roleAccessUsers = this.getRolesAccessByRoleId(role);
         if (roleAccessUsers == null) {
+            logger.info("roleAccessUsers is null");
             return null;
         }
         if (roleAccessUsers.contains(userName)) {
