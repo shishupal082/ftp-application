@@ -96,7 +96,7 @@
     "Get uploaded CSV data [GET]"
   ],
   [
-    "/api/get_uploaded_data_by_filename_pattern?filename=[.]txt$&username=.",
+    "/api/get_uploaded_data_by_filename_pattern?filename=[.]txt$&username=.&temp_file_name=1",
     "Get uploaded data by query parameter username and filename pattern [GET]"
   ],
   [
