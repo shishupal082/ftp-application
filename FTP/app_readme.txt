@@ -1104,6 +1104,18 @@ Added (even though mysql is enable but there tables can be disabled)
         - page404Config
         - envConfig
 
+8.0.0.6
+-------------------
+Remove backendConfig and  backendConfigV2 and keep all there variables directly
+Add new config parameter
+lockFileNamePattern:
+    - p1
+    - p2
+It will be used in fileDelete request, identification of delete permission
+
+If /api/upload_file request with same filename then it will add 1, 2, ... recursively
+- instead of rename existing file and as it is and rename current filename
+
 
 Future releases
 -------------------

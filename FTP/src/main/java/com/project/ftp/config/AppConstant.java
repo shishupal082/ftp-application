@@ -25,7 +25,7 @@ public class AppConstant {
     public static final String ALLOWED_HEADERS= "Access-Control-Allow-Headers";
     public static final String FILE = "FILE";
     public static final String FOLDER = "FOLDER";
-    public static final String AppVersion = "8.0.0.5";
+    public static final String AppVersion = "8.0.0.6";
     public static final String DATE_FORMAT = "yyyy-MM-dd";
     public static final String TIME_FORMAT = "HHmmss";
     public static final String FILENAME_FORMAT = "yyyy-MM-dd-HH-mm'-filename'";

@@ -8,7 +8,6 @@ import com.project.ftp.exceptions.AppException;
 import com.project.ftp.exceptions.ErrorCodes;
 import com.project.ftp.helper.AppConfigHelper;
 import com.project.ftp.obj.*;
-import com.project.ftp.obj.yamlObj.BackendConfig;
 import com.project.ftp.obj.yamlObj.FtlConfig;
 import com.project.ftp.obj.yamlObj.Page404Entry;
 import com.project.ftp.obj.yamlObj.PageConfig404;
@@ -465,7 +464,7 @@ public class FileServiceV2 {
             throw new AppException(ErrorCodes.CONFIG_ERROR);
         }
         PathInfo pathInfo = fileService.getPathInfo(saveDir + fileDetail.getFilepath());
-        Boolean permanentlyDeleteFile = appConfig.getFtpConfiguration().isPermanentlyDeleteFile();
+        Boolean permanentlyDeleteFile = appConfig.getFtpConfiguration().getPermanentlyDeleteFile();
         Boolean fileDeleteStatus;
         if (AppConstant.FILE.equals(pathInfo.getType())) {
             if (permanentlyDeleteFile != null && permanentlyDeleteFile) {
@@ -686,20 +685,15 @@ public class FileServiceV2 {
         logger.info("final pathInfo: {}", pathInfo);
         return pathInfo;
     }
-    public PathInfo doUpload(InputStream uploadedInputStream, String fileName) throws AppException {
+    public PathInfo doUpload(InputStream uploadedInputStream, String fileName, String orgFilename,  int count) throws AppException {
         PathInfo pathInfo = fileService.getPathInfo(fileName);
+        PathInfo orgPathInfo = fileService.getPathInfo(orgFilename);
         if (AppConstant.FILE.equals(pathInfo.getType())) {
-            logger.info("Filename: {}, already exist, re-naming it. {}", fileName, pathInfo);
-            String ext = pathInfo.getExtension();
-            String parentFolder = pathInfo.getParentFolder();
-            String currentFileName = pathInfo.getFileName();
-            String newFileName = pathInfo.getFilenameWithoutExt() + "-Copy." + ext;
-            Boolean renameStatus = fileService.renameExistingFile(parentFolder, currentFileName, newFileName);
-            if (!renameStatus) {
-                String timeInMs = StaticService.getDateStrFromPattern(AppConstant.DateTimeFormat);
-                newFileName = pathInfo.getFilenameWithoutExt() + "-" + timeInMs + "." + ext;
-                fileService.renameExistingFile(parentFolder, currentFileName, newFileName);
-            }
+            logger.info("Filename: {}, already exist: {}", fileName + ":" + count, pathInfo);
+            String parentFolder = orgPathInfo.getParentFolder();
+            String ext = orgPathInfo.getExtension();
+            String newFileName = parentFolder + "/" + orgPathInfo.getFilenameWithoutExt() + "-"+count+"." + ext;
+            return this.doUpload(uploadedInputStream,  newFileName, orgFilename, count+1);
         }
         Integer maxFileSize = appConfig.getFtpConfiguration().getMaxFileSize();
         pathInfo = fileService.uploadFile(uploadedInputStream, fileName, maxFileSize);
@@ -752,7 +746,7 @@ public class FileServiceV2 {
             dirStatus = fileService.createFolder(saveDir, loginUserName);
         }
         if (dirStatus) {
-            pathInfo = this.doUpload(uploadedInputStream, uploadingFileName);
+            pathInfo = this.doUpload(uploadedInputStream, uploadingFileName, uploadingFileName,1);
         } else {
             logger.info("Error in creating directory for username: {}", loginUserName);
             throw new AppException(ErrorCodes.INVALID_FILE_SAVE_PATH);
@@ -812,12 +806,9 @@ public class FileServiceV2 {
     }
     private String getAddTextV2TimeStamp() {
         String timeStampPattern;
-        BackendConfig backendConfig = appConfig.getFtpConfiguration().getBackendConfig();
-        if (backendConfig != null) {
-            timeStampPattern = backendConfig.getAddTextV2TimeStamp();
-            if (timeStampPattern != null && !timeStampPattern.isEmpty()) {
-                return timeStampPattern;
-            }
+        timeStampPattern = appConfig.getFtpConfiguration().getAddTextV2TimeStamp();
+        if (timeStampPattern != null && !timeStampPattern.isEmpty()) {
+            return timeStampPattern;
         }
         return AppConstant.DateTimeFormat7;
     }

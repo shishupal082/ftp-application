@@ -123,7 +123,7 @@ public class FileService {
             this.renameExistingFile(destination, filename + "." + ext, filename2 + "." + ext);
         }
         Boolean copyFileStatus = this.copyFileV2(sourceFilePath, destinationFilePath);
-        Boolean deleteStatus = false;
+        boolean deleteStatus = false;
         if (copyFileStatus) {
             deleteStatus = this.deleteFileV2(sourceFilePath);
             if (!deleteStatus) {
@@ -280,25 +280,25 @@ public class FileService {
         return availableFiles;
     }
 
-    public Boolean renameExistingFile(String dir, String fileName, String renameFilename) {
+    private void renameExistingFile(String dir, String fileName, String renameFilename) {
         String logStr = "File rename request: dir=" + dir + ", filename=" + fileName;
         logger.info("{}, renameFilename={}", logStr, renameFilename);
         if (dir == null || fileName == null || renameFilename == null) {
             logger.info("Invalid request for file rename.");
-            return false;
+            return; // return false;
         }
         File file = new File(dir + "/" + fileName);
         if (!file.isFile()) {
             logger.info("Requested src file does not exist.");
-            return false;
+            return;//return false;
         }
         String renameFilePath = dir + "/" + renameFilename;
         File newFile = new File(renameFilePath);
         if (newFile.isFile()) {
             logger.info("Requested destination file already exist.");
-            return false;
+            return;//return false;
         }
-        boolean renameStatus = false;
+//        boolean renameStatus = false;
         try {
             if (file.renameTo(newFile)) {
                 logStr = "file rename in dir={}, from: {}";
@@ -306,11 +306,11 @@ public class FileService {
             } else {
                 logger.info("File rename fail: from {}, to {}", file.getPath(), newFile.getPath());
             }
-            renameStatus = true;
+//            renameStatus = true;
         } catch (Exception e) {
             logger.info("Error in renaming file from '{}', to '{}'", file.getPath(), newFile.getPath());
         }
-        return renameStatus;
+        //return renameStatus;
     }
 
     public PathInfo searchIndexHtmlInFolder(PathInfo pathInfo) {

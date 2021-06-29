@@ -215,6 +215,12 @@ AppHandler.extend({
         combinedDateSelectionParameter["all"] = allDateSelection;
         return combinedDateSelectionParameter;
     },
+    ReplaceComma: function(str) {
+        if ($S.isStringV2(str)) {
+            return str.replaceAll("," , "...");
+        }
+        return str;
+    },
     GetDataParameterFromDate: function(dateRange) {
         var allDate, tempAllDate, arrangedDate, startLimit, endLimit;
         var i;
@@ -508,7 +514,21 @@ AppHandler.extend({
         return $S.clone(staticData);
     },
     SetStaticData: function(tempStaticData) {
+        if (!$S.isObject(tempStaticData)) {
+            return false;
+        }
         staticData = $S.clone(tempStaticData);
+        return true;
+    },
+    SetStaticDataAttr: function(key, value) {
+        if (!$S.isStringV2(key)) {
+            return false;
+        }
+        var keys = Object.keys(staticData);
+        if (keys.indexOf(key) < 0) {
+            return false
+        }
+        staticData[key] = $S.clone(value);
         return true;
     },
     GetStaticData: function(key, defaultValue) {
@@ -812,8 +832,10 @@ AppHandler.extend({
         }
         var selectionOptions = [];
         var selectedValue;
+        var isResetBtn = false;
         for(i=0; i<filterKeys.length; i++) {
             if (filterKeys[i] === "reset") {
+                isResetBtn = true;
                 selectionOptions.push({"type": "buttons", "buttons": resetButton, "selectedValue": ""});
                 continue;
             }
@@ -833,6 +855,9 @@ AppHandler.extend({
                     "selectedValue": selectedValue
                 });
             }
+        }
+        if (isResetBtn && selectionOptions.length === 1) {
+            selectionOptions = [];
         }
         return selectionOptions;
     },
@@ -860,6 +885,9 @@ AppHandler.extend({
         }
         if (!$S.isArray(reportData)) {
             reportData = [];
+        }
+        if (!$S.isArray(filterOptions)) {
+            filterOptions = [];
         }
         for(k=0; k<filterOptions.length; k++) {
             filterIndex = filterOptions[k].dataKey;

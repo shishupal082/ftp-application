@@ -6,7 +6,6 @@ import com.project.ftp.config.*;
 import com.project.ftp.event.EventTracking;
 import com.project.ftp.exceptions.ErrorCodes;
 import com.project.ftp.obj.PathInfo;
-import com.project.ftp.obj.yamlObj.BackendConfig;
 import com.project.ftp.parser.YamlFileParser;
 import com.project.ftp.pdf.TextToPdfService;
 import org.slf4j.Logger;
@@ -61,7 +60,7 @@ public class StaticService {
         }
         ftpConfiguration.setIndexPageReRoute(indexPageReRoute);
         TextToPdfService textToPdfService = new TextToPdfService();
-        Boolean createReadMePdf = ftpConfiguration.isCreateReadmePdf();
+        Boolean createReadMePdf = ftpConfiguration.getCreateReadmePdf();
         if (createReadMePdf != null && createReadMePdf) {
             String textFilename, pdfFilename, pdfTitle, pdfSubject;
             textFilename = "readme.txt";
@@ -187,13 +186,12 @@ public class StaticService {
     }
     public static ArrayList<String> getRolesConfigPath(final FtpConfiguration ftpConfiguration) {
         String configDir = ftpConfiguration.getConfigDataFilePath();
-        BackendConfig backendConfig = ftpConfiguration.getBackendConfig();
         ArrayList<String> rolesConfigPath = new ArrayList<>();
         if (configDir == null) {
             return rolesConfigPath;
         }
-        if (backendConfig != null && backendConfig.getRolesFileName() != null) {
-            ArrayList<String> rolesFileName = backendConfig.getRolesFileName();
+        if (ftpConfiguration.getRolesFileName() != null) {
+            ArrayList<String> rolesFileName = ftpConfiguration.getRolesFileName();
             if (rolesFileName.size() > 0) {
                 for (String filename: rolesFileName) {
                     rolesConfigPath.add(configDir+filename);
@@ -445,9 +443,8 @@ public class StaticService {
     public static String getForgotPasswordMessage(AppConfig appConfig) {
         ErrorCodes errorCodes = ErrorCodes.FORGOT_PASSWORD_REPEAT_REQUEST;
         String message = errorCodes.getErrorString();
-        BackendConfig backendConfig = appConfig.getFtpConfiguration().getBackendConfig();
-        if (backendConfig != null && StaticService.isValidString(backendConfig.getForgotPasswordMessage())) {
-            message = backendConfig.getForgotPasswordMessage();
+        if (StaticService.isValidString(appConfig.getFtpConfiguration().getForgotPasswordMessage())) {
+            message = appConfig.getFtpConfiguration().getForgotPasswordMessage();
         }
         return message;
     }

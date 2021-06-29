@@ -31,7 +31,7 @@ public class AppView extends View {
                 AppConstant.FromEnvConfig);
         this.loginRedirectUrl = userService.getLoginRedirectUrl(loginUserDetailsV2,
                 ftlConfig.getLoginRedirectUrl());
-        Boolean isGuestEnableTemp = appConfig.getFtpConfiguration().isGuestEnable();
+        Boolean isGuestEnableTemp = appConfig.getFtpConfiguration().getGuestEnable();
         if (isGuestEnableTemp == null) {
             isGuestEnableTemp = false;
         }

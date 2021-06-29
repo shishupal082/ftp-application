@@ -1,37 +1,31 @@
 fileSaveDir: "D:/workspace/project/ftp-app/saved-files/"
 #configDataFilePath: "D:/workspace/project/ftp-app/config-files/"
 configDataFilePath: "D:/workspace/ftp-application/FTP/meta-data/config-files/"
-publicDir: "../.."
-publicPostDir: "/project"
-
-#  forgotPasswordMessage: "Forgot password request submitted, Please check your email."
-forgotPasswordMessage: "Forgot password request submitted, Please create password."
-loadRoleStatusOnPageLoad: "FromRoleConfig" #"isAdminUser" #FromRoleConfig
-forgotPasswordEnable: true
-rolesFileName:
-  - roles/roles.yml
-  - roles/roles_2.yml
-fileNotFoundMapping:
-  - "file_not_found_config.yml"
-  - "file_not_found_config_2.yml"
-staticDataFilename: "app_static_data.json"
-rateLimitThreshold: 2
-addTextV2TimeStamp: "yyyy-MM-dd HH:mm:ss.SSS','"
-enableMysqlTableName:
-  - users
-  - event_data
 
 
-eventDataFilenamePattern: "'event_data/'yyyy-MM-dd-HH-mm'-event_data.csv'"
-userDataFilename: "user_data.csv"
-fileDataFilename: "file_details.csv"
+backendConfig:
+  #  forgotPasswordMessage: "Forgot password request submitted, Please check your email."
+  forgotPasswordMessage: "Forgot password request submitted, Please create password."
+  loadRoleStatusOnPageLoad: "FromRoleConfig" #"isAdminUser" #FromRoleConfig
+  forgotPasswordEnable: true
+  rolesFileName:
+    - roles/roles.yml
+    - roles/roles_2.yml
+  fileNotFoundMapping:
+    - "file_not_found_config.yml"
+    - "file_not_found_config_2.yml"
+  staticDataFilename: "app_static_data.json"
+  rateLimitThreshold: 2
+  addTextV2TimeStamp: "yyyy-MM-dd HH:mm:ss.SSS','"
+  enableMysqlTableName:
+    - users
+    - event_data
 
-lockFileNamePattern:
-  - "(file_table.csv|delete_table.csv)"
-  - "project_table.csv"
-  - project_work_status.csv
-  - "(supply_item|supply_status).csv"
 
+backendConfigV2:
+  eventDataFilenamePattern: "'event_data/'yyyy-MM-dd-HH-mm'-event_data.csv'"
+  userDataFilename: "user_data.csv"
+  fileDataFilename: "file_details.csv"
 
 
 cookieName: "ftp-cookie-8080"
@@ -107,6 +101,8 @@ androidCheckEnable: true
 # Only for development purpose
 createReadmePdf: true
 appRestartCommand: "sh app_run.bat" # not required for now
+publicDir: "../.."
+publicPostDir: "/project"
 allowedOrigin:
   - http://localhost
   - http://127.0.0.1:9000
@@ -116,5 +112,5 @@ allowedOrigin:
   - http://localhost:9080
   - chrome-extension://fhbjgbiflinjbdggehcddcbncdddomop
 
-tempConfig:
-  username: Admin
+tempConfig2:
+  username: U1

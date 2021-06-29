@@ -9,7 +9,6 @@ import com.project.ftp.exceptions.ErrorCodes;
 import com.project.ftp.intreface.UserInterface;
 import com.project.ftp.mysql.MysqlUser;
 import com.project.ftp.obj.*;
-import com.project.ftp.obj.yamlObj.BackendConfig;
 import com.project.ftp.obj.yamlObj.FtlConfig;
 import com.project.ftp.session.SessionService;
 import org.slf4j.Logger;
@@ -305,11 +304,7 @@ public class UserService {
         ArrayList<String> allRoles = new ArrayList<>();
         String[] allRolesConfig;
         if (AppConstant.FromEnvConfig.equals(source)) {
-            String loadRoleStatusOnPageLoad = null;
-            BackendConfig backendConfig = appConfig.getFtpConfiguration().getBackendConfig();
-            if (backendConfig != null) {
-                loadRoleStatusOnPageLoad = backendConfig.getLoadRoleStatusOnPageLoad();
-            }
+            String loadRoleStatusOnPageLoad = appConfig.getFtpConfiguration().getLoadRoleStatusOnPageLoad();
             if (AppConstant.FromRoleConfig.equals(loadRoleStatusOnPageLoad)) {
                 source = AppConstant.FromRoleConfig;
             } else if (loadRoleStatusOnPageLoad != null) {
@@ -567,8 +562,8 @@ public class UserService {
         appConfig.getAppToBridge().sendCreatePasswordOtpEmail(user);
     }
     public void forgotPassword(RequestForgotPassword forgotPassword) throws AppException {
-        BackendConfig backendConfig = appConfig.getFtpConfiguration().getBackendConfig();
-        if (backendConfig != null && !backendConfig.isForgotPasswordEnable()) {
+        boolean forgotPasswordEnable = appConfig.getFtpConfiguration().getForgotPasswordEnable();
+        if (!forgotPasswordEnable) {
             logger.info("ForgotPassword is not enable, requested forgotPassword");
             throw new AppException(ErrorCodes.FORGOT_PASSWORD_NOT_ENABLE);
         }

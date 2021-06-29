@@ -7,7 +7,6 @@ package com.project.ftp.config;
 
 import com.project.ftp.FtpConfiguration;
 import com.project.ftp.intreface.AppToBridge;
-import com.project.ftp.obj.yamlObj.BackendConfig;
 import com.project.ftp.obj.yamlObj.FtlConfig;
 import com.project.ftp.obj.yamlObj.PageConfig404;
 import com.project.ftp.parser.YamlFileParser;
@@ -79,11 +78,8 @@ public class AppConfig {
     }
     public int getRateLimitThreshold() {
         int rateLimitThreshold = AppConstant.DEFAULT_RATE_LIMIT_THRESHOLD;
-        BackendConfig backendConfig = ftpConfiguration.getBackendConfig();
-        if (backendConfig != null) {
-            if (backendConfig.getRateLimitThreshold() > 0) {
-                rateLimitThreshold = backendConfig.getRateLimitThreshold();
-            }
+        if (ftpConfiguration.getRateLimitThreshold() > 0) {
+            rateLimitThreshold = ftpConfiguration.getRateLimitThreshold();
         }
         return rateLimitThreshold;
     }

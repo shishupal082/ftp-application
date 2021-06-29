@@ -10,7 +10,6 @@ import com.project.ftp.filters.ResponseFilter;
 import com.project.ftp.intreface.*;
 import com.project.ftp.mysql.DbDAO;
 import com.project.ftp.mysql.MysqlUser;
-import com.project.ftp.obj.yamlObj.BackendConfig;
 import com.project.ftp.resources.ApiResource;
 import com.project.ftp.resources.AppResource;
 import com.project.ftp.resources.FaviconResource;
@@ -71,10 +70,9 @@ public class FtpApplication  extends Application<FtpConfiguration> {
         UserInterface userInterface = null;
         if (appConfig.getFtpConfiguration().isMysqlEnable()) {
             LOGGER.info("mysql config enable");
-            BackendConfig backendConfig = appConfig.getFtpConfiguration().getBackendConfig();
             ArrayList<String> enableMysqlTable = null;
-            if (backendConfig != null) {
-                enableMysqlTable = backendConfig.getEnableMysqlTableName();
+            if (ftpConfiguration.isMysqlEnable()) {
+                enableMysqlTable = ftpConfiguration.getEnableMysqlTableName();
             }
             if (enableMysqlTable != null) {
                 DbDAO dbDAO = new DbDAO(hibernateBundle.getSessionFactory(), ftpConfiguration.getDataSourceFactory());

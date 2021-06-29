@@ -16,7 +16,7 @@ cp target/FTP-*.jar meta-data/
 #rm -rf target
 echo *****Copy jar file completed*****
 
-sh app_run.bat
+#sh app_run.bat
 
 #Copying new build file
 sh copy_build.sh

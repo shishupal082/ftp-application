@@ -5,8 +5,6 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.project.ftp.bridge.config.CreatePasswordEmailConfig;
 import com.project.ftp.bridge.config.EmailConfig;
-import com.project.ftp.obj.yamlObj.BackendConfig;
-import com.project.ftp.obj.yamlObj.BackendConfigV2;
 import com.project.ftp.obj.yamlObj.FtlConfig;
 import io.dropwizard.Configuration;
 import io.dropwizard.db.DataSourceFactory;
@@ -29,49 +27,38 @@ public class FtpConfiguration extends Configuration {
     private String uploadFileApiVersion;
     private String cookieName;
 
+    private String forgotPasswordMessage;
+    private String loadRoleStatusOnPageLoad;
+    private String staticDataFilename;
+    private String addTextV2TimeStamp;
+    private String eventDataFilenamePattern;
+    private String userDataFilename;
+    private String fileDataFilename;
     private String aesEncryptionPassword;
-    @JsonProperty("database")
-    private DataSourceFactory dataSourceFactory = new DataSourceFactory();
-    private EmailConfig emailConfig;
-    private CreatePasswordEmailConfig createPasswordEmailConfig;
 
-    private int maxFileSize;
+    // Defined as Boolean but not as boolean
+    // Because while updating if not found shall not assume false
     private Boolean createReadmePdf;
     private Boolean permanentlyDeleteFile;
-    private boolean mysqlEnable;
+    private Boolean forgotPasswordEnable;
     private Boolean guestEnable;
     private Boolean androidCheckEnable;
+    private boolean mysqlEnable;
+    private int maxFileSize;
+    private int rateLimitThreshold;// used for register and create_password
     private ArrayList<String> allowedOrigin;
     private ArrayList<String> supportedFileType;
-    private FtlConfig ftlConfig;
-    private BackendConfig backendConfig;
-    private BackendConfigV2 backendConfigV2;
+    private ArrayList<String> enableMysqlTableName;
+    private ArrayList<String> fileNotFoundMapping;
+    private ArrayList<String> rolesFileName;
+    private ArrayList<String> lockFileNamePattern;
     private HashMap<String, String> loginRedirectMapping;
     private HashMap<String, String> tempConfig;
-
-    public EmailConfig getEmailConfig() {
-        return emailConfig;
-    }
-
-    public void setEmailConfig(EmailConfig emailConfig) {
-        this.emailConfig = emailConfig;
-    }
-
-    public CreatePasswordEmailConfig getCreatePasswordEmailConfig() {
-        return createPasswordEmailConfig;
-    }
-
-    public void setCreatePasswordEmailConfig(CreatePasswordEmailConfig createPasswordEmailConfig) {
-        this.createPasswordEmailConfig = createPasswordEmailConfig;
-    }
-
-    public FtlConfig getFtlConfig() {
-        return ftlConfig;
-    }
-
-    public void setFtlConfig(FtlConfig ftlConfig) {
-        this.ftlConfig = ftlConfig;
-    }
+    private EmailConfig emailConfig;
+    private CreatePasswordEmailConfig createPasswordEmailConfig;
+    private FtlConfig ftlConfig;
+    @JsonProperty("database")
+    private DataSourceFactory dataSourceFactory = new DataSourceFactory();
 
     public String getIndexPageReRoute() {
         return indexPageReRoute;
@@ -161,6 +148,62 @@ public class FtpConfiguration extends Configuration {
         this.cookieName = cookieName;
     }
 
+    public String getForgotPasswordMessage() {
+        return forgotPasswordMessage;
+    }
+
+    public void setForgotPasswordMessage(String forgotPasswordMessage) {
+        this.forgotPasswordMessage = forgotPasswordMessage;
+    }
+
+    public String getLoadRoleStatusOnPageLoad() {
+        return loadRoleStatusOnPageLoad;
+    }
+
+    public void setLoadRoleStatusOnPageLoad(String loadRoleStatusOnPageLoad) {
+        this.loadRoleStatusOnPageLoad = loadRoleStatusOnPageLoad;
+    }
+
+    public String getStaticDataFilename() {
+        return staticDataFilename;
+    }
+
+    public void setStaticDataFilename(String staticDataFilename) {
+        this.staticDataFilename = staticDataFilename;
+    }
+
+    public String getAddTextV2TimeStamp() {
+        return addTextV2TimeStamp;
+    }
+
+    public void setAddTextV2TimeStamp(String addTextV2TimeStamp) {
+        this.addTextV2TimeStamp = addTextV2TimeStamp;
+    }
+
+    public String getEventDataFilenamePattern() {
+        return eventDataFilenamePattern;
+    }
+
+    public void setEventDataFilenamePattern(String eventDataFilenamePattern) {
+        this.eventDataFilenamePattern = eventDataFilenamePattern;
+    }
+
+    public String getUserDataFilename() {
+        return userDataFilename;
+    }
+
+    public void setUserDataFilename(String userDataFilename) {
+        this.userDataFilename = userDataFilename;
+    }
+
+    public String getFileDataFilename() {
+        return fileDataFilename;
+    }
+
+    public void setFileDataFilename(String fileDataFilename) {
+        this.fileDataFilename = fileDataFilename;
+    }
+
     public String getAesEncryptionPassword() {
         return aesEncryptionPassword;
     }
@@ -169,56 +212,7 @@ public class FtpConfiguration extends Configuration {
         this.aesEncryptionPassword = aesEncryptionPassword;
     }
 
-    public DataSourceFactory getDataSourceFactory() {
-        return dataSourceFactory;
-    }
-
-    public void setDataSourceFactory(DataSourceFactory dataSourceFactory) {
-        this.dataSourceFactory = dataSourceFactory;
-    }
-
-    public ArrayList<String> getAllowedOrigin() {
-        return allowedOrigin;
-    }
-
-    public void setAllowedOrigin(ArrayList<String> allowedOrigin) {
-        this.allowedOrigin = allowedOrigin;
-    }
-
-
-    public ArrayList<String> getSupportedFileType() {
-        return supportedFileType;
-    }
-
-    public void setSupportedFileType(ArrayList<String> supportedFileType) {
-        this.supportedFileType = supportedFileType;
-    }
-
-    public HashMap<String, String> getTempConfig() {
-        return tempConfig;
-    }
-
-    public void setTempConfig(HashMap<String, String> tempConfig) {
-        this.tempConfig = tempConfig;
-    }
-
-    public HashMap<String, String> getLoginRedirectMapping() {
-        return loginRedirectMapping;
-    }
-
-    public void setLoginRedirectMapping(HashMap<String, String> loginRedirectMapping) {
-        this.loginRedirectMapping = loginRedirectMapping;
-    }
-
-    public int getMaxFileSize() {
-        return maxFileSize;
-    }
-
-    public void setMaxFileSize(int maxFileSize) {
-        this.maxFileSize = maxFileSize;
-    }
-
-    public Boolean isCreateReadmePdf() {
+    public Boolean getCreateReadmePdf() {
         return createReadmePdf;
     }
 
@@ -226,7 +220,7 @@ public class FtpConfiguration extends Configuration {
         this.createReadmePdf = createReadmePdf;
     }
 
-    public Boolean isPermanentlyDeleteFile() {
+    public Boolean getPermanentlyDeleteFile() {
         return permanentlyDeleteFile;
     }
 
@@ -234,15 +228,15 @@ public class FtpConfiguration extends Configuration {
         this.permanentlyDeleteFile = permanentlyDeleteFile;
     }
 
-    public boolean isMysqlEnable() {
-        return mysqlEnable;
+    public Boolean getForgotPasswordEnable() {
+        return forgotPasswordEnable;
     }
 
-    public void setMysqlEnable(boolean mysqlEnable) {
-        this.mysqlEnable = mysqlEnable;
+    public void setForgotPasswordEnable(Boolean forgotPasswordEnable) {
+        this.forgotPasswordEnable = forgotPasswordEnable;
     }
 
-    public Boolean isGuestEnable() {
+    public Boolean getGuestEnable() {
         return guestEnable;
     }
 
@@ -258,20 +252,124 @@ public class FtpConfiguration extends Configuration {
         this.androidCheckEnable = androidCheckEnable;
     }
 
-    public BackendConfig getBackendConfig() {
-        return backendConfig;
+    public boolean isMysqlEnable() {
+        return mysqlEnable;
     }
 
-    public void setBackendConfig(BackendConfig backendConfig) {
-        this.backendConfig = backendConfig;
+    public void setMysqlEnable(boolean mysqlEnable) {
+        this.mysqlEnable = mysqlEnable;
     }
 
-    public BackendConfigV2 getBackendConfigV2() {
-        return backendConfigV2;
+    public int getMaxFileSize() {
+        return maxFileSize;
     }
 
-    public void setBackendConfigV2(BackendConfigV2 backendConfigV2) {
-        this.backendConfigV2 = backendConfigV2;
+    public void setMaxFileSize(int maxFileSize) {
+        this.maxFileSize = maxFileSize;
+    }
+
+    public int getRateLimitThreshold() {
+        return rateLimitThreshold;
+    }
+
+    public void setRateLimitThreshold(int rateLimitThreshold) {
+        this.rateLimitThreshold = rateLimitThreshold;
+    }
+
+    public ArrayList<String> getAllowedOrigin() {
+        return allowedOrigin;
+    }
+
+    public void setAllowedOrigin(ArrayList<String> allowedOrigin) {
+        this.allowedOrigin = allowedOrigin;
+    }
+
+    public ArrayList<String> getSupportedFileType() {
+        return supportedFileType;
+    }
+
+    public void setSupportedFileType(ArrayList<String> supportedFileType) {
+        this.supportedFileType = supportedFileType;
+    }
+
+    public ArrayList<String> getEnableMysqlTableName() {
+        return enableMysqlTableName;
+    }
+
+    public void setEnableMysqlTableName(ArrayList<String> enableMysqlTableName) {
+        this.enableMysqlTableName = enableMysqlTableName;
+    }
+
+    public ArrayList<String> getFileNotFoundMapping() {
+        return fileNotFoundMapping;
+    }
+
+    public void setFileNotFoundMapping(ArrayList<String> fileNotFoundMapping) {
+        this.fileNotFoundMapping = fileNotFoundMapping;
+    }
+
+    public ArrayList<String> getRolesFileName() {
+        return rolesFileName;
+    }
+
+    public void setRolesFileName(ArrayList<String> rolesFileName) {
+        this.rolesFileName = rolesFileName;
+    }
+
+    public ArrayList<String> getLockFileNamePattern() {
+        return lockFileNamePattern;
+    }
+
+    public void setLockFileNamePattern(ArrayList<String> lockFileNamePattern) {
+        this.lockFileNamePattern = lockFileNamePattern;
+    }
+
+    public HashMap<String, String> getLoginRedirectMapping() {
+        return loginRedirectMapping;
+    }
+
+    public void setLoginRedirectMapping(HashMap<String, String> loginRedirectMapping) {
+        this.loginRedirectMapping = loginRedirectMapping;
+    }
+
+    public HashMap<String, String> getTempConfig() {
+        return tempConfig;
+    }
+
+    public void setTempConfig(HashMap<String, String> tempConfig) {
+        this.tempConfig = tempConfig;
+    }
+
+    public EmailConfig getEmailConfig() {
+        return emailConfig;
+    }
+
+    public void setEmailConfig(EmailConfig emailConfig) {
+        this.emailConfig = emailConfig;
+    }
+
+    public CreatePasswordEmailConfig getCreatePasswordEmailConfig() {
+        return createPasswordEmailConfig;
+    }
+
+    public void setCreatePasswordEmailConfig(CreatePasswordEmailConfig createPasswordEmailConfig) {
+        this.createPasswordEmailConfig = createPasswordEmailConfig;
+    }
+
+    public FtlConfig getFtlConfig() {
+        return ftlConfig;
+    }
+
+    public void setFtlConfig(FtlConfig ftlConfig) {
+        this.ftlConfig = ftlConfig;
+    }
+
+    public DataSourceFactory getDataSourceFactory() {
+        return dataSourceFactory;
+    }
+
+    public void setDataSourceFactory(DataSourceFactory dataSourceFactory) {
+        this.dataSourceFactory = dataSourceFactory;
     }
 
     public void updateFtpConfig(final FtpConfiguration tempFtpConfiguration) {
@@ -322,37 +420,65 @@ public class FtpConfiguration extends Configuration {
         if (cookieName != null) {
             this.cookieName = cookieName;
         }
+        String forgotPasswordMessage = tempFtpConfiguration.getForgotPasswordMessage();
+        if (forgotPasswordMessage != null) {
+            this.forgotPasswordMessage = forgotPasswordMessage;
+        }
+        String loadRoleStatusOnPageLoad = tempFtpConfiguration.getLoadRoleStatusOnPageLoad();
+        if (loadRoleStatusOnPageLoad != null) {
+            this.loadRoleStatusOnPageLoad = loadRoleStatusOnPageLoad;
+        }
+        String staticDataFilename = tempFtpConfiguration.getStaticDataFilename();
+        if (staticDataFilename != null) {
+            this.staticDataFilename = staticDataFilename;
+        }
+        String addTextV2TimeStamp = tempFtpConfiguration.getAddTextV2TimeStamp();
+        if (addTextV2TimeStamp != null) {
+            this.addTextV2TimeStamp = addTextV2TimeStamp;
+        }
+        String eventDataFilenamePattern = tempFtpConfiguration.getEventDataFilenamePattern();
+        if (eventDataFilenamePattern != null) {
+            this.eventDataFilenamePattern = eventDataFilenamePattern;
+        }
+        String userDataFilename = tempFtpConfiguration.getUserDataFilename();
+        if (userDataFilename != null) {
+            this.userDataFilename = userDataFilename;
+        }
+        String fileDataFilename = tempFtpConfiguration.getFileDataFilename();
+        if (fileDataFilename != null) {
+            this.fileDataFilename = fileDataFilename;
+        }
         String aesEncryptionPassword = tempFtpConfiguration.getAesEncryptionPassword();
         if (aesEncryptionPassword != null) {
             this.aesEncryptionPassword = aesEncryptionPassword;
         }
-        EmailConfig emailConfig = tempFtpConfiguration.getEmailConfig();
-        if (emailConfig != null) {
-            this.emailConfig = emailConfig;
-        }
-        CreatePasswordEmailConfig createPasswordEmailConfig = tempFtpConfiguration.getCreatePasswordEmailConfig();
-        if (createPasswordEmailConfig != null) {
-            this.createPasswordEmailConfig = createPasswordEmailConfig;
-        }
-        int maxFileSize = tempFtpConfiguration.getMaxFileSize();
-        if (maxFileSize > 0) {
-            this.maxFileSize = maxFileSize;
-        }
-        Boolean createReadmePdf = tempFtpConfiguration.isCreateReadmePdf();
+        Boolean createReadmePdf = tempFtpConfiguration.getCreateReadmePdf();
         if (createReadmePdf != null) {
             this.createReadmePdf = createReadmePdf;
         }
-        Boolean permanentlyDeleteFile = tempFtpConfiguration.isPermanentlyDeleteFile();
+        Boolean permanentlyDeleteFile = tempFtpConfiguration.getPermanentlyDeleteFile();
         if (permanentlyDeleteFile != null) {
             this.permanentlyDeleteFile = permanentlyDeleteFile;
         }
-        Boolean guestEnable = tempFtpConfiguration.isGuestEnable();
+        Boolean forgotPasswordEnable = tempFtpConfiguration.getForgotPasswordEnable();
+        if (forgotPasswordEnable != null) {
+            this.forgotPasswordEnable = forgotPasswordEnable;
+        }
+        Boolean guestEnable = tempFtpConfiguration.getGuestEnable();
         if (guestEnable != null) {
             this.guestEnable = guestEnable;
         }
         Boolean androidCheckEnable = tempFtpConfiguration.getAndroidCheckEnable();
         if (androidCheckEnable != null) {
             this.androidCheckEnable = androidCheckEnable;
+        }
+        int maxFileSize = tempFtpConfiguration.getMaxFileSize();
+        if (maxFileSize > 0) {
+            this.maxFileSize = maxFileSize;
+        }
+        int rateLimitThreshold = tempFtpConfiguration.getRateLimitThreshold();
+        if (rateLimitThreshold > 0) {
+            this.rateLimitThreshold = rateLimitThreshold;
         }
         ArrayList<String> allowedOrigin = tempFtpConfiguration.getAllowedOrigin();
         if (allowedOrigin != null && allowedOrigin.size() > 0) {
@@ -362,27 +488,44 @@ public class FtpConfiguration extends Configuration {
         if (supportedFileType != null && supportedFileType.size() > 0) {
             this.supportedFileType = supportedFileType;
         }
-        FtlConfig ftlConfig = tempFtpConfiguration.getFtlConfig();
-        if (ftlConfig != null) {
-            this.ftlConfig = ftlConfig;
+        ArrayList<String> enableMysqlTableName = tempFtpConfiguration.getEnableMysqlTableName();
+        if (enableMysqlTableName != null && enableMysqlTableName.size() > 0) {
+            this.enableMysqlTableName = enableMysqlTableName;
         }
-        BackendConfig backendConfig = tempFtpConfiguration.getBackendConfig();
-        if (backendConfig != null) {
-            this.backendConfig = backendConfig;
+        ArrayList<String> fileNotFoundMapping = tempFtpConfiguration.getFileNotFoundMapping();
+        if (fileNotFoundMapping != null && fileNotFoundMapping.size() > 0) {
+            this.fileNotFoundMapping = fileNotFoundMapping;
         }
-        BackendConfigV2 backendConfigV2 = tempFtpConfiguration.getBackendConfigV2();
-        if (backendConfig != null) {
-            this.backendConfigV2 = backendConfigV2;
+        ArrayList<String> rolesFileName = tempFtpConfiguration.getRolesFileName();
+        if (rolesFileName != null && rolesFileName.size() > 0) {
+            this.rolesFileName = rolesFileName;
         }
-        HashMap<String, String> tempConfig = tempFtpConfiguration.getTempConfig();
-        if (tempConfig != null) {
-            this.tempConfig = tempConfig;
+        ArrayList<String> lockFileNamePattern = tempFtpConfiguration.getLockFileNamePattern();
+        if (lockFileNamePattern != null && lockFileNamePattern.size() > 0) {
+            this.lockFileNamePattern = lockFileNamePattern;
         }
         HashMap<String, String> loginRedirectMapping = tempFtpConfiguration.getLoginRedirectMapping();
         if (loginRedirectMapping != null) {
             this.loginRedirectMapping = loginRedirectMapping;
         }
+        HashMap<String, String> tempConfig = tempFtpConfiguration.getTempConfig();
+        if (tempConfig != null) {
+            this.tempConfig = tempConfig;
+        }
+        EmailConfig emailConfig = tempFtpConfiguration.getEmailConfig();
+        if (emailConfig != null) {
+            this.emailConfig = emailConfig;
+        }
+        CreatePasswordEmailConfig createPasswordEmailConfig = tempFtpConfiguration.getCreatePasswordEmailConfig();
+        if (createPasswordEmailConfig != null) {
+            this.createPasswordEmailConfig = createPasswordEmailConfig;
+        }
+        FtlConfig ftlConfig = tempFtpConfiguration.getFtlConfig();
+        if (ftlConfig != null) {
+            this.ftlConfig = ftlConfig;
+        }
     }
+
     @Override
     public String toString() {
         return "FtpConfiguration{" +
@@ -397,23 +540,34 @@ public class FtpConfiguration extends Configuration {
                 ", appRestartCommand='" + appRestartCommand + '\'' +
                 ", uploadFileApiVersion='" + uploadFileApiVersion + '\'' +
                 ", cookieName='" + cookieName + '\'' +
-                ", aesEncryptionPassword='" + "*****" +
-                ", dataSourceFactory=" + "*****" +
-                ", emailConfig=" + emailConfig +
-                ", createPasswordEmailConfig=" + createPasswordEmailConfig +
-                ", maxFileSize=" + maxFileSize +
+                ", forgotPasswordMessage='" + forgotPasswordMessage + '\'' +
+                ", loadRoleStatusOnPageLoad='" + loadRoleStatusOnPageLoad + '\'' +
+                ", staticDataFilename='" + staticDataFilename + '\'' +
+                ", addTextV2TimeStamp='" + addTextV2TimeStamp + '\'' +
+                ", eventDataFilenamePattern='" + eventDataFilenamePattern + '\'' +
+                ", userDataFilename='" + userDataFilename + '\'' +
+                ", fileDataFilename='" + fileDataFilename + '\'' +
+                ", aesEncryptionPassword='" + "*****" + '\'' +
                 ", createReadmePdf=" + createReadmePdf +
                 ", permanentlyDeleteFile=" + permanentlyDeleteFile +
-                ", mysqlEnable=" + mysqlEnable +
+                ", forgotPasswordEnable=" + forgotPasswordEnable +
                 ", guestEnable=" + guestEnable +
                 ", androidCheckEnable=" + androidCheckEnable +
+                ", mysqlEnable=" + mysqlEnable +
+                ", maxFileSize=" + maxFileSize +
+                ", rateLimitThreshold=" + rateLimitThreshold +
                 ", allowedOrigin=" + allowedOrigin +
                 ", supportedFileType=" + supportedFileType +
-                ", ftlConfig=" + ftlConfig +
-                ", backendConfig=" + backendConfig +
-                ", backendConfigV2=" + backendConfigV2 +
+                ", enableMysqlTableName=" + enableMysqlTableName +
+                ", fileNotFoundMapping=" + fileNotFoundMapping +
+                ", rolesFileName=" + rolesFileName +
+                ", lockFileNamePattern=" + lockFileNamePattern +
                 ", loginRedirectMapping=" + loginRedirectMapping +
                 ", tempConfig=" + tempConfig +
+                ", emailConfig=" + emailConfig +
+                ", createPasswordEmailConfig=" + createPasswordEmailConfig +
+                ", ftlConfig=" + ftlConfig +
+                ", dataSourceFactory=" + "*****" +
                 '}';
     }
 }
