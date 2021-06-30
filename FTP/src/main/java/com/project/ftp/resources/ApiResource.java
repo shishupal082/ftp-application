@@ -170,7 +170,7 @@ public class ApiResource {
         try {
             authService.isLogin(request);
             LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
-            fileServiceV2.deleteRequestFileV2(loginUserDetails, deleteFile);
+            fileServiceV2.deleteRequestFile(loginUserDetails, deleteFile);
             apiResponse = new ApiResponse();
             eventTracking.addSuccessDeleteFile(request, deleteFile, uiUsername);
         } catch (AppException ae) {

@@ -76,6 +76,7 @@ public class AppConstant {
     public static final String IS_OTHER_USERS_CONTROL_ENABLE = "isOtherUsersControlEnable";
     public static final String IS_ADD_TEXT_ENABLE = "isAddTextEnable";
     public static final String IS_UPLOAD_FILE_ENABLE = "isUploadFileEnable";
+    public static final String IS_DELETE_FILE_ENABLE = "isDeleteFileEnable";
     public static final String IS_GET_ALL_USERS_ENABLE = "getAllUsersEnable";
 
     public static final int CMD_LINE_ARG_IS_MYSQL_ENABLE = 0;

@@ -440,44 +440,27 @@ public class FileServiceV2 {
         }
         return parsedFileStr;
     }
-    private void addTextInFileDetailForDelete(LoginUserDetails userDetails, FileDetail fileDetail) {
-        String uploadedBy = fileDetail.getUploadedby();
-        String filename = StaticService.replaceComma(fileDetail.getFilename());
-        String deletedBy = userDetails.getUsername();
-        FileDetail finalFileDetail = new FileDetail(filename, uploadedBy, deletedBy);
-        if (!finalFileDetail.isValid()) {
-            logger.info("Invalid file details: {}", finalFileDetail);
-        } else {
-            finalFileDetail.setSubject(fileDetail.getSubject());
-            finalFileDetail.setHeading(fileDetail.getHeading());
-            finalFileDetail.setDeleteAccess(fileDetail.getDeleteAccess());
-        }
-        if (!fileDetail.isValid()) {
-            logger.info("Invalid file delete data: {}", fileDetail);
-        }
-        fileService.saveFileDetails(savedDataFilepath, finalFileDetail);
-    }
-    private void deleteFileV3(FileDetail fileDetail) throws AppException {
+    private void deleteFile(String fileUsername, String filename) throws AppException {
         String saveDir = appConfig.getFtpConfiguration().getFileSaveDir();
         if (saveDir == null) {
             logger.info("fileSaveDir is: null");
             throw new AppException(ErrorCodes.CONFIG_ERROR);
         }
-        PathInfo pathInfo = fileService.getPathInfo(saveDir + fileDetail.getFilepath());
+        PathInfo pathInfo = fileService.getPathInfo(saveDir + fileUsername + "/" + filename);
         Boolean permanentlyDeleteFile = appConfig.getFtpConfiguration().getPermanentlyDeleteFile();
         Boolean fileDeleteStatus;
         if (AppConstant.FILE.equals(pathInfo.getType())) {
             if (permanentlyDeleteFile != null && permanentlyDeleteFile) {
-                logger.info("Permanently deleting file: {}", fileDetail);
+                logger.info("Permanently deleting file: {}", pathInfo);
                 fileDeleteStatus = fileService.deleteFileV2(pathInfo.getPath());
             } else {
                 ArrayList<String> requiredDirs = new ArrayList<>();
                 requiredDirs.add(saveDir);
                 requiredDirs.add(AppConstant.TRASH);
-                requiredDirs.add(fileDetail.getUploadedby());
+                requiredDirs.add(fileUsername);
                 String trashFolder = fileService.createDir(requiredDirs);
                 if (trashFolder == null) {
-                    logger.info("Error in creating trash folder for user: {}", fileDetail.getUploadedby());
+                    logger.info("Error in creating trash folder for user: {}", fileUsername);
                     throw new AppException(ErrorCodes.RUNTIME_ERROR);
                 }
                 String currentFolder = pathInfo.getParentFolder();
@@ -485,24 +468,15 @@ public class FileServiceV2 {
                         pathInfo.getFilenameWithoutExt(), pathInfo.getExtension());
             }
             if (!fileDeleteStatus) {
-                logger.info("Error in deleting requested file: {}", fileDetail.getFilepath());
+                logger.info("Error in deleting requested file: {}", pathInfo.getPath());
                 throw new AppException(ErrorCodes.RUNTIME_ERROR);
             } else {
-                logger.info("Requested file deleted: {}", fileDetail.getFilepath());
+                logger.info("Requested file deleted: {}", pathInfo.getPath());
             }
         } else {
-            logger.info("Requested deleteFile: {}, does not exist.", fileDetail.getFilepath());
+            logger.info("Requested deleteFile: {}, does not exist.", pathInfo.getPath());
             throw new AppException(ErrorCodes.FILE_NOT_FOUND);
         }
-    }
-    private void deleteFileByUser(LoginUserDetails userDetails, FileDetail fileDetail) throws AppException {
-        String fileUserName = fileDetail.getUploadedby();
-        String userName = userDetails.getUsername();
-        if (!fileUserName.equals(userName)) {
-            logger.info("UnAuthorised user trying to deleteFile: {}", userDetails);
-            throw new AppException(ErrorCodes.UNAUTHORIZED_USER);
-        }
-        this.deleteFileV3(fileDetail);
     }
     // uploadFileV1
     private FileDetail generateFileDetailsFromFilepath(String fileUsername, String filename,
@@ -525,8 +499,36 @@ public class FileServiceV2 {
                 subject, heading);
         fileService.saveFileDetails(savedDataFilepath, fileDetail);
     }
-    public void deleteRequestFileV2(LoginUserDetails loginUserDetails,
+    private boolean isFileDeleteAllowed(LoginUserDetails loginUserDetails,
+                                        String fileUsername, String filename) throws AppException {
+        if (fileUsername != null && fileUsername.equals(loginUserDetails.getUsername())) {
+            boolean isDeleteEnable = userService.isAuthorised(loginUserDetails, AppConstant.IS_DELETE_FILE_ENABLE);
+            if (isDeleteEnable) {
+                ArrayList<String> lockFileNamePattern = appConfig.getFtpConfiguration().getLockFileNamePattern();
+                if (lockFileNamePattern != null) {
+                    for (String pattern : lockFileNamePattern) {
+                        if (StaticService.isPatternMatching(filename, pattern)) {
+                            logger.info("isFileDeleteAllowed: false, file locked: filename: {}, pattern: {}",
+                                    filename, pattern);
+                            throw new AppException(ErrorCodes.FILE_DELETE_LOCKED);
+                        }
+                    }
+                }
+            } else {
+                logger.info("isFileDeleteAllowed: false, user UnAuthorised: {}", loginUserDetails);
+                throw new AppException(ErrorCodes.FILE_DELETE_UNAUTHORISED);
+            }
+        } else {
+            logger.info("isFileDeleteAllowed: false, fileUsername and loginUsername not matching: {}, {}",
+                    fileUsername, loginUserDetails);
+            throw new AppException(ErrorCodes.FILE_DELETE_UNAUTHORISED);
+        }
+        logger.info("isFileDeleteAllowed: true, {}/{}", fileUsername, filename);
+        return true;
+    }
+    public void deleteRequestFile(LoginUserDetails loginUserDetails,
                                     RequestDeleteFile deleteFile) throws AppException {
+        // Throw error if invalid request
         HashMap<String, String> parsedFileStr = this.verifyDeleteRequestParameters(deleteFile);
         String deleteFileReq = deleteFile.getFilename();
         String saveDir = appConfig.getFtpConfiguration().getFileSaveDir();
@@ -540,37 +542,13 @@ public class FileServiceV2 {
             logger.info("requested delete file not found: {}", filepath);
             throw new AppException(ErrorCodes.FILE_NOT_FOUND);
         }
-        FileDetail fileDetail = fileService.searchFileDetails(savedDataFilepath, deleteFileReq);
-        if (fileDetail == null || !fileDetail.isValid()) {
-            logger.info("fileDetails not found for file path: {}, {}", deleteFileReq, fileDetail);
-            fileDetail = this.generateFileDetailsFromFilepath(parsedFileStr.get(AppConstant.FILE_USERNAME),
-                    parsedFileStr.get(AppConstant.FILE_NAME_STR), "deleteRequest");
+        // file found
+        // Throw error if file delete not allowed
+        boolean isFileDeleteAllowed = this.isFileDeleteAllowed(loginUserDetails,
+                parsedFileStr.get(AppConstant.FILE_USERNAME), parsedFileStr.get(AppConstant.FILE_NAME_STR));
+        if (isFileDeleteAllowed) {
+            this.deleteFile(parsedFileStr.get(AppConstant.FILE_USERNAME), parsedFileStr.get(AppConstant.FILE_NAME_STR));
         }
-        // file found and file details found or not, does not matter
-        FileDeleteAccess deleteAccess = fileDetail.getDeleteAccess();
-        if (deleteAccess == null) {
-            logger.info("deleteAccess of file is null: {}", fileDetail);
-            throw new AppException(ErrorCodes.UNAUTHORIZED_USER);
-        }
-        boolean isLoginUserAdmin = userService.isLoginUserAdmin(loginUserDetails);
-        if (deleteAccess == FileDeleteAccess.SELF) {
-            this.deleteFileByUser(loginUserDetails, fileDetail);
-        } else if (deleteAccess == FileDeleteAccess.ADMIN) {
-            if (isLoginUserAdmin) {
-                this.deleteFileV3(fileDetail);
-            } else {
-                logger.info("Only admin is allowed delete this file: {}, currentUser: {}",
-                        fileDetail, loginUserDetails);
-                throw new AppException((ErrorCodes.UNAUTHORIZED_USER));
-            }
-        } else if (deleteAccess == FileDeleteAccess.SELF_ADMIN) {
-            if (isLoginUserAdmin) {
-                this.deleteFileV3(fileDetail);
-            } else {
-                this.deleteFileByUser(loginUserDetails, fileDetail);
-            }
-        }
-        this.addTextInFileDetailForDelete(loginUserDetails, fileDetail);
     }
     // By default folder is authorised
     private boolean isFolderAuthorised(LoginUserDetails userDetails,
@@ -776,7 +754,7 @@ public class FileServiceV2 {
         boolean isAuthorised = userService.isAuthorised(loginUserDetails, AppConstant.IS_UPLOAD_FILE_ENABLE);
         if (!isAuthorised) {
             logger.info("fileUpload is disabled.");
-            throw new AppException(ErrorCodes.FILE_UPLOAD_DISABLED);
+            throw new AppException(ErrorCodes.FILE_UPLOAD_UNAUTHORISED);
         }
         fileName = StaticService.replaceComma(fileName);
         String loginUsername = loginUserDetails.getUsername();

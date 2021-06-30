@@ -1115,7 +1115,8 @@ It will be used in fileDelete request, identification of delete permission
 
 If /api/upload_file request with same filename then it will add 1, 2, ... recursively
 - instead of rename existing file and as it is and rename current filename
-
+New ApiRole added for file delete
+    - isDeleteFileEnable
 
 Future releases
 -------------------
