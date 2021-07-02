@@ -24,7 +24,6 @@ enableMysqlTableName:
 
 eventDataFilenamePattern: "'event_data/'yyyy-MM-dd-HH-mm'-event_data.csv'"
 userDataFilename: "user_data.csv"
-fileDataFilename: "file_details.csv"
 
 lockFileNamePattern:
   - "(file_table.csv|delete_table.csv)"
@@ -54,7 +53,6 @@ supportedFileType:
   - png
 
 
-fileDeleteAccess: "self" #self or admin or self_admin
 permanentlyDeleteFile: false #File will saved in trash folder
 maxFileSize: 10240001 #i.e. #i.e. 2048000 = 2048 kB = 2MB, 10240001 = 10MB
 uploadFileApiVersion: v2 #(v1|v2)

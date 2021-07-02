@@ -2,7 +2,10 @@ package com.project.ftp.service;
 
 import com.project.ftp.FtpConfiguration;
 import com.project.ftp.common.*;
-import com.project.ftp.config.*;
+import com.project.ftp.config.AppConfig;
+import com.project.ftp.config.AppConstant;
+import com.project.ftp.config.FileMimeType;
+import com.project.ftp.config.UserMethod;
 import com.project.ftp.event.EventTracking;
 import com.project.ftp.exceptions.ErrorCodes;
 import com.project.ftp.obj.PathInfo;
@@ -278,23 +281,6 @@ public class StaticService {
 //            logger.info("Error in parsing enum ({}): {}", name, e.getMessage());
         }
         return userMethod;
-    }
-    public static FileDeleteAccess getFileDeleteAccess(String fileDeleteAccess) {
-        if (fileDeleteAccess == null || fileDeleteAccess.isEmpty()) {
-            return null;
-        }
-        fileDeleteAccess = fileDeleteAccess.toUpperCase();
-        FileDeleteAccess deleteAccess = null;
-        try {
-            deleteAccess = FileDeleteAccess.valueOf(fileDeleteAccess);
-        } catch (Exception e) {
-            logger.info("Error in parsing FileDeleteAccess enum ({}): {}", fileDeleteAccess, e.getMessage());
-        }
-        return deleteAccess;
-    }
-    public static FileDeleteAccess getFileDeleteAccessV2(AppConfig appConfig) {
-        String fileDeleteAccess = appConfig.getFtpConfiguration().getFileDeleteAccess();
-        return StaticService.getFileDeleteAccess(fileDeleteAccess);
     }
     public static void renameOldLogFile(final String relativeConfigFilePath) {
         if (relativeConfigFilePath == null) {

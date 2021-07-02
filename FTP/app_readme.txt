@@ -1118,6 +1118,25 @@ If /api/upload_file request with same filename then it will add 1, 2, ... recurs
 New ApiRole added for file delete
     - isDeleteFileEnable
 
+8.0.0.7 (01.07.2021)
+--------------------
+Do not add entry in file_details.csv for add_text text
+
+Remove config parameter
+    - fileDeleteAccess
+    - fileDataFilename
+
+Synchronised response for all 3 apis
+    - /api/get_files_info
+    - /api/get_files_info_by_filename_pattern
+    - /api/get_current_user_files_info
+
+subject and heading is unused for now in following apis
+    - /api/upload_file (V2)
+    - /api/add_text
+    - /api/add_text_v2
+
+
 Future releases
 -------------------
 

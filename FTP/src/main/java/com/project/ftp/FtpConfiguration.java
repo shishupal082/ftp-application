@@ -20,7 +20,6 @@ public class FtpConfiguration extends Configuration {
     private String fileSaveDir;
     private String publicDir;
     private String publicPostDir;
-    private String fileDeleteAccess;
     private String filenameFormat;
     private String instance;
     private String appRestartCommand;
@@ -33,7 +32,6 @@ public class FtpConfiguration extends Configuration {
     private String addTextV2TimeStamp;
     private String eventDataFilenamePattern;
     private String userDataFilename;
-    private String fileDataFilename;
     private String aesEncryptionPassword;
 
     // Defined as Boolean but not as boolean
@@ -98,14 +96,6 @@ public class FtpConfiguration extends Configuration {
 
     public void setPublicPostDir(String publicPostDir) {
         this.publicPostDir = publicPostDir;
-    }
-
-    public String getFileDeleteAccess() {
-        return fileDeleteAccess;
-    }
-
-    public void setFileDeleteAccess(String fileDeleteAccess) {
-        this.fileDeleteAccess = fileDeleteAccess;
     }
 
     public String getFilenameFormat() {
@@ -194,14 +184,6 @@ public class FtpConfiguration extends Configuration {
 
     public void setUserDataFilename(String userDataFilename) {
         this.userDataFilename = userDataFilename;
-    }
-
-    public String getFileDataFilename() {
-        return fileDataFilename;
-    }
-
-    public void setFileDataFilename(String fileDataFilename) {
-        this.fileDataFilename = fileDataFilename;
     }
 
     public String getAesEncryptionPassword() {
@@ -396,10 +378,6 @@ public class FtpConfiguration extends Configuration {
         if (publicPostDir != null) {
             this.publicPostDir = publicPostDir;
         }
-        String fileDeleteAccess = tempFtpConfiguration.getFileDeleteAccess();
-        if (fileDeleteAccess != null) {
-            this.fileDeleteAccess = fileDeleteAccess;
-        }
         String filenameFormat = tempFtpConfiguration.getFilenameFormat();
         if (filenameFormat != null) {
             this.filenameFormat = filenameFormat;
@@ -443,10 +421,6 @@ public class FtpConfiguration extends Configuration {
         String userDataFilename = tempFtpConfiguration.getUserDataFilename();
         if (userDataFilename != null) {
             this.userDataFilename = userDataFilename;
-        }
-        String fileDataFilename = tempFtpConfiguration.getFileDataFilename();
-        if (fileDataFilename != null) {
-            this.fileDataFilename = fileDataFilename;
         }
         String aesEncryptionPassword = tempFtpConfiguration.getAesEncryptionPassword();
         if (aesEncryptionPassword != null) {
@@ -534,7 +508,6 @@ public class FtpConfiguration extends Configuration {
                 ", fileSaveDir='" + fileSaveDir + '\'' +
                 ", publicDir='" + publicDir + '\'' +
                 ", publicPostDir='" + publicPostDir + '\'' +
-                ", fileDeleteAccess='" + fileDeleteAccess + '\'' +
                 ", filenameFormat='" + filenameFormat + '\'' +
                 ", instance='" + instance + '\'' +
                 ", appRestartCommand='" + appRestartCommand + '\'' +
@@ -546,7 +519,6 @@ public class FtpConfiguration extends Configuration {
                 ", addTextV2TimeStamp='" + addTextV2TimeStamp + '\'' +
                 ", eventDataFilenamePattern='" + eventDataFilenamePattern + '\'' +
                 ", userDataFilename='" + userDataFilename + '\'' +
-                ", fileDataFilename='" + fileDataFilename + '\'' +
                 ", aesEncryptionPassword='" + "*****" + '\'' +
                 ", createReadmePdf=" + createReadmePdf +
                 ", permanentlyDeleteFile=" + permanentlyDeleteFile +

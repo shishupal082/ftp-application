@@ -1,45 +1,29 @@
 package com.project.ftp.obj;
 
-import com.project.ftp.config.FileDeleteAccess;
 import com.project.ftp.service.StaticService;
 
 public class ResponseFilesInfo {
-    private String filepath;
-    private boolean viewOption;
-    private boolean deleteOption;
+    private String filepath; // uploadedBy + / + filename.ext
+    private String fileUsername;
+    private String filename;
     private String subject;
     private String heading;
-    public ResponseFilesInfo(boolean isLoginUserAdmin, FileDetail fileDetail,
+    private boolean viewOption;
+    private boolean deleteOption;
+    public ResponseFilesInfo(String fileUsername, String fileNamStr,
                              LoginUserDetails loginUserDetails) {
-        if (fileDetail == null || loginUserDetails == null) {
-            return;
-        }
-        if (fileDetail.isDeletedTrue()) {
+        if (fileUsername == null || fileNamStr == null || loginUserDetails == null) {
             return;
         }
         String loginUsername = loginUserDetails.getUsername();
         if (StaticService.isInValidString(loginUsername)) {
             return;
         }
-        this.filepath = fileDetail.getFilepath();
-        this.subject = fileDetail.getSubject();
-        this.heading = fileDetail.getHeading();
+        this.filepath = fileUsername + "/" + fileNamStr;
+        this.fileUsername = fileUsername;
+        this.filename = fileNamStr;
         this.viewOption = true;
-        this.deleteOption = false;
-        FileDeleteAccess deleteAccess = fileDetail.getDeleteAccess();
-        if (FileDeleteAccess.ADMIN == deleteAccess) {
-            if (isLoginUserAdmin) {
-                this.deleteOption = true;
-            }
-        } else if (FileDeleteAccess.SELF_ADMIN == deleteAccess) {
-            if (isLoginUserAdmin || loginUsername.equals(fileDetail.getUploadedby())) {
-                this.deleteOption = true;
-            }
-        } else if (FileDeleteAccess.SELF == deleteAccess) {
-            if (loginUsername.equals(fileDetail.getUploadedby())) {
-                this.deleteOption = true;
-            }
-        }
+        this.deleteOption = loginUsername.equals(fileUsername);
     }
     public String getFilepath() {
         return filepath;
@@ -49,20 +33,20 @@ public class ResponseFilesInfo {
         this.filepath = filepath;
     }
 
-    public boolean isViewOption() {
-        return viewOption;
+    public String getFileUsername() {
+        return fileUsername;
     }
 
-    public void setViewOption(boolean viewOption) {
-        this.viewOption = viewOption;
+    public void setFileUsername(String fileUsername) {
+        this.fileUsername = fileUsername;
     }
 
-    public boolean isDeleteOption() {
-        return deleteOption;
+    public String getFilename() {
+        return filename;
     }
 
-    public void setDeleteOption(boolean deleteOption) {
-        this.deleteOption = deleteOption;
+    public void setFilename(String filename) {
+        this.filename = filename;
     }
 
     public String getSubject() {
@@ -81,14 +65,32 @@ public class ResponseFilesInfo {
         this.heading = heading;
     }
 
+    public boolean isViewOption() {
+        return viewOption;
+    }
+
+    public void setViewOption(boolean viewOption) {
+        this.viewOption = viewOption;
+    }
+
+    public boolean isDeleteOption() {
+        return deleteOption;
+    }
+
+    public void setDeleteOption(boolean deleteOption) {
+        this.deleteOption = deleteOption;
+    }
+
     @Override
     public String toString() {
         return "ResponseFilesInfo{" +
                 "filepath='" + filepath + '\'' +
-                ", viewOption=" + viewOption +
-                ", deleteOption=" + deleteOption +
+                ", fileUsername='" + fileUsername + '\'' +
+                ", filename='" + filename + '\'' +
                 ", subject='" + subject + '\'' +
                 ", heading='" + heading + '\'' +
+                ", viewOption=" + viewOption +
+                ", deleteOption=" + deleteOption +
                 '}';
     }
 }

@@ -30,14 +30,6 @@ public class AppConfigHelper {
         }
         return AppConstant.USER_DATA_FILENAME;
     }
-    public static String getFileDataFilename(final AppConfig appConfig) {
-        String resultFilename = appConfig.getFtpConfiguration().getFileDataFilename();
-        boolean isValidFilename = StaticService.isValidString(resultFilename);
-        if (isValidFilename) {
-            return resultFilename;
-        }
-        return AppConstant.FILE_DATA_FILENAME;
-    }
     public static ArrayList<String> getFileNotFoundMapping(final AppConfig appConfig) {
         ArrayList<String> result = appConfig.getFtpConfiguration().getFileNotFoundMapping();
         if (result == null) {

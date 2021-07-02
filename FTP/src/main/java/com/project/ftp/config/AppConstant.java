@@ -25,7 +25,7 @@ public class AppConstant {
     public static final String ALLOWED_HEADERS= "Access-Control-Allow-Headers";
     public static final String FILE = "FILE";
     public static final String FOLDER = "FOLDER";
-    public static final String AppVersion = "8.0.0.6";
+    public static final String AppVersion = "8.0.0.7";
     public static final String DATE_FORMAT = "yyyy-MM-dd";
     public static final String TIME_FORMAT = "HHmmss";
     public static final String FILENAME_FORMAT = "yyyy-MM-dd-HH-mm'-filename'";
@@ -42,7 +42,6 @@ public class AppConstant {
     public static final String APP_STATIC_DATA_FILENAME = "app_static_data.json";
     public static final String USER_DATA_FILENAME = "user_data.csv";
     public static final String EVENT_DATA_FILENAME = "event_data.csv";
-    public static final String FILE_DATA_FILENAME = "file_details.csv";
     public static final String APP_VIEW_FTL_FILENAME = "app_view-1.0.0.ftl";
     public static final String FILE_NOT_FOUND_MAPPING = "file_not_found_config.yml";
     public static final String ROLES = "roles.yml";
