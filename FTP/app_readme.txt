@@ -1136,6 +1136,11 @@ subject and heading is unused for now in following apis
     - /api/add_text
     - /api/add_text_v2
 
+8.0.0.8 (01.07.2021)
+--------------------
+Remove support for isLogin roleName from backend (from roleAccessMapping and roleAccess)
+Now only login user can call isAuthorisedApi call from user service
+New parameter added Roles.userRolesMapping
 
 Future releases
 -------------------

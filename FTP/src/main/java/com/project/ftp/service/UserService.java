@@ -39,7 +39,11 @@ public class UserService {
             username = loginUserDetails.getUsername();
             isLogin = loginUserDetails.getLogin();
         }
-        return appConfig.getAppToBridge().isAuthorisedApi(roleAccess, username, isLogin);
+        if (!isLogin) {
+            logger.info("User is not login: {}", loginUserDetails);
+            return false;
+        }
+        return appConfig.getAppToBridge().isAuthorisedApi(roleAccess, username);
     }
     public boolean isAuthorisedV2(LoginUserDetailsV2 loginUserDetailsV2, String roleAccess)  {
         String username = null;
@@ -48,7 +52,11 @@ public class UserService {
             username = loginUserDetailsV2.getUsername();
             isLogin = loginUserDetailsV2.isLogin();
         }
-        return appConfig.getAppToBridge().isAuthorisedApi(roleAccess, username, isLogin);
+        if (!isLogin) {
+            logger.info("User is not login: {}", loginUserDetailsV2);
+            return false;
+        }
+        return appConfig.getAppToBridge().isAuthorisedApi(roleAccess, username);
     }
     public boolean isLoginUserAdmin(LoginUserDetails loginUserDetails)  {
         return this.isAuthorised(loginUserDetails, AppConstant.IS_ADMIN_USER);
@@ -278,7 +286,6 @@ public class UserService {
         LoginUserDetails loginUserDetails = this.getLoginUserDetails(request);
         return loginUserDetails.getUsername();
     }
-
     public Object getUserDataForLogging(HttpServletRequest request) {
         HashMap<String, String> result = new HashMap<>();
         LoginUserDetails loginUserDetails = this.getLoginUserDetails(request);
@@ -302,6 +309,8 @@ public class UserService {
             return;
         }
         ArrayList<String> allRoles = new ArrayList<>();
+        ArrayList<String> requiredRoleId = new ArrayList<>();
+        ArrayList<String> activeRoleId;
         String[] allRolesConfig;
         if (AppConstant.FromEnvConfig.equals(source)) {
             String loadRoleStatusOnPageLoad = appConfig.getFtpConfiguration().getLoadRoleStatusOnPageLoad();
@@ -312,19 +321,19 @@ public class UserService {
                 allRoles.addAll(Arrays.asList(allRolesConfig));
             }
         }
+        activeRoleId = appConfig.getAppToBridge().getActiveRoleIdByUserName(loginUserDetailsV2.getUsername());
         if (AppConstant.FromRoleConfig.equals(source)) {
-            allRoles = appConfig.getAppToBridge().getAllRoles();
-        }
-        if (allRoles == null) {
-            return;
+            requiredRoleId = activeRoleId;
+        } else if (activeRoleId != null) {
+            for (String role: allRoles) {
+                if (activeRoleId.contains(role)) {
+                    requiredRoleId.add(role);
+                }
+            }
         }
         loginUserDetailsV2.setRoles(new HashMap<>());
-        boolean access;
-        for (String role: allRoles) {
-            access = this.isAuthorisedV2(loginUserDetailsV2, role);
-            if (access) {
-                loginUserDetailsV2.getRoles().put(role, true);
-            }
+        for (String role: requiredRoleId) {
+            loginUserDetailsV2.getRoles().put(role, true);
         }
     }
     public LoginUserDetailsV2 getLoginUserDetailsV2Data(HttpServletRequest request, String source)  {

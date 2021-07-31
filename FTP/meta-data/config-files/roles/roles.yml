@@ -6,7 +6,6 @@ roleAccess:
     - U1
     - adminAndDev
 #  true: notRequiredAnyUserName
-#  isLogin: notRequiredAnyUserName
   UsersControlGroup:
     - Admin
     - U1
@@ -28,20 +27,19 @@ roleAccess:
     - U3
 roleAccessMapping:
   isAdminUser: admin
-  isDevUser: dev
-  isUploadFileEnable: isLogin
-  isAddTextEnable: isLogin
+  isDevUser: (dev|admin)
+  isUploadFileEnable: true
+  isAddTextEnable: true
   isUsersControlEnable: UsersControlGroup
   isOtherUsersControlEnable: admin
   isAdminTextDisplayEnable: admin
   isAdminOrDevUser: (admin|dev)
-  isAdminOrDevOrLoginUser: (admin|dev|isLogin)
-  inValidRoleEntry: (admin1|dev|isLogin)
+  inValidRoleEntry: (admin1|dev)
   inValidRoleEntry2: (&dev)
   isAdminAndDevUser: (admin&dev)
   isBooleanTrue: true
   getAllUsersEnable: true
-#  isLogin: notRequiredAnyRoleAccess
+  isLogin: true
 
 # Duplicate entry will be removed from final coRelatedUsers and relatedUsers calculation
 

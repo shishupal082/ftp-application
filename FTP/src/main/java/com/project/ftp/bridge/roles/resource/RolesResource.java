@@ -16,11 +16,11 @@ public class RolesResource {
         this.rolesService = rolesService;
         this.bridgeTracking = bridgeTracking;
     }
-    public boolean isRoleAuthorised(String apiName, String userName, boolean isLogin) {
-        return rolesService.isRoleAuthorised(apiName, userName, isLogin);
+    public boolean isRoleAuthorised(String apiName, String userName) {
+        return rolesService.isRoleAuthorised(apiName, userName);
     }
-    public ArrayList<String> getAllRoles() {
-        return rolesService.getAllRoles();
+    public ArrayList<String> getActiveRoleIdByUserName(String username) {
+        return rolesService.getActiveRoleIdByUserName(username);
     }
 
     public ArrayList<String> getRelatedUsers(String username) {

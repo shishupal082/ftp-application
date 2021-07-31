@@ -15,16 +15,20 @@ import java.util.Map;
 public class RolesService {
     final static Logger logger = LoggerFactory.getLogger(RolesService.class);
     private final BridgeConfig bridgeConfig;
+    private final RolesUpdate rolesUpdate;
     public RolesService(BridgeConfig bridgeConfig, ArrayList<String> rolesConfigPath) {
         this.bridgeConfig = bridgeConfig;
+        rolesUpdate = new RolesUpdate(this);
         if (bridgeConfig != null) {
             this.bridgeConfig.setRoles(this.getRolesConfigByConfigPath(rolesConfigPath));
+            rolesUpdate.updateUserRolesMapping();
         }
     }
     public boolean updateRoles(ArrayList<String> rolesConfigPath) {
         Roles roles = this.getRolesConfigByConfigPath(rolesConfigPath);
         if (roles != null) {
             this.bridgeConfig.setRoles(roles);
+            rolesUpdate.updateUserRolesMapping();
             logger.info("Roles update success");
             return true;
         }
@@ -233,8 +237,8 @@ public class RolesService {
             usernameList.add(username1);
             finalRelatedUsers.put(username1, this.removeDuplicate(usernameList));
         }
-        logger.info("finalRelatedUsers after duplicate removal: {}", finalRelatedUsers);
         roles.setRelatedUsers(finalRelatedUsers);
+        logger.info("finalRelatedUsers after duplicate removal: {}", finalRelatedUsers);
         logger.info("roles config data: {}", roles);
         return roles;
     }
@@ -255,6 +259,13 @@ public class RolesService {
         Roles roles = this.getRolesConfig();
         if (roles != null) {
             return roles.getRoleAccessMapping();
+        }
+        return null;
+    }
+    public HashMap<String, ArrayList<String>> getUserRolesMapping() {
+        Roles roles = this.getRolesConfig();
+        if (roles != null) {
+            return roles.getUserRolesMapping();
         }
         return null;
     }
@@ -291,19 +302,40 @@ public class RolesService {
         }
         return null;
     }
-    public boolean isRoleAuthorised(String roleName, String userName, boolean isLogin) {
-        logger.info("isRoleAuthorised check request:"+roleName+",{},{}", userName, isLogin);
+    public boolean isRoleAuthorised(String roleName, String userName) {
+        logger.info("isRoleAuthorised check request:{},{}", roleName, userName);
         if (BridgeStaticService.isInValidString(roleName)) {
             logger.info("Invalid roleName:{}", roleName);
             return false;
         }
-        if (BridgeConstant.IS_LOGIN.equals(roleName)) {
-            return isLogin;
+        if (BridgeStaticService.isInValidString(userName)) {
+            logger.info("Invalid userName:{}", userName);
+            return false;
         }
-        String apiRoles = this.getRolesByApiName(roleName);
-        boolean result = this.apiRolesIncludeUser(apiRoles, userName, isLogin);
-        logger.info("isRoleAuthorised check response:{}", result);
+        boolean result = false;
+        HashMap<String, ArrayList<String>> userRolesMapping = this.getUserRolesMapping();
+        if (userRolesMapping != null) {
+            if (userRolesMapping.get(userName) != null) {
+                result = userRolesMapping.get(userName).contains(roleName);
+            } else {
+                logger.info("isRoleAuthorised check userRolesMapping is null for username: {}", userName);
+            }
+        } else {
+            logger.info("isRoleAuthorised check userRolesMapping is null");
+        }
+        logger.info("isRoleAuthorised check response: {}", result);
         return result;
+    }
+    public ArrayList<String> getActiveRoleIdByUserName(String username) {
+        if (BridgeStaticService.isInValidString(username)) {
+            logger.info("Invalid username:{}", username);
+            return null;
+        }
+        HashMap<String, ArrayList<String>> userRolesMapping = this.getUserRolesMapping();
+        if (userRolesMapping != null) {
+            return userRolesMapping.get(username);
+        }
+        return null;
     }
     public ArrayList<String> getAllRoles() {
         HashMap<String, String> roleAccessMapping = this.getApiRolesMapping();
@@ -362,17 +394,10 @@ public class RolesService {
         }
         return finalResult;
     }
-    private String getBooleanEquivalentToRole(String role, String userName, boolean isLogin) {
+    private String getBooleanEquivalentToRole(String role, String userName) {
         if (BridgeStaticService.isInValidString(role)) {
             logger.info("Invalid role:{}", role);
             return null;
-        }
-        if (BridgeConstant.IS_LOGIN.equals(role)) {
-            if (isLogin) {
-                return BridgeConstant.TRUE;
-            } else {
-                return BridgeConstant.FALSE;
-            }
         }
         if (BridgeConstant.TRUE.equals(role)) {
             return BridgeConstant.TRUE;
@@ -391,7 +416,7 @@ public class RolesService {
         }
         return BridgeConstant.FALSE;
     }
-    private boolean apiRolesIncludeUser(String apiRoles, String userName, boolean isLogin) {
+    public boolean apiRolesIncludeUser(String apiRoles, String userName) {
         if (BridgeStaticService.isInValidString(apiRoles)) {
             logger.info("Invalid apiRoles:{}", apiRoles);
             return false;
@@ -410,7 +435,7 @@ public class RolesService {
             if (parameters.contains(token)) {
                 continue;
             }
-            tokens.set(i, this.getBooleanEquivalentToRole(token, userName, isLogin));
+            tokens.set(i, this.getBooleanEquivalentToRole(token, userName));
         }
         Boolean finalResult = evaluator.evaluateBinaryExpression(String.join("", tokens));
         if (finalResult == null) {

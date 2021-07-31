@@ -13,6 +13,7 @@ public class Roles {
     private HashMap<String, ArrayList<String>> relatedUsers;
     private ArrayList<String> coRelatedUsers;
     private HashMap<String, ArrayList<String>> groupRelatedUsers;
+    private HashMap<String, ArrayList<String>> userRolesMapping;
     public Roles() {}
     public Roles(boolean isInit) {
         if (isInit) {
@@ -21,6 +22,7 @@ public class Roles {
             relatedUsers = new HashMap<>();
             coRelatedUsers = new ArrayList<>();
             groupRelatedUsers = new HashMap<>();
+            userRolesMapping = new HashMap<>();
         }
     }
     public HashMap<String, ArrayList<String>> getRoleAccess() {
@@ -63,6 +65,14 @@ public class Roles {
         this.groupRelatedUsers = groupRelatedUsers;
     }
 
+    public HashMap<String, ArrayList<String>> getUserRolesMapping() {
+        return userRolesMapping;
+    }
+
+    public void setUserRolesMapping(HashMap<String, ArrayList<String>> userRolesMapping) {
+        this.userRolesMapping = userRolesMapping;
+    }
+
     @Override
     public String toString() {
         return "Roles{" +
@@ -71,6 +81,7 @@ public class Roles {
                 ", relatedUsers=" + relatedUsers +
                 ", coRelatedUsers=" + coRelatedUsers +
                 ", groupRelatedUsers=" + groupRelatedUsers +
+                ", userRolesMapping=" + userRolesMapping +
                 '}';
     }
 }

@@ -73,23 +73,21 @@ public class TestRoles {
         Assert.assertNull(rolesService.getRolesAccessByRoleId("admin"));
         Assert.assertNull(rolesService.getRolesByApiName(null));
         Assert.assertNull(rolesService.getRolesByApiName("getPublicFiles"));
-        Assert.assertFalse(rolesService.isRoleAuthorised(null, null, false));
-        Assert.assertFalse(rolesService.isRoleAuthorised(null, null, true));
-        Assert.assertFalse(rolesService.isRoleAuthorised("apiName", null, false));
-        Assert.assertFalse(rolesService.isRoleAuthorised("apiName", null, true));
-        Assert.assertFalse(rolesService.isRoleAuthorised(null, "userName", false));
-        Assert.assertFalse(rolesService.isRoleAuthorised(null, "userName", true));
-        Assert.assertFalse(rolesService.isRoleAuthorised(BridgeConstant.IS_LOGIN, null, false));
-        Assert.assertFalse(rolesService.isRoleAuthorised(BridgeConstant.IS_LOGIN, "username", false));
-        Assert.assertTrue(rolesService.isRoleAuthorised(BridgeConstant.IS_LOGIN, null, true));
-        Assert.assertTrue(rolesService.isRoleAuthorised(BridgeConstant.IS_LOGIN, "username", true));
-        Assert.assertFalse(rolesService.isRoleAuthorised("isBooleanTrue", null, true));
-        Assert.assertFalse(rolesService.isRoleAuthorised("isBooleanTrue", null, false));
-        Assert.assertFalse(rolesService.isRoleAuthorised("isBooleanTrue", "username", true));
-        Assert.assertFalse(rolesService.isRoleAuthorised("isUploadFileEnable", "username", true));
-        Assert.assertFalse(rolesService.isRoleAuthorised("isUploadFileEnable", "username", false));
-        Assert.assertFalse(rolesService.isRoleAuthorised("isAddTextEnable", "username", true));
-        Assert.assertFalse(rolesService.isRoleAuthorised("isAddTextEnable", "username", false));
+        Assert.assertFalse(rolesService.isRoleAuthorised(null, null));
+        Assert.assertFalse(rolesService.isRoleAuthorised(null, null));
+        Assert.assertFalse(rolesService.isRoleAuthorised("apiName", null));
+        Assert.assertFalse(rolesService.isRoleAuthorised("apiName", null));
+        Assert.assertFalse(rolesService.isRoleAuthorised(null, "userName"));
+        Assert.assertFalse(rolesService.isRoleAuthorised(null, "userName"));
+        Assert.assertFalse(rolesService.isRoleAuthorised("isLogin", null));
+        Assert.assertFalse(rolesService.isRoleAuthorised("isLogin", "username"));
+        Assert.assertFalse(rolesService.isRoleAuthorised("isBooleanTrue", null));
+        Assert.assertFalse(rolesService.isRoleAuthorised("isBooleanTrue", null));
+        Assert.assertFalse(rolesService.isRoleAuthorised("isBooleanTrue", "username"));
+        Assert.assertFalse(rolesService.isRoleAuthorised("isUploadFileEnable", "username"));
+        Assert.assertFalse(rolesService.isRoleAuthorised("isUploadFileEnable", "username"));
+        Assert.assertFalse(rolesService.isRoleAuthorised("isAddTextEnable", "username"));
+        Assert.assertFalse(rolesService.isRoleAuthorised("isAddTextEnable", "username"));
 
         ArrayList<String> rolesFilePath = new ArrayList<>();
         rolesFilePath.add(StaticService.getProjectWorkingDir()+"/meta-data/config-files/roles/roles.yml");
@@ -102,52 +100,40 @@ public class TestRoles {
         Assert.assertNotNull(rolesService.getRolesAccessByRoleId("admin"));
         Assert.assertNull(rolesService.getRolesAccessByRoleId("adminNotFound"));
         Assert.assertNotNull(rolesService.getRolesByApiName("isAdminUser"));
-        Assert.assertTrue(rolesService.isRoleAuthorised("isAdminUser", "Admin", false));
-        Assert.assertTrue(rolesService.isRoleAuthorised("isAdminUser", "Admin", true));
-        Assert.assertFalse(rolesService.isRoleAuthorised("isAdminUser", "U1", false));
-        Assert.assertFalse(rolesService.isRoleAuthorised("isAdminUser", "U1", true));
-        Assert.assertFalse(rolesService.isRoleAuthorised("isAdminUser", "userNotFound", false));
-        Assert.assertFalse(rolesService.isRoleAuthorised("isAdminUser", "userNotFound", true));
-        Assert.assertTrue(rolesService.isRoleAuthorised("isDevUser", "U1", false));
-        Assert.assertTrue(rolesService.isRoleAuthorised("isDevUser", "U1", true));
-        Assert.assertFalse(rolesService.isRoleAuthorised("isDevUser", null, true));
-        Assert.assertFalse(rolesService.isRoleAuthorised("isDevUser", "", true));
+        Assert.assertTrue(rolesService.isRoleAuthorised("isAdminUser", "Admin"));
+        Assert.assertFalse(rolesService.isRoleAuthorised("isAdminUser", "U1"));
+        Assert.assertFalse(rolesService.isRoleAuthorised("isAdminUser", "userNotFound"));
+        Assert.assertTrue(rolesService.isRoleAuthorised("isDevUser", "U1"));
+        Assert.assertFalse(rolesService.isRoleAuthorised("isDevUser", null));
+        Assert.assertFalse(rolesService.isRoleAuthorised("isDevUser", ""));
 
-        Assert.assertFalse(rolesService.isRoleAuthorised(BridgeConstant.IS_LOGIN, null, false));
-        Assert.assertFalse(rolesService.isRoleAuthorised(BridgeConstant.IS_LOGIN, "", false));
-        Assert.assertFalse(rolesService.isRoleAuthorised(BridgeConstant.IS_LOGIN, "U1", false));
-        Assert.assertTrue(rolesService.isRoleAuthorised(BridgeConstant.IS_LOGIN, null, true));
-        Assert.assertTrue(rolesService.isRoleAuthorised(BridgeConstant.IS_LOGIN, "", true));
-        Assert.assertTrue(rolesService.isRoleAuthorised(BridgeConstant.IS_LOGIN, "U1", true));
-        Assert.assertTrue(rolesService.isRoleAuthorised(BridgeConstant.IS_LOGIN, "InvalidUsername", true));
+        Assert.assertFalse(rolesService.isRoleAuthorised("isLogin", null));
+        Assert.assertFalse(rolesService.isRoleAuthorised("isLogin", ""));
+        Assert.assertTrue(rolesService.isRoleAuthorised("isLogin", "U1"));
+        Assert.assertFalse(rolesService.isRoleAuthorised("isLogin", "InvalidUsername"));
 
 
-        Assert.assertTrue(rolesService.isRoleAuthorised("isBooleanTrue", null, true));
-        Assert.assertTrue(rolesService.isRoleAuthorised("isBooleanTrue", null, false));
-        Assert.assertTrue(rolesService.isRoleAuthorised("isBooleanTrue", "", true));
-        Assert.assertTrue(rolesService.isRoleAuthorised("isBooleanTrue", "", false));
-        Assert.assertTrue(rolesService.isRoleAuthorised("isBooleanTrue", "username", true));
-        Assert.assertTrue(rolesService.isRoleAuthorised("isBooleanTrue", "username", false));
+        Assert.assertFalse(rolesService.isRoleAuthorised("isBooleanTrue", null));
+        Assert.assertFalse(rolesService.isRoleAuthorised("isBooleanTrue", ""));
+        // username does not exist in roles config
+        Assert.assertFalse(rolesService.isRoleAuthorised("isBooleanTrue", "username"));
 
-        Assert.assertFalse(rolesService.isRoleAuthorised("isDevUserNotFound", "U1", false));
-        Assert.assertFalse(rolesService.isRoleAuthorised("isDevUserNotFound", "U1", true));
+        Assert.assertFalse(rolesService.isRoleAuthorised("isDevUserNotFound", "U1"));
 
-        Assert.assertTrue(rolesService.isRoleAuthorised("isAdminOrDevUser", "U1", true));
-        Assert.assertTrue(rolesService.isRoleAuthorised("isAdminOrDevUser", "Admin", true));
-        Assert.assertTrue(rolesService.isRoleAuthorised("isAdminAndDevUser", "adminAndDev", true));
-        Assert.assertTrue(rolesService.isRoleAuthorised("isAdminOrDevOrLoginUser", "Admin1", true));
-        Assert.assertFalse(rolesService.isRoleAuthorised("inValidRoleEntry", "Admin", true));
-        Assert.assertFalse(rolesService.isRoleAuthorised("inValidRoleEntry2", "Admin", true));
+        Assert.assertTrue(rolesService.isRoleAuthorised("isAdminOrDevUser", "U1"));
+        Assert.assertTrue(rolesService.isRoleAuthorised("isAdminOrDevUser", "Admin"));
+        Assert.assertTrue(rolesService.isRoleAuthorised("isAdminAndDevUser", "adminAndDev"));
+        Assert.assertFalse(rolesService.isRoleAuthorised("isAdminOrDevUser", "Admin1"));
+        Assert.assertFalse(rolesService.isRoleAuthorised("inValidRoleEntry", "Admin"));
+        Assert.assertFalse(rolesService.isRoleAuthorised("inValidRoleEntry2", "Admin"));
 
 
-        Assert.assertTrue(rolesService.isRoleAuthorised("isUploadFileEnable", "username", true));
-        Assert.assertTrue(rolesService.isRoleAuthorised("isAddTextEnable", "username", true));
-        Assert.assertFalse(rolesService.isRoleAuthorised("isUploadFileEnable", "username", false));
-        Assert.assertFalse(rolesService.isRoleAuthorised("isAddTextEnable", "username", false));
+        Assert.assertTrue(rolesService.isRoleAuthorised("isUploadFileEnable", "U1"));
+        Assert.assertTrue(rolesService.isRoleAuthorised("isAddTextEnable", "U1"));
 
 
-        Assert.assertFalse(rolesService.isRoleAuthorised("isUploadFileEnableNotFound", "username", true));
-        Assert.assertFalse(rolesService.isRoleAuthorised("isAddTextEnableNotFound", "username", true));
+        Assert.assertFalse(rolesService.isRoleAuthorised("isUploadFileEnableNotFound", "username"));
+        Assert.assertFalse(rolesService.isRoleAuthorised("isAddTextEnableNotFound", "username"));
 
         Assert.assertEquals("((admin|dev)|(admin|dev))", rolesService.getRolesByApiName("isAdminOrDevUser"));
     }

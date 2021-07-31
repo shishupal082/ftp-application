@@ -6,9 +6,9 @@ import java.util.ArrayList;
 
 public interface AppToBridgeInterface {
     void sendCreatePasswordOtpEmail(MysqlUser user);
-    boolean isAuthorisedApi(String apiName, String userName, boolean isLogin);
+    boolean isAuthorisedApi(String apiName, String userName);
     boolean updateUserRoles(ArrayList<String> rolesConfigPath);
-    ArrayList<String> getAllRoles();
+    ArrayList<String> getActiveRoleIdByUserName(String username);
     ArrayList<String> getRelatedUsers(String username);
     ArrayList<String> getAllRelatedUsersName();
     Object getRolesConfig();

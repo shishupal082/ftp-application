@@ -62,14 +62,13 @@ public class AppToBridge implements AppToBridgeInterface {
         }
     }
     @Override
-    public boolean isAuthorisedApi(String apiName, String userName, boolean isLogin) {
-        return rolesResource.isRoleAuthorised(apiName, userName, isLogin);
+    public boolean isAuthorisedApi(String apiName, String userName) {
+        return rolesResource.isRoleAuthorised(apiName, userName);
     }
     @Override
-    public ArrayList<String> getAllRoles() {
-        return rolesResource.getAllRoles();
+    public ArrayList<String> getActiveRoleIdByUserName(String username) {
+        return rolesResource.getActiveRoleIdByUserName(username);
     }
-
     @Override
     public ArrayList<String> getRelatedUsers(String username) {
         return rolesResource.getRelatedUsers(username);
