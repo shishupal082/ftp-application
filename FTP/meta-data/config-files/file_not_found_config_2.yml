@@ -1,33 +1,11 @@
 pageMapping404:
   default:
     fileName: "/app/account/indexv2.html"
-  /account:
-    fileName: "/app/account/indexv2.html"
-  /account/journal:
-    fileName: "/app/account/indexv2.html"
-  /account/journalbydate:
-    fileName: "/app/account/indexv2.html"
-  /account/ledger:
-    fileName: "/app/account/indexv2.html"
-  /account/trialbalance:
-    fileName: "/app/account/indexv2.html"
-  /account/currentbal:
-    fileName: "/app/account/indexv2.html"
-  /account/currentbalbydate:
-    fileName: "/app/account/indexv2.html"
-  /account/currentbalbydatev2:
-    fileName: "/app/account/indexv2.html"
-  /account/summary:
-    fileName: "/app/account/indexv2.html"
-  /account/summarybydate:
-    fileName: "/app/account/indexv2.html"
-  /account/summarybycalander:
-    fileName: "/app/account/indexv2.html"
-  /account/customisedebit:
-    fileName: "/app/account/indexv2.html"
-  /account/customisecredit:
-    fileName: "/app/account/indexv2.html"
-  /account/custompage:
-    fileName: "/app/account/indexv2.html"
-  /account/profitandloss:
-    fileName: "/app/account/indexv2.html"
+  /readme.txt:
+    fileName: "/temp.txt"
+  /[a-z|0-9]{3}/readme.tx:
+    fileName: "/temp.txt"
+  /ok/readme.txt:
+    fileName: "/temp.txt"
+  /bye/readme.txt:
+    fileName: "/temp.txt"

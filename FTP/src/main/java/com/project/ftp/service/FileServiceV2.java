@@ -18,6 +18,7 @@ import org.slf4j.LoggerFactory;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 public class FileServiceV2 {
     private final static Logger logger = LoggerFactory.getLogger(FileServiceV2.class);
@@ -200,8 +201,8 @@ public class FileServiceV2 {
             }
             String[] fileNameArr = filename.split("/");
             if(fileNameArr.length == 2) {
-                if (StaticService.isPatternMatching(fileNameArr[1], filenamePattern)) {
-                    if (StaticService.isPatternMatching(fileNameArr[0], usernamePattern)) {
+                if (StaticService.isPatternMatching(fileNameArr[1], filenamePattern, false)) {
+                    if (StaticService.isPatternMatching(fileNameArr[0], usernamePattern, false)) {
                         filterFileName.add(filename);
                     }
                 }
@@ -436,7 +437,7 @@ public class FileServiceV2 {
                 ArrayList<String> lockFileNamePattern = appConfig.getFtpConfiguration().getLockFileNamePattern();
                 if (lockFileNamePattern != null) {
                     for (String pattern : lockFileNamePattern) {
-                        if (StaticService.isPatternMatching(filename, pattern)) {
+                        if (StaticService.isPatternMatching(filename, pattern, false)) {
                             logger.info("isFileDeleteAllowed: false, file locked: filename: {}, pattern: {}",
                                     filename, pattern);
                             throw new AppException(ErrorCodes.FILE_DELETE_LOCKED);
@@ -512,6 +513,23 @@ public class FileServiceV2 {
         }
         return true;
     }
+    private Page404Entry getFinal404Entry(HashMap<String, Page404Entry> pageMapping, String requestPath) {
+        Page404Entry page404Entry = null;
+        boolean isPatternMatch;
+        if (pageMapping != null && requestPath != null) {
+            page404Entry = pageMapping.get(requestPath);
+            if (page404Entry == null) {
+                for(Map.Entry<String, Page404Entry> el: pageMapping.entrySet()) {
+                    isPatternMatch = StaticService.isPatternMatching(requestPath, el.getKey(), true);
+                    if (isPatternMatch) {
+                        logger.info("url-pattern matched: {}, {}", el.getKey(), requestPath);
+                        return el.getValue();
+                    }
+                }
+            }
+        }
+        return page404Entry;
+    }
     private Page404Entry getFileNotFoundMapping(PageConfig404 pageConfig404, String requestPath) {
         String publicDir = appConfig.getPublicDir();
         if (publicDir == null) {
@@ -521,7 +539,7 @@ public class FileServiceV2 {
         if (pageConfig404 != null) {
             HashMap<String, Page404Entry> pageMapping = pageConfig404.getPageMapping404();
             if (pageMapping != null) {
-                page404Entry = pageMapping.get(requestPath);
+                page404Entry = this.getFinal404Entry(pageMapping, requestPath);
                 if (page404Entry != null && page404Entry.getFileName() != null) {
                     if (fileService.isFile(publicDir + page404Entry.getFileName())) {
                         logger.info("page404Entry found for '{}', {}", requestPath, page404Entry);

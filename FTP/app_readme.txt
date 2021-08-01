@@ -1142,6 +1142,10 @@ Remove support for isLogin roleName from backend (from roleAccessMapping and rol
 Now only login user can call isAuthorisedApi call from user service
 New parameter added Roles.userRolesMapping
 
+pageMapping404
+    - key of pageMapping404 can be regex
+    - url matching with pattern is implemented
+
 Future releases
 -------------------
 

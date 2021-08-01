@@ -127,12 +127,15 @@ public class StaticService {
         * */
         return str.split(regex, limit);
     }
-    public static boolean isPatternMatching(String str, String pattern) {
+    public static boolean isPatternMatching(String str, String pattern, boolean exactMatch) {
         if (str == null || pattern == null) {
             return false;
         }
         if (str.isEmpty() || pattern.trim().isEmpty()) {
             return false;
+        }
+        if (exactMatch) {
+            pattern = "^" + pattern + "$";
         }
         Pattern regexPattern = Pattern.compile(pattern, Pattern.CASE_INSENSITIVE);
         Matcher matcher = regexPattern.matcher(str);
