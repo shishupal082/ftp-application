@@ -25,6 +25,8 @@ roleAccess:
     - U18
   individualUser3:
     - U3
+  U_without_related_user:
+    - UX
 roleAccessMapping:
   isAdminUser: admin
   isDevUser: (dev|admin)
@@ -56,6 +58,8 @@ relatedUsers:
   U6:
     - individualUser3
   U5:
+    - userGroup1
+  U_without_role_access:
     - userGroup1
 # final output
 # tempCoRelatedUsers: {U5=[U5, U4, U1, U3, U2], U9=[U9], U13=[U13, U12], U12=[U13, U12], U1=[U5, U4, U1, U3, U2], U2=[U5, U4, U1, U3, U2], U3=[U5, U4, U1, U3, U2], U4=[U5, U4, U1, U3, U2]}

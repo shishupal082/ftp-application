@@ -348,32 +348,49 @@ public class RolesService {
         return result;
     }
     public HashMap<String, ArrayList<String>> getAllRelatedUsers() {
+        // It may not contains all user
         Roles roles = this.getRolesConfig();
         if (roles == null) {
             return null;
         }
         return roles.getRelatedUsers();
     }
-    public ArrayList<String> getAllRelatedUsersName() {
+    public ArrayList<String> getAllUsersName() {
         Roles roles = this.getRolesConfig();
         if (roles == null) {
             return null;
         }
-        HashMap<String, ArrayList<String>> allRelatedUsers = roles.getRelatedUsers();
-        if (allRelatedUsers == null) {
-            return null;
-        }
-        ArrayList<String> result = new ArrayList<>();
-        for(Map.Entry<String, ArrayList<String>> entry: allRelatedUsers.entrySet()) {
-            if (entry.getKey() != null) {
-                result.add(entry.getKey());
+        HashMap<String, ArrayList<String>> relatedUsers = roles.getRelatedUsers();
+        HashMap<String, ArrayList<String>> roleAccess = roles.getRoleAccess();
+        ArrayList<String> userNames;
+        ArrayList<String> allUsername = new ArrayList<>();
+        if (relatedUsers != null) {
+            for (Map.Entry<String, ArrayList<String>> el: relatedUsers.entrySet()) {
+                userNames = el.getValue();
+                if (userNames == null) {
+                    continue;
+                }
+                for(String userName: userNames) {
+                    if (userName != null && !allUsername.contains(userName)) {
+                        allUsername.add(userName);
+                    }
+                }
             }
-            if (entry.getValue() != null) {
-                result.addAll(entry.getValue());
+        }
+        if (roleAccess != null) {
+            for (Map.Entry<String, ArrayList<String>> el: roleAccess.entrySet()) {
+                userNames = el.getValue();
+                if (userNames == null) {
+                    continue;
+                }
+                for(String userName: userNames) {
+                    if (userName != null && !allUsername.contains(userName)) {
+                        allUsername.add(userName);
+                    }
+                }
             }
         }
-        result = this.removeDuplicate(result);
-        return result;
+        return allUsername;
     }
     public ArrayList<String> getRelatedUsers(String username) {
         if (username == null) {
@@ -387,12 +404,7 @@ public class RolesService {
         if (relatedUsers == null) {
             return null;
         }
-        ArrayList<String> finalResult = new ArrayList<>();
-        ArrayList<String> tempResult = relatedUsers.get(username);
-        if (tempResult != null) {
-            finalResult.addAll(tempResult);
-        }
-        return finalResult;
+        return relatedUsers.get(username);
     }
     private String getBooleanEquivalentToRole(String role, String userName) {
         if (BridgeStaticService.isInValidString(role)) {

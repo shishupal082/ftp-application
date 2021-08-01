@@ -424,7 +424,7 @@ public class UserService {
     }
     public ArrayList<String> getAllRelatedUsersName(String username) {
         ArrayList<String> relatedUsers;
-        relatedUsers = appConfig.getAppToBridge().getAllRelatedUsersName();
+        relatedUsers = appConfig.getAppToBridge().getAllUsersName();
         if (relatedUsers == null) {
             relatedUsers = new ArrayList<>();
         }

@@ -10,6 +10,6 @@ public interface AppToBridgeInterface {
     boolean updateUserRoles(ArrayList<String> rolesConfigPath);
     ArrayList<String> getActiveRoleIdByUserName(String username);
     ArrayList<String> getRelatedUsers(String username);
-    ArrayList<String> getAllRelatedUsersName();
+    ArrayList<String> getAllUsersName();
     Object getRolesConfig();
 }

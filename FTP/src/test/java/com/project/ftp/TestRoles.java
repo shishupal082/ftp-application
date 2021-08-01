@@ -1,6 +1,5 @@
 package com.project.ftp;
 
-import com.project.ftp.bridge.BridgeConstant;
 import com.project.ftp.bridge.config.BridgeConfig;
 import com.project.ftp.bridge.roles.obj.Roles;
 import com.project.ftp.bridge.roles.service.ExpressionEvaluator;
@@ -22,18 +21,23 @@ public class TestRoles {
         rolesFilePath.add(StaticService.getProjectWorkingDir()+"/meta-data/config-files/roles/roles_2.yml");
         RolesService rolesService = new RolesService(bridgeConfig, rolesFilePath);
         Assert.assertNull(rolesService.getRelatedUsers(null));
-        Assert.assertNotNull(rolesService.getAllRelatedUsers());
-        Assert.assertEquals("U9,U6,U5,U4,U3,U2,U18,U17,U16,U15,U14,U13,U12,U11,U1", String.join(",", rolesService.getAllRelatedUsersName()));
+        Assert.assertEquals(20, rolesService.getAllUsersName().size());
+        Assert.assertEquals("U5,U4,U3,U2,U1,U6,U9,U_without_role_access," +
+                        "U11,U13,U12,U18,U17,U15,U14,U16,Admin,U7,adminAndDev,UX",
+                String.join(",", rolesService.getAllUsersName()));
+        Assert.assertEquals(16, rolesService.getAllRelatedUsers().size());
+        Assert.assertEquals("U5,U6,U9,U_without_role_access,U11,U13,U12,U15,U14,U17,U16,U1,U2,U18,U3,U4",
+                String.join(",",rolesService.getAllRelatedUsers().keySet()));
         Assert.assertEquals("U5,U4,U3,U2,U1", String.join(",", rolesService.getRelatedUsers("U1")));
         Assert.assertEquals("U5,U4,U3,U2,U1", String.join(",", rolesService.getRelatedUsers("U2")));
         Assert.assertEquals("U5,U4,U3,U2,U1", String.join(",", rolesService.getRelatedUsers("U3")));
         Assert.assertEquals("U5,U4,U3,U2,U1", String.join(",", rolesService.getRelatedUsers("U4")));
         Assert.assertEquals("U5,U4,U3,U2,U1", String.join(",", rolesService.getRelatedUsers("U5")));
         Assert.assertEquals("U6,U3", String.join(",", rolesService.getRelatedUsers("U6")));
-        Assert.assertEquals("", String.join(",", rolesService.getRelatedUsers("U7")));
-        Assert.assertEquals("", String.join(",", rolesService.getRelatedUsers("U8")));
+        Assert.assertNull(rolesService.getRelatedUsers("U7"));
+        Assert.assertNull(rolesService.getRelatedUsers("U8"));
         Assert.assertEquals("U9", String.join(",", rolesService.getRelatedUsers("U9")));
-        Assert.assertEquals("", String.join(",", rolesService.getRelatedUsers("U10")));
+        Assert.assertNull(rolesService.getRelatedUsers("U10"));
         Assert.assertEquals("U3,U11", String.join(",", rolesService.getRelatedUsers("U11")));
         Assert.assertEquals("U18,U17,U15", String.join(",", rolesService.getRelatedUsers("U15")));
         Assert.assertEquals("U18,U17,U16", String.join(",", rolesService.getRelatedUsers("U16")));

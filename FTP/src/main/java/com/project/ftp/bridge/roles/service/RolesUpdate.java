@@ -31,37 +31,8 @@ public class RolesUpdate {
         }
         HashMap<String, ArrayList<String>> userRolesMapping = new HashMap<>();
         HashMap<String, String> roleAccessMapping = roles.getRoleAccessMapping();
-        HashMap<String, ArrayList<String>> relatedUsers = roles.getRelatedUsers();
-        HashMap<String, ArrayList<String>> roleAccess = roles.getRoleAccess();
-        ArrayList<String> userNames;
-        ArrayList<String> allUsername = new ArrayList<>();
-        if (relatedUsers != null) {
-            for (Map.Entry<String, ArrayList<String>> el: relatedUsers.entrySet()) {
-                userNames = el.getValue();
-                if (userNames == null) {
-                    continue;
-                }
-                for(String userName: userNames) {
-                    if (userName != null && !allUsername.contains(userName)) {
-                        allUsername.add(userName);
-                    }
-                }
-            }
-        }
-        if (roleAccess != null) {
-            for (Map.Entry<String, ArrayList<String>> el: roleAccess.entrySet()) {
-                userNames = el.getValue();
-                if (userNames == null) {
-                    continue;
-                }
-                for(String userName: userNames) {
-                    if (userName != null && !allUsername.contains(userName)) {
-                        allUsername.add(userName);
-                    }
-                }
-            }
-        }
-        if (roleAccessMapping != null) {
+        ArrayList<String> allUsername = rolesService.getAllUsersName();
+        if (roleAccessMapping != null && allUsername != null) {
             for(String tempUsername: allUsername) {
                 for (Map.Entry<String, String> el1: roleAccessMapping.entrySet()) {
                     boolean result = rolesService.apiRolesIncludeUser(el1.getValue(), tempUsername);

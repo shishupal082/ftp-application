@@ -74,8 +74,8 @@ public class AppToBridge implements AppToBridgeInterface {
         return rolesResource.getRelatedUsers(username);
     }
     @Override
-    public ArrayList<String> getAllRelatedUsersName() {
-        return rolesResource.getAllRelatedUsersName();
+    public ArrayList<String> getAllUsersName() {
+        return rolesResource.getAllUsersName();
     }
     @Override
     public Object getRolesConfig() {
