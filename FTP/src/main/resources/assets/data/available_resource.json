@@ -80,10 +80,6 @@
     "Get login user Details [GET]"
   ],
   [
-    "/api/get_related_users_data_by_username?username",
-    "Get related users Data By Username [GET]"
-  ],
-  [
     "/api/get_roles_config",
     "Get roles config [GET]"
   ],

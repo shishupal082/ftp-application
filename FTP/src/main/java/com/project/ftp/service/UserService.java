@@ -64,9 +64,6 @@ public class UserService {
     public boolean isControlGroupUser(LoginUserDetails loginUserDetails)  {
         return this.isAuthorised(loginUserDetails, AppConstant.IS_USERS_CONTROL_ENABLE);
     }
-    public boolean isOtherUserControlEnable(LoginUserDetails loginUserDetails)  {
-        return this.isAuthorised(loginUserDetails, AppConstant.IS_OTHER_USERS_CONTROL_ENABLE);
-    }
     public boolean isLoginUserDev(LoginUserDetails loginUserDetails)  {
         return this.isAuthorised(loginUserDetails, AppConstant.IS_DEV_USER);
     }

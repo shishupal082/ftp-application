@@ -33,7 +33,6 @@ roleAccessMapping:
   isUploadFileEnable: true
   isAddTextEnable: true
   isUsersControlEnable: UsersControlGroup
-  isOtherUsersControlEnable: admin
   isAdminTextDisplayEnable: admin
   isAdminOrDevUser: (admin|dev)
   inValidRoleEntry: (admin1|dev)

@@ -123,28 +123,6 @@ public class ApiResource {
         logger.info("getRelatedUsersDataV2 : Out");
         return response;
     }
-    @GET
-    @Path("/get_related_users_data_by_username")
-    @UnitOfWork
-    public ApiResponse getRelatedUsersDataByUsername(@Context HttpServletRequest request,
-                                                     @QueryParam("username") String username) {
-        LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
-        logger.info("getRelatedUsersDataByUsername : In, {}, username: {}", loginUserDetails, username);
-        ApiResponse response;
-        try {
-            authService.isOtherUserControlEnable(request);
-            loginUserDetails.setUsername(username);
-            ArrayList<RelatedUserData> relatedUserData = userService.getRelatedUsersData(loginUserDetails);
-            response = new ApiResponse(relatedUserData);
-            eventTracking.trackSuccessEvent(request, EventName.GET_OTHER_USER_RELATED_DATA);
-        } catch (AppException ae) {
-            logger.info("Error in getRelatedUsersDataByUsername: {}", ae.getErrorCode().getErrorCode());
-            response = new ApiResponse(ae.getErrorCode());
-            eventTracking.trackFailureEvent(request, EventName.GET_OTHER_USER_RELATED_DATA, ae.getErrorCode());
-        }
-        logger.info("getRelatedUsersDataByUsername : Out");
-        return response;
-    }
 
     @POST
     @Path("/track_event")

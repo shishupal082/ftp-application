@@ -1145,6 +1145,9 @@ New parameter added Roles.userRolesMapping
 pageMapping404
     - key of pageMapping404 can be regex
     - url matching with pattern is implemented
+Backend RoleId isOtherUsersControlEnable is removed
+Api removed (This is implemented using roleConfig data reading by dev user)
+    - /api/get_related_users_data_by_username?username
 
 Future releases
 -------------------
