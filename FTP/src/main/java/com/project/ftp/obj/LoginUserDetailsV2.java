@@ -13,6 +13,7 @@ public class LoginUserDetailsV2 {
     * */
     public LoginUserDetailsV2(LoginUserDetails loginUserDetails) {
         displayName = "";
+        roles = new HashMap<>();
         if (loginUserDetails != null) {
             username = loginUserDetails.getUsername();
             isLogin = loginUserDetails.getLogin();

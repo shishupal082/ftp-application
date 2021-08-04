@@ -306,7 +306,7 @@ public class UserService {
             return;
         }
         ArrayList<String> allRoles = new ArrayList<>();
-        ArrayList<String> requiredRoleId = new ArrayList<>();
+        ArrayList<String> requiredRoleId = null;
         ArrayList<String> activeRoleId;
         String[] allRolesConfig;
         if (AppConstant.FromEnvConfig.equals(source)) {
@@ -322,15 +322,23 @@ public class UserService {
         if (AppConstant.FromRoleConfig.equals(source)) {
             requiredRoleId = activeRoleId;
         } else if (activeRoleId != null) {
+            requiredRoleId = new ArrayList<>();
             for (String role: allRoles) {
                 if (activeRoleId.contains(role)) {
                     requiredRoleId.add(role);
                 }
             }
         }
-        loginUserDetailsV2.setRoles(new HashMap<>());
-        for (String role: requiredRoleId) {
-            loginUserDetailsV2.getRoles().put(role, true);
+        HashMap<String, Boolean> roles;
+        if (requiredRoleId != null) {
+            roles = loginUserDetailsV2.getRoles();
+            if (roles == null) {
+                roles = new HashMap<>();
+            }
+            for (String role: requiredRoleId) {
+                roles.put(role, true);
+            }
+            loginUserDetailsV2.setRoles(roles);
         }
     }
     public LoginUserDetailsV2 getLoginUserDetailsV2Data(HttpServletRequest request, String source)  {
