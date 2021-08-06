@@ -25,7 +25,13 @@ public class AuthService {
         LoginUserDetails userDetails = userService.getLoginUserDetails(request);
         return userDetails.getLogin();
     }
-
+    public void isLoginOtherUserEnable(HttpServletRequest request) throws AppException {
+        LoginUserDetails userDetails = userService.getLoginUserDetails(request);
+        if (!userService.isLoginOtherUserEnable(userDetails)) {
+            logger.info("UnAuthorised user trying to login other user: {}", userDetails);
+            throw new AppException(ErrorCodes.UNAUTHORIZED_USER);
+        }
+    }
     public void isLoginUserAdmin(HttpServletRequest request) throws AppException {
         LoginUserDetails userDetails = userService.getLoginUserDetails(request);
         if (!userService.isLoginUserAdmin(userDetails)) {

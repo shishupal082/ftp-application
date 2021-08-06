@@ -76,6 +76,7 @@ createPasswordEmailConfig:
 loginRedirectMapping:
   isAdminUser: "/view/resource"
   isDevUser: "/dashboard"
+  isLoginOtherUserEnable: "/login_other_user"
 
 ftlConfig:
   description: "FTP Application description"
@@ -115,4 +116,4 @@ allowedOrigin:
   - chrome-extension://fhbjgbiflinjbdggehcddcbncdddomop
 
 tempConfig:
-  username: Admin
+  username: Group1Login

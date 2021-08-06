@@ -434,6 +434,32 @@ public class ApiResource {
         return response;
     }
     @POST
+    @Path("/login_other_user")
+    @UnitOfWork
+    public ApiResponse loginOtherUser(@Context HttpServletRequest request,
+                                 RequestUserLogin userLogin) {
+        logger.info("loginOtherUser: In, {}, user: {}",
+                userLogin, userService.getUserDataForLogging(request));
+        ApiResponse response;
+        String comment = null;
+        try {
+            authService.isLoginOtherUserEnable(request);
+            LoginUserDetails loginUserDetails = userService.loginOtherUser(request, userLogin);
+            response = new ApiResponse(loginUserDetails);
+            comment = loginUserDetails.toString();
+            eventTracking.trackSuccessEventV2(request, EventName.LOGIN_OTHER_USER, comment);
+        } catch (AppException ae) {
+            logger.info("Error in loginOtherUser: {}", ae.getErrorCode().getErrorCode());
+            if (userLogin != null) {
+                comment = userLogin.toString();
+            }
+            eventTracking.trackFailureEventV2(request, EventName.LOGIN_OTHER_USER, ae.getErrorCode(), comment);
+            response = new ApiResponse(ae.getErrorCode());
+        }
+        logger.info("loginOtherUser: Out: {}", response);
+        return response;
+    }
+    @POST
     @Path("/register_user")
     @UnitOfWork
     public ApiResponse registerUser(@Context HttpServletRequest httpServletRequest,

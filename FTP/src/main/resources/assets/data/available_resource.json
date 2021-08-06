@@ -16,6 +16,10 @@
     "Login View"
   ],
   [
+    "/login_other_user",
+    "Login Other User"
+  ],
+  [
     "/logout",
     "Logout View"
   ],
@@ -110,6 +114,10 @@
   [
     "/api/login_user",
     "Login User [POST]"
+  ],
+  [
+    "/api/login_other_user",
+    "Login Other User [POST]"
   ],
   [
     "/api/forgot_password",

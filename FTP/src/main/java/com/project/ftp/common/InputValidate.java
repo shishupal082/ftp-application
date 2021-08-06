@@ -91,6 +91,17 @@ public class InputValidate {
             throw new AppException(ErrorCodes.PASSWORD_REQUIRED);
         }
     }
+    public void validateOtherUserLoginRequest(RequestUserLogin userLogin) throws AppException {
+        if (userLogin == null) {
+            logger.info("loginUser request is null.");
+            throw new AppException(ErrorCodes.BAD_REQUEST_ERROR);
+        }
+        String username = userLogin.getUsername();
+        if (StaticService.isInValidString(username)) {
+            logger.info("loginUser request invalid username: {}", username);
+            throw new AppException(ErrorCodes.USER_NAME_REQUIRED);
+        }
+    }
     public void validateChangePassword(RequestChangePassword changePassword) throws AppException {
         if (changePassword == null) {
             logger.info("changePassword request is null.");

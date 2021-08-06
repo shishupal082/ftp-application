@@ -25,7 +25,7 @@ public class AppConstant {
     public static final String ALLOWED_HEADERS= "Access-Control-Allow-Headers";
     public static final String FILE = "FILE";
     public static final String FOLDER = "FOLDER";
-    public static final String AppVersion = "8.0.0.8";
+    public static final String AppVersion = "8.0.0.9";
     public static final String DATE_FORMAT = "yyyy-MM-dd";
     public static final String TIME_FORMAT = "HHmmss";
     public static final String FILENAME_FORMAT = "yyyy-MM-dd-HH-mm'-filename'";
@@ -48,6 +48,8 @@ public class AppConstant {
     public static final String DEFAULT = "default";
     public static final String TRASH = "trash";
     public static final String TEMP = "temp";
+    public static final String USERNAME = "username";
+    public static final String ORG_USERNAME = "org_username";
     public static final String UN_AUTHORISED = "un_authorised";
     public static final String FromRoleConfig = "FromRoleConfig";
     public static final String FromEnvConfig = "FromEnvConfig";
@@ -72,6 +74,7 @@ public class AppConstant {
     public static final String IS_DEV_USER = "isDevUser";
     public static final String IS_ADMIN_USER = "isAdminUser";
     public static final String IS_USERS_CONTROL_ENABLE = "isUsersControlEnable";
+    public static final String IS_LOGIN_OTHER_USER_ENABLE = "isLoginOtherUserEnable";
     public static final String IS_ADD_TEXT_ENABLE = "isAddTextEnable";
     public static final String IS_UPLOAD_FILE_ENABLE = "isUploadFileEnable";
     public static final String IS_DELETE_FILE_ENABLE = "isDeleteFileEnable";

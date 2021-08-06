@@ -166,6 +166,11 @@ public class AppResource {
         return new AppView(request, appViewFtlFileName, "login", userService, appConfig);
     }
     @GET
+    @Path("/login_other_user")
+    public AppView loginOtherUser(@Context HttpServletRequest request) {
+        return new AppView(request, appViewFtlFileName, "login_other_user", userService, appConfig);
+    }
+    @GET
     @Path("/logout")
     @UnitOfWork
     public AppView logout(@Context HttpServletRequest request) {

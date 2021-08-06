@@ -1,0 +1,112 @@
+body.theme-green {
+    background-color: #8ab794;
+    color: #eee;
+}
+body.theme-grey {
+    background-color: #eee;
+}
+.b-none {
+    border: none;
+}
+.b-1px {
+    border: 1px solid;
+}
+.p-0 {
+    padding: 0;
+}
+.p-5px {
+    padding: 5px;
+}
+.p-10px {
+    padding: 10px;
+}
+.pt-0 {
+    padding-top: 0px;
+}
+.pt-1px {
+    padding-top: 1px;
+}
+.pt-10px {
+    padding-top: 10px;
+}
+.pt-25px {
+    padding-top: 25px;
+}
+.pt-40px {
+    padding-top: 40px;
+}
+.pr-5px {
+    padding-right: 5px;
+}
+.pb-0 {
+    padding-bottom: 0px;
+}
+.pr-10px {
+    padding-right: 10px;
+}
+.pl-0 {
+    padding-left: 0px;
+}
+.pl-5px {
+    padding-left: 5px;
+}
+.pl-10px {
+    padding-left: 10px;
+}
+.ml-5px {
+    margin-left: 5px;
+}
+.ml-10px {
+    margin-left: 10px;
+}
+.w-35px {
+    width: 35px;
+}
+.w-40px {
+    width: 40px;
+}
+.w-75px {
+    width: 75px;
+}
+.w-45px {
+    width: 45px;
+}
+.w-55px {
+    width: 55px;
+}
+.w-90px {
+    width: 90px;
+}
+.w-120px {
+    width: 120px;
+}
+.w-200px {
+    width: 200px;
+}
+.w-300px {
+    width: 300px;
+}
+.h-15px {
+    height: 15px;
+}
+.h-45px {
+    height: 45px;
+}
+.fs-80 {
+    font-size: 80%;
+}
+.fs-60 {
+    font-size: 60%;
+}
+.fs-50 {
+    font-size: 50%;
+}
+.fs-40 {
+    font-size: 40%;
+}
+table.table-padded-px-5 > thead > tr > th,
+table.table-padded-px-5 > thead > tr > td,
+table.table-padded-px-5 > tbody > tr > th,
+table.table-padded-px-5 > tbody > tr > td {
+    padding: 5px;
+}

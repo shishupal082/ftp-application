@@ -30,8 +30,8 @@ public class DbDAO extends AbstractDAO<MysqlUser> {
             list = (List<MysqlUser>) namedQuery(FindAllUser).getResultList();
             logger.info("result count: {}", list.size());
         } catch (Exception e) {
-            logger.info("error in query: {}, {}", FindAllUser, e.getMessage());
-            e.printStackTrace();
+            logger.info("error in query: findAll: {}, {}", FindAllUser, e.getMessage());
+//            e.printStackTrace();
         }
         return list;
     }
@@ -44,8 +44,8 @@ public class DbDAO extends AbstractDAO<MysqlUser> {
             list = (List<MysqlUser>) namedQuery(queryName).setParameter("name", builder.toString()).getResultList();
             logger.info("result count: {}", list.size());
         } catch (Exception e) {
-            logger.info("error in query: {}, {}", queryName, e.getMessage());
-            e.printStackTrace();
+            logger.info("error in query: findUserByName: {}, {}", queryName, e.getMessage());
+//            e.printStackTrace();
         }
         return list;
     }
@@ -80,8 +80,8 @@ public class DbDAO extends AbstractDAO<MysqlUser> {
                     .setParameter("comment", eventDBParameters.getComment())
                     .executeUpdate();
         } catch (Exception e) {
-            logger.info("error in query: {}, {}", query, e.getMessage());
-            e.printStackTrace();
+            logger.info("error in query: insertEvent: {}, {}", query, e.getMessage());
+//            e.printStackTrace();
         }
     }
     public void insertEventV2(EventDBParameters eventDBParameters) {
@@ -96,8 +96,8 @@ public class DbDAO extends AbstractDAO<MysqlUser> {
         try {
             mysqlConnection.updateQueryV2(query, parameters);
         } catch (Exception e) {
-            logger.info("error in query: {}, {}", query, e.getMessage());
-            e.printStackTrace();
+            logger.info("error in query: insertEventV2: {}, {}", query, e.getMessage());
+//            e.printStackTrace();
         }
     }
 }

@@ -27,12 +27,15 @@ roleAccess:
     - U3
   U_without_related_user:
     - UX
+  Group1_users:
+    - Group1Login
 roleAccessMapping:
   isAdminUser: admin
   isDevUser: (dev|admin)
   isUploadFileEnable: true
   isAddTextEnable: true
   isUsersControlEnable: UsersControlGroup
+  isLoginOtherUserEnable: Group1_users
   isAdminTextDisplayEnable: admin
   isAdminOrDevUser: (admin|dev)
   inValidRoleEntry: (admin1|dev)
@@ -59,6 +62,8 @@ relatedUsers:
   U5:
     - userGroup1
   U_without_role_access:
+    - userGroup1
+  Group1Login:
     - userGroup1
 # final output
 # tempCoRelatedUsers: {U5=[U5, U4, U1, U3, U2], U9=[U9], U13=[U13, U12], U12=[U13, U12], U1=[U5, U4, U1, U3, U2], U2=[U5, U4, U1, U3, U2], U3=[U5, U4, U1, U3, U2], U4=[U5, U4, U1, U3, U2]}

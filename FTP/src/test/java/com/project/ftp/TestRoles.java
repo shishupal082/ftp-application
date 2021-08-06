@@ -21,12 +21,12 @@ public class TestRoles {
         rolesFilePath.add(StaticService.getProjectWorkingDir()+"/meta-data/config-files/roles/roles_2.yml");
         RolesService rolesService = new RolesService(bridgeConfig, rolesFilePath);
         Assert.assertNull(rolesService.getRelatedUsers(null));
-        Assert.assertEquals(20, rolesService.getAllUsersName().size());
-        Assert.assertEquals("U5,U4,U3,U2,U1,U6,U9,U_without_role_access," +
-                        "U11,U13,U12,U18,U17,U15,U14,U16,Admin,U7,adminAndDev,UX",
+        Assert.assertEquals(21, rolesService.getAllUsersName().size());
+        Assert.assertEquals("U5,U4,U3,U2,U1,U6,U9,Group1Login,U_without_role_access," +
+                        "U11,U13,U12,U18,U17,U15,U14,U16,U7,Admin,adminAndDev,UX",
                 String.join(",", rolesService.getAllUsersName()));
-        Assert.assertEquals(16, rolesService.getAllRelatedUsers().size());
-        Assert.assertEquals("U5,U6,U9,U_without_role_access,U11,U13,U12,U15,U14,U17,U16,U1,U2,U18,U3,U4",
+        Assert.assertEquals(17, rolesService.getAllRelatedUsers().size());
+        Assert.assertEquals("U5,U6,U9,Group1Login,U_without_role_access,U11,U13,U12,U15,U14,U17,U16,U1,U2,U18,U3,U4",
                 String.join(",",rolesService.getAllRelatedUsers().keySet()));
         Assert.assertEquals("U5,U4,U3,U2,U1", String.join(",", rolesService.getRelatedUsers("U1")));
         Assert.assertEquals("U5,U4,U3,U2,U1", String.join(",", rolesService.getRelatedUsers("U2")));
@@ -100,7 +100,7 @@ public class TestRoles {
         Assert.assertNotNull(rolesService.getRolesConfig());
         Assert.assertNotNull(rolesService.getRolesAccess());
         Assert.assertNotNull(rolesService.getApiRolesMapping());
-        Assert.assertEquals(13, rolesService.getAllRoles().size());
+        Assert.assertEquals(14, rolesService.getAllRoles().size());
         Assert.assertNotNull(rolesService.getRolesAccessByRoleId("admin"));
         Assert.assertNull(rolesService.getRolesAccessByRoleId("adminNotFound"));
         Assert.assertNotNull(rolesService.getRolesByApiName("isAdminUser"));

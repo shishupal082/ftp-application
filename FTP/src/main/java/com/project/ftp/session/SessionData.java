@@ -6,6 +6,7 @@ import com.project.ftp.service.StaticService;
 public class SessionData {
     private String sessionId;
     private Long updatedTime;
+    private String orgUsername;
     private String username;
     private String visibleDate;
     public SessionData(String sessionId, Long updatedTime) {
@@ -30,6 +31,14 @@ public class SessionData {
         visibleDate = StaticService.getDateStrFromTimeMs(AppConstant.DateTimeFormat2, updatedTime);
     }
 
+    public String getOrgUsername() {
+        return orgUsername;
+    }
+
+    public void setOrgUsername(String orgUsername) {
+        this.orgUsername = orgUsername;
+    }
+
     public String getUsername() {
         return username;
     }
@@ -51,8 +60,9 @@ public class SessionData {
         return "SessionData{" +
                 "sessionId='" + sessionId + '\'' +
                 ", updatedTime=" + updatedTime +
+                ", orgUsername='" + orgUsername + '\'' +
                 ", username='" + username + '\'' +
-                ", visibleDate=" + visibleDate +
+                ", visibleDate='" + visibleDate + '\'' +
                 '}';
     }
 }

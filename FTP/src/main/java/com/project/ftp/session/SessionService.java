@@ -67,6 +67,7 @@ public class SessionService {
     private SessionData getNewSessionV2(String sessionId, String username) {
         SessionData sessionData = this.getNewSession(sessionId);
         sessionData.setUsername(username);
+        sessionData.setOrgUsername(username);
         return sessionData;
     }
 
@@ -126,35 +127,49 @@ public class SessionService {
         sessionData.put(newSessionId, this.getNewSessionV2(newSessionId, username));
         this.setSessionId(request, newSessionId);
     }
-    public void logoutUser(HttpServletRequest request) {
+    public void loginOtherUser(HttpServletRequest request, String username) throws AppException {
+        if (username == null || username.isEmpty()) {
+            logger.info("userLogin request username is incorrect: {}", username);
+            throw new AppException(ErrorCodes.BAD_REQUEST_ERROR);
+        }
         HashMap<String, SessionData> sessionData = appConfig.getSessionData();
         String sessionId = this.getSessionId(request);
         SessionData currentSessionData = sessionData.get(sessionId);
         if (currentSessionData != null) {
-            sessionData.remove(sessionId);
-            this.setSessionId(request, StaticService.createUUIDNumber());
+            currentSessionData.setUsername(username);
         }
     }
-    public String getLoginUserName(HttpServletRequest request) {
-        String loginUserName = null;
+    public void logoutUser(HttpServletRequest request) {
+        HashMap<String, SessionData> sessionData = appConfig.getSessionData();
+        String sessionId = this.getSessionId(request);
+        SessionData currentSessionData = sessionData.get(sessionId);
+        String loginUsername, orgLoginUsername;
+        if (currentSessionData != null) {
+            loginUsername = currentSessionData.getUsername();
+            orgLoginUsername = currentSessionData.getOrgUsername();
+            if (loginUsername != null && orgLoginUsername != null && !loginUsername.equals(orgLoginUsername)) {
+                currentSessionData.setUsername(orgLoginUsername);
+            } else {
+                sessionData.remove(sessionId);
+                this.setSessionId(request, StaticService.createUUIDNumber());
+            }
+        }
+    }
+    public String getSessionParam(final HttpServletRequest request, String param) {
+        String result = null;
         try {
             SessionData sessionData = this.getCurrentSessionData(request);
-            loginUserName = sessionData.getUsername();
-            if (loginUserName == null || loginUserName.isEmpty()) {
-                loginUserName = null;
+            if (AppConstant.USERNAME.equals(param)) {
+                result = sessionData.getUsername();
+            } else if (AppConstant.ORG_USERNAME.equals(param)) {
+                result = sessionData.getOrgUsername();
+            }
+            if (result == null || result.isEmpty()) {
+                result = null;
             }
         } catch (Exception e) {
-            logger.info("Error in getting loginUserDetails: {}", e.getMessage());
+            logger.info("Error in getting getSessionParam: {}, {}", param, e.getMessage());
         }
-        if (loginUserName == null) {
-            HashMap<String, String> tempConfig = appConfig.getFtpConfiguration().getTempConfig();
-            if (tempConfig != null) {
-                loginUserName = tempConfig.get("username");
-                if (loginUserName == null || loginUserName.isEmpty()) {
-                    loginUserName = null;
-                }
-            }
-        }
-        return loginUserName;
+        return result;
     }
 }

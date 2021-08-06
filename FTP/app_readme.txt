@@ -1149,6 +1149,17 @@ Backend RoleId isOtherUsersControlEnable is removed
 Api removed (This is implemented using roleConfig data reading by dev user)
     - /api/get_related_users_data_by_username?username
 
+8.0.0.9 (06.08.2021)
+--------------------
+Added new API: /api/login_other_user [POST]
+Added new View: /login_other_user
+    - UI functionality of both page /login_other_user and /logout is exactly same
+
+Added new role: isLoginOtherUserEnable
+    - this role is used for login_other_user
+Removed reactjs project from this repository
+
+
 Future releases
 -------------------
 

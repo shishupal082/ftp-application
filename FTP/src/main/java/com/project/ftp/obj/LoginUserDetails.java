@@ -1,13 +1,24 @@
 package com.project.ftp.obj;
 
 public class LoginUserDetails {
+    private String orgUsername;
     private String username;
     private boolean isLogin;
     private String loginRedirectUrl;
     public LoginUserDetails() {
+        orgUsername = "";
         username = "";
         isLogin = false;
     }
+
+    public String getOrgUsername() {
+        return orgUsername;
+    }
+
+    public void setOrgUsername(String orgUsername) {
+        this.orgUsername = orgUsername;
+    }
+
     public String getUsername() {
         return username;
     }
@@ -35,7 +46,8 @@ public class LoginUserDetails {
     @Override
     public String toString() {
         return "LoginUserDetails{" +
-                "username='" + username + '\'' +
+                "orgUsername='" + orgUsername + '\'' +
+                ", username='" + username + '\'' +
                 ", isLogin=" + isLogin +
                 ", loginRedirectUrl='" + loginRedirectUrl + '\'' +
                 '}';

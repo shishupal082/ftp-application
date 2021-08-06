@@ -5,6 +5,7 @@ import java.util.Map;
 
 public class LoginUserDetailsV2 {
     private String username;
+    private String orgUsername;
     private String displayName;
     private boolean isLogin;
     private HashMap<String, Boolean> roles;
@@ -16,9 +17,11 @@ public class LoginUserDetailsV2 {
         roles = new HashMap<>();
         if (loginUserDetails != null) {
             username = loginUserDetails.getUsername();
+            orgUsername = loginUserDetails.getOrgUsername();
             isLogin = loginUserDetails.getLogin();
         } else {
             username = "";
+            orgUsername = "";
             isLogin = false;
         }
     }
@@ -28,6 +31,14 @@ public class LoginUserDetailsV2 {
 
     public void setUsername(String username) {
         this.username = username;
+    }
+
+    public String getOrgUsername() {
+        return orgUsername;
+    }
+
+    public void setOrgUsername(String orgUsername) {
+        this.orgUsername = orgUsername;
     }
 
     public String getDisplayName() {
@@ -57,6 +68,7 @@ public class LoginUserDetailsV2 {
         String jsonDisplayName = displayName == null ? "" : displayName;
         String result = "{"+
                 "\"username\":\""+username+"\""+
+                ", \"orgUsername\":\""+orgUsername+"\""+
                 ", \"isLogin\":\""+isLogin+"\""+
                 ", \"displayName\":\""+jsonDisplayName+"\"";
         if (roles != null) {
@@ -67,10 +79,12 @@ public class LoginUserDetailsV2 {
         result += "}";
         return result;
     }
+
     @Override
     public String toString() {
         return "LoginUserDetailsV2{" +
                 "username='" + username + '\'' +
+                ", orgUsername='" + orgUsername + '\'' +
                 ", displayName='" + displayName + '\'' +
                 ", isLogin=" + isLogin +
                 ", roles=" + roles +

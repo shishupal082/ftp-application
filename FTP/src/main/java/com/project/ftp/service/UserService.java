@@ -61,6 +61,9 @@ public class UserService {
     public boolean isLoginUserAdmin(LoginUserDetails loginUserDetails)  {
         return this.isAuthorised(loginUserDetails, AppConstant.IS_ADMIN_USER);
     }
+    public boolean isLoginOtherUserEnable(LoginUserDetails loginUserDetails) {
+        return this.isAuthorised(loginUserDetails, AppConstant.IS_LOGIN_OTHER_USER_ENABLE);
+    }
     public boolean isControlGroupUser(LoginUserDetails loginUserDetails)  {
         return this.isAuthorised(loginUserDetails, AppConstant.IS_USERS_CONTROL_ENABLE);
     }
@@ -292,12 +295,33 @@ public class UserService {
     private Boolean isUserLogin(String loginUserName) {
         return loginUserName != null && !loginUserName.isEmpty();
     }
+
+    private String getTempConfigParameter() {
+        String param = AppConstant.USERNAME;
+        String result = null;
+        HashMap<String, String> tempConfig = appConfig.getFtpConfiguration().getTempConfig();
+        if (tempConfig != null) {
+            result = tempConfig.get(param);
+            if (result == null || result.isEmpty()) {
+                result = null;
+            }
+        }
+        return result;
+    }
     public LoginUserDetails getLoginUserDetails(HttpServletRequest request) {
         LoginUserDetails loginUserDetails = new LoginUserDetails();
-        String loginUserName = sessionService.getLoginUserName(request);
+        String loginUserName = sessionService.getSessionParam(request, AppConstant.USERNAME);
+        if (loginUserName == null) {
+            loginUserName = this.getTempConfigParameter();
+            if (loginUserName != null) {
+                logger.info("forcing loginUser from tempConfig.username: {}", loginUserName);
+                sessionService.loginUser(request, loginUserName);
+            }
+        }
         if (loginUserName != null) {
             loginUserDetails.setUsername(loginUserName);
             loginUserDetails.setLogin(this.isUserLogin(loginUserName));
+            loginUserDetails.setOrgUsername(sessionService.getSessionParam(request, AppConstant.ORG_USERNAME));
         }
         return loginUserDetails;
     }
@@ -513,6 +537,13 @@ public class UserService {
         LoginUserDetails loginUserDetails = this.getLoginUserDetails(request);
         this.addLoginRedirectUrl(loginUserDetails);
         logger.info("loginUser success: {}", loginUserDetails);
+        return loginUserDetails;
+    }
+    public LoginUserDetails loginOtherUser(HttpServletRequest request, RequestUserLogin userLogin) throws AppException {
+        inputValidate.validateOtherUserLoginRequest(userLogin);
+        sessionService.loginOtherUser(request, userLogin.getUsername());
+        LoginUserDetails loginUserDetails = this.getLoginUserDetails(request);
+        this.addLoginRedirectUrl(loginUserDetails);
         return loginUserDetails;
     }
     public LoginUserDetails userRegister(HttpServletRequest request, RequestUserRegister userRegister) throws AppException {
