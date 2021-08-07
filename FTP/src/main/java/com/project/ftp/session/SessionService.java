@@ -64,10 +64,10 @@ public class SessionService {
         return new SessionData(sessionId, currentTime);
     }
 
-    private SessionData getNewSessionV2(String sessionId, String username) {
+    private SessionData getNewSessionV2(String sessionId, String username, String orgUsername) {
         SessionData sessionData = this.getNewSession(sessionId);
         sessionData.setUsername(username);
-        sessionData.setOrgUsername(username);
+        sessionData.setOrgUsername(orgUsername);
         return sessionData;
     }
 
@@ -115,16 +115,19 @@ public class SessionService {
         this.setSessionId(request, currentSessionId);
         return currentSessionId;
     }
-    public void loginUser(HttpServletRequest request, String username) throws AppException {
+    public void loginUser(HttpServletRequest request, String username, String orgUsername) throws AppException {
         if (username == null || username.isEmpty()) {
             logger.info("userLogin request username is incorrect: {}", username);
             throw new AppException(ErrorCodes.BAD_REQUEST_ERROR);
+        }
+        if (StaticService.isInValidString((orgUsername))) {
+            orgUsername = username;
         }
         HashMap<String, SessionData> sessionData = appConfig.getSessionData();
         String oldSessionId = this.getSessionId(request);
         String newSessionId = StaticService.createUUIDNumber();
         sessionData.remove(oldSessionId);
-        sessionData.put(newSessionId, this.getNewSessionV2(newSessionId, username));
+        sessionData.put(newSessionId, this.getNewSessionV2(newSessionId, username, orgUsername));
         this.setSessionId(request, newSessionId);
     }
     public void loginOtherUser(HttpServletRequest request, String username) throws AppException {

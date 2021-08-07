@@ -4,6 +4,7 @@ import com.project.ftp.config.AppConfig;
 import com.project.ftp.config.AppConstant;
 import com.project.ftp.obj.LoginUserDetailsV2;
 import com.project.ftp.obj.yamlObj.FtlConfig;
+import com.project.ftp.service.StaticService;
 import com.project.ftp.service.UserService;
 import io.dropwizard.views.View;
 import org.slf4j.Logger;
@@ -16,6 +17,7 @@ import javax.servlet.http.HttpServletRequest;
  */
 public class AppView extends View {
     private final static Logger logger = LoggerFactory.getLogger(AppView.class);
+    private final String pageName;
     private final String appVersion;
     private final String isGuestEnable;
     private final String loginRedirectUrl;
@@ -39,12 +41,20 @@ public class AppView extends View {
         if (androidCheckEnableTemp == null) {
             androidCheckEnableTemp = false;
         }
+        if (StaticService.isInValidString(pageName)) {
+            pageName = "";
+        }
+        this.pageName = pageName;
         this.displayCreatePasswordLinkEnable = ftlConfig.getDisplayCreatePasswordLinkEnable();
         this.androidCheckEnable = Boolean.toString(androidCheckEnableTemp);
         this.isGuestEnable = Boolean.toString(isGuestEnableTemp);
         this.appVersion = AppConstant.AppVersion;
         this.loginUserDetailsV2Str = loginUserDetailsV2.toJsonString();
         logger.info("Loading AppView, page: {}, userDetails: {}", pageName, loginUserDetailsV2);
+    }
+
+    public String getPageName() {
+        return pageName;
     }
 
     public String getAppVersion() {

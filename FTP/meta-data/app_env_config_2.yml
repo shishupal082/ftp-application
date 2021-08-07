@@ -116,4 +116,5 @@ allowedOrigin:
   - chrome-extension://fhbjgbiflinjbdggehcddcbncdddomop
 
 tempConfig:
+  org_username: Group1Login
   username: Group1Login

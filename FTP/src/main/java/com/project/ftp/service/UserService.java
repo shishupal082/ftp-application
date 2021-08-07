@@ -296,13 +296,15 @@ public class UserService {
         return loginUserName != null && !loginUserName.isEmpty();
     }
 
-    private String getTempConfigParameter() {
-        String param = AppConstant.USERNAME;
+    private String getTempConfigParameter(String param) {
+        if (StaticService.isInValidString(param)) {
+            return null;
+        }
         String result = null;
         HashMap<String, String> tempConfig = appConfig.getFtpConfiguration().getTempConfig();
         if (tempConfig != null) {
             result = tempConfig.get(param);
-            if (result == null || result.isEmpty()) {
+            if (StaticService.isInValidString(result)) {
                 result = null;
             }
         }
@@ -311,11 +313,13 @@ public class UserService {
     public LoginUserDetails getLoginUserDetails(HttpServletRequest request) {
         LoginUserDetails loginUserDetails = new LoginUserDetails();
         String loginUserName = sessionService.getSessionParam(request, AppConstant.USERNAME);
-        if (loginUserName == null) {
-            loginUserName = this.getTempConfigParameter();
-            if (loginUserName != null) {
-                logger.info("forcing loginUser from tempConfig.username: {}", loginUserName);
-                sessionService.loginUser(request, loginUserName);
+        String orgUsername;
+        if (StaticService.isInValidString(loginUserName)) {
+            loginUserName = this.getTempConfigParameter(AppConstant.USERNAME);
+            orgUsername = this.getTempConfigParameter(AppConstant.ORG_USERNAME);
+            if (loginUserName != null && !loginUserName.isEmpty()) {
+                logger.info("forcing tempConfig loginUser username: {}, org_username: {}", loginUserName, orgUsername);
+                sessionService.loginUser(request, loginUserName, orgUsername);
             }
         }
         if (loginUserName != null) {
@@ -533,7 +537,8 @@ public class UserService {
         logger.info("loginUser encrypted password: {}", encryptedPassword);
 
         this.isUserPasswordMatch(user, encryptedPassword, ErrorCodes.PASSWORD_NOT_MATCHING);
-        sessionService.loginUser(request, user.getUsername());
+        String username = user.getUsername();
+        sessionService.loginUser(request, username, username);
         LoginUserDetails loginUserDetails = this.getLoginUserDetails(request);
         this.addLoginRedirectUrl(loginUserDetails);
         logger.info("loginUser success: {}", loginUserDetails);
@@ -553,7 +558,8 @@ public class UserService {
             logger.info("Create user failed: {}", userRegister);
             throw new AppException(ErrorCodes.RUNTIME_ERROR);
         }
-        sessionService.loginUser(request, user.getUsername());
+        String username = user.getUsername();
+        sessionService.loginUser(request, username, username);
         LoginUserDetails loginUserDetails = this.getLoginUserDetails(request);
         this.addLoginRedirectUrl(loginUserDetails);
         return loginUserDetails;
@@ -677,7 +683,8 @@ public class UserService {
         user.setPassword(encryptedNewPassword);
         user.setPasscode(createPasswordOtp);
         this.createPassword(user);
-        sessionService.loginUser(request, user.getUsername());
+        String username2 = user.getUsername();
+        sessionService.loginUser(request, username2, username2);
         LoginUserDetails loginUserDetails = this.getLoginUserDetails(request);
         this.addLoginRedirectUrl(loginUserDetails);
         return loginUserDetails;
