@@ -49,7 +49,7 @@ public class AppConstant {
     public static final String TRASH = "trash";
     public static final String TEMP = "temp";
     public static final String USERNAME = "username";
-    public static final String ORG_USERNAME = "org_username";
+    public static final String ORG_USERNAME = "orgUsername";
     public static final String UN_AUTHORISED = "un_authorised";
     public static final String FromRoleConfig = "FromRoleConfig";
     public static final String FromEnvConfig = "FromEnvConfig";

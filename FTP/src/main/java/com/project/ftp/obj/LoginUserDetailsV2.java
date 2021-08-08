@@ -65,20 +65,27 @@ public class LoginUserDetailsV2 {
         this.roles = roles;
     }
     public String toJsonString() {
+        String jsonUsername = username == null ? "" : username;
         String jsonDisplayName = displayName == null ? "" : displayName;
         String jsonOrgUsername = orgUsername == null ? "" : orgUsername;
-        String result = "{"+
-                "\"username\":\""+username+"\""+
-                ", \"orgUsername\":\""+jsonOrgUsername+"\""+
-                ", \"login\":\""+isLogin+"\""+
-                ", \"displayName\":\""+jsonDisplayName+"\"";
+        boolean isRolesAdded = false;
+        StringBuilder result = new StringBuilder("{" +
+                "\"username\":\"" + jsonUsername + "\"" +
+                ", \"orgUsername\":\"" + jsonOrgUsername + "\"" +
+                ", \"login\":\"" + isLogin + "\"" +
+                ", \"displayName\":\"" + jsonDisplayName + "\"" +
+                ", \"roles\":{");
         if (roles != null) {
             for (Map.Entry<String, Boolean> entry: roles.entrySet()) {
-                result += ",\"" + entry.getKey() + "\":\""+entry.getValue()+"\"";
+                if (isRolesAdded) {
+                    result.append(",");
+                }
+                result.append("\"").append(entry.getKey()).append("\":\"").append(entry.getValue()).append("\"");
+                isRolesAdded = true;
             }
         }
-        result += "}";
-        return result;
+        result.append("}}");
+        return result.toString();
     }
 
     @Override

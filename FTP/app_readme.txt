@@ -1159,6 +1159,8 @@ Added new role: isLoginOtherUserEnable
     - this role is used for login_other_user
 Removed reactjs project from this repository
 Added app_view-1.0.0.ftl pageData parameter "page=${pageName}"
+Added new parameter: tempConfig.orgUsername
+
 
 Future releases
 -------------------
