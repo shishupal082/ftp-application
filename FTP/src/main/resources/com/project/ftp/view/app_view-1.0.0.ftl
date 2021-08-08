@@ -49,8 +49,7 @@
 var GLOBAL = {
     baseapi: "",
     basepathname: "",
-    JQ: $,
-    isReactEnv: false
+    JQ: $
 };
 GLOBAL.gaTrackingEnable = ${ftlConfig.gaTrackingEnable?c};
 <#if ftlConfig.tempGaEnable??>

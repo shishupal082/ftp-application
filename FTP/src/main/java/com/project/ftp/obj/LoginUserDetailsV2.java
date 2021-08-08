@@ -66,10 +66,11 @@ public class LoginUserDetailsV2 {
     }
     public String toJsonString() {
         String jsonDisplayName = displayName == null ? "" : displayName;
+        String jsonOrgUsername = orgUsername == null ? "" : orgUsername;
         String result = "{"+
                 "\"username\":\""+username+"\""+
-                ", \"orgUsername\":\""+orgUsername+"\""+
-                ", \"isLogin\":\""+isLogin+"\""+
+                ", \"orgUsername\":\""+jsonOrgUsername+"\""+
+                ", \"login\":\""+isLogin+"\""+
                 ", \"displayName\":\""+jsonDisplayName+"\"";
         if (roles != null) {
             for (Map.Entry<String, Boolean> entry: roles.entrySet()) {
