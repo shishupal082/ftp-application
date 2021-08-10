@@ -1,5 +1,7 @@
 {
     "config": {
         "uploadFileInstruction": "(Supported type: pdf,jpeg,jpg and png, max size < 10MB)"
-    }
+    },
+    "permissionControlApi": "/app/auth/data/appControlData.json",
+    "compareControlApi": "/app/auth/data/appControlData.json"
 }

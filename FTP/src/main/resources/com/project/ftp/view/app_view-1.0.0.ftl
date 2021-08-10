@@ -47,17 +47,21 @@
 <script type="text/javascript" src="/assets/static/libs/jquery-2.1.3.js"></script>
 <script type="text/javascript">
 var GLOBAL = {
-    baseapi: "",
+    baseApi: "",
     basepathname: "",
-    JQ: $
+    staticDataApi: "/api/get_static_data",
+    relatedUsersDataApi: "/api/get_related_users_data",
+    relatedUsersDataV2Api: "/api/get_related_users_data_v2",
+    rolesConfigDataApi: "/api/get_roles_config"
 };
+GLOBAL.JQ = $;
 GLOBAL.gaTrackingEnable = ${ftlConfig.gaTrackingEnable?c};
 <#if ftlConfig.tempGaEnable??>
 GLOBAL.gtag = gtag;
 <#else>
 GLOBAL.gtag = null;
 </#if>
-GLOBAL.currentPageData = document.getElementById("pageData").value;
+GLOBAL.pageData = document.getElementById("pageData").value;
 GLOBAL.loginUserDetails = document.getElementById("loginUserDetailsV2Str").value;
 GLOBAL.headingJson = document.getElementById("headingJson").value;
 GLOBAL.afterLoginLinkJson = document.getElementById("afterLoginLinkJson").value;

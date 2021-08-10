@@ -1161,6 +1161,35 @@ Removed reactjs project from this repository
 Added app_view-1.0.0.ftl pageData parameter "page=${pageName}"
 Added new parameter: tempConfig.orgUsername
 
+8.0.1 (10.08.2021)
+--------------------
+Added new View:
+    - /users_control         isUsersControlEnable
+    - /permission_control    isDevUser
+    - /compare_control       isDevUser
+Related View:
+    - /login_other_user      isLoginOtherUserEnable
+
+
+Permission vs api / view list
+------------------------------
+Predefined role
+    - isDevUser
+    - isAdminUser
+    - isUsersControlEnable
+    - isLoginOtherUserEnable
+    - isAddTextEnable
+    - isUploadFileEnable
+    - isDeleteFileEnable
+    - getAllUsersEnable
+
+Added new View:
+    - /users_control         isUsersControlEnable
+    - /permission_control    isDevUser
+    - /compare_control       isDevUser
+Related View:
+    - /login_other_user      isLoginOtherUserEnable
+
 
 Future releases
 -------------------

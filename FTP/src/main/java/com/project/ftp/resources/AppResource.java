@@ -161,14 +161,29 @@ public class AppResource {
         return new CommonView("page_not_found_404.ftl", appConfig);
     }
     @GET
-    @Path("/login")
-    public AppView login(@Context HttpServletRequest request) {
-        return new AppView(request, appViewFtlFileName, "login", userService, appConfig);
+    @Path("/users_control")
+    public AppView usersControl(@Context HttpServletRequest request) {
+        return new AppView(request, appViewFtlFileName, "users_control", userService, appConfig);
+    }
+    @GET
+    @Path("/permission_control")
+    public AppView permissionControl(@Context HttpServletRequest request) {
+        return new AppView(request, appViewFtlFileName, "permission_control", userService, appConfig);
+    }
+    @GET
+    @Path("/compare_control")
+    public AppView compareControl(@Context HttpServletRequest request) {
+        return new AppView(request, appViewFtlFileName, "compare_control", userService, appConfig);
     }
     @GET
     @Path("/login_other_user")
     public AppView loginOtherUser(@Context HttpServletRequest request) {
         return new AppView(request, appViewFtlFileName, "login_other_user", userService, appConfig);
+    }
+    @GET
+    @Path("/login")
+    public AppView login(@Context HttpServletRequest request) {
+        return new AppView(request, appViewFtlFileName, "login", userService, appConfig);
     }
     @GET
     @Path("/logout")

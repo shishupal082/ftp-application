@@ -12,12 +12,24 @@
     "View Resource"
   ],
   [
-    "/login",
-    "Login View"
+    "/users_control",
+    "Users Control View"
+  ],
+  [
+    "/permission_control",
+    "Permission Control View"
+  ],
+  [
+    "/compare_control",
+    "Compare Control View"
   ],
   [
     "/login_other_user",
-    "Login Other User"
+    "Login Other User View"
+  ],
+  [
+    "/login",
+    "Login View"
   ],
   [
     "/logout",
