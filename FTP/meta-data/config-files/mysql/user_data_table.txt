@@ -16,5 +16,3 @@ create table users(
     -- boolean (tinyint, 1 byte, max = 127)
     deleted boolean default false
 );
-
-ALTER TABLE users ADD create_password_otp varchar(15) DEFAULT NULL AFTER passcode;

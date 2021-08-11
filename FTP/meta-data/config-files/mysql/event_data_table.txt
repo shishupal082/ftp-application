@@ -1,3 +1,6 @@
+
+create database feedback;
+
 create table event_data(
     -- auto-generated primary key
     id bigint primary key not null auto_increment,
