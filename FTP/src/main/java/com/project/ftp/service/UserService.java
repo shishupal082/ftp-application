@@ -405,6 +405,26 @@ public class UserService {
         }
         return loginRedirectUrl;
     }
+    public String getFileSaveDirMapping(LoginUserDetails loginUserDetails, String defaultFileSaveDir) {
+        String fileSaveDir = null;
+        if (defaultFileSaveDir != null) {
+            fileSaveDir = defaultFileSaveDir;
+        }
+        HashMap<String, String> fileSaveDirMapping = appConfig.getFtpConfiguration().getFileSaveDirMapping();
+        String value;
+        if (fileSaveDirMapping != null && loginUserDetails != null && loginUserDetails.getLogin()) {
+            for(Map.Entry<String, String> entry: fileSaveDirMapping.entrySet()) {
+                if (this.isAuthorised(loginUserDetails, entry.getKey())) {
+                    value = entry.getValue();
+                    if (value != null && !value.isEmpty()) {
+                        fileSaveDir = value;
+                        break;
+                    }
+                }
+            }
+        }
+        return fileSaveDir;
+    }
     public String getLoginRedirectUrlV2(LoginUserDetails loginUserDetails) {
         String defaultUrlRedirect = "";
         FtlConfig ftlConfig = appConfig.getFtpConfiguration().getFtlConfig();

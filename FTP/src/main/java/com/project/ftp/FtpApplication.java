@@ -106,6 +106,7 @@ public class FtpApplication  extends Application<FtpConfiguration> {
         EventTracking eventTracking = new EventTracking(appConfig, userService, eventInterface);
         // for bridge implementation
         appConfig.setAppToBridge(new AppToBridge(ftpConfiguration, eventTracking));
+        appConfig.setUserService(userService);
         // ---for bridge implementation end----
         environment.servlets().setSessionHandler(new SessionHandler());
         environment.jersey().register(MultiPartFeature.class);

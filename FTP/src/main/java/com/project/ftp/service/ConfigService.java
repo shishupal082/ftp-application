@@ -68,19 +68,5 @@ public class ConfigService {
         } else {
             logger.info("appConfig publicDir set skip.");
         }
-        String fileSaveDir = appConfig.getFtpConfiguration().getFileSaveDir();
-        PathInfo saveDirPathInfo = StaticService.getPathInfo(fileSaveDir);
-        if (!AppConstant.FOLDER.equals(saveDirPathInfo.getType())) {
-            logger.info("File save directory is not a folder: {}", fileSaveDir);
-            if (AppConstant.FOLDER.equals(publicDirPathInfo.getType())) {
-                logger.info("setting fileSaveDir as publicDir + /saved-files/");
-                appConfig.getFtpConfiguration().setFileSaveDir(setPublicDir + "/saved-files/");
-            } else {
-                logger.info("publicDir is also not a folder, setting fileSaveDir as: null");
-                appConfig.getFtpConfiguration().setFileSaveDir(null);
-            }
-        } else {
-            logger.info("File save directory is a folder: {}", fileSaveDir);
-        }
     }
 }

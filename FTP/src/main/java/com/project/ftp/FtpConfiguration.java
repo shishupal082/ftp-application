@@ -51,6 +51,7 @@ public class FtpConfiguration extends Configuration {
     private ArrayList<String> rolesFileName;
     private ArrayList<String> lockFileNamePattern;
     private HashMap<String, String> loginRedirectMapping;
+    private HashMap<String, String> fileSaveDirMapping;
     private HashMap<String, String> tempConfig;
     private EmailConfig emailConfig;
     private CreatePasswordEmailConfig createPasswordEmailConfig;
@@ -314,6 +315,14 @@ public class FtpConfiguration extends Configuration {
         this.loginRedirectMapping = loginRedirectMapping;
     }
 
+    public HashMap<String, String> getFileSaveDirMapping() {
+        return fileSaveDirMapping;
+    }
+
+    public void setFileSaveDirMapping(HashMap<String, String> fileSaveDirMapping) {
+        this.fileSaveDirMapping = fileSaveDirMapping;
+    }
+
     public HashMap<String, String> getTempConfig() {
         return tempConfig;
     }
@@ -482,6 +491,10 @@ public class FtpConfiguration extends Configuration {
         if (loginRedirectMapping != null) {
             this.loginRedirectMapping = loginRedirectMapping;
         }
+        HashMap<String, String> fileSaveDirMapping = tempFtpConfiguration.getFileSaveDirMapping();
+        if (fileSaveDirMapping != null) {
+            this.fileSaveDirMapping = fileSaveDirMapping;
+        }
         HashMap<String, String> tempConfig = tempFtpConfiguration.getTempConfig();
         if (tempConfig != null) {
             this.tempConfig = tempConfig;
@@ -535,6 +548,7 @@ public class FtpConfiguration extends Configuration {
                 ", rolesFileName=" + rolesFileName +
                 ", lockFileNamePattern=" + lockFileNamePattern +
                 ", loginRedirectMapping=" + loginRedirectMapping +
+                ", fileSaveDirMapping=" + fileSaveDirMapping +
                 ", tempConfig=" + tempConfig +
                 ", emailConfig=" + emailConfig +
                 ", createPasswordEmailConfig=" + createPasswordEmailConfig +

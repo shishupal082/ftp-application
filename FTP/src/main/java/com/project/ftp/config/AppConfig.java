@@ -7,10 +7,13 @@ package com.project.ftp.config;
 
 import com.project.ftp.FtpConfiguration;
 import com.project.ftp.intreface.AppToBridge;
+import com.project.ftp.obj.LoginUserDetails;
+import com.project.ftp.obj.PathInfo;
 import com.project.ftp.obj.yamlObj.FtlConfig;
 import com.project.ftp.obj.yamlObj.PageConfig404;
 import com.project.ftp.parser.YamlFileParser;
 import com.project.ftp.service.StaticService;
+import com.project.ftp.service.UserService;
 import com.project.ftp.session.SessionData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,8 +36,14 @@ public class AppConfig {
     private PageConfig404 pageConfig404;
 
     private AppToBridge appToBridge;
+    private UserService userService;
     public AppConfig() {
         this.configDate = StaticService.getDateStrFromPattern(AppConstant.DATE_FORMAT);
+        userService = null;
+    }
+
+    public void setUserService(UserService userService) {
+        this.userService = userService;
     }
 
     public AppToBridge getAppToBridge() {
@@ -141,6 +150,29 @@ public class AppConfig {
         }
         ftlConfig.setTempGaEnable(null);
         return ftlConfig;
+    }
+    public String getFileSaveDir(LoginUserDetails loginUserDetails) {
+        String fileSaveDir = ftpConfiguration.getFileSaveDir();
+        String finalSaveDir = fileSaveDir;
+        if (userService != null) {
+            finalSaveDir = userService.getFileSaveDirMapping(loginUserDetails, fileSaveDir);
+        }
+        PathInfo saveDirPathInfo = StaticService.getPathInfo(finalSaveDir);
+        if (!AppConstant.FOLDER.equals(saveDirPathInfo.getType())) {
+            logger.info("File save directory is not a folder: {}", finalSaveDir);
+            if (fileSaveDir != null && !fileSaveDir.equals(finalSaveDir)) {
+                saveDirPathInfo = StaticService.getPathInfo(fileSaveDir);
+                if (!AppConstant.FOLDER.equals(saveDirPathInfo.getType())) {
+                    logger.info("File save directory original is not a folder: {}", fileSaveDir);
+                    finalSaveDir = null;
+                } else {
+                    finalSaveDir = fileSaveDir;
+                }
+            } else {
+                finalSaveDir = null;
+            }
+        }
+        return finalSaveDir;
     }
 
     public PageConfig404 getPageConfig404() {

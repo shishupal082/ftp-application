@@ -9,6 +9,7 @@ roleAccess:
 
 roleAccessMapping:
   isAdminOrDevUser: (admin|dev)
+  localSystemUser: individualUser9
 
 coRelatedUsers:
   - userGroup3

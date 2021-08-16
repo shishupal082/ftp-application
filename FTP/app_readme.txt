@@ -1169,6 +1169,11 @@ Added new View:
     - /compare_control       isDevUser
 Related View:
     - /login_other_user      isLoginOtherUserEnable
+16.08.2021
+-----------
+added role dependent saved files directory
+
+
 
 
 Permission vs api / view list

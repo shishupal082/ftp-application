@@ -78,6 +78,9 @@ loginRedirectMapping:
   isDevUser: "/dashboard"
   isLoginOtherUserEnable: "/login_other_user"
 
+fileSaveDirMapping:
+  localSystemUser: "D:/workspace/project/ftp-app/saved-files/"
+
 ftlConfig:
   description: "FTP Application description"
   keywords: "FTP Application, File upload, PDF, JPEG, JPG, PNG"
