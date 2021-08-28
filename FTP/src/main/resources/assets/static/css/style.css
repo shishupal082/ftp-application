@@ -65,20 +65,29 @@ body.theme-grey {
 .w-40px {
     width: 40px;
 }
-.w-75px {
-    width: 75px;
-}
 .w-45px {
     width: 45px;
 }
 .w-55px {
     width: 55px;
 }
+.w-60px {
+    width: 60px;
+}
+.w-75px {
+    width: 75px;
+}
 .w-90px {
     width: 90px;
 }
+.w-105px {
+    width: 105px;
+}
 .w-120px {
     width: 120px;
+}
+.w-160px {
+    width: 160px;
 }
 .w-200px {
     width: 200px;
@@ -103,6 +112,9 @@ body.theme-grey {
 }
 .fs-40 {
     font-size: 40%;
+}
+.v-align-initial {
+    vertical-align: initial;
 }
 table.table-padded-px-5 > thead > tr > th,
 table.table-padded-px-5 > thead > tr > td,

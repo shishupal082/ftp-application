@@ -226,4 +226,18 @@ public class AppResource {
     public Object defaultMethod(@Context HttpServletRequest request) {
         return requestService.handleDefaultUrl(request);
     }
+    @Path("{default: .*}")
+    @POST
+    @Produces(MediaType.TEXT_HTML)
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Object defaultMethodPost(@Context HttpServletRequest request) {
+        return requestService.handleDefaultUrl(request);
+    }
+    @Path("{default: .*}")
+    @POST
+    @Produces(MediaType.TEXT_HTML)
+    @Consumes(MediaType.TEXT_PLAIN)
+    public Object defaultMethodPostV2(@Context HttpServletRequest request) {
+        return requestService.handleDefaultUrl(request);
+    }
 }

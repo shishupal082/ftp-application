@@ -1173,6 +1173,16 @@ Related View:
 -----------
 added role dependent saved files directory
 
+28.08.2021
+-----------
+Added two default postMethod (in AppResource)
+
+defaultMethodPost
+    - @Produces(MediaType.TEXT_HTML)
+    - @Consumes(MediaType.APPLICATION_JSON)
+defaultMethodPostV2
+    - @Produces(MediaType.TEXT_HTML)
+    - @Consumes(MediaType.TEXT_PLAIN)
 
 
 
