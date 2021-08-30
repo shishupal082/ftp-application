@@ -1184,6 +1184,11 @@ defaultMethodPostV2
     - @Produces(MediaType.TEXT_HTML)
     - @Consumes(MediaType.TEXT_PLAIN)
 
+30.08.2021
+-----------
+Created app_env_config_final.yml for direct running of application without any folder pre requirement
+    - except logging dir
+
 
 
 Permission vs api / view list

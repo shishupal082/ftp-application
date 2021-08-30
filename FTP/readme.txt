@@ -10,40 +10,6 @@ To run application
 Then open below url in browser (Preferably Chrome)
 ==> http://127.0.0.1:8080
 
-If ask login (Available users are as below)
-
-U1,U1,U1 User (Username: U1, Password: U1)
-U2,U1,U2 User (Username: U2, Password: U1)
-U3,U1,U3 User (Username: U3, Password: U1)
-public,public,Public User (Username: public, Password: public)
-Admin,Admin,Admin User (Username: Admin, Password: Admin)
-
-There are three types of account
---------------------------------------------
-1) public account
-2) admin account
-3) normal user account
-
-Any file uploaded from any account, can be deleted from respective account only
-
-If file is uploaded from public account
-    - Then it can be viewed in all account
-
-If file uploaded from any account other account than public
-    - Admin can view these files
-    - Admin can not delete these files
-
-
-----------------------------------------------------------
-For user registration (passcode will be required)
-Below format can be added in user_data.csv file
-
-U1,,U1 User,1234 (passcode=1234 can be used only once)
-    - 1) username = U1
-    - 2) password = "" (it will be set after registration)
-    - 3) user display name = U1 User
-    - 4) passcode = 1234
-
 ****************
 Pre requisite
 ------------------
@@ -60,34 +26,3 @@ Then type
 - run.bat
 
 It will give reason for not running application
-
-******************************
-Change config if required
-------------------------------------
-- permanentlyDeleteFile: false (Boolean)
-    - If true, file will be permanently deleted
-    - If false, file will be move to trash folder
-- logFilePath (string) (D:/workspace/project/ftp-app/log/application.log)
-    - used for copy and delete old file
-- supportedFileType (arrayList) (pdf,jpeg,jpg,png)
-- maxFileSize(Integer) (10MB)
-- filenameFormat (string)
-    - username, filename, yyyy-MM-dd, HH-mm-ss-SSS
-    for example
-        - "yyyy-MM-dd'-username'"
-        - "yyyy-MM-dd'-filename'"
-        - "yyyy-MM-dd'-username-filename'"
-        - "yyyy-MM-dd-HH-mm-ss-SSS"
-- fileSaveDir (string)
-    - Example:
-        fileSaveDir: D:/workspace/project/ftp-app/saved-files/
-    - Default file save directory will be running directory + "/saved-files/"
-- adminUsersName (arrayList) (Admin)
-- defaultFileViewer: "self" #self or all
-- fileDeleteAccess: "self" #self or admin or self_admin
-- uploadFileApiVersion: "v1" #v1 or v2
-
-Fixed configurations
----------------------
-SESSION_TTL = 10min
-MAX_ENTRY_ALLOWED_IN_USER_DATA_FILE = 8

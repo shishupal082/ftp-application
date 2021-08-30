@@ -3,7 +3,7 @@
 echo [INFO] Copying file to desired location
 
 appVersionDir="../../project/ftp-app/ftp-app-8.0.1/"
-configDataDir="../../project/ftp-app/config-files/"
+#configDataDir="../../project/ftp-app/config-files/"
 #configFilename="env_config-6.0.9.yml"
 #savedFilesDir=${appVersionDir}"/saved-files/"
 
@@ -14,11 +14,11 @@ copyFiles() {
     echo "Copying file failed.";
     return;
   fi
-  if [[ ! (-d "${configDataDir}") ]]; then
-    echo "configDataDir dir: ${configDataDir}, is missing.";
-    echo "Copying file failed.";
-    return;
-  fi
+#  if [[ ! (-d "${configDataDir}") ]]; then
+#    echo "configDataDir dir: ${configDataDir}, is missing.";
+#    echo "Copying file failed.";
+#    return;
+#  fi
 #  if [[ ! (-d "${savedFilesDir}") ]]; then
 #    echo "savedFilesDir dir: ${savedFilesDir}, is missing.";
 #    mkdir $savedFilesDir
@@ -29,6 +29,7 @@ copyFiles() {
   cp readme.pdf ${appVersionDir}
   cp user_guide.pdf ${appVersionDir}
   cp run.bat ${appVersionDir}
+  cp meta-data/app_env_config_final.yml ${appVersionDir}
   cp meta-data/FTP-*.jar ${appVersionDir}
 
 #  cp meta-data/config-files/${configFilename} ${configDataDir}

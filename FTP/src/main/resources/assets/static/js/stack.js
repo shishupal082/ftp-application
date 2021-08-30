@@ -1497,6 +1497,13 @@ Stack.extend({
     isObject: function(value) {
         return isObject(value);
     },
+    isObjectV2: function(value) {
+        var temp = isObject(value);
+        if (temp) {
+            return Object.keys(value).length > 0;
+        }
+        return false;
+    },
     isFunction: function(value) {
         return isFunction(value);
     },
@@ -2078,6 +2085,27 @@ Stack.extend({
     callMethod: function(method) {
         if (Stack.isFunction(method)) {
             method();
+            return 1;
+        }
+        return 0;
+    },
+    callMethodV1: function(method, arg1) {
+        if (Stack.isFunction(method)) {
+            method(arg1);
+            return 1;
+        }
+        return 0;
+    },
+    callMethodV2: function(method, arg1, arg2) {
+        if (Stack.isFunction(method)) {
+            method(arg1, arg2);
+            return 1;
+        }
+        return 0;
+    },
+    callMethodV3: function(method, arg1, arg2, arg3) {
+        if (Stack.isFunction(method)) {
+            method(arg1, arg2, arg3);
             return 1;
         }
         return 0;

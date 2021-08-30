@@ -1,0 +1,141 @@
+logging:
+  level: INFO
+  loggers:
+    com.todo: INFO
+  appenders:
+    - type: console
+      logFormat: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level [%X{X-Session-Id} - %X{X-Request-Id}] - %c{15} - %msg%n%rEx"
+      threshold: ALL
+      timeZone: UTC
+    - type: file
+      threshold: ALL
+      timeZone: UTC
+      archive: true
+      logFormat: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level [%X{X-Session-Id} - %X{X-Request-Id}] - %c{15} - %msg%n%rEx"
+      archivedLogFilenamePattern: C:/log/java/application-%d{yyyy-MM-dd}.log
+      currentLogFilename: C:/log/java/application.log
+      #      archivedLogFilenamePattern: C:/log/java/application-%d{yyyy-MM-dd}-%i.log
+      #      maxFileSize: 1MB
+      archivedFileCount: 5 #Number of day archived file to be present
+
+logFilePath: "C:/log/java/"
+
+server:
+  type: simple
+  applicationContextPath: /
+  adminContextPath: /admin
+  connector:
+    port: 8080
+    type: http
+  rootPath: /*
+
+# Database settings.
+database:
+  # the name of the JDBC driver, mysql in our case
+  driverClass: com.mysql.jdbc.Driver
+  # the username
+  user: mysql
+  # the password
+  password: mysql
+  # the JDBC URL; the database is called DWGettingStarted
+  url: jdbc:mysql://localhost:3306/ftpapp?autoReconnect=true&useSSL=false&allowPublicKeyRetrieval=true
+
+
+
+
+fileSaveDir: "invalid-save-dir"
+configDataFilePath: "invalid-config-dir"
+publicDir: ""
+publicPostDir: ""
+
+#  forgotPasswordMessage: "Forgot password request submitted, Please check your email."
+forgotPasswordMessage: "Forgot password request submitted, Please create password."
+loadRoleStatusOnPageLoad: "FromRoleConfig" #"isAdminUser" #FromRoleConfig
+forgotPasswordEnable: true
+rolesFileName:
+  - "invalid-role-file-path"
+fileNotFoundMapping:
+  - "invalid-file-not-found-mapping"
+staticDataFilename: "invalid-static-data-file-name"
+rateLimitThreshold: 2
+addTextV2TimeStamp: "yyyy-MM-dd HH:mm:ss.SSS','"
+enableMysqlTableName:
+  - users
+  - event_data
+
+
+eventDataFilenamePattern: "'event_data/'yyyy-MM-dd-HH-mm'-event_data.csv'"
+userDataFilename: "user_data.csv"
+
+lockFileNamePattern:
+  - "lock-file-name-pattern"
+
+cookieName: "web-app"
+supportedFileType:
+  - pdf
+  - txt
+  - docx
+  - doc
+  - xlsx
+  - xls
+  - pptx
+  - ppt
+  - mp3
+  - 3gp
+  - mp4
+  - exe
+  - jpeg
+  - jpg
+  - png
+
+
+permanentlyDeleteFile: false #File will saved in trash folder
+maxFileSize: 10240001 #i.e. #i.e. 2048000 = 2048 kB = 2MB, 10240001 = 10MB
+uploadFileApiVersion: v2 #(v1|v2)
+aesEncryptionPassword: "1234"
+
+emailConfig:
+  enable: false
+  senderEmail: "username@gmail.com"
+  senderPassword: "password"
+
+createPasswordEmailConfig:
+  createPasswordLink: "http://localhost:8080/create_password"
+  createPasswordSubject: "Forgot your password?"
+  createPasswordMessage: '<div>
+                                <div>Dear <b>%s</b>,</div>
+                                <br></br><div>Please find OTP for creating new password: <b>%s</b></div>
+                                <br></br><div><a href="%s">Click here</a> for creating new password or, open %s</div>
+                                <br></br><div>Please do not reply to this email.</div>
+                             </div>'
+
+ftlConfig:
+  description: "Web Application description"
+  keywords: "Web Application, File upload, PDF, JPEG, JPG, PNG"
+  author: "Web Application Author"
+  title: "Web Application"
+  loginRedirectUrl: "/view-resource"
+  gaTrackingId: "UA-177553408-1" # for development
+  gaTrackingEnable: true
+  displayCreatePasswordLinkEnable: true
+#  forgotPasswordPageInstruction: "Please contact admin."
+  forgotPasswordPageInstruction: "Please contact admin to get create password otp."
+  createPasswordOtpInstruction: "(Receive from admin)"
+#  createPasswordOtpInstruction: "(Check your email)"
+  headingJson: '[{"tag":"div.center.table.tbody.tr","className":"heading","text":[{"tag":"td","className":"text-center pl-5px","text":[{"tag":"div","text":"Heading Line 1 (config)"},{"tag":"div","text":"Larger Heading Line 2 Row"}]}]}]'
+  afterLoginLinkJson: '[{"tag":"div.center","text":[{"tag":"a","href":"/dashboard","name":"link.dashboard","className":"p-5px","text":"Dashboard"},{"tag":"a","href":"/change_password","name":"link.change_password","className":"p-5px","text":"Change Password"},{"tag":"a","href":"/upload_file","name":"link.upload_file","className":"p-5px","text":"Upload File"},{"tag":"a","name":"link.logout","href":"/logout","className":"p-5px","text":"Logout"}]},{"tag":"div.center","text":[{"tag":"span","text":"Login as(Config): "},{"tag":"b","name":"link.loginAs","text":""}]}]'
+  pageNotFoundJson: '[{"tag": "center.h1","text": {"tag": "span","className": "","name": "date","text": "Page not found"}}]'
+  footerLinkJson: '[{"tag":"div.center","text":[{"tag":"a","href":"/users_control","name":"isUsersControlEnable","className":"p-5px d-none","text":"Users Control"},{"tag":"a","href":"/permission_control","name":"isDevUser","className":"p-5px d-none","text":"Permission Control"},{"tag":"a","href":"/compare_control","name":"isDevUser2","className":"p-5px d-none","text":"Compare Control"},{"tag":"a","href":"/login_other_user","name":"isLoginOtherUserEnable","className":"p-5px d-none","text":"Login Other Users"}]}]'
+  footerLinkJsonAfterLogin: '[{"tag":"div.center","text":[{"tag":"a","href":"/users_control","name":"isUsersControlEnable","className":"p-5px d-none","text":"Users Control"},{"tag":"a","href":"/permission_control","name":"isDevUser","className":"p-5px d-none","text":"Permission Control"},{"tag":"a","href":"/compare_control","name":"isDevUser2","className":"p-5px d-none","text":"Compare Control"},{"tag":"a","href":"/login_other_user","name":"isLoginOtherUserEnable","className":"p-5px d-none","text":"Login Other Users"}]}]'
+
+# Optional parameter
+indexPageReRoute: /view/resource
+filenameFormat: "yyyy-MM-dd-HH-mm'-filename'"
+instance: ConsumerComputer
+guestEnable: false
+androidCheckEnable: false
+# Only for development purpose
+
+tempConfig:
+  orgUsername: Username
+  username: Username

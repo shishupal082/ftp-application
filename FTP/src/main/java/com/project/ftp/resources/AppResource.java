@@ -8,6 +8,7 @@ import com.project.ftp.exceptions.AppException;
 import com.project.ftp.obj.ApiResponse;
 import com.project.ftp.obj.LoginUserDetails;
 import com.project.ftp.obj.PathInfo;
+import com.project.ftp.obj.RequestAddText;
 import com.project.ftp.service.AuthService;
 import com.project.ftp.service.FileServiceV2;
 import com.project.ftp.service.RequestService;
@@ -231,6 +232,7 @@ public class AppResource {
     @Produces(MediaType.TEXT_HTML)
     @Consumes(MediaType.APPLICATION_JSON)
     public Object defaultMethodPost(@Context HttpServletRequest request) {
+        logger.info("Post Request received with: Consume APPLICATION_JSON and Produce TEXT_HTML");
         return requestService.handleDefaultUrl(request);
     }
     @Path("{default: .*}")
@@ -238,6 +240,7 @@ public class AppResource {
     @Produces(MediaType.TEXT_HTML)
     @Consumes(MediaType.TEXT_PLAIN)
     public Object defaultMethodPostV2(@Context HttpServletRequest request) {
+        logger.info("Post Request received with: Consume TEXT_PLAIN and Produce TEXT_HTML");
         return requestService.handleDefaultUrl(request);
     }
 }
