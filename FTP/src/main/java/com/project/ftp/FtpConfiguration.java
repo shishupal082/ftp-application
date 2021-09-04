@@ -46,6 +46,7 @@ public class FtpConfiguration extends Configuration {
     private ArrayList<String> enableMysqlTableName;
     private ArrayList<String> fileNotFoundMapping;
     private ArrayList<String> rolesFileName;
+    private ArrayList<String> allowedTableFilename;
     private HashMap<String, String> loginRedirectMapping;
     private HashMap<String, String> fileSaveDirMapping;
     private HashMap<String, String> tempConfig;
@@ -271,6 +272,14 @@ public class FtpConfiguration extends Configuration {
         this.rolesFileName = rolesFileName;
     }
 
+    public ArrayList<String> getAllowedTableFilename() {
+        return allowedTableFilename;
+    }
+
+    public void setAllowedTableFilename(ArrayList<String> allowedTableFilename) {
+        this.allowedTableFilename = allowedTableFilename;
+    }
+
     public HashMap<String, String> getLoginRedirectMapping() {
         return loginRedirectMapping;
     }
@@ -435,6 +444,10 @@ public class FtpConfiguration extends Configuration {
         if (rolesFileName != null && rolesFileName.size() > 0) {
             this.rolesFileName = rolesFileName;
         }
+        ArrayList<String> allowedTableFilename = tempFtpConfiguration.getAllowedTableFilename();
+        if (allowedTableFilename != null && allowedTableFilename.size() > 0) {
+            this.allowedTableFilename = allowedTableFilename;
+        }
         HashMap<String, String> loginRedirectMapping = tempFtpConfiguration.getLoginRedirectMapping();
         if (loginRedirectMapping != null) {
             this.loginRedirectMapping = loginRedirectMapping;
@@ -491,6 +504,7 @@ public class FtpConfiguration extends Configuration {
                 ", enableMysqlTableName=" + enableMysqlTableName +
                 ", fileNotFoundMapping=" + fileNotFoundMapping +
                 ", rolesFileName=" + rolesFileName +
+                ", allowedTableFilename=" + allowedTableFilename +
                 ", loginRedirectMapping=" + loginRedirectMapping +
                 ", fileSaveDirMapping=" + fileSaveDirMapping +
                 ", tempConfig=" + tempConfig +

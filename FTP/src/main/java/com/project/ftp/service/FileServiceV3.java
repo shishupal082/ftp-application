@@ -15,9 +15,11 @@ import java.util.HashMap;
 
 public class FileServiceV3 {
     private final static Logger logger = LoggerFactory.getLogger(FileServiceV3.class);
+    private final AppConfig appConfig;
     private final FileService fileService;
     private final UserService userService;
     public FileServiceV3(final AppConfig appConfig, final UserService userService) {
+        this.appConfig = appConfig;
         this.userService = userService;
         this.fileService = new FileService();
     }
@@ -56,20 +58,31 @@ public class FileServiceV3 {
         }
     }
     public ArrayList<String> removeDeleteFileName(ArrayList<String> response) {
-        if (response == null) {
+        return this.filterFilename(AppConstant.DELETE_TABLE_FILE_NAME, response, true);
+    }
+    public ArrayList<String> filterFilename(String requiredFilenamePattern,
+                                            ArrayList<String> allUserFilename, boolean revertResult) {
+        if (requiredFilenamePattern == null || allUserFilename == null) {
             return null;
         }
         ArrayList<String> result = new ArrayList<>();
-        for(String tableFilename: response) {
-            if (AppConstant.DELETE_TABLE_FILE_NAME.equals(tableFilename)) {
-                continue;
+        String[] temp;
+        boolean isMatched;
+        for(String userFilename: allUserFilename) {
+            temp = userFilename.split("/");
+            if (temp.length == 3) {
+                isMatched = StaticService.isPatternMatching(temp[2], requiredFilenamePattern, true);
+                if (revertResult && !isMatched) {
+                    result.add(userFilename);
+                } else if (isMatched) {
+                    result.add(userFilename);
+                }
             }
-            result.add(tableFilename);
         }
         return result;
     }
-    public ArrayList<String> getUsersFilePath(LoginUserDetails loginUserDetails,
-                                              String saveDir, boolean isAddDatabaseDir) {
+    public ArrayList<String> getUsersFilePath(LoginUserDetails loginUserDetails, String saveDir,
+                                              boolean isAddDatabaseDir, boolean isAdmin) {
         ArrayList<ScanResult> scanResults = new ArrayList<>();
         ArrayList<String> response = new ArrayList<>();
         if (saveDir == null) {
@@ -78,22 +91,25 @@ public class FileServiceV3 {
         }
         String scanDir;
         String loginUserName = loginUserDetails.getUsername();
-        boolean isLoginUserAdmin = userService.isLoginUserAdmin(loginUserDetails);
-        if (isLoginUserAdmin) {
+        if (isAdmin) {
             scanResults.add(fileService.scanDirectory(saveDir, saveDir, true, isAddDatabaseDir));
         } else {
             ArrayList<String> relatedUsers = userService.getRelatedUsers(loginUserName);
             for (String username: relatedUsers) {
                 scanDir = saveDir + username + "/";
-                scanResults.add(fileService.scanDirectory(scanDir, scanDir, false, isAddDatabaseDir));
+                if (isAddDatabaseDir) {
+                    scanDir += AppConstant.DATABASE + "/";
+                }
+                scanResults.add(fileService.scanDirectory(scanDir, scanDir, false, false));
             }
         }
         this.generateApiResponse(saveDir, scanResults, response);
 //        logger.info("scanUserDatabaseDirectory complete, result size: {}", response.size());
         return response;
     }
-    public ArrayList<String> getUsersFilePathV2(LoginUserDetails loginUserDetails, String saveDir) {
-        ArrayList<String> response = this.getUsersFilePath(loginUserDetails, saveDir, true);
+    public ArrayList<String> getUsersFilePathV2(LoginUserDetails loginUserDetails,
+                                                String saveDir, boolean isAdmin) {
+        ArrayList<String> response = this.getUsersFilePath(loginUserDetails, saveDir, true, isAdmin);
         response = this.removeDeleteFileName(response);
         return response;
     }
@@ -237,7 +253,6 @@ public class FileServiceV3 {
                                      RequestAddText addText) throws AppException {
         this.verifyAddTextRequest(addText);
         String filename = addText.getFilename();
-        String[] textData = addText.getText();
         if (AppConstant.DELETE_TABLE_FILE_NAME.equals(filename)) {
             logger.info("Invalid addText.filename delete not allowed: {}", addText);
             throw new AppException(ErrorCodes.BAD_REQUEST_ERROR);
@@ -272,9 +287,26 @@ public class FileServiceV3 {
             throw new AppException(ErrorCodes.ADD_TEXT_ERROR);
         }
     }
+    public boolean isValidAddTextFilename(String filename) {
+        ArrayList<String> allowedAddTextFilename = appConfig.getFtpConfiguration().getAllowedTableFilename();
+        if (allowedAddTextFilename == null) {
+            return false;
+        }
+        for(String filenamePattern: allowedAddTextFilename) {
+            if (StaticService.isPatternMatching(filename, filenamePattern, true)) {
+                return true;
+            }
+        }
+        return false;
+    }
     public boolean saveAddText(String saveDir, String loginUsername, RequestAddText addText) {
         if (StaticService.isInValidString(saveDir) || StaticService.isInValidString(loginUsername) || addText == null) {
             logger.info("Invalid saveDir or loginUsername or addText");
+            return false;
+        }
+        String addTextFilename = addText.getFilename();
+        if (!this.isValidAddTextFilename(addTextFilename)) {
+            logger.info("Invalid addTextFilename: {}", addTextFilename);
             return false;
         }
         ArrayList<String> requiredDir = new ArrayList<>();
@@ -287,7 +319,7 @@ public class FileServiceV3 {
             return false;
         }
         finalDir += "/";
-        String filePath = finalDir + addText.getFilename();
+        String filePath = finalDir + addTextFilename;
         String userFilename = this.parseUserFileName(saveDir, filePath);
         if (userFilename == null) {
             logger.info("Invalid final filePath: {}", filePath);

@@ -484,7 +484,7 @@ public class UserService {
         if (StaticService.isValidString(username) && !relatedUsers.contains(username)) {
             relatedUsers.add(username);
         }
-        logger.info("Related users for username:{}, {}", username, relatedUsers);
+        logger.info("AllRelatedUsersName for username:{}, {}", username, relatedUsers);
         return relatedUsers;
     }
     public ArrayList<String> getRelatedUsers(String username) {
@@ -500,7 +500,7 @@ public class UserService {
                 relatedUsers.add(username);
             }
         }
-        logger.info("Related users for username:{}, {}", username, relatedUsers);
+        logger.info("RelatedUsers for username:{}, {}", username, relatedUsers);
         return relatedUsers;
     }
     public Object getRolesConfig() {

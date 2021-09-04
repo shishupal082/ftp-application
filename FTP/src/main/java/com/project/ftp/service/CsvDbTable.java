@@ -21,26 +21,25 @@ public class CsvDbTable {
         this.userService = userService;
         this.fileServiceV3 = new FileServiceV3(appConfig, userService);
     }
-    public ArrayList<String> getDeletedIds(String saveDir, LoginUserDetails loginUserDetails) {
-        ArrayList<String> response = fileServiceV3.getUsersFilePath(loginUserDetails, saveDir, true);
-        ArrayList<ResponseFilesInfo> filesInfo =
-                fileServiceV3.generateFileInfoResponse(response, loginUserDetails, true);
-        filesInfo = fileServiceV3.filterResponseFilesInfo(filesInfo, AppConstant.DELETE_TABLE_FILE_NAME);
-        ArrayList<String> deleteTableFilenames = new ArrayList<>();
-        if (filesInfo != null) {
-            for (ResponseFilesInfo filesInfo1: filesInfo) {
-                if (StaticService.isValidString(filesInfo1.getFilepath())) {
-                    deleteTableFilenames.add(filesInfo1.getFilepath());
-                }
-            }
-        }
+    public ArrayList<String> getDeletedIds(String saveDir, LoginUserDetails loginUserDetails, boolean isAdmin) {
+        ArrayList<String> response = fileServiceV3.getUsersFilePath(loginUserDetails, saveDir, true, isAdmin);
+        ArrayList<String> deleteTableFilenames =
+                fileServiceV3.filterFilename(AppConstant.DELETE_TABLE_FILE_NAME, response, false);
         ArrayList<TableRowResponse> rowResponses =
                 fileServiceV3.getTableRowResponseByFilePath(saveDir, deleteTableFilenames);
         ArrayList<String> result = new ArrayList<>();
+        String text;
+        String[] temp;
         if (rowResponses != null) {
             for (TableRowResponse rowResponse: rowResponses) {
                 if (rowResponse.isValid()) {
-                    result.add(rowResponse.getTableUniqueId());
+                    text = rowResponse.getText();
+                    if (text != null) {
+                        temp = text.split(",");
+                        if (temp.length > 0 && StaticService.isValidString(temp[0]) && !result.contains(temp[0])) {
+                            result.add(temp[0]);
+                        }
+                    }
                 }
             }
         }
@@ -48,15 +47,12 @@ public class CsvDbTable {
     }
     public ApiResponse getTableData(LoginUserDetails loginUserDetails, String filenames,
                                                     String tableNames) throws AppException {
+        boolean isAdmin = userService.isLoginUserAdmin(loginUserDetails);
         String saveDir = appConfig.getFileSaveDirV2(loginUserDetails);// throw error when invalid
-        ArrayList<String> response = fileServiceV3.getUsersFilePathV2(loginUserDetails, saveDir);
-        ArrayList<String> response2 = new ArrayList<>();
+        ArrayList<String> response = fileServiceV3.getUsersFilePathV2(loginUserDetails, saveDir, isAdmin);
+        ArrayList<String> response2;
         if (response != null && StaticService.isValidString(filenames)) {
-            for (String filename: response) {
-                if (StaticService.isPatternMatching(filename, filenames, true)) {
-                    response2.add(filename);
-                }
-            }
+            response2 = fileServiceV3.filterFilename(filenames, response, false);
         } else {
             response2 = response;
         }
@@ -65,7 +61,8 @@ public class CsvDbTable {
         String tempTableName;
         ArrayList<TableRowResponse> tableData;
         boolean filterTableName = StaticService.isValidString(tableNames);
-        ArrayList<String> deletedIds = this.getDeletedIds(saveDir, loginUserDetails);
+        ArrayList<String> deletedIds = this.getDeletedIds(saveDir, loginUserDetails, isAdmin);
+        int count = 0;
         if (rowResponses != null) {
             if (deletedIds == null) {
                 deletedIds = new ArrayList<>();
@@ -78,6 +75,9 @@ public class CsvDbTable {
                     continue;
                 }
                 tempTableName = tableRowResponse.getTableName();
+                if (AppConstant.DELETE_TABLE_NAME.equals(tempTableName)) {
+                    continue;
+                }
                 if (filterTableName) {
                     if (!StaticService.isPatternMatching(tempTableName, tableNames, true)) {
                         continue;
@@ -85,14 +85,16 @@ public class CsvDbTable {
                 }
                 tableData = finalResponse.computeIfAbsent(tempTableName, k -> new ArrayList<>());
                 tableData.add(tableRowResponse);
+                count++;
             }
         }
+        logger.info("Total row count: {}, table count: {}", count, finalResponse.keySet().size());
         return new ApiResponse(finalResponse);
     }
     public ApiResponse scanUserDatabaseDirectory(LoginUserDetails loginUserDetails,
-                                                 String filenames) throws AppException {
+                                                 String filenames, boolean isAdmin) throws AppException {
         String saveDir = appConfig.getFileSaveDirV2(loginUserDetails);
-        ArrayList<String> response = fileServiceV3.getUsersFilePath(loginUserDetails, saveDir, true);
+        ArrayList<String> response = fileServiceV3.getUsersFilePath(loginUserDetails, saveDir, true, isAdmin);
         ArrayList<ResponseFilesInfo> filesInfo =
                 fileServiceV3.generateFileInfoResponse(response, loginUserDetails, true);
         logger.info("Result size before filenames filter: {}", filesInfo.size());
@@ -122,6 +124,7 @@ public class CsvDbTable {
             logger.info("Invalid request deleteText: null");
             throw new AppException(ErrorCodes.BAD_REQUEST_ERROR);
         }
+        boolean isAdmin = userService.isLoginUserAdmin(loginUserDetails);
         String deleteId = deleteText.getDeleteId();
         String tableName = deleteText.getTableName();
         if (StaticService.isInValidString(deleteId) || StaticService.isInValidString(tableName)) {
@@ -129,13 +132,13 @@ public class CsvDbTable {
             throw new AppException(ErrorCodes.BAD_REQUEST_ERROR);
         }
         String saveDir = appConfig.getFileSaveDirV2(loginUserDetails);
-        ArrayList<String> deletedIds = this.getDeletedIds(saveDir, loginUserDetails);
+        ArrayList<String> deletedIds = this.getDeletedIds(saveDir, loginUserDetails, isAdmin);
         if (deletedIds != null && deletedIds.contains(deleteId)) {
             logger.info("deleteId already deleted: {}", deleteId);
             throw new AppException(ErrorCodes.DELETE_TEXT_ALREADY_DELETED);
         }
         String username = loginUserDetails.getUsername();
-        ArrayList<String> tableFileNames = fileServiceV3.getUsersFilePathV2(loginUserDetails, saveDir);
+        ArrayList<String> tableFileNames = fileServiceV3.getUsersFilePathV2(loginUserDetails, saveDir, isAdmin);
         ArrayList<TableRowResponse> rowResponses = fileServiceV3.getTableRowResponseByFilePath(saveDir, tableFileNames);
         TableRowResponse finalRowResponse = null;
         int entryCount = 0;

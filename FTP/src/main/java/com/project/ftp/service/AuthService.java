@@ -32,12 +32,13 @@ public class AuthService {
             throw new AppException(ErrorCodes.UNAUTHORIZED_USER);
         }
     }
-    public void isLoginUserAdmin(HttpServletRequest request) throws AppException {
+    public boolean isLoginUserAdmin(HttpServletRequest request) throws AppException {
         LoginUserDetails userDetails = userService.getLoginUserDetails(request);
         if (!userService.isLoginUserAdmin(userDetails)) {
             logger.info("UnAuthorised user trying to access admin data: {}", userDetails);
             throw new AppException(ErrorCodes.UNAUTHORIZED_USER);
         }
+        return true;
     }
     public void isControlGroupUser(HttpServletRequest request) throws AppException {
         LoginUserDetails userDetails = userService.getLoginUserDetails(request);

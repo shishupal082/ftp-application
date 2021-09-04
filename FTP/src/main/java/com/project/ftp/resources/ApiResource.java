@@ -213,9 +213,9 @@ public class ApiResource {
                 userService.getUserDataForLogging(request), filenames);
         ApiResponse response;
         try {
-            authService.isLoginUserAdmin(request);
+            boolean isAdmin = authService.isLoginUserAdmin(request);
             LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
-            response = fileServiceV2.scanUserDatabaseDirectory(loginUserDetails, filenames);
+            response = fileServiceV2.scanUserDatabaseDirectory(loginUserDetails, filenames, isAdmin);
             eventTracking.trackSuccessEvent(request, EventName.GET_DATABASE_FILES_INFO);
         } catch (AppException ae) {
             logger.info("Error in scanning user database directory: {}", ae.getErrorCode().getErrorString());

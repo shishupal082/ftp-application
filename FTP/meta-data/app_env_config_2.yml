@@ -21,6 +21,11 @@ enableMysqlTableName:
   - users
   - event_data
 
+allowedTableFilename:
+  - "(delete_table|project_table)[.]csv"
+  - "(feedback_table|comment_table)[.]csv"
+
+
 
 eventDataFilenamePattern: "'event_data/'yyyy-MM-dd-HH-mm'-event_data.csv'"
 userDataFilename: "user_data.csv"

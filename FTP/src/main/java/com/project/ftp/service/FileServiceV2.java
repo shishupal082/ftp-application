@@ -77,8 +77,9 @@ public class FileServiceV2 {
         logger.info("final result size: {}", filesInfo.size());
         return new ApiResponse(filesInfo);
     }
-    public ApiResponse scanUserDatabaseDirectory(LoginUserDetails loginUserDetails, String filenamePattern) throws AppException {
-        return csvDbTable.scanUserDatabaseDirectory(loginUserDetails, filenamePattern);
+    public ApiResponse scanUserDatabaseDirectory(LoginUserDetails loginUserDetails, String filenamePattern,
+                                                 boolean isAdmin) throws AppException {
+        return csvDbTable.scanUserDatabaseDirectory(loginUserDetails, filenamePattern, isAdmin);
     }
     public ApiResponse getTableData(LoginUserDetails loginUserDetails,
                                     String filenames, String tableNames) throws AppException {
@@ -93,7 +94,8 @@ public class FileServiceV2 {
     }
     public ArrayList<String> getUsersFilePath(LoginUserDetails loginUserDetails,
                                                String saveDir, boolean isAddDatabaseDir) {
-        return fileServiceV3.getUsersFilePath(loginUserDetails, saveDir, isAddDatabaseDir);
+        boolean isAdmin = userService.isLoginUserAdmin(loginUserDetails);
+        return fileServiceV3.getUsersFilePath(loginUserDetails, saveDir, isAddDatabaseDir, isAdmin);
     }
     private PathInfo getFinalPathInfo(LoginUserDetails loginUserDetails,
                                       ArrayList<String> responseFilenames,

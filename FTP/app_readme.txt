@@ -1201,6 +1201,10 @@ Remove config parameter
 - addTextV2TimeStamp (It is fixed as YYYY-MM-DD hh:mm:ss)
 - ftlConfig.displayCreatePasswordLinkEnable
 
+Added config parameter
+allowedTableFilename:
+    - project_table.csv
+    - "(feedback_table|comment_table)[.]csv"
 
 Remove formData parameter from /api/upload_file
 - subject and heading
