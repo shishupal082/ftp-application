@@ -199,6 +199,12 @@ public class FileServiceV3 {
         }
         return finalResponse;
     }
+    public boolean isValidTableRowResponse(TableRowResponse rowResponse) {
+        if (rowResponse == null) {
+            return false;
+        }
+        return StaticService.isValidString(rowResponse.getsNo());
+    }
     private ArrayList<TableRowResponse> convertTokensToTableRow(ArrayList<ArrayList<String>> tokens) {
         if (tokens == null) {
             return null;
@@ -207,7 +213,7 @@ public class FileServiceV3 {
         TableRowResponse temp;
         for(ArrayList<String> token: tokens) {
             temp = new TableRowResponse(token);
-            if (temp.isValid()) {
+            if (this.isValidTableRowResponse(temp)) {
                 result.add(temp);
             }
         }

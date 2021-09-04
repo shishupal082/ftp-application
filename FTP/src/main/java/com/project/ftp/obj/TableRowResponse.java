@@ -1,7 +1,5 @@
 package com.project.ftp.obj;
 
-import com.project.ftp.service.StaticService;
-
 import java.util.ArrayList;
 
 public class TableRowResponse {
@@ -41,22 +39,6 @@ public class TableRowResponse {
                 text.add(row.get(i));
             }
         }
-    }
-    public boolean isValid() {
-        return StaticService.isValidString(sNo);
-    }
-    public String getTextForSaving() {
-        StringBuilder result = new StringBuilder();
-        if (text != null) {
-            for (String str: text) {
-                if (StaticService.isInValidString((str))) {
-                    result = new StringBuilder(str);
-                } else {
-                    result.append(",").append(str);
-                }
-            }
-        }
-        return result.toString();
     }
     public String getsNo() {
         return sNo;

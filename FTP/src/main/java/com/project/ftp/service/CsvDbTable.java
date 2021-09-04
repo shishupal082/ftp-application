@@ -32,7 +32,7 @@ public class CsvDbTable {
         String deleteId;
         if (rowResponses != null) {
             for (TableRowResponse rowResponse: rowResponses) {
-                if (rowResponse.isValid()) {
+                if (fileServiceV3.isValidTableRowResponse(rowResponse)) {
                     text = rowResponse.getText();
                     if (text != null && text.size() > 0) {
                         deleteId = text.get(0);
@@ -68,7 +68,7 @@ public class CsvDbTable {
                 deletedIds = new ArrayList<>();
             }
             for (TableRowResponse tableRowResponse: rowResponses) {
-                if (!tableRowResponse.isValid()) {
+                if (!fileServiceV3.isValidTableRowResponse(tableRowResponse)) {
                     continue;
                 }
                 if (deletedIds.contains(tableRowResponse.getTableUniqueId())) {
@@ -119,6 +119,21 @@ public class CsvDbTable {
         logger.info("Error in adding text loginUserDetails: {}, addTex: {}", userDetails, addText);
         throw new AppException(ErrorCodes.ADD_TEXT_ERROR);
     }
+    private String getTextForSaving(ArrayList<String> text) {
+        StringBuilder result = new StringBuilder();
+        boolean isAdded = false;
+        if (text != null) {
+            for (String str: text) {
+                if (isAdded) {
+                    result.append(",").append(str);
+                } else {
+                    result = new StringBuilder(str);
+                    isAdded = true;
+                }
+            }
+        }
+        return result.toString();
+    }
     public ApiResponse deleteText(LoginUserDetails loginUserDetails, RequestDeleteText deleteText) throws AppException {
         if (deleteText == null) {
             logger.info("Invalid request deleteText: null");
@@ -162,7 +177,7 @@ public class CsvDbTable {
         addText.setFilename(AppConstant.DELETE_TABLE_FILE_NAME);
         addText.setTableName(AppConstant.DELETE_TABLE_NAME);
         String[] text = new String[1];
-        text[0] = deleteId + "," + finalRowResponse.getTextForSaving();
+        text[0] = deleteId + "," + this.getTextForSaving(finalRowResponse.getText());
         addText.setText(text);
         boolean textAdded = fileServiceV3.saveAddText(saveDir, username, addText);
         if (textAdded) {
