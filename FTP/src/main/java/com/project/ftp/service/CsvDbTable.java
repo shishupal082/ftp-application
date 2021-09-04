@@ -28,16 +28,16 @@ public class CsvDbTable {
         ArrayList<TableRowResponse> rowResponses =
                 fileServiceV3.getTableRowResponseByFilePath(saveDir, deleteTableFilenames);
         ArrayList<String> result = new ArrayList<>();
-        String text;
-        String[] temp;
+        ArrayList<String> text;
+        String deleteId;
         if (rowResponses != null) {
             for (TableRowResponse rowResponse: rowResponses) {
                 if (rowResponse.isValid()) {
                     text = rowResponse.getText();
-                    if (text != null) {
-                        temp = text.split(",");
-                        if (temp.length > 0 && StaticService.isValidString(temp[0]) && !result.contains(temp[0])) {
-                            result.add(temp[0]);
+                    if (text != null && text.size() > 0) {
+                        deleteId = text.get(0);
+                        if (StaticService.isValidString(deleteId) && !result.contains(deleteId)) {
+                            result.add(deleteId);
                         }
                     }
                 }
@@ -162,7 +162,7 @@ public class CsvDbTable {
         addText.setFilename(AppConstant.DELETE_TABLE_FILE_NAME);
         addText.setTableName(AppConstant.DELETE_TABLE_NAME);
         String[] text = new String[1];
-        text[0] = deleteId + "," + finalRowResponse.getText();
+        text[0] = deleteId + "," + finalRowResponse.getTextForSaving();
         addText.setText(text);
         boolean textAdded = fileServiceV3.saveAddText(saveDir, username, addText);
         if (textAdded) {

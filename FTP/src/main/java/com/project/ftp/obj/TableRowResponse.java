@@ -11,7 +11,7 @@ public class TableRowResponse {
     private String tableName;
     private String tableUniqueId;
     private String uiEntryTime;
-    private String text;
+    private ArrayList<String> text;
 
     public TableRowResponse(ArrayList<String> row) {
         if (row == null) {
@@ -35,20 +35,28 @@ public class TableRowResponse {
         if (row.size() > 5) {
             uiEntryTime = row.get(5);
         }
-        StringBuilder temp = new StringBuilder();
         if (row.size() > 6) {
+            text = new ArrayList<>();
             for(int i=6; i<row.size(); i++) {
-                if (i==6) {
-                    temp = new StringBuilder(row.get(i));
-                    continue;
-                }
-                temp.append(",").append(row.get(i));
+                text.add(row.get(i));
             }
         }
-        text = temp.toString();
     }
     public boolean isValid() {
         return StaticService.isValidString(sNo);
+    }
+    public String getTextForSaving() {
+        StringBuilder result = new StringBuilder();
+        if (text != null) {
+            for (String str: text) {
+                if (StaticService.isInValidString((str))) {
+                    result = new StringBuilder(str);
+                } else {
+                    result.append(",").append(str);
+                }
+            }
+        }
+        return result.toString();
     }
     public String getsNo() {
         return sNo;
@@ -98,11 +106,11 @@ public class TableRowResponse {
         this.uiEntryTime = uiEntryTime;
     }
 
-    public String getText() {
+    public ArrayList<String> getText() {
         return text;
     }
 
-    public void setText(String text) {
+    public void setText(ArrayList<String> text) {
         this.text = text;
     }
 
@@ -115,7 +123,7 @@ public class TableRowResponse {
                 ", tableName='" + tableName + '\'' +
                 ", tableUniqueId='" + tableUniqueId + '\'' +
                 ", uiEntryTime='" + uiEntryTime + '\'' +
-                ", text='" + text + '\'' +
+                ", text=" + text +
                 '}';
     }
 }
