@@ -100,7 +100,6 @@ public class FtpApplication  extends Application<FtpConfiguration> {
             userInterface = new UserFile(appConfig);
             LOGGER.info("userInterface configured from file");
         }
-
         UserService userService = new UserService(appConfig, userInterface);
         AuthService authService = new AuthService(userService);
         EventTracking eventTracking = new EventTracking(appConfig, userService, eventInterface);

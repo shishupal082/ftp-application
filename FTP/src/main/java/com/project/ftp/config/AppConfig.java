@@ -6,6 +6,8 @@ package com.project.ftp.config;
 */
 
 import com.project.ftp.FtpConfiguration;
+import com.project.ftp.exceptions.AppException;
+import com.project.ftp.exceptions.ErrorCodes;
 import com.project.ftp.intreface.AppToBridge;
 import com.project.ftp.obj.LoginUserDetails;
 import com.project.ftp.obj.PathInfo;
@@ -151,7 +153,7 @@ public class AppConfig {
         ftlConfig.setTempGaEnable(null);
         return ftlConfig;
     }
-    public String getFileSaveDir(LoginUserDetails loginUserDetails) {
+    private String getFileSaveDir(LoginUserDetails loginUserDetails) {
         String fileSaveDir = ftpConfiguration.getFileSaveDir();
         String finalSaveDir = fileSaveDir;
         if (userService != null) {
@@ -173,6 +175,18 @@ public class AppConfig {
             }
         }
         return finalSaveDir;
+    }
+    public String getFileSaveDirV2(LoginUserDetails loginUserDetails) throws AppException {
+        String saveDir = this.getFileSaveDir(loginUserDetails);
+        if (saveDir == null) {
+            logger.info("fileSaveDir is: null");
+            throw new AppException(ErrorCodes.CONFIG_ERROR);
+        }
+        if (!StaticService.isDirectory(saveDir)) {
+            logger.info("Invalid file save dir: {}", saveDir);
+            throw new AppException(ErrorCodes.CONFIG_ERROR);
+        }
+        return saveDir;
     }
 
     public PageConfig404 getPageConfig404() {

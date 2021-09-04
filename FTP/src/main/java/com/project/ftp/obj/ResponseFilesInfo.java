@@ -1,9 +1,10 @@
 package com.project.ftp.obj;
 
+import com.project.ftp.config.AppConstant;
 import com.project.ftp.service.StaticService;
 
 public class ResponseFilesInfo {
-    private String filepath; // uploadedBy + / + filename.ext
+    private String filepath; // uploadedBy + / + filename.ext or uploadedBy + /database/+ + filename.ext
     private String fileUsername;
     private String filename;
     private String subject;
@@ -11,7 +12,7 @@ public class ResponseFilesInfo {
     private boolean viewOption;
     private boolean deleteOption;
     public ResponseFilesInfo(String fileUsername, String fileNamStr,
-                             LoginUserDetails loginUserDetails) {
+                             LoginUserDetails loginUserDetails, boolean addDatabasePath) {
         if (fileUsername == null || fileNamStr == null || loginUserDetails == null) {
             return;
         }
@@ -19,7 +20,11 @@ public class ResponseFilesInfo {
         if (StaticService.isInValidString(loginUsername)) {
             return;
         }
-        this.filepath = fileUsername + "/" + fileNamStr;
+        if (addDatabasePath) {
+            this.filepath = fileUsername + "/" + AppConstant.DATABASE + "/" + fileNamStr;
+        } else {
+            this.filepath = fileUsername + "/" + fileNamStr;
+        }
         this.fileUsername = fileUsername;
         this.filename = fileNamStr;
         this.viewOption = true;

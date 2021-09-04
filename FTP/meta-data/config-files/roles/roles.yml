@@ -32,6 +32,9 @@ roleAccess:
 roleAccessMapping:
   isAdminUser: admin
   isDevUser: (dev|admin)
+  isDevUser2: (dev|admin)
+  isDevUser3: (dev|admin)
+  isDevUser4: (dev|admin)
   isUploadFileEnable: true
   isAddTextEnable: true
   isUsersControlEnable: UsersControlGroup

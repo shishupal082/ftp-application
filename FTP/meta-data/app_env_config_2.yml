@@ -1,22 +1,22 @@
 fileSaveDir: "D:/workspace/project/ftp-app/saved-files/"
-#configDataFilePath: "D:/workspace/project/ftp-app/config-files/"
-configDataFilePath: "D:/workspace/ftp-application/FTP/meta-data/config-files/"
+configDataFilePath: "D:/workspace/project/ftp-app/config-files/"
 publicDir: "../.."
 publicPostDir: "/project"
+
+
 
 #  forgotPasswordMessage: "Forgot password request submitted, Please check your email."
 forgotPasswordMessage: "Forgot password request submitted, Please create password."
 loadRoleStatusOnPageLoad: "FromRoleConfig" #"isAdminUser" #FromRoleConfig
 forgotPasswordEnable: true
 rolesFileName:
-  - roles/roles.yml
-  - roles/roles_2.yml
+  - roles/user_roles.yml
+#  - roles/roles_2.yml
 fileNotFoundMapping:
-  - "file_not_found_config.yml"
-  - "file_not_found_config_2.yml"
+#  - "file_not_found_config.yml"
+  - "file_not_found_config/file_not_found_config_v2.yml"
 staticDataFilename: "app_static_data.json"
 rateLimitThreshold: 2
-addTextV2TimeStamp: "yyyy-MM-dd HH:mm:ss.SSS','"
 enableMysqlTableName:
   - users
   - event_data
@@ -24,12 +24,6 @@ enableMysqlTableName:
 
 eventDataFilenamePattern: "'event_data/'yyyy-MM-dd-HH-mm'-event_data.csv'"
 userDataFilename: "user_data.csv"
-
-lockFileNamePattern:
-  - "(file_table.csv|delete_table.csv)"
-  - "project_table.csv"
-  - project_work_status.csv
-  - "(supply_item|supply_status).csv"
 
 
 
@@ -53,9 +47,7 @@ supportedFileType:
   - png
 
 
-permanentlyDeleteFile: false #File will saved in trash folder
 maxFileSize: 10240001 #i.e. #i.e. 2048000 = 2048 kB = 2MB, 10240001 = 10MB
-uploadFileApiVersion: v2 #(v1|v2)
 aesEncryptionPassword: "1234"
 
 emailConfig:
@@ -89,7 +81,6 @@ ftlConfig:
   loginRedirectUrl: "/dashboard"
   gaTrackingId: "UA-177553408-1" # for development
   gaTrackingEnable: true
-  displayCreatePasswordLinkEnable: true
 #  forgotPasswordPageInstruction: "Please contact admin."
   forgotPasswordPageInstruction: "Please contact admin to get create password otp."
   createPasswordOtpInstruction: "(Receive from admin)"
@@ -97,8 +88,8 @@ ftlConfig:
   headingJson: '[{"tag":"div.center.table.tbody.tr","className":"heading","text":[{"tag":"td","text":{"tag":"img","className":"w-55px","src":"/assets/static/img/railwayslogo-128.png"}},{"tag":"td","className":"text-center pl-5px","text":[{"tag":"div","text":"Heading Line 1 (config)"},{"tag":"div","text":"Larger Heading Line 2 Row"}]}]}]'
   afterLoginLinkJson: '[{"tag":"div.center","text":[{"tag":"a","href":"/dashboard","name":"link.dashboard","className":"p-5px","text":"Dashboard"},{"tag":"a","href":"/change_password","name":"link.change_password","className":"p-5px","text":"Change Password"},{"tag":"a","href":"/upload_file","name":"link.upload_file","className":"p-5px","text":"Upload File"},{"tag":"a","name":"link.logout","href":"/logout","className":"p-5px","text":"Logout"}]},{"tag":"div.center","text":[{"tag":"span","text":"Login as(Config)"},{"tag":"span","className":"small","name":"link.is-admin","text":" (Admin)"},{"tag":"span","className":"","text":":"},{"tag":"b","name":"link.loginAs","text":""}]}]'
   pageNotFoundJson: '[{"tag": "center.h1","text": {"tag": "span","className": "","name": "date","text": "Page not found"}}]'
-  footerLinkJson: '[{"tag":"div.center","text":[{"tag":"a","href":"/users_control","name":"footerLink.users_control","className":"p-5px d-none","text":"Users Control"}]}]'
-  footerLinkJsonAfterLogin: '[{"tag":"div.center","text":[{"tag":"a","href":"/users_control","name":"footerLink.users_control","className":"p-5px d-none","text":"Users Control"}]}]'
+  footerLinkJson: '[{"tag":"div.center","text":[{"tag":"a","href":"/","className":"p-5px","text":"Footer link before login (Home page)"}]}]'
+  footerLinkJsonAfterLogin: '[{"tag":"div.center","text":[{"tag":"a","href":"/users_control","name":"isUsersControlEnable","className":"p-5px d-none","text":"Users Control"},{"tag":"a","href":"/permission_control","name":"isDevUser","className":"p-5px d-none","text":"Permission Control"},{"tag":"a","href":"/compare_control","name":"isDevUser2","className":"p-5px d-none","text":"Compare Control"},{"tag":"a","href":"/login_other_user","name":"isLoginOtherUserEnable","className":"p-5px d-none","text":"Login Other Users"},{"tag":"a","href":"/database_files","name":"isDevUser4","className":"p-5px d-none","text":"Database Files"},{"tag":"a","href":"/api/update_config","name":"isDevUser3","className":"p-5px d-none","text":"Update Config"}]}]'
 
 # Optional parameter
 indexPageReRoute: /login

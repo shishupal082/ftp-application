@@ -383,13 +383,6 @@ public class StaticService {
         appConfig.setRequestCount(0);
         appConfig.setConfigDate(currentDate);
     }
-    public static String getUploadFileApiVersion(AppConfig appConfig) {
-        String version = appConfig.getFtpConfiguration().getUploadFileApiVersion();
-        if (version == null) {
-            return AppConstant.V1;
-        }
-        return version;
-    }
     public static String joinWithComma(String str1, String str2) {
         if (StaticService.isInValidString(str2)) {
             return str1;
@@ -436,5 +429,8 @@ public class StaticService {
             message = appConfig.getFtpConfiguration().getForgotPasswordMessage();
         }
         return message;
+    }
+    public static boolean isDirectory(String dir) {
+        return fileService.isDirectory(dir);
     }
 }

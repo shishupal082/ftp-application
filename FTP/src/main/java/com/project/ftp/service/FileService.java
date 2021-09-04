@@ -178,7 +178,8 @@ public class FileService {
         return dirCreateStatus;
     }
 
-    public ScanResult scanDirectory(String folderPath, String staticFolderPath, boolean isRecursive) {
+    public ScanResult scanDirectory(String folderPath, String staticFolderPath,
+                                    boolean isRecursive, boolean isAddDatabaseDir) {
         //folderPath and staticFolderPath should contain / in the end
         ScanResult finalFileScanResult = new ScanResult(staticFolderPath, folderPath);
         if (folderPath == null || staticFolderPath == null) {
@@ -189,48 +190,52 @@ public class FileService {
             File folder = new File(folderPath);
             if (folder.isFile()) {
                 finalFileScanResult = new ScanResult(staticFolderPath, folderPath, PathType.FILE);
-//                logger.info("Given folder path is a file returning : {}", finalFileScanResult);
+//                logger.info("Given folder path is a file returning: {}", finalFileScanResult);
                 return finalFileScanResult;
             }
             finalFileScanResult = new ScanResult(staticFolderPath, folderPath);
             File[] listOfFiles = folder.listFiles();
             if (listOfFiles != null) {
-//                logger.info("Files in folder : {}, {}", folderPath, listOfFiles);
+//                logger.info("Files in folder: {}, {}", folderPath, listOfFiles);
                 finalFileScanResult.setPathType(PathType.FOLDER);
                 finalFileScanResult.setScanResults(new ArrayList<ScanResult>());
                 for (File file : listOfFiles) {
                     if (file.isFile()) {
                         fileScanResult = scanDirectory(folderPath + file.getName(),
-                                staticFolderPath, false);
+                                staticFolderPath, false, isAddDatabaseDir);
                     } else if (file.isDirectory()) {
                         if (isRecursive) {
-                            fileScanResult = scanDirectory(folderPath + file.getName() + "/",
-                                    staticFolderPath, true);
+                            // Setting isRecursive as false as we have to scan only up to 1 layer
+                            if (isAddDatabaseDir) {
+                                fileScanResult = scanDirectory(
+                                        folderPath + file.getName() + "/" + AppConstant.DATABASE + "/",
+                                        staticFolderPath, false, false);
+                            } else {
+                                fileScanResult = scanDirectory(folderPath + file.getName() + "/", staticFolderPath,
+                                        true, false);
+                            }
                         } else {
                             fileScanResult = new ScanResult(staticFolderPath,
                                     folderPath + file.getName() + "/", PathType.FOLDER);
                         }
                     } else {
-                        logger.info("Unknown file type present : {}", file.getName());
+                        logger.info("Unknown file type present: {}", file.getName());
                         continue;
                     }
                     finalFileScanResult.getScanResults().add(fileScanResult);
                 }
-            } else {
-                logger.info("No files found in folder : {}, listOfFiles=null", folderPath);
             }
         } catch (Exception e) {
-            logger.info("Error fetching folder from : {}, {}", folderPath, e);
+            logger.info("Error fetching folder from: {}, {}", folderPath, e);
         }
-//        logger.info("Scan folder result for folder : {}, {}", folderPath, finalFileScanResult);
-        logger.info("Scan complete for folder : {}", folderPath);
+//        logger.info("Scan folder result for folder: {}, {}", folderPath, finalFileScanResult);
+//        logger.info("Scan complete for folder: {}", folderPath);
         return finalFileScanResult;
     }
-
     public ArrayList<String> getAvailableFiles(String directory) {
         //directory should contain / in the end
         ArrayList<String> availableFiles = new ArrayList<>();
-        ScanResult scanResult = this.scanDirectory(directory, directory, false);
+        ScanResult scanResult = this.scanDirectory(directory, directory, false, false);
         ArrayList<ScanResult> scanResults = scanResult.getScanResults();
         if (scanResults != null && scanResults.size() > 0) {
             for (ScanResult scanResult1 : scanResults) {

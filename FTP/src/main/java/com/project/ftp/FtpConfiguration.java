@@ -23,13 +23,11 @@ public class FtpConfiguration extends Configuration {
     private String filenameFormat;
     private String instance;
     private String appRestartCommand;
-    private String uploadFileApiVersion;
     private String cookieName;
 
     private String forgotPasswordMessage;
     private String loadRoleStatusOnPageLoad;
     private String staticDataFilename;
-    private String addTextV2TimeStamp;
     private String eventDataFilenamePattern;
     private String userDataFilename;
     private String aesEncryptionPassword;
@@ -37,7 +35,6 @@ public class FtpConfiguration extends Configuration {
     // Defined as Boolean but not as boolean
     // Because while updating if not found shall not assume false
     private Boolean createReadmePdf;
-    private Boolean permanentlyDeleteFile;
     private Boolean forgotPasswordEnable;
     private Boolean guestEnable;
     private Boolean androidCheckEnable;
@@ -49,7 +46,6 @@ public class FtpConfiguration extends Configuration {
     private ArrayList<String> enableMysqlTableName;
     private ArrayList<String> fileNotFoundMapping;
     private ArrayList<String> rolesFileName;
-    private ArrayList<String> lockFileNamePattern;
     private HashMap<String, String> loginRedirectMapping;
     private HashMap<String, String> fileSaveDirMapping;
     private HashMap<String, String> tempConfig;
@@ -123,14 +119,6 @@ public class FtpConfiguration extends Configuration {
         this.appRestartCommand = appRestartCommand;
     }
 
-    public String getUploadFileApiVersion() {
-        return uploadFileApiVersion;
-    }
-
-    public void setUploadFileApiVersion(String uploadFileApiVersion) {
-        this.uploadFileApiVersion = uploadFileApiVersion;
-    }
-
     public String getCookieName() {
         return cookieName;
     }
@@ -163,14 +151,6 @@ public class FtpConfiguration extends Configuration {
         this.staticDataFilename = staticDataFilename;
     }
 
-    public String getAddTextV2TimeStamp() {
-        return addTextV2TimeStamp;
-    }
-
-    public void setAddTextV2TimeStamp(String addTextV2TimeStamp) {
-        this.addTextV2TimeStamp = addTextV2TimeStamp;
-    }
-
     public String getEventDataFilenamePattern() {
         return eventDataFilenamePattern;
     }
@@ -201,14 +181,6 @@ public class FtpConfiguration extends Configuration {
 
     public void setCreateReadmePdf(Boolean createReadmePdf) {
         this.createReadmePdf = createReadmePdf;
-    }
-
-    public Boolean getPermanentlyDeleteFile() {
-        return permanentlyDeleteFile;
-    }
-
-    public void setPermanentlyDeleteFile(Boolean permanentlyDeleteFile) {
-        this.permanentlyDeleteFile = permanentlyDeleteFile;
     }
 
     public Boolean getForgotPasswordEnable() {
@@ -297,14 +269,6 @@ public class FtpConfiguration extends Configuration {
 
     public void setRolesFileName(ArrayList<String> rolesFileName) {
         this.rolesFileName = rolesFileName;
-    }
-
-    public ArrayList<String> getLockFileNamePattern() {
-        return lockFileNamePattern;
-    }
-
-    public void setLockFileNamePattern(ArrayList<String> lockFileNamePattern) {
-        this.lockFileNamePattern = lockFileNamePattern;
     }
 
     public HashMap<String, String> getLoginRedirectMapping() {
@@ -399,10 +363,6 @@ public class FtpConfiguration extends Configuration {
         if (appRestartCommand != null) {
             this.appRestartCommand = appRestartCommand;
         }
-        String uploadFileApiVersion = tempFtpConfiguration.getUploadFileApiVersion();
-        if (uploadFileApiVersion != null) {
-            this.uploadFileApiVersion = uploadFileApiVersion;
-        }
         String cookieName = tempFtpConfiguration.getCookieName();
         if (cookieName != null) {
             this.cookieName = cookieName;
@@ -419,10 +379,6 @@ public class FtpConfiguration extends Configuration {
         if (staticDataFilename != null) {
             this.staticDataFilename = staticDataFilename;
         }
-        String addTextV2TimeStamp = tempFtpConfiguration.getAddTextV2TimeStamp();
-        if (addTextV2TimeStamp != null) {
-            this.addTextV2TimeStamp = addTextV2TimeStamp;
-        }
         String eventDataFilenamePattern = tempFtpConfiguration.getEventDataFilenamePattern();
         if (eventDataFilenamePattern != null) {
             this.eventDataFilenamePattern = eventDataFilenamePattern;
@@ -438,10 +394,6 @@ public class FtpConfiguration extends Configuration {
         Boolean createReadmePdf = tempFtpConfiguration.getCreateReadmePdf();
         if (createReadmePdf != null) {
             this.createReadmePdf = createReadmePdf;
-        }
-        Boolean permanentlyDeleteFile = tempFtpConfiguration.getPermanentlyDeleteFile();
-        if (permanentlyDeleteFile != null) {
-            this.permanentlyDeleteFile = permanentlyDeleteFile;
         }
         Boolean forgotPasswordEnable = tempFtpConfiguration.getForgotPasswordEnable();
         if (forgotPasswordEnable != null) {
@@ -483,10 +435,6 @@ public class FtpConfiguration extends Configuration {
         if (rolesFileName != null && rolesFileName.size() > 0) {
             this.rolesFileName = rolesFileName;
         }
-        ArrayList<String> lockFileNamePattern = tempFtpConfiguration.getLockFileNamePattern();
-        if (lockFileNamePattern != null && lockFileNamePattern.size() > 0) {
-            this.lockFileNamePattern = lockFileNamePattern;
-        }
         HashMap<String, String> loginRedirectMapping = tempFtpConfiguration.getLoginRedirectMapping();
         if (loginRedirectMapping != null) {
             this.loginRedirectMapping = loginRedirectMapping;
@@ -524,17 +472,14 @@ public class FtpConfiguration extends Configuration {
                 ", filenameFormat='" + filenameFormat + '\'' +
                 ", instance='" + instance + '\'' +
                 ", appRestartCommand='" + appRestartCommand + '\'' +
-                ", uploadFileApiVersion='" + uploadFileApiVersion + '\'' +
                 ", cookieName='" + cookieName + '\'' +
                 ", forgotPasswordMessage='" + forgotPasswordMessage + '\'' +
                 ", loadRoleStatusOnPageLoad='" + loadRoleStatusOnPageLoad + '\'' +
                 ", staticDataFilename='" + staticDataFilename + '\'' +
-                ", addTextV2TimeStamp='" + addTextV2TimeStamp + '\'' +
                 ", eventDataFilenamePattern='" + eventDataFilenamePattern + '\'' +
                 ", userDataFilename='" + userDataFilename + '\'' +
                 ", aesEncryptionPassword='" + "*****" + '\'' +
                 ", createReadmePdf=" + createReadmePdf +
-                ", permanentlyDeleteFile=" + permanentlyDeleteFile +
                 ", forgotPasswordEnable=" + forgotPasswordEnable +
                 ", guestEnable=" + guestEnable +
                 ", androidCheckEnable=" + androidCheckEnable +
@@ -546,7 +491,6 @@ public class FtpConfiguration extends Configuration {
                 ", enableMysqlTableName=" + enableMysqlTableName +
                 ", fileNotFoundMapping=" + fileNotFoundMapping +
                 ", rolesFileName=" + rolesFileName +
-                ", lockFileNamePattern=" + lockFileNamePattern +
                 ", loginRedirectMapping=" + loginRedirectMapping +
                 ", fileSaveDirMapping=" + fileSaveDirMapping +
                 ", tempConfig=" + tempConfig +

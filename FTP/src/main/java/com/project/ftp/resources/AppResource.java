@@ -8,7 +8,6 @@ import com.project.ftp.exceptions.AppException;
 import com.project.ftp.obj.ApiResponse;
 import com.project.ftp.obj.LoginUserDetails;
 import com.project.ftp.obj.PathInfo;
-import com.project.ftp.obj.RequestAddText;
 import com.project.ftp.service.AuthService;
 import com.project.ftp.service.FileServiceV2;
 import com.project.ftp.service.RequestService;
@@ -219,6 +218,13 @@ public class AppResource {
     public AppView createPassword(@Context HttpServletRequest request) {
         eventTracking.trackLandingPage(request, EventName.CREATE_PASSWORD);
         return new AppView(request, appViewFtlFileName, "create_password", userService, appConfig);
+    }
+    @GET
+    @Path("/database_files")
+    @UnitOfWork
+    public AppView databaseFiles(@Context HttpServletRequest request) {
+        eventTracking.trackLandingPage(request, EventName.APP_DATA);
+        return new AppView(request, appViewFtlFileName, "database_files", userService, appConfig);
     }
     @Path("{default: .*}")
     @GET

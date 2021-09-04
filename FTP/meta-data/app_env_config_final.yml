@@ -58,7 +58,6 @@ fileNotFoundMapping:
   - "invalid-file-not-found-mapping"
 staticDataFilename: "invalid-static-data-file-name"
 rateLimitThreshold: 2
-addTextV2TimeStamp: "yyyy-MM-dd HH:mm:ss.SSS','"
 enableMysqlTableName:
   - users
   - event_data
@@ -66,9 +65,6 @@ enableMysqlTableName:
 
 eventDataFilenamePattern: "'event_data/'yyyy-MM-dd-HH-mm'-event_data.csv'"
 userDataFilename: "user_data.csv"
-
-lockFileNamePattern:
-  - "lock-file-name-pattern"
 
 cookieName: "web-app"
 supportedFileType:
@@ -89,9 +85,7 @@ supportedFileType:
   - png
 
 
-permanentlyDeleteFile: false #File will saved in trash folder
 maxFileSize: 10240001 #i.e. #i.e. 2048000 = 2048 kB = 2MB, 10240001 = 10MB
-uploadFileApiVersion: v2 #(v1|v2)
 aesEncryptionPassword: "1234"
 
 emailConfig:
@@ -117,7 +111,6 @@ ftlConfig:
   loginRedirectUrl: "/view-resource"
   gaTrackingId: "UA-177553408-1" # for development
   gaTrackingEnable: true
-  displayCreatePasswordLinkEnable: true
 #  forgotPasswordPageInstruction: "Please contact admin."
   forgotPasswordPageInstruction: "Please contact admin to get create password otp."
   createPasswordOtpInstruction: "(Receive from admin)"
@@ -126,7 +119,7 @@ ftlConfig:
   afterLoginLinkJson: '[{"tag":"div.center","text":[{"tag":"a","href":"/dashboard","name":"link.dashboard","className":"p-5px","text":"Dashboard"},{"tag":"a","href":"/change_password","name":"link.change_password","className":"p-5px","text":"Change Password"},{"tag":"a","href":"/upload_file","name":"link.upload_file","className":"p-5px","text":"Upload File"},{"tag":"a","name":"link.logout","href":"/logout","className":"p-5px","text":"Logout"}]},{"tag":"div.center","text":[{"tag":"span","text":"Login as(Config): "},{"tag":"b","name":"link.loginAs","text":""}]}]'
   pageNotFoundJson: '[{"tag": "center.h1","text": {"tag": "span","className": "","name": "date","text": "Page not found"}}]'
   footerLinkJson: '[{"tag":"div.center","text":[{"tag":"a","href":"/users_control","name":"isUsersControlEnable","className":"p-5px d-none","text":"Users Control"},{"tag":"a","href":"/permission_control","name":"isDevUser","className":"p-5px d-none","text":"Permission Control"},{"tag":"a","href":"/compare_control","name":"isDevUser2","className":"p-5px d-none","text":"Compare Control"},{"tag":"a","href":"/login_other_user","name":"isLoginOtherUserEnable","className":"p-5px d-none","text":"Login Other Users"}]}]'
-  footerLinkJsonAfterLogin: '[{"tag":"div.center","text":[{"tag":"a","href":"/users_control","name":"isUsersControlEnable","className":"p-5px d-none","text":"Users Control"},{"tag":"a","href":"/permission_control","name":"isDevUser","className":"p-5px d-none","text":"Permission Control"},{"tag":"a","href":"/compare_control","name":"isDevUser2","className":"p-5px d-none","text":"Compare Control"},{"tag":"a","href":"/login_other_user","name":"isLoginOtherUserEnable","className":"p-5px d-none","text":"Login Other Users"}]}]'
+  footerLinkJsonAfterLogin: '[{"tag":"div.center","text":[{"tag":"a","href":"/users_control","name":"isUsersControlEnable","className":"p-5px d-none","text":"Users Control"},{"tag":"a","href":"/permission_control","name":"isDevUser","className":"p-5px d-none","text":"Permission Control"},{"tag":"a","href":"/compare_control","name":"isDevUser2","className":"p-5px d-none","text":"Compare Control"},{"tag":"a","href":"/login_other_user","name":"isLoginOtherUserEnable","className":"p-5px d-none","text":"Login Other Users"},{"tag":"a","href":"/database_files","name":"isDevUser4","className":"p-5px d-none","text":"Database Files"},{"tag":"a","href":"/api/update_config","name":"isDevUser3","className":"p-5px d-none","text":"Update Config"}]}]'
 
 # Optional parameter
 indexPageReRoute: /view/resource

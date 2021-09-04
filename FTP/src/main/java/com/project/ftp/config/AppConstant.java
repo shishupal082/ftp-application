@@ -25,7 +25,7 @@ public class AppConstant {
     public static final String ALLOWED_HEADERS= "Access-Control-Allow-Headers";
     public static final String FILE = "FILE";
     public static final String FOLDER = "FOLDER";
-    public static final String AppVersion = "8.0.1";
+    public static final String AppVersion = "8.0.2";
     public static final String DATE_FORMAT = "yyyy-MM-dd";
     public static final String TIME_FORMAT = "HHmmss";
     public static final String FILENAME_FORMAT = "yyyy-MM-dd-HH-mm'-filename'";
@@ -35,7 +35,6 @@ public class AppConstant {
     public static final String DateTimeFormat4 = "yyyy-MM-dd-HH-mm-ss"; // used for log file copy
     public static final String DateTimeFormat5 = "yyyy-MM-dd-HH:mm"; // used for file_details.csv data generation
     public static final String DateTimeFormat6 = "yyyy-MM-dd HH:mm:ss"; // used for timestamp in UserFile interface
-    public static final String DateTimeFormat7 = "yyyy-MM-dd HH:mm:ss.SSS','"; // used for timestamp in add_text_v2
     public static final String UTF8 = "UTF-8";
     public static final String FAVICON_ICO_PATH = "favicon.ico";
     public static final String INDEX_PAGE_RE_ROUTE = "/login";
@@ -53,8 +52,6 @@ public class AppConstant {
     public static final String UN_AUTHORISED = "un_authorised";
     public static final String FromRoleConfig = "FromRoleConfig";
     public static final String FromEnvConfig = "FromEnvConfig";
-    public static final String V1 = "v1";
-    public static final String V2 = "v2";
     public static final String PDF_AUTHOR = "Project Author";
     public static final String PDF_CREATOR = "Project Creator";
     public static final String EmptyParagraph = " ";
@@ -69,6 +66,10 @@ public class AppConstant {
 
     public static final String TABLE_NAME_EVENT = "event_data";
     public static final String TABLE_NAME_USER = "users";
+    public static final String DATABASE = "database";
+    public static final String DEFAULT_TABLE_NAME = "default_table";
+    public static final String DELETE_TABLE_FILE_NAME = "delete_table.csv";
+    public static final String DELETE_TABLE_NAME = "delete_table";
 
 
     public static final String IS_DEV_USER = "isDevUser";

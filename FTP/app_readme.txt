@@ -1190,6 +1190,36 @@ Created app_env_config_final.yml for direct running of application without any f
     - except logging dir
 
 
+8.0.2
+----------
+02.09.2021
+----------
+Remove config parameter
+- lockFileNamePattern
+- uploadFileApiVersion
+- permanentlyDeleteFile
+- addTextV2TimeStamp (It is fixed as YYYY-MM-DD hh:mm:ss)
+- ftlConfig.displayCreatePasswordLinkEnable
+
+
+Remove formData parameter from /api/upload_file
+- subject and heading
+
+Added two new api
+    - /api/get_table_data  [GET]
+    - /api/delete_text     [POST]
+
+Created new view
+- /database_files (For monitoring /api/get_database_files_info)
+
+
+
+send ftlConfig.title in getStaticData api
+
+
+
+
+
 
 Permission vs api / view list
 ------------------------------

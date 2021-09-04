@@ -52,6 +52,10 @@
     "Create Password View"
   ],
   [
+    "/database_files",
+    "Database files view"
+  ],
+  [
     "/view/file/{username}/{filename}?u=requested_username&iframe=true",
     "/view/file/{username}/{filename}?u=requested_username&iframe=true"
   ],
@@ -157,11 +161,15 @@
   ],
   [
     "/api/add_text",
-    "Add array text in file given by user [POST]"
+    "Add array text in file given by user [POST] in the pre defined pattern"
   ],
   [
     "/api/add_text_v2",
-    "Add array text in file given by user and insert current timestamp in each line [POST]"
+    "Add array text in file given by user [POST]"
+  ],
+  [
+    "/api/delete_text",
+    "Delete text [POST]"
   ],
   [
     "/api/aes_encrypt",

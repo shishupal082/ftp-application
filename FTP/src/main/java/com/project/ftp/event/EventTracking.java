@@ -397,7 +397,7 @@ public class EventTracking {
 
     public void addSuccessUploadFile(HttpServletRequest request,
                                      FormDataContentDisposition fileDetail,
-                                     String subject, String heading, String uiUsername) {
+                                     String uiUsername) {
         LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
         String filename = null;
         if (fileDetail != null) {
@@ -405,23 +405,15 @@ public class EventTracking {
         }
         String comment = "";
         comment += "filepath=" + filename;
-        comment += ",subject=" + subject;
-        comment += ",heading=" + heading;
         comment += ",uiUsername=" + uiUsername;
         EventName eventName = EventName.UPLOAD_FILE;
-        String apiVersion = StaticService.getUploadFileApiVersion(appConfig);
-        if (AppConstant.V1.equals(apiVersion)) {
-            eventName = EventName.UPLOAD_FILE_V1;
-        } else if (AppConstant.V2.equals(apiVersion)) {
-            eventName = EventName.UPLOAD_FILE_V2;
-        }
         addEvent.addSuccessEvent(loginUserDetails.getUsername(), eventName, comment);
     }
 
     public void addFailureUploadFile(HttpServletRequest request,
                                      ErrorCodes errorCodes,
                                      FormDataContentDisposition fileDetail,
-                                     String subject, String heading, String uiUsername) {
+                                     String uiUsername) {
         LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
         String filename = null;
         if (fileDetail != null) {
@@ -429,16 +421,8 @@ public class EventTracking {
         }
         String comment = "";
         comment += "filepath=" + filename;
-        comment += ",subject=" + subject;
-        comment += ",heading=" + heading;
         comment += ",uiUsername=" + uiUsername;
         EventName eventName = EventName.UPLOAD_FILE;
-        String apiVersion = StaticService.getUploadFileApiVersion(appConfig);
-        if (AppConstant.V1.equals(apiVersion)) {
-            eventName = EventName.UPLOAD_FILE_V1;
-        } else if (AppConstant.V2.equals(apiVersion)) {
-            eventName = EventName.UPLOAD_FILE_V2;
-        }
         if (errorCodes != null) {
             comment += ","+errorCodes.getErrorString();
         }

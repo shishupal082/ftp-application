@@ -203,6 +203,52 @@ public class ApiResource {
         logger.info("getAllV4Data : Out");
         return response;
     }
+
+    @GET
+    @Path("/get_database_files_info")
+    @UnitOfWork
+    public ApiResponse getAllV5Data(@Context HttpServletRequest request,
+                                    @QueryParam("filenames") String filenames) {
+        logger.info("getAllV5Data : In, user: {}, filenames: {}",
+                userService.getUserDataForLogging(request), filenames);
+        ApiResponse response;
+        try {
+            authService.isLoginUserAdmin(request);
+            LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
+            response = fileServiceV2.scanUserDatabaseDirectory(loginUserDetails, filenames);
+            eventTracking.trackSuccessEvent(request, EventName.GET_DATABASE_FILES_INFO);
+        } catch (AppException ae) {
+            logger.info("Error in scanning user database directory: {}", ae.getErrorCode().getErrorString());
+            response = new ApiResponse(ae.getErrorCode());
+            eventTracking.trackFailureEvent(request, EventName.GET_DATABASE_FILES_INFO, ae.getErrorCode());
+        }
+        // Not putting response in log as it may be very large
+        logger.info("getAllV5Data : Out");
+        return response;
+    }
+    @GET
+    @Path("/get_table_data")
+    @UnitOfWork
+    public ApiResponse getTableData(@Context HttpServletRequest request,
+                                    @QueryParam("filenames") String filenames,
+                                    @QueryParam("table_names") String tableNames) {
+        logger.info("getTableData : In, user: {}, filenames+table_names: {}",
+                userService.getUserDataForLogging(request), filenames + tableNames);
+        ApiResponse response;
+        try {
+            authService.isLogin(request);
+            LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
+            response = fileServiceV2.getTableData(loginUserDetails, filenames, tableNames);
+            eventTracking.trackSuccessEvent(request, EventName.GET_DATABASE_TABLE_DATA);
+        } catch (AppException ae) {
+            logger.info("Error in getting tableData: {}", ae.getErrorCode().getErrorString());
+            response = new ApiResponse(ae.getErrorCode());
+            eventTracking.trackFailureEvent(request, EventName.GET_DATABASE_TABLE_DATA, ae.getErrorCode());
+        }
+        // Not putting response in log as it may be very large
+        logger.info("getTableData : Out");
+        return response;
+    }
     @GET
     @Path("/get_current_user_files_info")
     @UnitOfWork
@@ -267,23 +313,19 @@ public class ApiResource {
     public ApiResponse uploadFile(@Context HttpServletRequest request,
                                   @FormDataParam("file") InputStream uploadedInputStream,
                                @FormDataParam("file") FormDataContentDisposition fileDetail,
-                               @FormDataParam("subject") String subject,
-                               @FormDataParam("heading") String heading,
                                @QueryParam("u") String uiUsername) {
         logger.info("uploadFile: In, upload fileDetails: {}, user: {}",
                 fileDetail, userService.getUserDataForLogging(request));
-        logger.info("uploadFile data, subject: {}, heading: {}", subject, heading);
         ApiResponse response;
         try {
             authService.isLogin(request);
             LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
-            response = fileServiceV2.uploadFileV2(loginUserDetails, uploadedInputStream,
-                    fileDetail, subject, heading);
-            eventTracking.addSuccessUploadFile(request, fileDetail, subject, heading, uiUsername);
+            response = fileServiceV2.uploadFileV2(loginUserDetails, uploadedInputStream, fileDetail);
+            eventTracking.addSuccessUploadFile(request, fileDetail, uiUsername);
         } catch (AppException ae) {
             logger.info("Error in uploading file: {}", ae.getErrorCode().getErrorCode());
             response = new ApiResponse(ae.getErrorCode());
-            eventTracking.addFailureUploadFile(request, ae.getErrorCode(), fileDetail, subject, heading, uiUsername);
+            eventTracking.addFailureUploadFile(request, ae.getErrorCode(), fileDetail, uiUsername);
         }
         logger.info("uploadFile : Out {}", response);
         return response;
@@ -302,7 +344,7 @@ public class ApiResource {
         try {
             authService.isLogin(request);
             LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
-            response = fileServiceV2.addText(loginUserDetails, addText, false);
+            response = fileServiceV2.addText(loginUserDetails, addText);
             eventTracking.trackSuccessEventV2(request, EventName.ADD_TEXT, comment);
         } catch (AppException ae) {
             logger.info("Error in addText: {}", ae.getErrorCode().getErrorCode());
@@ -325,7 +367,7 @@ public class ApiResource {
         try {
             authService.isLogin(request);
             LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
-            response = fileServiceV2.addText(loginUserDetails, addText, true);
+            response = fileServiceV2.addTextV2(loginUserDetails, addText);
             eventTracking.trackSuccessEventV2(request, EventName.ADD_TEXT_V2, comment);
         } catch (AppException ae) {
             logger.info("Error in addTextV2: {}", ae.getErrorCode().getErrorCode());
@@ -333,6 +375,29 @@ public class ApiResource {
             eventTracking.trackFailureEventV2(request, EventName.ADD_TEXT_V2, ae.getErrorCode(), comment);
         }
         logger.info("addTextV2 : Out {}", response);
+        return response;
+    }
+    @POST
+    @Path("/delete_text")
+    @UnitOfWork
+    public ApiResponse deleteText(@Context HttpServletRequest request, RequestDeleteText deleteText) {
+        logger.info("deleteText: In, data: {}, user: {}", deleteText, userService.getUserDataForLogging(request));
+        String comment = null;
+        if (deleteText != null) {
+            comment = deleteText.toString();
+        }
+        ApiResponse response;
+        try {
+            authService.isLogin(request);
+            LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
+            response = fileServiceV2.deleteText(loginUserDetails, deleteText);
+            eventTracking.trackSuccessEventV2(request, EventName.DELETE_FILE, comment);
+        } catch (AppException ae) {
+            logger.info("Error in deleteText: {}", ae.getErrorCode().getErrorCode());
+            response = new ApiResponse(ae.getErrorCode());
+            eventTracking.trackFailureEventV2(request, EventName.DELETE_FILE, ae.getErrorCode(), comment);
+        }
+        logger.info("deleteText: Out {}", response);
         return response;
     }
     @GET

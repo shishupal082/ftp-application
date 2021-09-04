@@ -24,7 +24,6 @@ public class AppView extends View {
     private final FtlConfig ftlConfig;
     private final String loginUserDetailsV2Str;
     private final String androidCheckEnable;
-    private final String displayCreatePasswordLinkEnable;
     public AppView(HttpServletRequest request, String ftl, String pageName,
                    UserService userService, AppConfig appConfig) {
         super(ftl);
@@ -45,7 +44,6 @@ public class AppView extends View {
             pageName = "";
         }
         this.pageName = pageName;
-        this.displayCreatePasswordLinkEnable = ftlConfig.getDisplayCreatePasswordLinkEnable();
         this.androidCheckEnable = Boolean.toString(androidCheckEnableTemp);
         this.isGuestEnable = Boolean.toString(isGuestEnableTemp);
         this.appVersion = AppConstant.AppVersion;
@@ -81,7 +79,4 @@ public class AppView extends View {
         return androidCheckEnable;
     }
 
-    public String getDisplayCreatePasswordLinkEnable() {
-        return displayCreatePasswordLinkEnable;
-    }
 }

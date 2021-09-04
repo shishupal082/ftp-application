@@ -2,7 +2,10 @@ package com.project.ftp.obj;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.project.ftp.config.AppConstant;
+import com.project.ftp.service.StaticService;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -12,10 +15,10 @@ public class RequestAddText {
     private String[] text;
     @JsonProperty("filename")
     private String filename;
-    @JsonProperty("subject")
-    private String subject;
-    @JsonProperty("heading")
-    private String heading;
+    @JsonProperty("tableName")
+    private String tableName;
+    @JsonProperty("uiEntryTime")
+    private String uiEntryTime;
 
     public String[] getText() {
         return text;
@@ -33,20 +36,56 @@ public class RequestAddText {
         this.filename = filename;
     }
 
-    public String getSubject() {
-        return subject;
+    public String getTableName() {
+        return tableName;
     }
 
-    public void setSubject(String subject) {
-        this.subject = subject;
+    public void setTableName(String tableName) {
+        this.tableName = tableName;
+    }
+    public String getUiEntryTime() {
+        return uiEntryTime;
     }
 
-    public String getHeading() {
-        return heading;
+    public void setUiEntryTime(String uiEntryTime) {
+        this.uiEntryTime = uiEntryTime;
     }
 
-    public void setHeading(String heading) {
-        this.heading = heading;
+    public ArrayList<String> generateAddTextResponse(String loginUsername, String currentTimeStamp) {
+        ArrayList<String> response = new ArrayList<>();
+        String result;
+        if (text != null) {
+            for (int i=0; i<text.length; i++) {
+                if (StaticService.isInValidString(text[i])) {
+                    continue;
+                }
+                result = "0,";
+                if (currentTimeStamp == null) {
+                    result += ",";
+                } else {
+                    result += currentTimeStamp+",";
+                }
+                if (loginUsername == null) {
+                    result += ",";
+                } else {
+                    result += loginUsername+",";
+                }
+                if (StaticService.isInValidString(tableName)) {
+                    result += AppConstant.DEFAULT_TABLE_NAME + ",";
+                } else {
+                    result += tableName+",";
+                }
+                result += StaticService.createUUIDNumber() +",";
+                if (StaticService.isInValidString(uiEntryTime)) {
+                    result += currentTimeStamp + ",";
+                } else {
+                    result += uiEntryTime+",";
+                }
+                result += text[i];
+                response.add(result);
+            }
+        }
+        return response;
     }
 
     @Override
@@ -54,8 +93,8 @@ public class RequestAddText {
         return "RequestAddText{" +
                 "text=" + Arrays.toString(text) +
                 ", filename='" + filename + '\'' +
-                ", subject='" + subject + '\'' +
-                ", heading='" + heading + '\'' +
+                ", tableName='" + tableName + '\'' +
+                ", uiEntryTime='" + uiEntryTime + '\'' +
                 '}';
     }
 }
