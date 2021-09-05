@@ -294,6 +294,9 @@ public class FileServiceV3 {
         }
     }
     public boolean isValidAddTextFilename(String filename) {
+        if (AppConstant.DELETE_TABLE_FILE_NAME.equals(filename)) {
+            return true;
+        }
         ArrayList<String> allowedAddTextFilename = appConfig.getFtpConfiguration().getAllowedTableFilename();
         if (allowedAddTextFilename == null) {
             return false;
