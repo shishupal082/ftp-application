@@ -121,8 +121,10 @@ public class CsvDbTable {
             logger.info("Error in reading table data");
             return new ApiResponse(ErrorCodes.SERVER_ERROR);
         }
+        HashMap<String, ArrayList<TableRowResponse>> finalResponse = new HashMap<>();
+        finalResponse.put(AppConstant.DEFAULT_TABLE_NAME, rowResponses);
         logger.info("Total table entry count: {}", rowResponses.size());
-        return new ApiResponse(rowResponses);
+        return new ApiResponse(finalResponse);
     }
     public ApiResponse scanUserDatabaseDirectory(LoginUserDetails loginUserDetails,
                                                  String filenames, boolean isAdmin) throws AppException {
