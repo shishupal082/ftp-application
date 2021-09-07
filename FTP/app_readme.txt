@@ -1216,13 +1216,17 @@ Added two new api
 Created new view
 - /database_files (For monitoring /api/get_database_files_info)
 
-
-
 send ftlConfig.title in getStaticData api
 
+8.0.2.1
+----------
+07.09.2021
+----------
 
+Added new api
+    - /api/get_table_data_v2  [GET]
 
-
+Added tableFilename in each tableRowResponse
 
 
 Permission vs api / view list

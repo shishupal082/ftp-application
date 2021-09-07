@@ -12,6 +12,10 @@ public class ApiResponse {
         this.status = AppConstant.SUCCESS;
     }
     public ApiResponse(Object data) {
+        if (data == null) {
+            this.status = AppConstant.FAILURE;
+            return;
+        }
         this.status = AppConstant.SUCCESS;
         this.data = data;
     }

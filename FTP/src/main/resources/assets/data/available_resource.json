@@ -76,6 +76,18 @@
     "Scan only current user directory [GET]"
   ],
   [
+    "/api/get_database_files_info?filenames=.",
+    "Scan database directory based on user login [GET]"
+  ],
+  [
+    "/api/get_table_data?filenames=.&table_names=.",
+    "Get table data [GET]"
+  ],
+  [
+    "/api/get_table_data_v2?filenames=.&table_names=.",
+    "Get table data v2 [GET]"
+  ],
+  [
     "/api/get_app_config",
     "Get appConfig data [GET]"
   ],

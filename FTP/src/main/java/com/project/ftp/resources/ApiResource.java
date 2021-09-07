@@ -250,6 +250,29 @@ public class ApiResource {
         return response;
     }
     @GET
+    @Path("/get_table_data_v2")
+    @UnitOfWork
+    public ApiResponse getTableDataV2(@Context HttpServletRequest request,
+                                    @QueryParam("filenames") String filenames,
+                                    @QueryParam("table_names") String tableNames) {
+        logger.info("getTableDataV2 : In, user: {}, filenames+table_names: {}",
+                userService.getUserDataForLogging(request), filenames + tableNames);
+        ApiResponse response;
+        try {
+            authService.isLogin(request);
+            LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
+            response = fileServiceV2.getTableDataV2(loginUserDetails, filenames, tableNames);
+            eventTracking.trackSuccessEvent(request, EventName.GET_DATABASE_TABLE_DATA);
+        } catch (AppException ae) {
+            logger.info("Error in getting getTableDataV2: {}", ae.getErrorCode().getErrorString());
+            response = new ApiResponse(ae.getErrorCode());
+            eventTracking.trackFailureEvent(request, EventName.GET_DATABASE_TABLE_DATA, ae.getErrorCode());
+        }
+        // Not putting response in log as it may be very large
+        logger.info("getTableDataV2 : Out");
+        return response;
+    }
+    @GET
     @Path("/get_current_user_files_info")
     @UnitOfWork
     public ApiResponse getAllV3DataV2(@Context HttpServletRequest request) {

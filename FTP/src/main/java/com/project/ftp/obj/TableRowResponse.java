@@ -7,11 +7,13 @@ public class TableRowResponse {
     private String entryTime;
     private String addedBy;
     private String tableName;
+    private String tableFilename;
     private String tableUniqueId;
     private String uiEntryTime;
     private ArrayList<String> text;
 
-    public TableRowResponse(ArrayList<String> row) {
+    public TableRowResponse(ArrayList<String> row, String tableFilename) {
+        this.tableFilename = tableFilename;
         if (row == null) {
             return;
         }
@@ -72,6 +74,14 @@ public class TableRowResponse {
         this.tableName = tableName;
     }
 
+    public String getTableFilename() {
+        return tableFilename;
+    }
+
+    public void setTableFilename(String tableFilename) {
+        this.tableFilename = tableFilename;
+    }
+
     public String getTableUniqueId() {
         return tableUniqueId;
     }
@@ -103,6 +113,7 @@ public class TableRowResponse {
                 ", entryTime='" + entryTime + '\'' +
                 ", addedBy='" + addedBy + '\'' +
                 ", tableName='" + tableName + '\'' +
+                ", tableFilename='" + tableFilename + '\'' +
                 ", tableUniqueId='" + tableUniqueId + '\'' +
                 ", uiEntryTime='" + uiEntryTime + '\'' +
                 ", text=" + text +

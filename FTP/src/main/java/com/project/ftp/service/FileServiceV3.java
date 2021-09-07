@@ -205,14 +205,15 @@ public class FileServiceV3 {
         }
         return StaticService.isValidString(rowResponse.getsNo());
     }
-    private ArrayList<TableRowResponse> convertTokensToTableRow(ArrayList<ArrayList<String>> tokens) {
+    private ArrayList<TableRowResponse> convertTokensToTableRow(ArrayList<ArrayList<String>> tokens,
+                                                                String tableFilename) {
         if (tokens == null) {
             return null;
         }
         ArrayList<TableRowResponse> result = new ArrayList<>();
         TableRowResponse temp;
         for(ArrayList<String> token: tokens) {
-            temp = new TableRowResponse(token);
+            temp = new TableRowResponse(token, tableFilename);
             if (this.isValidTableRowResponse(temp)) {
                 result.add(temp);
             }
@@ -232,7 +233,7 @@ public class FileServiceV3 {
         for (String tableFilename: tableFilenames) {
             TextFileParser textFileParser = new TextFileParser(saveDir + tableFilename);
             temp = textFileParser.getTextData();
-            temp2 = this.convertTokensToTableRow(temp);
+            temp2 = this.convertTokensToTableRow(temp, tableFilename);
             if (temp2 != null) {
                 finalResult.addAll(temp2);
             }

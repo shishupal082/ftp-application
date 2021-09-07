@@ -85,6 +85,10 @@ public class FileServiceV2 {
                                     String filenames, String tableNames) throws AppException {
         return csvDbTable.getTableData(loginUserDetails, filenames, tableNames);
     }
+    public ApiResponse getTableDataV2(LoginUserDetails loginUserDetails,
+                                    String filenames, String tableNames) throws AppException {
+        return csvDbTable.getTableDataV2(loginUserDetails, filenames, tableNames);
+    }
     public PathInfo getUserCsvData(LoginUserDetails loginUserDetails) throws AppException {
         String saveDir = appConfig.getFileSaveDirV2(loginUserDetails);
         ArrayList<String> responseFilenames = this.getUsersFilePath(loginUserDetails, saveDir, false);

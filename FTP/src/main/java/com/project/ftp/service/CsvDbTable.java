@@ -45,10 +45,11 @@ public class CsvDbTable {
         }
         return result;
     }
-    public ApiResponse getTableData(LoginUserDetails loginUserDetails, String filenames,
-                                                    String tableNames) throws AppException {
-        boolean isAdmin = userService.isLoginUserAdmin(loginUserDetails);
-        String saveDir = appConfig.getFileSaveDirV2(loginUserDetails);// throw error when invalid
+    private ArrayList<TableRowResponse> getTableRowResponses(LoginUserDetails loginUserDetails, String saveDir,
+                                                             boolean isAdmin, String filenames, String tableNames) {
+        if (StaticService.isInValidString(saveDir)) {
+            return null;
+        }
         ArrayList<String> response = fileServiceV3.getUsersFilePathV2(loginUserDetails, saveDir, isAdmin);
         ArrayList<String> response2;
         if (response != null && StaticService.isValidString(filenames)) {
@@ -57,12 +58,10 @@ public class CsvDbTable {
             response2 = response;
         }
         ArrayList<TableRowResponse> rowResponses = fileServiceV3.getTableRowResponseByFilePath(saveDir, response2);
-        HashMap<String, ArrayList<TableRowResponse>> finalResponse = new HashMap<>();
-        String tempTableName;
-        ArrayList<TableRowResponse> tableData;
+        ArrayList<TableRowResponse> finalResponses = new ArrayList<>();
         boolean filterTableName = StaticService.isValidString(tableNames);
         ArrayList<String> deletedIds = this.getDeletedIds(saveDir, loginUserDetails, isAdmin);
-        int count = 0;
+        String tempTableName;
         if (rowResponses != null) {
             if (deletedIds == null) {
                 deletedIds = new ArrayList<>();
@@ -83,6 +82,27 @@ public class CsvDbTable {
                         continue;
                     }
                 }
+                finalResponses.add(tableRowResponse);
+            }
+        }
+        return finalResponses;
+    }
+    public ApiResponse getTableData(LoginUserDetails loginUserDetails, String filenames,
+                                                    String tableNames) throws AppException {
+        boolean isAdmin = userService.isLoginUserAdmin(loginUserDetails);
+        String saveDir = appConfig.getFileSaveDirV2(loginUserDetails);// throw error when invalid
+        ArrayList<TableRowResponse> rowResponses =
+                this.getTableRowResponses(loginUserDetails, saveDir, isAdmin, filenames, tableNames);
+        HashMap<String, ArrayList<TableRowResponse>> finalResponse = new HashMap<>();
+        String tempTableName;
+        ArrayList<TableRowResponse> tableData;
+        int count = 0;
+        if (rowResponses != null) {
+            for (TableRowResponse tableRowResponse: rowResponses) {
+                if (!fileServiceV3.isValidTableRowResponse(tableRowResponse)) {
+                    continue;
+                }
+                tempTableName = tableRowResponse.getTableName();
                 tableData = finalResponse.computeIfAbsent(tempTableName, k -> new ArrayList<>());
                 tableData.add(tableRowResponse);
                 count++;
@@ -90,6 +110,19 @@ public class CsvDbTable {
         }
         logger.info("Total row count: {}, table count: {}", count, finalResponse.keySet().size());
         return new ApiResponse(finalResponse);
+    }
+    public ApiResponse getTableDataV2(LoginUserDetails loginUserDetails, String filenames,
+                                    String tableNames) throws AppException {
+        boolean isAdmin = userService.isLoginUserAdmin(loginUserDetails);
+        String saveDir = appConfig.getFileSaveDirV2(loginUserDetails);// throw error when invalid
+        ArrayList<TableRowResponse> rowResponses =
+                this.getTableRowResponses(loginUserDetails, saveDir, isAdmin, filenames, tableNames);
+        if (rowResponses == null) {
+            logger.info("Error in reading table data");
+            return new ApiResponse(ErrorCodes.SERVER_ERROR);
+        }
+        logger.info("Total table entry count: {}", rowResponses.size());
+        return new ApiResponse(rowResponses);
     }
     public ApiResponse scanUserDatabaseDirectory(LoginUserDetails loginUserDetails,
                                                  String filenames, boolean isAdmin) throws AppException {
