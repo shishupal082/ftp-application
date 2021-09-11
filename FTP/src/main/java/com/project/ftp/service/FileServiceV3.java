@@ -10,6 +10,7 @@ import com.project.ftp.parser.TextFileParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -58,7 +59,7 @@ public class FileServiceV3 {
         }
     }
     public ArrayList<String> removeDeleteFileName(ArrayList<String> response) {
-        return this.filterFilename(AppConstant.DELETE_TABLE_FILE_NAME, response, true);
+        return this.filterFilename(AppConstant.DELETE_TABLE_FILE_NAME, response, AppConstant.true1);
     }
     public ArrayList<String> filterFilename(String requiredFilenamePattern,
                                             ArrayList<String> allUserFilename, boolean revertResult) {
@@ -72,8 +73,10 @@ public class FileServiceV3 {
             temp = userFilename.split("/");
             if (temp.length == 3) {
                 isMatched = StaticService.isPatternMatching(temp[2], requiredFilenamePattern, true);
-                if (revertResult && !isMatched) {
-                    result.add(userFilename);
+                if (revertResult) {
+                    if (!isMatched) {
+                        result.add(userFilename);
+                    }
                 } else if (isMatched) {
                     result.add(userFilename);
                 }
@@ -81,8 +84,8 @@ public class FileServiceV3 {
         }
         return result;
     }
-    public ArrayList<String> getUsersFilePath(LoginUserDetails loginUserDetails, String saveDir,
-                                              boolean isAddDatabaseDir, boolean isAdmin) {
+    public ArrayList<String> getUsersFilePathByRelatedUsers(ArrayList<String> relatedUsers, String saveDir,
+                                                boolean isAddDatabaseDir, boolean isAdmin) {
         ArrayList<ScanResult> scanResults = new ArrayList<>();
         ArrayList<String> response = new ArrayList<>();
         if (saveDir == null) {
@@ -90,11 +93,9 @@ public class FileServiceV3 {
             return response;
         }
         String scanDir;
-        String loginUserName = loginUserDetails.getUsername();
         if (isAdmin) {
             scanResults.add(fileService.scanDirectory(saveDir, saveDir, true, isAddDatabaseDir));
-        } else {
-            ArrayList<String> relatedUsers = userService.getRelatedUsers(loginUserName);
+        } else if (relatedUsers != null) {
             for (String username: relatedUsers) {
                 scanDir = saveDir + username + "/";
                 if (isAddDatabaseDir) {
@@ -104,36 +105,26 @@ public class FileServiceV3 {
             }
         }
         this.generateApiResponse(saveDir, scanResults, response);
-//        logger.info("scanUserDatabaseDirectory complete, result size: {}", response.size());
         return response;
     }
-    public ArrayList<String> getUsersFilePathV2(LoginUserDetails loginUserDetails,
-                                                String saveDir, boolean isAdmin) {
-        ArrayList<String> response = this.getUsersFilePath(loginUserDetails, saveDir, true, isAdmin);
-        response = this.removeDeleteFileName(response);
-        return response;
-    }
-    public ArrayList<String> getUserDatabaseFilePathByUsername(String saveDir,
-                                                               LoginUserDetails loginUserDetails, String username) {
-        ArrayList<ScanResult> scanResults = new ArrayList<>();
-        ArrayList<String> response = new ArrayList<>();
-        if (saveDir == null) {
-            logger.info("fileSaveDir is: null");
-            return response;
-        }
-        String scanDir;
+    public ArrayList<String> getUsersFilePath(LoginUserDetails loginUserDetails, String saveDir,
+                                              boolean isAddDatabaseDir, boolean isAdmin) {
+        ArrayList<String> response;
         String loginUserName = loginUserDetails.getUsername();
-        ArrayList<String> relatedUsers = userService.getRelatedUsers(loginUserName);
-        if (relatedUsers != null) {
-            if (relatedUsers.contains(username)) {
-                scanDir = saveDir + username + "/";
-                scanResults.add(fileService.scanDirectory(scanDir, scanDir, false, true));
-            }
+        ArrayList<String> relatedUsers = new ArrayList<>();
+        if (isAdmin) {
+            response = this.getUsersFilePathByRelatedUsers(relatedUsers, saveDir, isAddDatabaseDir, true);
+        } else {
+            relatedUsers = userService.getRelatedUsers(loginUserName);
+            response = this.getUsersFilePathByRelatedUsers(relatedUsers, saveDir, isAddDatabaseDir, false);
         }
-        this.generateApiResponse(saveDir, scanResults, response);
-        this.removeDeleteFileName(response);
-//        logger.info("scanUserDatabaseDirectory complete, result size: {}", response.size());
         return response;
+    }
+    public ArrayList<String> getCurrentUsersFilePath(@NotNull LoginUserDetails loginUserDetails, String saveDir,
+                                                     boolean isAddDatabaseDir) {
+        ArrayList<String> relatedUsers = new ArrayList<>();
+        relatedUsers.add(loginUserDetails.getUsername());
+        return this.getUsersFilePathByRelatedUsers(relatedUsers, saveDir, isAddDatabaseDir, false);
     }
     public HashMap<String, String> parseRequestedFileStr(String filename, boolean containsDatabaseDir) {
         HashMap<String, String> response = new HashMap<>();

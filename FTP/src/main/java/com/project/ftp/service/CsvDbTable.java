@@ -22,9 +22,10 @@ public class CsvDbTable {
         this.fileServiceV3 = new FileServiceV3(appConfig, userService);
     }
     public ArrayList<String> getDeletedIds(String saveDir, LoginUserDetails loginUserDetails, boolean isAdmin) {
-        ArrayList<String> response = fileServiceV3.getUsersFilePath(loginUserDetails, saveDir, true, isAdmin);
+        ArrayList<String> response =
+                fileServiceV3.getUsersFilePath(loginUserDetails, saveDir, AppConstant.true1, isAdmin);
         ArrayList<String> deleteTableFilenames =
-                fileServiceV3.filterFilename(AppConstant.DELETE_TABLE_FILE_NAME, response, false);
+                fileServiceV3.filterFilename(AppConstant.DELETE_TABLE_FILE_NAME, response, AppConstant.false1);
         ArrayList<TableRowResponse> rowResponses =
                 fileServiceV3.getTableRowResponseByFilePath(saveDir, deleteTableFilenames);
         ArrayList<String> result = new ArrayList<>();
@@ -50,10 +51,11 @@ public class CsvDbTable {
         if (StaticService.isInValidString(saveDir)) {
             return null;
         }
-        ArrayList<String> response = fileServiceV3.getUsersFilePathV2(loginUserDetails, saveDir, isAdmin);
+        ArrayList<String> response = fileServiceV3.getUsersFilePath(loginUserDetails, saveDir, AppConstant.true1, isAdmin);
+        response = fileServiceV3.removeDeleteFileName(response);
         ArrayList<String> response2;
         if (response != null && StaticService.isValidString(filenames)) {
-            response2 = fileServiceV3.filterFilename(filenames, response, false);
+            response2 = fileServiceV3.filterFilename(filenames, response, AppConstant.false1);
         } else {
             response2 = response;
         }
@@ -78,7 +80,7 @@ public class CsvDbTable {
                     continue;
                 }
                 if (filterTableName) {
-                    if (!StaticService.isPatternMatching(tempTableName, tableNames, true)) {
+                    if (!StaticService.isPatternMatching(tempTableName, tableNames, AppConstant.true1)) {
                         continue;
                     }
                 }
@@ -176,9 +178,8 @@ public class CsvDbTable {
         }
         boolean isAdmin = userService.isLoginUserAdmin(loginUserDetails);
         String deleteId = deleteText.getDeleteId();
-        String tableName = deleteText.getTableName();
-        if (StaticService.isInValidString(deleteId) || StaticService.isInValidString(tableName)) {
-            logger.info("Invalid request deleteId or tableName: {}, {}", deleteId, tableName);
+        if (StaticService.isInValidString(deleteId)) {
+            logger.info("Invalid request deleteId: {}", deleteId);
             throw new AppException(ErrorCodes.BAD_REQUEST_ERROR);
         }
         String saveDir = appConfig.getFileSaveDirV2(loginUserDetails);
@@ -188,24 +189,26 @@ public class CsvDbTable {
             throw new AppException(ErrorCodes.DELETE_TEXT_ALREADY_DELETED);
         }
         String username = loginUserDetails.getUsername();
-        ArrayList<String> tableFileNames = fileServiceV3.getUsersFilePathV2(loginUserDetails, saveDir, isAdmin);
+        // Users can delete there own text only
+        ArrayList<String> tableFileNames =
+                fileServiceV3.getCurrentUsersFilePath(loginUserDetails, saveDir, AppConstant.true1);
+        tableFileNames = fileServiceV3.removeDeleteFileName(tableFileNames);
         ArrayList<TableRowResponse> rowResponses = fileServiceV3.getTableRowResponseByFilePath(saveDir, tableFileNames);
         TableRowResponse finalRowResponse = null;
         int entryCount = 0;
         if (rowResponses != null) {
             for (TableRowResponse rowResponse: rowResponses) {
-                if (tableName.equals(rowResponse.getTableName()) &&
-                        deleteId.equals(rowResponse.getTableUniqueId())) {
+                if (deleteId.equals(rowResponse.getTableUniqueId())) {
                     entryCount++;
                     finalRowResponse = rowResponse;
                 }
             }
         }
         if (entryCount > 1) {
-            logger.info("Duplicate entry for deleteId and tableName: {}, {}", deleteId, tableName);
+            logger.info("Duplicate entry for deleteId: {}", deleteId);
             throw new AppException(ErrorCodes.DELETE_TEXT_DUPLICATE);
         } else if (entryCount == 0) {
-            logger.info("Entry not found for deleteId and tableName: {}, {}", deleteId, tableName);
+            logger.info("Entry not found for deleteId: {}", deleteId);
             throw new AppException(ErrorCodes.DELETE_TEXT_NOT_FOUND);
         }
         RequestAddText addText = new RequestAddText();
@@ -218,7 +221,7 @@ public class CsvDbTable {
         if (textAdded) {
             return new ApiResponse();
         }
-        logger.info("Error in adding delete text: {}, {}", deleteId, tableName);
+        logger.info("Error in adding deleteText: {}", deleteText);
         throw new AppException(ErrorCodes.SERVER_ERROR);
     }
 }

@@ -6,7 +6,6 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 public class RequestDeleteText {
     private String deleteId;
-    private String tableName;
 
     public String getDeleteId() {
         return deleteId;
@@ -16,19 +15,10 @@ public class RequestDeleteText {
         this.deleteId = deleteId;
     }
 
-    public String getTableName() {
-        return tableName;
-    }
-
-    public void setTableName(String tableName) {
-        this.tableName = tableName;
-    }
-
     @Override
     public String toString() {
         return "RequestDeleteText{" +
                 "deleteId='" + deleteId + '\'' +
-                ", tableName='" + tableName + '\'' +
                 '}';
     }
 }

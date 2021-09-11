@@ -3,6 +3,10 @@ configDataFilePath: "D:/workspace/project/ftp-app/config-files/"
 publicDir: "../.."
 publicPostDir: "/project"
 
+eventConfig:
+  enabled: true
+  staticDir: false
+  eventDataFilenamePattern: "'event_data/'yyyy-MM-dd-HH-mm'-event_data.csv'"
 
 
 #  forgotPasswordMessage: "Forgot password request submitted, Please check your email."
@@ -24,13 +28,6 @@ enableMysqlTableName:
 allowedTableFilename:
   - "(delete_table|project_table)[.]csv"
   - "(feedback_table|comment_table)[.]csv"
-
-
-
-eventConfig:
-  enabled: true
-  staticDir: false
-  eventDataFilenamePattern: "'event_data/'yyyy-MM-dd-HH-mm'-event_data.csv'"
 
 userDataFilename: "user_data.csv"
 

@@ -1236,6 +1236,12 @@ eventConfig:
     - staticDir: boolean
     - eventDataFilenamePattern: String
 
+8.0.2.2
+----------
+11.09.2021
+----------
+Remove deleteText parameter
+    - tableName (As it is only required deleteId)
 
 
 Permission vs api / view list

@@ -36,22 +36,17 @@ public class FileServiceV2 {
     private String parseUserFileName(String fileSaveDir, String fileName) {
         return fileServiceV3.parseUserFileName(fileSaveDir, fileName);
     }
-    private void generateApiResponse(String fileSaveDir, ArrayList<ScanResult> scanResults,
-                                     ArrayList<String> response) {
-        this.fileServiceV3.generateApiResponse(fileSaveDir, scanResults, response);
-    }
     private ArrayList<ResponseFilesInfo> generateFileInfoResponse(ArrayList<String> res,
                                                           LoginUserDetails loginUserDetails, boolean addDatabasePath) {
         return fileServiceV3.generateFileInfoResponse(res, loginUserDetails, addDatabasePath);
     }
     public ApiResponse scanCurrentUserDirectory(LoginUserDetails loginUserDetails) throws AppException {
-        ArrayList<ScanResult> scanResults = new ArrayList<>();
-        String dir = appConfig.getFileSaveDirV2(loginUserDetails);
-        String loginUserName = loginUserDetails.getUsername();
-        dir = dir + loginUserName + "/";
-        scanResults.add(fileService.scanDirectory(dir, dir, false, false));
-        ArrayList<String> response = new ArrayList<>();
-        this.generateApiResponse(dir, scanResults, response);
+        String saveDir = appConfig.getFileSaveDirV2(loginUserDetails);
+        ArrayList<String> response =
+                fileServiceV3.getCurrentUsersFilePath(loginUserDetails, saveDir, false);
+        if (response == null) {
+            response = new ArrayList<>();
+        }
         logger.info("scanUserDirectory result size: {}", response.size());
         ArrayList<ResponseFilesInfo> filesInfo =
                 this.generateFileInfoResponse(response, loginUserDetails, false);
