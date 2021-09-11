@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.project.ftp.bridge.config.CreatePasswordEmailConfig;
 import com.project.ftp.bridge.config.EmailConfig;
+import com.project.ftp.obj.yamlObj.EventConfig;
 import com.project.ftp.obj.yamlObj.FtlConfig;
 import io.dropwizard.Configuration;
 import io.dropwizard.db.DataSourceFactory;
@@ -28,7 +29,6 @@ public class FtpConfiguration extends Configuration {
     private String forgotPasswordMessage;
     private String loadRoleStatusOnPageLoad;
     private String staticDataFilename;
-    private String eventDataFilenamePattern;
     private String userDataFilename;
     private String aesEncryptionPassword;
 
@@ -53,6 +53,7 @@ public class FtpConfiguration extends Configuration {
     private EmailConfig emailConfig;
     private CreatePasswordEmailConfig createPasswordEmailConfig;
     private FtlConfig ftlConfig;
+    private EventConfig eventConfig;
     @JsonProperty("database")
     private DataSourceFactory dataSourceFactory = new DataSourceFactory();
 
@@ -150,14 +151,6 @@ public class FtpConfiguration extends Configuration {
 
     public void setStaticDataFilename(String staticDataFilename) {
         this.staticDataFilename = staticDataFilename;
-    }
-
-    public String getEventDataFilenamePattern() {
-        return eventDataFilenamePattern;
-    }
-
-    public void setEventDataFilenamePattern(String eventDataFilenamePattern) {
-        this.eventDataFilenamePattern = eventDataFilenamePattern;
     }
 
     public String getUserDataFilename() {
@@ -328,6 +321,13 @@ public class FtpConfiguration extends Configuration {
         this.ftlConfig = ftlConfig;
     }
 
+    public EventConfig getEventConfig() {
+        return eventConfig;
+    }
+
+    public void setEventConfig(EventConfig eventConfig) {
+        this.eventConfig = eventConfig;
+    }
     public DataSourceFactory getDataSourceFactory() {
         return dataSourceFactory;
     }
@@ -387,10 +387,6 @@ public class FtpConfiguration extends Configuration {
         String staticDataFilename = tempFtpConfiguration.getStaticDataFilename();
         if (staticDataFilename != null) {
             this.staticDataFilename = staticDataFilename;
-        }
-        String eventDataFilenamePattern = tempFtpConfiguration.getEventDataFilenamePattern();
-        if (eventDataFilenamePattern != null) {
-            this.eventDataFilenamePattern = eventDataFilenamePattern;
         }
         String userDataFilename = tempFtpConfiguration.getUserDataFilename();
         if (userDataFilename != null) {
@@ -472,6 +468,10 @@ public class FtpConfiguration extends Configuration {
         if (ftlConfig != null) {
             this.ftlConfig = ftlConfig;
         }
+        EventConfig eventConfig = tempFtpConfiguration.getEventConfig();
+        if (eventConfig != null) {
+            this.eventConfig = eventConfig;
+        }
     }
 
     @Override
@@ -489,7 +489,6 @@ public class FtpConfiguration extends Configuration {
                 ", forgotPasswordMessage='" + forgotPasswordMessage + '\'' +
                 ", loadRoleStatusOnPageLoad='" + loadRoleStatusOnPageLoad + '\'' +
                 ", staticDataFilename='" + staticDataFilename + '\'' +
-                ", eventDataFilenamePattern='" + eventDataFilenamePattern + '\'' +
                 ", userDataFilename='" + userDataFilename + '\'' +
                 ", aesEncryptionPassword='" + "*****" + '\'' +
                 ", createReadmePdf=" + createReadmePdf +
@@ -511,6 +510,7 @@ public class FtpConfiguration extends Configuration {
                 ", emailConfig=" + emailConfig +
                 ", createPasswordEmailConfig=" + createPasswordEmailConfig +
                 ", ftlConfig=" + ftlConfig +
+                ", eventConfig=" + eventConfig +
                 ", dataSourceFactory=" + "*****" +
                 '}';
     }

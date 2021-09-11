@@ -3,6 +3,7 @@ package com.project.ftp.intreface;
 import com.project.ftp.common.DateUtilities;
 import com.project.ftp.config.AppConfig;
 import com.project.ftp.config.AppConstant;
+import com.project.ftp.obj.yamlObj.EventConfig;
 import com.project.ftp.parser.TextFileParser;
 import com.project.ftp.service.FileService;
 import com.project.ftp.service.StaticService;
@@ -20,10 +21,19 @@ public class EventFile implements EventInterface {
     }
     private String getEventDataFileName() {
         String configPath = appConfig.getFtpConfiguration().getConfigDataFilePath();
-        String format = appConfig.getFtpConfiguration().getEventDataFilenamePattern();
+        EventConfig eventConfig = appConfig.getFtpConfiguration().getEventConfig();
         String filename = AppConstant.EVENT_DATA_FILENAME;
+        String format = null;
+        boolean isStaticDir = false;
+        if (eventConfig != null) {
+            format = eventConfig.getEventDataFilenamePattern();
+            isStaticDir = eventConfig.isStaticDir();
+        }
         if (format != null) {
             filename = dateUtilities.getDateStrFromPattern(format);
+        }
+        if (isStaticDir) {
+            return filename;
         }
         return configPath + filename;
     }

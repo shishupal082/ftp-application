@@ -1,16 +1,27 @@
 package com.project.ftp.event;
 
+import com.project.ftp.config.AppConfig;
 import com.project.ftp.config.AppConstant;
 import com.project.ftp.exceptions.ErrorCodes;
 import com.project.ftp.intreface.EventInterface;
+import com.project.ftp.obj.yamlObj.EventConfig;
 import com.project.ftp.service.StaticService;
 
 public class AddEvent {
+    private final AppConfig appConfig;
     private final EventInterface eventInterface;
-    public AddEvent(final EventInterface eventInterface) {
+    public AddEvent(final AppConfig appConfig, final EventInterface eventInterface) {
+        this.appConfig = appConfig;
         this.eventInterface = eventInterface;
     }
+    private boolean isEventLoggingDisabled() {
+        EventConfig eventConfig = appConfig.getFtpConfiguration().getEventConfig();
+        return eventConfig == null || !eventConfig.isEnabled();
+    }
     public void addCommonEvent(String username, String eventNameStr, String status, String reason, String comment) {
+        if (this.isEventLoggingDisabled()) {
+            return;
+        }
         eventInterface.addText(username, eventNameStr, status, reason, comment);
     }
     public void addFailureEvent(String username, EventName eventName,
@@ -52,6 +63,9 @@ public class AddEvent {
     }
 
     public void addEventTextV2(String username, EventName eventName, String status, String reason, String comment) {
+        if (this.isEventLoggingDisabled()) {
+            return;
+        }
         String eventNameStr = null;
         if (eventName != null) {
             eventNameStr = eventName.getName();
@@ -60,6 +74,9 @@ public class AddEvent {
     }
 
     public void addCommonEventV2(String username, String eventNameStr, String status, String reason, String comment) {
+        if (this.isEventLoggingDisabled()) {
+            return;
+        }
         eventInterface.addTextV2(username, eventNameStr, status, reason, comment);
     }
 }

@@ -23,7 +23,6 @@ public class EventTracking {
     final static private Logger logger = LoggerFactory.getLogger(EventTracking.class);
     private final UserService userService;
     private final SessionService sessionService;
-    private final AppConfig appConfig;
     private final AddEvent addEvent;
     private final String uiUserAgent = "uiUserAgent";
     private final String uiUserName = "uiUserName";
@@ -41,10 +40,9 @@ public class EventTracking {
     public EventTracking(final AppConfig appConfig,
                          final UserService userService,
                          final EventInterface eventInterface) {
-        this.appConfig = appConfig;
         this.userService = userService;
         this.sessionService = new SessionService(appConfig);
-        this.addEvent = new AddEvent(eventInterface);
+        this.addEvent = new AddEvent(appConfig, eventInterface);
     }
 
     private String generateCommentString(HashMap<String, String> commentData, ArrayList<String> sequence) {

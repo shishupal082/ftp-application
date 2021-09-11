@@ -1228,6 +1228,15 @@ Added new api
 
 Added tableFilename in each tableRowResponse
 
+11.09.2021
+----------
+FtpConfiguration.eventDataFilenamePattern changed to FtpConfiguration.eventConfig
+eventConfig:
+    - enabled: boolean
+    - staticDir: boolean
+    - eventDataFilenamePattern: String
+
+
 
 Permission vs api / view list
 ------------------------------
