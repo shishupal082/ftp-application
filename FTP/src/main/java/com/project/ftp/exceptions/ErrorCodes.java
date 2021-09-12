@@ -13,7 +13,7 @@ public enum ErrorCodes {
     UNAUTHORIZED_ROLE_ACCESS("UNAUTHORIZED_ROLE_ACCESS", "UnAuthorized Role Access", 401),
     DELETE_TEXT_DUPLICATE("DELETE_TEXT_DUPLICATE", "Duplicate entry found", 401),
     DELETE_TEXT_DUPLICATE_OTHER_USER("DELETE_TEXT_DUPLICATE_OTHER_USER", "Duplicate entry found in other user", 401),
-    DELETE_TEXT_NOT_FOUND_IN_USER_DIR("DELETE_TEXT_NOT_FOUND_IN_USER_DIR", "Entry not found in user directory", 401),
+    DELETE_TEXT_NOT_FOUND("DELETE_TEXT_NOT_FOUND", "Entry not found", 401),
     DELETE_TEXT_ALREADY_DELETED("DELETE_TEXT_ALREADY_DELETED", "Entry already deleted", 401),
     DELETE_TEXT_UNAUTHORISED("DELETE_TEXT_UNAUTHORISED", "Delete text unauthorised", 401),
     FILE_NOT_FOUND("FILE_NOT_FOUND", "File not found", 402),

@@ -218,7 +218,7 @@ public class CsvDbTable {
             for (TableRowResponse rowResponse: currentUserRowResponses) {
                 if (deleteId.equals(rowResponse.getTableUniqueId())) {
                     entryCount++;
-                    logger.info("Entry found in other user: {}", rowResponse);
+                    logger.info("Entry found in current user: {}", rowResponse);
                     finalRowResponse = rowResponse;
                 }
             }
@@ -237,7 +237,7 @@ public class CsvDbTable {
             throw new AppException(ErrorCodes.DELETE_TEXT_DUPLICATE);
         } else if (entryCount == 0) {
             logger.info("Entry not found for deleteId: {}", deleteId);
-            throw new AppException(ErrorCodes.DELETE_TEXT_NOT_FOUND_IN_USER_DIR);
+            throw new AppException(ErrorCodes.DELETE_TEXT_NOT_FOUND);
         }
         RequestAddText addText = new RequestAddText();
         addText.setFilename(AppConstant.DELETE_TABLE_FILE_NAME);
