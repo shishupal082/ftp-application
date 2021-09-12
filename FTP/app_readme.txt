@@ -1243,6 +1243,13 @@ eventConfig:
 Remove deleteText parameter
     - tableName (As it is only required deleteId)
 
+12.09.2021
+----------
+
+Added new role
+    - isDeleteTextEnable
+
+
 
 Permission vs api / view list
 ------------------------------
@@ -1252,6 +1259,7 @@ Predefined role
     - isUsersControlEnable
     - isLoginOtherUserEnable
     - isAddTextEnable
+    - isDeleteTextEnable
     - isUploadFileEnable
     - isDeleteFileEnable
     - getAllUsersEnable

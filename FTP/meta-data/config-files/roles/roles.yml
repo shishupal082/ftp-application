@@ -37,6 +37,7 @@ roleAccessMapping:
   isDevUser4: (dev|admin)
   isUploadFileEnable: true
   isAddTextEnable: true
+  isDeleteTextEnable: true
   isUsersControlEnable: UsersControlGroup
   isLoginOtherUserEnable: Group1_users
   isAdminTextDisplayEnable: admin

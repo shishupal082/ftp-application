@@ -15,8 +15,10 @@ public class AppConstant {
     public static final String FAILURE = "FAILURE";
     public static final String TRUE = "true";
     public static final String FALSE = "false";
-    public static final boolean true1 = true;
-    public static final boolean false1 = false;
+    public static final boolean ADMIN_TRUE = true;
+    public static final boolean DB_TRUE = true;
+    public static final boolean EXACT_MATCH = true;
+    public static final boolean REVERT_RESULT = true;
     public static final String IFRAME = "iframe";
     public static final String FILE_USERNAME = "fileUsername";
     public static final String FILE_NAME_STR = "filenameStr";
@@ -79,6 +81,7 @@ public class AppConstant {
     public static final String IS_USERS_CONTROL_ENABLE = "isUsersControlEnable";
     public static final String IS_LOGIN_OTHER_USER_ENABLE = "isLoginOtherUserEnable";
     public static final String IS_ADD_TEXT_ENABLE = "isAddTextEnable";
+    public static final String IS_DELETE_TEXT_ENABLE = "isDeleteTextEnable";
     public static final String IS_UPLOAD_FILE_ENABLE = "isUploadFileEnable";
     public static final String IS_DELETE_FILE_ENABLE = "isDeleteFileEnable";
     public static final String IS_GET_ALL_USERS_ENABLE = "getAllUsersEnable";

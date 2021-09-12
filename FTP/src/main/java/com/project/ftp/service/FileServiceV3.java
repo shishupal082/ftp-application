@@ -59,7 +59,7 @@ public class FileServiceV3 {
         }
     }
     public ArrayList<String> removeDeleteFileName(ArrayList<String> response) {
-        return this.filterFilename(AppConstant.DELETE_TABLE_FILE_NAME, response, AppConstant.true1);
+        return this.filterFilename(AppConstant.DELETE_TABLE_FILE_NAME, response, AppConstant.REVERT_RESULT);
     }
     public ArrayList<String> filterFilename(String requiredFilenamePattern,
                                             ArrayList<String> allUserFilename, boolean revertResult) {
@@ -72,7 +72,7 @@ public class FileServiceV3 {
         for(String userFilename: allUserFilename) {
             temp = userFilename.split("/");
             if (temp.length == 3) {
-                isMatched = StaticService.isPatternMatching(temp[2], requiredFilenamePattern, true);
+                isMatched = StaticService.isPatternMatching(temp[2], requiredFilenamePattern, AppConstant.EXACT_MATCH);
                 if (revertResult) {
                     if (!isMatched) {
                         result.add(userFilename);
@@ -101,22 +101,22 @@ public class FileServiceV3 {
                 if (isAddDatabaseDir) {
                     scanDir += AppConstant.DATABASE + "/";
                 }
-                scanResults.add(fileService.scanDirectory(scanDir, scanDir, false, false));
+                scanResults.add(fileService.scanDirectory(scanDir, scanDir, false, !AppConstant.DB_TRUE));
             }
         }
         this.generateApiResponse(saveDir, scanResults, response);
         return response;
     }
     public ArrayList<String> getUsersFilePath(LoginUserDetails loginUserDetails, String saveDir,
-                                              boolean isAddDatabaseDir, boolean isAdmin) {
+                                              boolean isDBDir, boolean isAdmin) {
         ArrayList<String> response;
         String loginUserName = loginUserDetails.getUsername();
         ArrayList<String> relatedUsers = new ArrayList<>();
         if (isAdmin) {
-            response = this.getUsersFilePathByRelatedUsers(relatedUsers, saveDir, isAddDatabaseDir, true);
+            response = this.getUsersFilePathByRelatedUsers(relatedUsers, saveDir, isDBDir, AppConstant.ADMIN_TRUE);
         } else {
             relatedUsers = userService.getRelatedUsers(loginUserName);
-            response = this.getUsersFilePathByRelatedUsers(relatedUsers, saveDir, isAddDatabaseDir, false);
+            response = this.getUsersFilePathByRelatedUsers(relatedUsers, saveDir, isDBDir, !AppConstant.ADMIN_TRUE);
         }
         return response;
     }
@@ -124,7 +124,7 @@ public class FileServiceV3 {
                                                      boolean isAddDatabaseDir) {
         ArrayList<String> relatedUsers = new ArrayList<>();
         relatedUsers.add(loginUserDetails.getUsername());
-        return this.getUsersFilePathByRelatedUsers(relatedUsers, saveDir, isAddDatabaseDir, false);
+        return this.getUsersFilePathByRelatedUsers(relatedUsers, saveDir, isAddDatabaseDir, !AppConstant.ADMIN_TRUE);
     }
     public HashMap<String, String> parseRequestedFileStr(String filename, boolean containsDatabaseDir) {
         HashMap<String, String> response = new HashMap<>();

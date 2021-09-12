@@ -252,13 +252,7 @@ public class FileServiceV2 {
     private boolean isFileDeleteAllowed(LoginUserDetails loginUserDetails,
                                         String fileUsername, String filename) throws AppException {
         if (fileUsername != null && fileUsername.equals(loginUserDetails.getUsername())) {
-            boolean isDeleteEnable = userService.isAuthorised(loginUserDetails, AppConstant.IS_DELETE_FILE_ENABLE);
-            if (isDeleteEnable) {
-                logger.info("isFileDeleteAllowed: true, {}/{}", fileUsername, filename);
-            } else {
-                logger.info("isFileDeleteAllowed: false, user UnAuthorised: {}", loginUserDetails);
-                throw new AppException(ErrorCodes.FILE_DELETE_UNAUTHORISED);
-            }
+            logger.info("isFileDeleteAllowed: true, {}/{}", fileUsername, filename);
         } else {
             logger.info("isFileDeleteAllowed: false, fileUsername and loginUsername not matching: {}, {}",
                     fileUsername, loginUserDetails);
@@ -450,11 +444,6 @@ public class FileServiceV2 {
     public ApiResponse addTextV2(LoginUserDetails loginUserDetails, RequestAddText addText) throws AppException {
         String saveDir = appConfig.getFileSaveDirV2(loginUserDetails);
         fileServiceV3.verifyAddTextRequest(addText);
-        boolean isAuthorised = userService.isAuthorised(loginUserDetails, AppConstant.IS_ADD_TEXT_ENABLE);
-        if (!isAuthorised) {
-            logger.info("addText is disabled.");
-            throw new AppException(ErrorCodes.ADD_TEXT_DISABLED);
-        }
         String username = loginUserDetails.getUsername();
         boolean textAdded = fileServiceV3.saveAddTextV2(saveDir, username, addText);
         if (textAdded) {
@@ -521,11 +510,6 @@ public class FileServiceV2 {
         if (fileName == null) {
             logger.info("fileName is: null");
             throw new AppException(ErrorCodes.UPLOAD_FILE_FILENAME_REQUIRED);
-        }
-        boolean isAuthorised = userService.isAuthorised(loginUserDetails, AppConstant.IS_UPLOAD_FILE_ENABLE);
-        if (!isAuthorised) {
-            logger.info("fileUpload is disabled.");
-            throw new AppException(ErrorCodes.FILE_UPLOAD_UNAUTHORISED);
         }
         fileName = StaticService.replaceComma(fileName);
         PathInfo pathInfo = this.uploadFile(loginUserDetails, saveDir, uploadedInputStream, fileName);

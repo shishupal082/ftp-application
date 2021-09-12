@@ -146,7 +146,7 @@ public class ApiResource {
         logger.info("deleteFile In: {}, user: {}", deleteFile, userService.getUserDataForLogging(request));
         ApiResponse apiResponse;
         try {
-            authService.isLogin(request);
+            authService.isAuthorised(request, AppConstant.IS_DELETE_FILE_ENABLE);
             LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
             fileServiceV2.deleteRequestFile(loginUserDetails, deleteFile);
             apiResponse = new ApiResponse();
@@ -341,7 +341,7 @@ public class ApiResource {
                 fileDetail, userService.getUserDataForLogging(request));
         ApiResponse response;
         try {
-            authService.isLogin(request);
+            authService.isAuthorised(request, AppConstant.IS_UPLOAD_FILE_ENABLE);
             LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
             response = fileServiceV2.uploadFileV2(loginUserDetails, uploadedInputStream, fileDetail);
             eventTracking.addSuccessUploadFile(request, fileDetail, uiUsername);
@@ -365,7 +365,7 @@ public class ApiResource {
         }
         ApiResponse response;
         try {
-            authService.isLogin(request);
+            authService.isAuthorised(request, AppConstant.IS_ADD_TEXT_ENABLE);
             LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
             response = fileServiceV2.addText(loginUserDetails, addText);
             eventTracking.trackSuccessEventV2(request, EventName.ADD_TEXT, comment);
@@ -388,7 +388,7 @@ public class ApiResource {
         }
         ApiResponse response;
         try {
-            authService.isLogin(request);
+            authService.isAuthorised(request, AppConstant.IS_ADD_TEXT_ENABLE);
             LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
             response = fileServiceV2.addTextV2(loginUserDetails, addText);
             eventTracking.trackSuccessEventV2(request, EventName.ADD_TEXT_V2, comment);
@@ -411,7 +411,7 @@ public class ApiResource {
         }
         ApiResponse response;
         try {
-            authService.isLogin(request);
+            authService.isAuthorised(request, AppConstant.IS_DELETE_TEXT_ENABLE);
             LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
             response = fileServiceV2.deleteText(loginUserDetails, deleteText);
             eventTracking.trackSuccessEventV2(request, EventName.DELETE_FILE, comment);
