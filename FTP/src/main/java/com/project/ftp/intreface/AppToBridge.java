@@ -7,8 +7,11 @@ import com.project.ftp.bridge.BridgeTracking;
 import com.project.ftp.bridge.config.BridgeConfig;
 import com.project.ftp.bridge.config.EmailConfig;
 import com.project.ftp.bridge.obj.BridgeRequestSendCreatePasswordOtp;
+import com.project.ftp.bridge.obj.yamlObj.CommunicationConfig;
+import com.project.ftp.bridge.obj.yamlObj.TcpConfig;
 import com.project.ftp.bridge.roles.resource.RolesResource;
 import com.project.ftp.bridge.roles.service.RolesService;
+import com.project.ftp.bridge.tcp.TcpClient;
 import com.project.ftp.config.AppConstant;
 import com.project.ftp.event.EventTracking;
 import com.project.ftp.mysql.MysqlUser;
@@ -17,15 +20,18 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class AppToBridge implements AppToBridgeInterface {
     private final static Logger logger = LoggerFactory.getLogger(AppToBridge.class);
     private final BridgeResource bridgeResource;
     private final RolesResource rolesResource;
     private final EmailConfig emailConfig;
+    private final CommunicationConfig communicationConfig;
 
     public AppToBridge(FtpConfiguration ftpConfiguration, EventTracking eventTracking) {
         emailConfig = ftpConfiguration.getEmailConfig();
+        communicationConfig = ftpConfiguration.getCommunicationConfig();
         ArrayList<String> rolesConfigPath = StaticService.getRolesConfigPath(ftpConfiguration);
         BridgeConfig bridgeConfig = new BridgeConfig(emailConfig, ftpConfiguration.getCreatePasswordEmailConfig());
         BridgeToAppInterface bridgeToAppInterface = new BridgeToApp(eventTracking);
@@ -34,6 +40,7 @@ public class AppToBridge implements AppToBridgeInterface {
         this.bridgeResource = new BridgeResource(bridgeConfig, bridgeToAppInterface, bridgeTracking);
         this.rolesResource = new RolesResource(rolesService, bridgeTracking);
         rolesResource.trackRelatedUser();
+
     }
     @Override
     public boolean updateUserRoles(ArrayList<String> rolesConfigPath) {
@@ -80,5 +87,28 @@ public class AppToBridge implements AppToBridgeInterface {
     @Override
     public Object getRolesConfig() {
         return rolesResource.getRolesConfig();
+    }
+    @Override
+    public String getTcpResponse(String tcpId, String data) {
+        if (communicationConfig == null || communicationConfig.getTcpData() == null) {
+            logger.info("TCP config error: communicationConfig or tcpData is null: {}", communicationConfig);
+            return null;
+        }
+        HashMap<String, TcpConfig> tcpData = communicationConfig.getTcpData();
+        TcpConfig tcpConfig = tcpData.get(tcpId);
+        if (tcpConfig == null) {
+            logger.info("tcpConfig is null, for tcpId: {}, {}", tcpId, tcpData);
+            return null;
+        }
+        if (tcpConfig.getHost() == null || tcpConfig.getHost().isEmpty()) {
+            logger.info("Invalid tcpHost, for tcpId: {}, {}", tcpId, tcpConfig);
+            return null;
+        }
+        if (tcpConfig.getPort() < 1) {
+            logger.info("Invalid tcpPort, for tcpId: {}, {}", tcpId, tcpConfig);
+            return null;
+        }
+        TcpClient tcpClient = new TcpClient(tcpConfig);
+        return tcpClient.callTcpServer(data);
     }
 }

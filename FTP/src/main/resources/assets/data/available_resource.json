@@ -198,5 +198,9 @@
   [
     "/api/track_event",
     "Track event [POST]"
+  ],
+  [
+    "/api/call_tcp",
+    "Call TCP IP [POST]"
   ]
 ]

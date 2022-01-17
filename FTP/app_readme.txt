@@ -1271,6 +1271,17 @@ Added new View:
 Related View:
     - /login_other_user      isLoginOtherUserEnable
 
+8.0.2.3
+----------
+17.01.2022
+----------
+Added support of TCP_IP
+Added new api
+    - /api/call_tcp [POST]
+
+Added config
+    - communicationConfig: HashMap<String, TcpConfig> tcpData
+
 
 Future releases
 -------------------

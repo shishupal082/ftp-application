@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.project.ftp.bridge.config.CreatePasswordEmailConfig;
 import com.project.ftp.bridge.config.EmailConfig;
+import com.project.ftp.bridge.obj.yamlObj.CommunicationConfig;
 import com.project.ftp.obj.yamlObj.EventConfig;
 import com.project.ftp.obj.yamlObj.FtlConfig;
 import io.dropwizard.Configuration;
@@ -54,6 +55,7 @@ public class FtpConfiguration extends Configuration {
     private CreatePasswordEmailConfig createPasswordEmailConfig;
     private FtlConfig ftlConfig;
     private EventConfig eventConfig;
+    private CommunicationConfig communicationConfig;
     @JsonProperty("database")
     private DataSourceFactory dataSourceFactory = new DataSourceFactory();
 
@@ -328,6 +330,15 @@ public class FtpConfiguration extends Configuration {
     public void setEventConfig(EventConfig eventConfig) {
         this.eventConfig = eventConfig;
     }
+
+    public CommunicationConfig getCommunicationConfig() {
+        return communicationConfig;
+    }
+
+    public void setCommunicationConfig(CommunicationConfig communicationConfig) {
+        this.communicationConfig = communicationConfig;
+    }
+
     public DataSourceFactory getDataSourceFactory() {
         return dataSourceFactory;
     }
@@ -472,6 +483,10 @@ public class FtpConfiguration extends Configuration {
         if (eventConfig != null) {
             this.eventConfig = eventConfig;
         }
+        CommunicationConfig communicationConfig = tempFtpConfiguration.getCommunicationConfig();
+        if (communicationConfig != null) {
+            this.communicationConfig = communicationConfig;
+        }
     }
 
     @Override
@@ -511,6 +526,7 @@ public class FtpConfiguration extends Configuration {
                 ", createPasswordEmailConfig=" + createPasswordEmailConfig +
                 ", ftlConfig=" + ftlConfig +
                 ", eventConfig=" + eventConfig +
+                ", communicationConfig=" + communicationConfig +
                 ", dataSourceFactory=" + "*****" +
                 '}';
     }

@@ -3,8 +3,12 @@ package com.project.ftp.service;
 import com.project.ftp.config.AppConfig;
 import com.project.ftp.config.AppConstant;
 import com.project.ftp.event.EventTracking;
+import com.project.ftp.exceptions.AppException;
+import com.project.ftp.exceptions.ErrorCodes;
+import com.project.ftp.obj.ApiResponse;
 import com.project.ftp.obj.LoginUserDetails;
 import com.project.ftp.obj.PathInfo;
+import com.project.ftp.obj.RequestTcp;
 import com.project.ftp.session.SessionService;
 import com.project.ftp.view.CommonView;
 import org.glassfish.jersey.server.ContainerRequest;
@@ -103,5 +107,27 @@ public class RequestService {
             userAgent = request.getHeader(AppConstant.REQUEST_USER_AGENT);
         }
         return userAgent;
+    }
+    public static ApiResponse callTcp(AppConfig appConfig, RequestTcp requestTcp) throws AppException {
+        String tcpId, data;
+        if (requestTcp == null) {
+            logger.info("requestTcp should not be null.");
+            throw new AppException(ErrorCodes.BAD_REQUEST_ERROR);
+        }
+        if (requestTcp.getTcpId() == null || requestTcp.getTcpId().isEmpty()) {
+            logger.info("remoteHost required.");
+            throw new AppException(ErrorCodes.BAD_REQUEST_ERROR);
+        }
+        if (requestTcp.getData() == null || requestTcp.getData().isEmpty()) {
+            logger.info("data required.");
+            throw new AppException(ErrorCodes.BAD_REQUEST_ERROR);
+        }
+        data = requestTcp.getData();
+        tcpId = requestTcp.getTcpId();
+        String response = appConfig.getAppToBridge().getTcpResponse(tcpId, data);
+        if (response == null) {
+            throw new AppException(ErrorCodes.CONFIG_ERROR);
+        }
+        return new ApiResponse(response);
     }
 }

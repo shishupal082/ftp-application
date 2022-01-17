@@ -12,4 +12,5 @@ public interface AppToBridgeInterface {
     ArrayList<String> getRelatedUsers(String username);
     ArrayList<String> getAllUsersName();
     Object getRolesConfig();
+    String getTcpResponse(String tcpId, String data);
 }

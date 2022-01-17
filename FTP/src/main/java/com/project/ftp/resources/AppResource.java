@@ -226,27 +226,31 @@ public class AppResource {
         eventTracking.trackLandingPage(request, EventName.APP_DATA);
         return new AppView(request, appViewFtlFileName, "database_files", userService, appConfig);
     }
+    /**
+     * Used when accessing from browser
+     */
     @Path("{default: .*}")
     @GET
-    @Produces(MediaType.TEXT_HTML)
-    @Consumes(MediaType.APPLICATION_JSON)
     public Object defaultMethod(@Context HttpServletRequest request) {
         return requestService.handleDefaultUrl(request);
     }
+    /**
+     * Used while accessing from api and response is text_html
+     */
     @Path("{default: .*}")
     @POST
-    @Produces(MediaType.TEXT_HTML)
-    @Consumes(MediaType.APPLICATION_JSON)
-    public Object defaultMethodPost(@Context HttpServletRequest request) {
-        logger.info("Post Request received with: Consume APPLICATION_JSON and Produce TEXT_HTML");
+    public Object defaultMethodPostV2(@Context HttpServletRequest request) {
+        logger.info("Post Request received with: Consume APPLICATION_JSON and Produce APPLICATION_JSON");
         return requestService.handleDefaultUrl(request);
     }
+    /**
+     * Used while accessing from api and response is json
+     */
     @Path("{default: .*}")
     @POST
-    @Produces(MediaType.TEXT_HTML)
-    @Consumes(MediaType.TEXT_PLAIN)
-    public Object defaultMethodPostV2(@Context HttpServletRequest request) {
-        logger.info("Post Request received with: Consume TEXT_PLAIN and Produce TEXT_HTML");
+    @Produces(MediaType.APPLICATION_JSON)
+    public Object defaultMethodPostV3(@Context HttpServletRequest request) {
+        logger.info("Post Request received with: Consume APPLICATION_JSON and Produce APPLICATION_JSON");
         return requestService.handleDefaultUrl(request);
     }
 }

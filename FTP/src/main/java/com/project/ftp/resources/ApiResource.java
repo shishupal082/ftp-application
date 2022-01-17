@@ -802,11 +802,51 @@ public class ApiResource {
         logger.info("getRolesConfig : Out, {}", response);
         return response;
     }
-
+    @POST
+    @Path("/call_tcp")
+    @UnitOfWork
+    public ApiResponse callTcp(@Context HttpServletRequest request,
+                                        RequestTcp requestTcp) {
+        LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
+        logger.info("callTcp: In, user: {}, request: {}", loginUserDetails, requestTcp);
+        ApiResponse response;
+        try {
+            authService.isLogin(request);
+            response = RequestService.callTcp(appConfig, requestTcp);
+        } catch (AppException ae) {
+            logger.info("Error in callTcp: {}", ae.getErrorCode().getErrorCode());
+            eventTracking.trackFailureEvent(request, EventName.CALL_TCP, ae.getErrorCode());
+            response = new ApiResponse(ae.getErrorCode());
+        }
+        logger.info("callTcp: Out, {}", response);
+        return response;
+    }
+    /**
+     * Used when accessing from browser
+     */
     @Path("{default: .*}")
     @GET
     @Produces(MediaType.TEXT_HTML)
     public Object defaultMethod(@Context HttpServletRequest request) {
+        return requestService.handleDefaultUrl(request);
+    }
+    /**
+     * Used while accessing from api and response is text_html
+     */
+    @Path("{default: .*}")
+    @POST
+    @Produces(MediaType.TEXT_HTML)
+    public Object defaultMethodPostV2(@Context HttpServletRequest request) {
+        logger.info("Post Request received with: Consume APPLICATION_JSON and Produce APPLICATION_JSON");
+        return requestService.handleDefaultUrl(request);
+    }
+    /**
+     * Used while accessing from api and response is json
+     */
+    @Path("{default: .*}")
+    @POST
+    public Object defaultMethodPostV3(@Context HttpServletRequest request) {
+        logger.info("Post Request received with: Consume APPLICATION_JSON and Produce APPLICATION_JSON");
         return requestService.handleDefaultUrl(request);
     }
 }

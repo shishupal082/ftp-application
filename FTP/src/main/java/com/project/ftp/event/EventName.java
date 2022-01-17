@@ -36,6 +36,7 @@ public enum EventName {
     GET_CURRENT_USER_FILES_INFO("get_current_user_files_info"),
     UPDATE_ROLES_CONFIG("update_roles_config"),
     VERIFY_PERMISSION("verify_permission"),
+    CALL_TCP("call_tcp"),
     GET_ROLES_CONFIG("get_roles_config"),
     AES_ENCRYPTION("aes_encryption"),
     AES_DECRYPTION("aes_decryption"),

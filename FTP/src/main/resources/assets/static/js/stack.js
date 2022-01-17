@@ -105,7 +105,11 @@ function isNumber(value) {
     return false;
 }
 function isNumeric(value) {
-    // if value = null then typeof value = "object"
+    /**
+     * isNaN(value) = false, for value = null, "", "9090", 9090, [], {}
+     * isNaN(value) = true, for value = "string", {}
+     * value = null, typeof value = "object"
+     */
     if (!isNaN(value) && typeof value != "object") {
         // if value = "" then it should return false
         if (typeof value === "string" && value.trim() === "") {
@@ -886,6 +890,7 @@ var BST = (function() {
 var BT = (function(){
     function BT(val) {
         this.data = val;
+        this.isSubTree = false;
         this.left = null;
         this.right = null;
     }
@@ -897,19 +902,19 @@ var BT = (function(){
             node = newNode;
         }
     };
-    BT.prototype.insertNodeInLeft = function(parent, leftNode) {
-        if (parent) {
-            parent.left = leftNode;
-        } else {
-            parent = leftNode;
-        }
-    };
     BT.prototype.insertRight = function(node, data) {
         var newNode = new BT(data);
         if (node) {
             node.right = newNode;
         } else {
             node = newNode;
+        }
+    };
+    BT.prototype.insertNodeInLeft = function(parent, leftNode) {
+        if (parent) {
+            parent.left = leftNode;
+        } else {
+            parent = leftNode;
         }
     };
     BT.prototype.getLeftChild = function(node) {
@@ -954,7 +959,101 @@ var BT = (function(){
         preOrderResult = preOrderResult.concat(this.getPreOrder(root.right));
         return preOrderResult;
     };
-    BT.prototype.createBinaryTree = function(items) {
+    BT.prototype._isSymbol = function(item) {
+        if (["+","-","*","/","&&","&","||","|","#","~"].indexOf(item) >= 0) {
+            return true;
+        }
+        return false;
+    };
+    BT.prototype._isNewNodeHasHighPrecedence = function(newSymbol, oldSymbol) {
+        if (newSymbol === oldSymbol) {
+            return false;
+        }
+        if (["&&","&"].indexOf(newSymbol) >= 0) {
+            if (["||","|","#"].indexOf(oldSymbol) >= 0) {
+                return true;
+            }
+        } else if (["~"].indexOf(newSymbol) >= 0) {
+            return true;
+        }
+        switch(oldSymbol) {
+            case "-":
+            case "+":
+                if (["*", "/"].indexOf(newSymbol) >= 0) {
+                    return true;
+                }
+            break;
+            case "*":
+                if (["/"].indexOf(newSymbol) >= 0) {
+                    return true;
+                }
+            break;
+            case "/":
+            default:
+            break;
+        }
+        return false;
+    };
+    BT.prototype._insertTreeNode = function(root, data, newNode) {
+        if (root === null) {
+            return newNode;
+        }
+        var temp = null;
+        if (this._isSymbol(root.data)) {
+            if (this._isSymbol(data)) {
+                if (root.isSubTree !== true && this._isNewNodeHasHighPrecedence(data, root.data)) {
+                    root.right = this._insertTreeNode(root.right, data, newNode);
+                } else {
+                    temp = newNode;
+                    temp.left = root;
+                    root = temp;
+                }
+            } else {
+                root.right = this._insertTreeNode(root.right, data, newNode);
+            }
+        } else {
+            if (this._isSymbol(data)) {
+                temp = newNode;
+                temp.left = root;
+                root = temp;
+            }
+        }
+        return root;
+    };
+    BT.prototype._getLeaf = function(root) {
+        if (root === null || root.right === null) {
+            return root;
+        }
+        return this._getLeaf(root.right);
+    };
+    BT.prototype.createBinaryTree = function(items, obj) {
+        var eTree = null, newNode = null;
+        var temp = null;
+        var start = isObject(obj) && isNumber(obj.start) ? obj.start : 0;
+        for (var i=start; i<items.length; i++) {
+            if (items[i] === "__SKIP__") {
+                continue;
+            }
+            if (items[i] === "(") {
+                temp = this._getLeaf(eTree);
+                if (temp == null) {
+                    eTree = this.createBinaryTree(items, {"start": i+1});
+                } else {
+                    temp.right = this.createBinaryTree(items, {"start": i+1});
+                }
+            } else if (items[i] === ")") {
+                items[i] = "__SKIP__";
+                eTree.isSubTree = true;
+                return eTree;
+            } else {
+                newNode = new BT(items[i]);
+                eTree = this._insertTreeNode(eTree, items[i], newNode);
+            }
+            items[i] = "__SKIP__";
+        }
+        return eTree;
+    };
+    BT.prototype.createBinaryTreeOld = function(items) {
         var st = new St();
         var currentTree, parent;
         var eTree = new BT("");
@@ -1018,6 +1117,7 @@ var BT = (function(){
     };
     return BT;
 })();
+
 var TextFilter;
 (function() {
 var Filter = function(className) {
@@ -1255,6 +1355,9 @@ Stack.extend({
             Last1000UniqueNumberQue.EnqueV2(unqieNumber);
         }
         return unqieNumber;
+    },
+    generateRandomUUID: function(matchedStr, index, orgStr) {
+        return (matchedStr ? (matchedStr ^ ((Math.random() * 16) >> (matchedStr / 4))).toString(16) : ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, Stack.generateRandomUUID));
     }
 });
 
@@ -1558,6 +1661,19 @@ Stack.extend({
         }
         return str;
     },
+    removeDuplicate: function(arr) {
+        var result = [];
+        if (isArray(arr)) {
+            for (var i=0; i<arr.length; i++) {
+                if (isString(arr[i]) || isNumeric(arr[i])) {
+                    if (result.indexOf(arr[i]) < 0) {
+                        result.push(arr[i]);
+                    }
+                }
+            }
+        }
+        return result;
+    },
     sortResult: function(requestedArray, sortableValue, sortableName, searchName, defaultValue) {
         // sortableValue: "ascending" or "descending"
         // sortableName: used for [{},{}]
@@ -1734,6 +1850,50 @@ Stack.extend({
             }
         }
         return defaultValue;
+    },
+    changeBase: function(n, fromBase, toBase) {
+        // void 0 === 'undefined'
+        if (fromBase === void 0) {
+            fromBase = 10;
+        }
+        if (toBase === void 0) {
+            toBase = 10;
+        }
+        return parseInt(n.toString(), fromBase).toString(toBase);
+    },
+    changeBaseV2: function(n, fromBase, toBase, minLength) {
+        var result = "", temp;
+        if (!isNumber(minLength)) {
+            minLength = 1;
+        }
+        if (isString(n)) {
+            for(var i=0; i<n.length; i++) {
+                if (n[i] === ' ') {
+                    result += ' ';
+                    continue;
+                }
+                temp = Stack.changeBase(n[i], fromBase, toBase);
+                if (minLength > 1) {
+                    temp = temp.padStart(minLength, '0');
+                }
+                result += temp;
+            }
+        }
+        return result;
+    },
+    convertHexToBin: function(hexCodedData) {
+        var binaryData = [];
+        for(var i=0; i<hexCodedData.length; i++) {
+            binaryData.push(Stack.changeBase(hexCodedData[i], 10, 2).padStart(8, '0'));
+        }
+        return binaryData;
+    },
+    convertHexToStr: function(hexCodedData) {
+        var strData = [];
+        for(var i=0; i<hexCodedData.length; i++) {
+            strData.push(Stack.changeBase(hexCodedData[i], 10, 16).padStart(2, '0'));
+        }
+        return strData.join(" ");
     }
 });
 
@@ -1816,39 +1976,42 @@ Stack.extend({
 });
 
 Stack.extend({
-    /** It follows right hand associativity **/
-    //(3*4*5*6) = 360
-    //(((3*4)*5)*6) = 360
-    //(4+(5*6)) = 34
-    //(4*5) = 20
-    //(3+(4*5)) = 23
-    //(3*(5+5)) = 30
-    //(3*(((5+5)*5)+5)) = 165
-    // (2*2*2) = 8
-    // (2+2*2) = (2+4) = 6
-    // (2*2+2) = (2*4) = 8
-    // (2*3+4*7) = (2*3+28) = (2*31) = 62
-    // (2+3*4*7) = (2+3*28) = (2+84) = 86
-    // ((2+3)*(4*7)) = (5*28) = 140
-    // (2*3*4+7) = (2*3*11) = (2*33) = 66
-    // (3+4*(7+2)) = (3+4*9) = (3+36) = 39
-    // (3+4*7+2) = (3*4*9) = (3*36) = 39
-    // (3*4*(7+2)) = (3*4*9) = (3*36) = 108
-    // ((3*4)*7+2) = (12*7+2) = (12*9) = 108
-    // (2*3*(5*5*2*2+2)) = (2*3*(5*5*2*4)) = (2*3*200) = 1200
-    // (2*3+5+5*4+2) = (2*3+5+5*6) = (2*3+5+30) = (2*3+35) = (2*78) = 76
-    // (3*(9*7+4)) = (3*99) = 297
-    // (3*((4+5)*7+2*2)) = (3*9*7+2*2) = (3*9*7+4) = (3*9*11) = (3*99) = 297 
-    // (3*((4+5)*7+2*2)*2) = (3*(9*7+2*2)*2) = (3*99*2) = (3*198) = 594
-    // (3*(9*7+4)*2) = (3*99*2) = 594
-    // (3*((4+5)*7+8*9)) = (3*(9*7+8*9)) = (3*(9*7+72)) = (3*(9*79)) = (3*711) = 2133
-    // (3*((4+5)*7+8*9)*2) = (3*(9*7+8*9)*2) = (3*(9*7+72)*2) = (3*(9*79)*2) = (3*711*2) = 4266
+    /**
+     * Preferences (Depricated and follow strictly BODMAS) => 1st it will evaluate Bracket, then it will follow right associativity (i.e. Right to Left)
+     * Date: 10.11.2021
+     * 3*5 = 15
+     * 2+2*2 = 6
+     * 2*2+2 = 6
+     * (1*((1+1)*1+1*1)*1) = 2+1 = 3
+     * (3*((4+5)*7+8*9)*2) = (3*(9*7+8*9)*2) = (3*(63+72)*2) = (6*135) = 810
+     * (3*((4+5)*7+8*9)) = 3*(63+72) = 3*135 = 405
+     * (3*(9*7+4)*2) = (3*67*2) = 402
+     * (3*((4+5)*7+2*2)*2) = (3*(9*7+2*2)*2) = (3*67*2) = 402
+     * (3*((4+5)*7+2*2)) = 3*(9*7+2*2) = (3*67) = 201
+     * (3*(9*7+4)) = 3*67 = 201
+     * (2*3+5+5*4+2) = 6+5+20+2 = 33
+     * (3*4*5*6) = 360
+     * (((3*4)*5)*6) = 360
+     * (4+(5*6)) = 34
+     * (3+(4*5)) = 23
+     * (3*(4+5)) = 27
+     * (3*(((5+5)*5)+5)) = 3*(10*5+5)
+     * (2*3+4*7) = 34
+     * (2+3*4*7) = 2+84 = 86
+     * ((2+3)*(4*7)) = 5*28 = 140
+     * (2*3*4+7) = 24+7 = 31
+     * (3+4*(7+2)) = 3+36 = 39
+     * (3+4*7+2) = 3+28+2 = 33
+     * (3*4*(7+2)) = 12*9 = 108
+     * ((3*4)*7+2) = 84+2 = 86
+     * (2*3*(5*5*2*2+2)) = 6*(100+2) = 612
+    */
     /*
-        It it not following BODMAS strictly, but it follws partially
+        It follows BODMAS strictly except exponent part (which is not implemented)
+        Priority of + and - is same
         BODMAS: Bracket, Of, Division, Multiplication, Addition, Subtraction
         BODMAS is also known as PEDMAS: Parentheses, Exponent, ...
         Exponent can be intiger or fraction 1/2, 1/3
-        Preferences => 1st it will evaluate Bracket, then it will follow right associativity (i.e. Right to Left)
         It does not support Exponent
         It support other things, Bracket, Division, Multiplication, Addition and Subtraction
     */
@@ -1904,19 +2067,19 @@ Stack.extend({
     },
     createPreOrderTree: function(tokenizedExp) {
         var bt = new BT("");
-        var btRoot = bt.createBinaryTree(tokenizedExp);
+        var btRoot = bt.createBinaryTree(Stack.clone(tokenizedExp));
         var preOrderTreeValue = bt.getPreOrder(btRoot);
         return preOrderTreeValue;
     },
     createInOrderTree: function(tokenizedExp) {
         var bt = new BT("");
-        var btRoot = bt.createBinaryTree(tokenizedExp);
+        var btRoot = bt.createBinaryTree(Stack.clone(tokenizedExp));
         var inOrderTreeValue = bt.getInOrder(btRoot);
         return inOrderTreeValue;
     },
     createPostOrderTree: function(tokenizedExp) {
         var bt = new BT("");
-        var btRoot = bt.createBinaryTree(tokenizedExp);
+        var btRoot = bt.createBinaryTree(Stack.clone(tokenizedExp));
         var postOrderTreeValue = bt.getPostOrder(btRoot);
         return postOrderTreeValue;
     },
@@ -2032,7 +2195,7 @@ Stack.extend({
             response.push(posixTreeValue[i]);
         }
         return response;
-    },
+    }
 });
 Stack.extend({
     _fireCallBack: function(callBack, ajax, status, response) {
@@ -2049,17 +2212,25 @@ Stack.extend({
         };
         JQ.ajax(options);
     },
-    sendPostRequest: function(JQ, url, data, callBack) {
+    sendPostRequest: function(JQ, url, data, callback) {
+        this.sendPostRequestV2(JQ, url, data, null, callback);
+    },
+    sendPostRequestV2: function(JQ, url, data, headers, callback) {
         var reqOption = {};
         reqOption["url"] = url;
         reqOption["type"] = "POST";
         reqOption["data"] = JSON.stringify(data);
         reqOption["dataType"] = "json";
-        reqOption["headers"] = {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json'
-        };
-        Stack._send(JQ, reqOption, callBack);
+        if (Stack.isObject(headers)) {
+            reqOption["headers"] = headers;
+            //headers = {"Accept": "text/html", "Content-Type": "application/json"};
+        } else {
+            reqOption["headers"] = {
+                "Accept": "application/json",
+                "Content-Type": "application/json"
+            };
+        }
+        Stack._send(JQ, reqOption, callback);
     },
     uploadFile: function(JQ, url, formData, callBack, percentageCompleteCallBack) {
         var reqOption = {};
@@ -2082,6 +2253,66 @@ Stack.extend({
             }
         }
         Stack._send(JQ, reqOption, callBack);
+    },
+    loadJsonData: function(JQ, urls, eachApiCallback, callBack, apiName, ajaxApiCall) {
+        var obj = {"type": "json", "dataType": "json"};
+        return Stack.callGetRequest(JQ, urls, obj, eachApiCallback, callBack, apiName, ajaxApiCall);
+    },
+    callGetRequest: function(JQ, urls, obj, eachApiCallback, callBack, apiName, ajaxApiCall) {
+        if (Stack.isFunction(JQ) && Stack.isFunction(JQ.ajax)) {
+            ajaxApiCall = function(ajax, callBack) {
+                JQ.ajax({url: ajax.url,
+                    type: "GET",
+                    success: function(response, textStatus) {
+                        callBack(ajax, "SUCCESS", response);
+                    },
+                    error: function(xhr, textStatus, errorThrown) {
+                        callBack(ajax, "FAILURE", null);
+                    }
+                });
+            }
+        }
+        if (isArray(urls) === false || urls.length < 1 || isFunction(ajaxApiCall) === false) {
+            if (isFunction(eachApiCallback)) {
+                eachApiCallback(null, apiName);
+            }
+            Stack.callMethod(callBack);
+            return false;
+        }
+        if (!isObject(obj)) {
+            obj = {};
+        }
+        var apiSendCount = urls.length, apiReceiveCount = 0;
+        var st = Stack.getStack(), temp;
+        for (var i = 0; i < urls.length; i++) {
+            var ajax = {};
+            ajax.type = obj.type ? obj.type : "json";
+            ajax.dataType = obj.dataType ? obj.dataType : "json";
+            ajax.url = urls[i];
+            ajax.apiName = apiName;
+            st.push(ajax);
+        }
+        function loadAjaxSequentially() {
+            if (st.getTop() >= 0) {
+                temp = st.pop();
+                ajaxApiCall(temp, function(ajaxDetails, status, response) {
+                    apiReceiveCount++;
+                    if (status === "FAILURE") {
+                        Stack.log("Error in api: " + ajaxDetails.url, LoggerInfo);
+                    }
+                    if (isFunction(eachApiCallback)) {
+                        eachApiCallback(response, ajaxDetails.apiName, ajaxDetails);
+                    }
+                    if (apiSendCount === apiReceiveCount) {
+                        Stack.callMethod(callBack);
+                    } else {
+                        loadAjaxSequentially();
+                    }
+                });
+            }
+        }
+        loadAjaxSequentially();
+        return true;
     }
 });
 Stack.extend({
@@ -2109,6 +2340,13 @@ Stack.extend({
     callMethodV3: function(method, arg1, arg2, arg3) {
         if (Stack.isFunction(method)) {
             method(arg1, arg2, arg3);
+            return 1;
+        }
+        return 0;
+    },
+    callMethodV4: function(method, arg1, arg2, arg3, arg4) {
+        if (Stack.isFunction(method)) {
+            method(arg1, arg2, arg3, arg4);
             return 1;
         }
         return 0;
@@ -2159,60 +2397,6 @@ Stack.extend({
         }
         return true;
     },*/
-    loadJsonData: function(JQ, urls, eachApiCallback, callBack, apiName, ajaxApiCall) {
-        if (Stack.isFunction(JQ) && Stack.isFunction(JQ.ajax)) {
-            ajaxApiCall = function(ajax, callBack) {
-                JQ.ajax({url: ajax.url,
-                    type: "GET",
-                    success: function(response, textStatus) {
-                        callBack(ajax, "SUCCESS", response);
-                    },
-                    error: function(xhr, textStatus, errorThrown) {
-                        callBack(ajax, "FAILURE", null);
-                    }
-                });
-            }
-        }
-        if (isArray(urls) === false || urls.length < 1 || isFunction(ajaxApiCall) === false) {
-            if (isFunction(eachApiCallback)) {
-                eachApiCallback(null, apiName);
-            }
-            Stack.callMethod(callBack);
-            return false;
-        }
-
-        var apiSendCount = urls.length, apiReceiveCount = 0;
-        var st = Stack.getStack(), temp;
-        for (var i = 0; i < urls.length; i++) {
-            var ajax = {};
-            ajax.type = "json";
-            ajax.dataType = "json";
-            ajax.url = urls[i];
-            ajax.apiName = apiName;
-            st.push(ajax);
-        }
-        function loadAjaxSequentially() {
-            if (st.getTop() >= 0) {
-                temp = st.pop();
-                ajaxApiCall(temp, function(ajaxDetails, status, response) {
-                    apiReceiveCount++;
-                    if (status === "FAILURE") {
-                        Stack.log("Error in api: " + ajaxDetails.url, LoggerInfo);
-                    }
-                    if (isFunction(eachApiCallback)) {
-                        eachApiCallback(response, ajaxDetails.apiName, ajaxDetails);
-                    }
-                    if (apiSendCount === apiReceiveCount) {
-                        Stack.callMethod(callBack);
-                    } else {
-                        loadAjaxSequentially();
-                    }
-                });
-            }
-        }
-        loadAjaxSequentially();
-        return true;
-    }
 });
 Stack.extend({
     /*
@@ -2395,7 +2579,77 @@ Stack.extend({
         }
         return trackingData.join(",");
     }
-})
+});
+Stack.extend({
+    readTextData: function(rawResponse) {
+        var temp = [];
+        if (Stack.isStringV2(rawResponse)) {
+            temp = rawResponse.split("\r\n");
+            if (temp.length === 1) {
+                temp = rawResponse.split("\n");
+            }
+        }
+        return temp;
+    },
+    removeSingleLineComment: function(fileResponse, singleLineCommentPattern) {
+        var result = [], i, temp;
+        if (!isArray(fileResponse)) {
+            return result;
+        }
+        if (!Stack.isStringV2(singleLineCommentPattern)) {
+            return fileResponse;
+        }
+        for (i = 0; i < fileResponse.length; i++) {
+            temp = fileResponse[i].split(singleLineCommentPattern);
+            if (temp.length >= 2) {
+                result.push(temp[0]);
+                continue;
+            }
+            result.push(fileResponse[i]);
+        }
+        return result;
+    },
+    removeEmpty: function(fileResponse) {
+        var result = [], i, temp;
+        if (!isArray(fileResponse)) {
+            return result;
+        }
+        for (i = 0; i < fileResponse.length; i++) {
+            temp = fileResponse[i].trim();
+            if (temp.length > 0) {
+                result.push(temp);
+            }
+        }
+        return result;
+    },
+    removeMultiLineComment: function(fileResponse, startPattern, endPattern) {
+        var result = [], i, j, k, isValidData = true, temp, temp2;
+        for (i = 0; i < fileResponse.length; i++) {
+            if (fileResponse[i].split(startPattern).length >= 2) {
+                temp = fileResponse[i].split(startPattern);
+                result.push(temp[0]);
+                isValidData = false;
+                for (j = i; j < fileResponse.length; j++) {
+                    if (fileResponse[j].split(endPattern).length >= 2) {
+                        temp = fileResponse[j].split(endPattern);
+                        temp2 = [];
+                        for (k=1; k<temp.length; k++) {
+                            temp2.push(temp[k]);
+                        }
+                        result.push(temp2.join(endPattern));
+                        break;
+                    } else {
+                        i++;
+                        continue;
+                    }
+                }
+            } else if (isValidData) {
+                result.push(fileResponse[i]);
+            }
+        }
+        return result;
+    },
+});
 /*End of direct access of methods*/
 if (Platform === "Window") {
     window.$S = Stack;
