@@ -109,6 +109,6 @@ public class AppToBridge implements AppToBridgeInterface {
             return null;
         }
         TcpClient tcpClient = new TcpClient(tcpConfig);
-        return tcpClient.callTcpServer(data);
+        return tcpClient.callTcpServer(data, tcpConfig.getTtl());
     }
 }

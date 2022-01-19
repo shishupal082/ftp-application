@@ -7,6 +7,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 public class TcpConfig {
     private String host;
     private int port;
+    private int ttl;
     public TcpConfig() {}
 
     public String getHost() {
@@ -25,11 +26,20 @@ public class TcpConfig {
         this.port = port;
     }
 
+    public int getTtl() {
+        return ttl;
+    }
+
+    public void setTtl(int ttl) {
+        this.ttl = ttl;
+    }
+
     @Override
     public String toString() {
         return "TcpConfig{" +
                 "host='" + host + '\'' +
                 ", port=" + port +
+                ", ttl=" + ttl +
                 '}';
     }
 }
