@@ -148,10 +148,12 @@ public class RolesService {
                     continue;
                 }
                 userByGroupName1 = rolesAccess.get(groupName1);
-                for (String ignored : userByGroupName1) {
-                    for (String groupName2: relatedGroups) {
-                        userByGroupName2 = rolesAccess.get(groupName2);
-                        this.addGroupEntry(tempCoRelatedUsers, userByGroupName1, userByGroupName2);
+                if (userByGroupName1 != null) {
+                    for (String ignored : userByGroupName1) {
+                        for (String groupName2: relatedGroups) {
+                            userByGroupName2 = rolesAccess.get(groupName2);
+                            this.addGroupEntry(tempCoRelatedUsers, userByGroupName1, userByGroupName2);
+                        }
                     }
                 }
             }
