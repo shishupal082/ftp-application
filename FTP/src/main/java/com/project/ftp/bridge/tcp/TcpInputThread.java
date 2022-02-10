@@ -54,8 +54,8 @@ public class TcpInputThread implements Runnable {
             InputStreamReader reader = new InputStreamReader(inputStream);
             while (isThreadRunning && (character = reader.read()) != -1) {
                 data.append((char) character);
-                //Find length, if first non digit character received or response length >= 5
-                if (responseLength == 0 && (character < 48 || character > 57 || response.length() >= 5)) {
+                //Find length, if first non digit character received
+                if (responseLength == 0 && (character < 48 || character > 57)) {
                     responseLength = this.getResponseLength(response);
                 }
                 response = data.toString();
