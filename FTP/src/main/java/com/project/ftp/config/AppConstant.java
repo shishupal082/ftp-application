@@ -89,6 +89,8 @@ public class AppConstant {
     public static final int CMD_LINE_ARG_IS_MYSQL_ENABLE = 0;
     public static final int CMD_LINE_ARG_1st_CONFIG_FILE = 1;
     public static final int CMD_LINE_ARG_MIN_SIZE = 2;
+
+    public static final int maxLengthLogDisplay = 512;
 }
 
 /*

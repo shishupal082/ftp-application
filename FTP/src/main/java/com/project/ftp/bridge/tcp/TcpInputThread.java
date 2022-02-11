@@ -1,5 +1,6 @@
 package com.project.ftp.bridge.tcp;
 
+import com.project.ftp.config.AppConstant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -67,7 +68,13 @@ public class TcpInputThread implements Runnable {
         } catch (IOException e) {
             logger.info("Error in reading input: {}", e.getMessage());
         }
-        logger.info("TCP Server response: {}, isThreadRunning: {}", response, isThreadRunning);
+        String logResponse;
+        if (response.length() < AppConstant.maxLengthLogDisplay) {
+            logResponse = response;
+        } else {
+            logResponse = "Length " + response.length();
+        }
+        logger.info("TCP Server response: {}, isThreadRunning: {}", logResponse, isThreadRunning);
     }
     public void run() {
         this.readInput();

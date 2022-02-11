@@ -1,6 +1,7 @@
 package com.project.ftp.bridge.tcp;
 
 import com.project.ftp.bridge.obj.yamlObj.TcpConfig;
+import com.project.ftp.config.AppConstant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -77,7 +78,13 @@ public class TcpClient {
             logger.info("Error in tcpServer: " + e.getMessage());
         }
         String response = tcpInputThread.getFinalResponse();
-        logger.info("TCP final response: {}", response);
+        String logResponse;
+        if (response.length() < AppConstant.maxLengthLogDisplay) {
+            logResponse = response;
+        } else {
+            logResponse = "Length " + response.length();
+        }
+        logger.info("TCP final response: {}", logResponse);
         return response;
     }
 }

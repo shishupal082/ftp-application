@@ -818,7 +818,7 @@ public class ApiResource {
             eventTracking.trackFailureEvent(request, EventName.CALL_TCP, ae.getErrorCode());
             response = new ApiResponse(ae.getErrorCode());
         }
-        logger.info("callTcp: Out, {}", response);
+        logger.info("callTcp: Out, {}", response.toStringV2());
         return response;
     }
     /**

@@ -65,6 +65,22 @@ public class ApiResponse {
                 "}";
     }
 
+    public String toStringV2() {
+        String logData;
+        if (data == null) {
+            logData = null;
+        } else if (data.toString().length() < AppConstant.maxLengthLogDisplay) {
+            logData = data.toString();
+        } else {
+            logData = "Length " + data.toString().length();
+        }
+        return "ApiResponse{" +
+                "status='" + status + '\'' +
+                ", failureCode='" + failureCode + '\'' +
+                ", error='" + error + '\'' +
+                ", data=" + logData +
+                '}';
+    }
     @Override
     public String toString() {
         return "ApiResponse{" +
