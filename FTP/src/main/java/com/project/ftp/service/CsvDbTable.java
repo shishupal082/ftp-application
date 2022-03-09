@@ -106,6 +106,9 @@ public class CsvDbTable {
                     continue;
                 }
                 tempTableName = tableRowResponse.getTableName();
+                if (tempTableName == null) {
+                    tempTableName = "null";
+                }
                 tableData = finalResponse.computeIfAbsent(tempTableName, k -> new ArrayList<>());
                 tableData.add(tableRowResponse);
                 count++;

@@ -304,7 +304,7 @@ var Data = (function() {
 var DT = (function() {
     var dateTime;
     // var YYYY, MM, DD, hh, mm, ss, ms, mr; //mr = meridian (AM/PM)
-    var MMMList = ["JAN", "FEB", "MARCH", "APRIL", "MAY", "JUNE", "JULY", "AUG", "SEP", "OCT", "NOV", "DEC"];
+    var MMMList = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
     var DDDList = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"];
     function isDateObject(dateObj) {
         if (dateObj && dateObj.constructor && dateObj.constructor.name === "Date") {
@@ -414,7 +414,130 @@ var DT = (function() {
         }
         return null;
     };
-
+    DateTime.prototype.addMinutes = function(dateObj, count) {
+        if (isDateObject(dateObj) && isNumber(count)) {
+            dateObj = new Date(dateObj.setMinutes(dateObj.getMinutes() + count));
+            return dateObj;
+        }
+        return null;
+    };
+    DateTime.prototype._getEndTime = function(todayDateObj, isAddMinute) {
+        var endTime = "";
+        if (isAddMinute) {
+            var temp = this.addMinutes(todayDateObj, 1);
+            if (temp !== null) {
+                return this.formateDateTime("YYYY/-/MM/-/DD/ /hh/:/mm", "/", temp);
+            }
+        } else {
+            this.addDate(todayDateObj, 1);
+            endTime = this.formateDateTime("YYYY/-/MM/-/DD/ 00:00", "/", todayDateObj);
+            this.addDate(todayDateObj, -1);
+            return endTime;
+        }
+        return this.formateDateTime("YYYY/-/MM/-/DD/ /hh/:/mm", "/", todayDateObj);
+    };
+    DateTime.prototype._getMatchingIndex = function(patternList, timeRange) {
+        var matchIndex = -1, temp;
+        if (!Stack.isStringV2(timeRange)) {
+            return matchIndex;
+        }
+        if (isArray(patternList)) {
+            for (var i=0; i<patternList.length; i++) {
+                temp = Stack.searchItems(patternList[i], [timeRange], true);
+                if (Stack.isArray(temp) && temp.length === 1) {
+                    matchIndex = i;
+                    break;
+                }
+            }
+        }
+        return matchIndex;
+    };
+    DateTime.prototype.getDateRange = function(timeRange) {
+        var finalTimeRange = [];
+        if (!Stack.isStringV2(timeRange)) {
+            return finalTimeRange;
+        }
+        var today = new Date(), startDay;
+        var startTime = "", endTime = "";
+        var count = 0, temp, temp2, i;
+        var patternList = [];
+        patternList.push(["last-[0-9]{1,3}-days-offset-[0-9]{1,3}"]); //0
+        patternList.push(["last-[0-9]{1,3}-days"]); //1
+        patternList.push(["last-[0-9]{1,3}-months-offset-[0-9]{1,3}"]); //2
+        patternList.push(["last-[0-9]{1,3}-months"]); //3
+        patternList.push(["from-[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}"]); // 4
+        patternList.push(["[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2},[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}"]); // 5
+        var matchIndex = this._getMatchingIndex(patternList, timeRange);
+        if ([0, 1].indexOf(matchIndex) >= 0) {
+            temp = timeRange.split("-");
+            endTime = this._getEndTime(today, true);
+            if (temp.length === 5) {
+                count = temp[4] * 1;
+                if (count > 0) {
+                    startDay = this.addDate(today, -1 * count);
+                    endTime = this._getEndTime(startDay, false);
+                    today = startDay;
+                }
+            }
+            if (temp.length >= 3) {
+                count = temp[1] * 1;
+                startDay = this.addDate(today, -1 * count);
+                startTime = this.formateDateTime("YYYY/-/MM/-/DD/ 00:00", "/", startDay);
+            }
+        } else if ([2, 3].indexOf(matchIndex) >= 0) {
+            temp = timeRange.split("-");
+            endTime = this._getEndTime(today, true);
+            if (temp.length === 5) {
+                count = temp[4] * 1;
+                startDay = today;
+                if (count > 0) {
+                    for(i=0; i<count; i++) {
+                        startDay = this.addDate(startDay, -1);
+                        startDay.setDate(1);
+                    }
+                    startDay.setDate(0);
+                    endTime = this._getEndTime(startDay, false);
+                    today = startDay;
+                }
+            }
+            if (temp.length >= 3) {
+                count = temp[1] * 1;
+                startDay = today;
+                startDay.setDate(1);
+                for(i=0; i<count; i++) {
+                    startDay = this.addDate(startDay, -1);
+                    startDay.setDate(1);
+                }
+                startTime = this.formateDateTime("YYYY/-/MM/-/DD/ 00:00", "/", startDay);
+            }
+        } else if (matchIndex === 4) {
+            temp = timeRange.split("from-");
+            endTime = this._getEndTime(today, true);
+            if (temp.length === 2) {
+                temp2 = this.getDateObj(temp[1]);
+                if (temp2 !== null) {
+                    startTime = temp[1];
+                }
+            }
+        } else if (matchIndex === 5) {
+            temp = timeRange.split(",");
+            if (temp.length === 2) {
+                temp2 = this.getDateObj(temp[0]);
+                if (temp2 !== null) {
+                    temp2 = this.getDateObj(temp[1]);
+                    if (temp2 !== null) {
+                        startTime = temp[0];
+                        endTime = temp[1];
+                    }
+                }
+            }
+        } else {
+            console.log("Invalid timeRange pattern: " + timeRange);
+        }
+        finalTimeRange.push(startTime);
+        finalTimeRange.push(endTime);
+        return finalTimeRange;
+    }
     return DateTime;
 })();
 var LocalStorage = (function(){
@@ -594,27 +717,19 @@ var Log = (function(){
 var Logger = new Log();
 
 var St = (function(){
-    var MAXSTACK = 500000, STACK = [];
-    function St(shareStorage) {
-        if (typeof shareStorage == "boolean" && shareStorage) {
-            this._STACK = STACK;
-        } else {
-            this._STACK = [];
-        }
+    var MAXSTACK = 500000;
+    function St() {
+        this._STACK = [];
         this._TOP = -1;
     }
     St.prototype.reset = function() {
-        this._STACK = []; this._TOP = -1;
-        for (var i = 0; i < MAXSTACK; i++) {
-            this._STACK.push(0);
-        }
+        this._TOP = -1;
         return true;
     };
     St.prototype.push = function(item) {
         if (this._TOP >= MAXSTACK - 1) {
             var logText = "stack over flow";
             Logger.log(logText);
-            throw logText;
         } else {
             this._TOP = this._TOP + 1;
             this._STACK[this._TOP] = item;
@@ -622,11 +737,10 @@ var St = (function(){
         return 1;
     };
     St.prototype.pop = function() {
-        var item = 0;
+        var item = null;
         if (this._TOP < 0) {
             var logText = "stack under flow";
             Logger.log(logText);
-            throw logText;
         } else {
             item = this._STACK[this._TOP];
             this._TOP = this._TOP - 1;
@@ -652,32 +766,52 @@ var St = (function(){
     return St;
 })();
 var Que = (function(){
-    var capacity = 500000, que = [];
-    function Que() {
+    var maxCapacity = 500000;
+    function Que(_capacity) {
+        if (isNumber(_capacity) && _capacity > 0 && _capacity <= maxCapacity) {
+            this._CAPACITY = _capacity;
+        } else {
+            this._CAPACITY = maxCapacity;
+        }
+        this._que = [];
         this._FRONT = -1;
         this._BACK = -1;
     }
+    Que.prototype._shiftElement = function() {
+        var index = 0;
+        for (var i = this._FRONT; i <= this._BACK; i++) {
+            this._que[index] = this._que[i];
+            index++;
+        }
+        this._FRONT = 0;
+        this._BACK = index-1;
+    };
     Que.prototype.Enque = function(item) {
-        if (this._BACK === capacity - 1) {
-            var logText = "Que full";
-            Logger.log(logText);
-            return 0;
+        var size = this.getSize();
+        if (this._BACK === this._CAPACITY - 1) {
+            if (size < 1) {
+                this.clear();
+            } else if (size < this._CAPACITY) {
+                this._shiftElement();
+            } else {
+                Logger.log("Que full");
+                return 0;
+            }
         }
         if (this._FRONT === -1) {
             this._FRONT = 0;
         }
         this._BACK++;
-        que[this._BACK] = item;
+        this._que[this._BACK] = item;
         return 1;
     };
     Que.prototype.Deque = function() {
         var item = 0;
         if (this._FRONT === -1 || this._FRONT > this._BACK) {
-            var logText = "Que under flow";
-            Logger.log(logText);
+            Logger.log("Que under flow");
             return 0;
         }
-        item = que[this._FRONT];
+        item = this._que[this._FRONT];
         this._FRONT++;
         return item;
     };
@@ -688,13 +822,19 @@ var Que = (function(){
     };
     Que.prototype.getAll = function() {
         var res = [];
-        for (var i = this._FRONT; i <= this._BACK; i++) {
-            res.push(que[i]);
+        var size = this.getSize();
+        if (size > 0) {
+            for (var i = this._FRONT; i <= this._BACK; i++) {
+                res.push(this._que[i]);
+            }
         }
         return res;
     };
     Que.prototype.getSize = function() {
-        return this._BACK - this._FRONT+1;
+        if (this._FRONT >= 0 && this._FRONT <= this._BACK) {
+            return this._BACK - this._FRONT+1;
+        }
+        return 0;
     };
     return Que;
 })();
@@ -1329,8 +1469,8 @@ Stack.extend({
 
 Last1000UniqueNumberQue = new CirQue(1000);
 Stack.extend({
-    getQue: function(shareStorage) {
-        return new Que();
+    getQue: function(size) {
+        return new Que(size);
     },
     getCirQue: function(size) {
         return new CirQue(size);
@@ -1533,8 +1673,8 @@ return Table;
 })();
 
 Stack.extend({
-    getStack: function(shareStorage) {
-        return new St(shareStorage);
+    getStack: function() {
+        return new St();
     },
     getLocalStorage: function() {
         return new LocalStorage();
@@ -2623,32 +2763,113 @@ Stack.extend({
         return result;
     },
     removeMultiLineComment: function(fileResponse, startPattern, endPattern) {
-        var result = [], i, j, k, isValidData = true, temp, temp2;
+        var result = [], i, j, k, temp, temp2;
         for (i = 0; i < fileResponse.length; i++) {
             if (fileResponse[i].split(startPattern).length >= 2) {
                 temp = fileResponse[i].split(startPattern);
                 result.push(temp[0]);
-                isValidData = false;
+                // j loop started from i because in the same line end pattern may be found
                 for (j = i; j < fileResponse.length; j++) {
                     if (fileResponse[j].split(endPattern).length >= 2) {
                         temp = fileResponse[j].split(endPattern);
                         temp2 = [];
+                        // k loop started from 1 by ignoring first part
                         for (k=1; k<temp.length; k++) {
                             temp2.push(temp[k]);
                         }
                         result.push(temp2.join(endPattern));
+                        // Here i++ not required because it will be automatically done
                         break;
-                    } else {
-                        i++;
-                        continue;
                     }
+                    i++;
                 }
-            } else if (isValidData) {
+            } else {
                 result.push(fileResponse[i]);
             }
         }
         return result;
     },
+    tokenizeFileData: function(fileResponse, wordBreak) {
+        var result = [];
+        if (Stack.isArray(fileResponse) && Stack.isStringV2(wordBreak)) {
+            for (var i=0; i<fileResponse.length; i++) {
+                if (Stack.isStringV2(fileResponse[i])) {
+                    result.push(fileResponse[i].split(wordBreak));
+                }
+            }
+        }
+        return result;
+    },
+    _generateTableRow: function(rowData, rowIndex) {
+        var result = {}, i, j, temp;
+        if (Stack.isArray(rowData) && Stack.isArray(rowIndex)) {
+            for (i = 0; i < rowData.length; i++) {
+                if (i < rowIndex.length-1) {
+                    result[rowIndex[i]] = rowData[i].trim();
+                } else {
+                    temp = [];
+                    for(j=i; j<rowData.length; j++) {
+                        if (Stack.isString(rowData[j]) && rowData[j].length > 0) {
+                            temp.push(rowData[j].trim());
+                        }
+                    }
+                    i = j;
+                    result[rowIndex[rowIndex.length-1]] = temp.join(",");
+                }
+            }
+        }
+        return result;
+    },
+    convertArrayToTable: function(arrayData, dataIndex) {
+        var maxLength = 0, i, j;
+        if (!Stack.isArray(arrayData)) {
+            arrayData = [];
+        }
+        for(i=0; i<arrayData.length; i++) {
+            if (Stack.isArray(arrayData[i])) {
+                if (maxLength < arrayData[i].length) {
+                    maxLength = arrayData[i].length;
+                }
+            }
+        }
+        for(i=0; i<arrayData.length; i++) {
+            if (Stack.isArray(arrayData[i])) {
+                for(j = arrayData[i].length; j<maxLength; j++) {
+                    arrayData[i].push("");
+                }
+            }
+        }
+        if (!Stack.isArray(dataIndex) || dataIndex.length === 0) {
+            dataIndex = [];
+            for (i=0; i<maxLength; i++) {
+                dataIndex.push(i.toString());
+            }
+        }
+        var result = [];
+        for(i=0; i<arrayData.length; i++) {
+            result.push(this._generateTableRow(arrayData[i], dataIndex));
+        }
+        return result;
+    },
+    convertFileDataToTable: function(fileData, dbDataApiObj) {
+        var temp = Stack.readTextData(fileData);
+        if (Stack.isObject(dbDataApiObj) && Stack.isStringV2(dbDataApiObj["singleLineComment"])) {
+            temp = Stack.removeSingleLineComment(temp, dbDataApiObj["singleLineComment"]);
+        }
+        temp = Stack.removeEmpty(temp);
+        if (Stack.isObject(dbDataApiObj)) {
+            if (Stack.isStringV2(dbDataApiObj["wordBreak"])) {
+                temp = Stack.tokenizeFileData(temp, dbDataApiObj["wordBreak"]);
+            }
+            if (Stack.isArray(dbDataApiObj["dataIndex"])) {
+                temp = Stack.convertArrayToTable(temp, dbDataApiObj["dataIndex"]);
+            }
+        }
+        if (!Stack.isArray(dbDataApiObj["tableData"])) {
+            dbDataApiObj["tableData"] = [];
+        }
+        dbDataApiObj["tableData"].push(temp);
+    }
 });
 /*End of direct access of methods*/
 if (Platform === "Window") {

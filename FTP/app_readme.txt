@@ -1281,7 +1281,12 @@ Added new api
 
 Added config
     - communicationConfig: HashMap<String, TcpConfig> tcpData
-
+8.0.2.4
+----------
+09.03.2022
+----------
+Bug fix for api /api/get_table_data
+    - When table name is null, it will replace as string "null"
 
 Future releases
 -------------------
