@@ -1288,6 +1288,22 @@ Added config
 Bug fix for api /api/get_table_data
     - When table name is null, it will replace as string "null"
 
+8.0.2.5
+----------
+14.03.2022
+----------
+SocialLogin implemented
+Added new api
+    - /api/login_social [POST]
+
+Added fptConfiguration
+-----------------------
+socialLoginConfig:
+  loginWithGmail: boolean
+  GoogleLoginClientId: String
+  GoogleLoginClientSecretId: String
+
+
 Future releases
 -------------------
 

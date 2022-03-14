@@ -1,6 +1,7 @@
 package com.project.ftp.common;
 
 import com.project.ftp.config.AppConstant;
+import com.project.ftp.config.SocialLoginType;
 import com.project.ftp.exceptions.AppException;
 import com.project.ftp.exceptions.ErrorCodes;
 import com.project.ftp.obj.*;
@@ -101,6 +102,23 @@ public class InputValidate {
             logger.info("loginUser request invalid username: {}", username);
             throw new AppException(ErrorCodes.USER_NAME_REQUIRED);
         }
+    }
+    public void validateLoginSocialRequest(RequestLoginSocial loginSocial) throws AppException {
+        if (loginSocial == null) {
+            logger.info("loginSocial request is null.");
+            throw new AppException(ErrorCodes.BAD_REQUEST_ERROR);
+        }
+        String type = loginSocial.getType();
+        if (!SocialLoginType.LOGIN_WITH_GOOGLE.getType().equals(type)) {
+            logger.info("loginSocial request invalid type: {}", type);
+            throw new AppException(ErrorCodes.SOCIAL_LOGIN_TYPE_NOT_MATCHING);
+        }
+        String idToken = loginSocial.getIdToken();
+        if (StaticService.isInValidString(type)) {
+            logger.info("loginSocial request invalid idToken: {}", idToken);
+            throw new AppException(ErrorCodes.SOCIAL_LOGIN_ID_TOKEN_REQUIRED);
+        }
+        logger.info("Request idToken: {}", loginSocial.getIdToken());
     }
     public void validateChangePassword(RequestChangePassword changePassword) throws AppException {
         if (changePassword == null) {

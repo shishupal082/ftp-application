@@ -28,7 +28,8 @@
 <noscript>You need to enable JavaScript to run this app.</noscript>
 <div style="display: none;">
     <input type="hidden" style="display: none;" name="pageData" id="pageData"
-           value="page=${pageName},app_version=${appVersion},is_guest_enable=${isGuestEnable},android_check_enable=${androidCheckEnable}"/>
+           value="page=${pageName},app_version=${appVersion},is_guest_enable=${isGuestEnable},android_check_enable=${androidCheckEnable},login_with_gmail_enable=${loginWithGmailEnable}"/>
+    <input type="hidden" style="display: none;" name="googleLoginClientId" id="googleLoginClientId" value="${googleLoginClientId}"/>
     <input type="hidden" style="display: none;" name="loginUserDetailsV2Str" id="loginUserDetailsV2Str" value="${loginUserDetailsV2Str}"/>
     <input type="hidden" style="display: none;" name="headingJson" id="headingJson"
             value="<#if ftlConfig.headingJson??>${ftlConfig.headingJson}<#else></#if>"/>
@@ -62,6 +63,7 @@ GLOBAL.gtag = gtag;
 GLOBAL.gtag = null;
 </#if>
 GLOBAL.pageData = document.getElementById("pageData").value;
+GLOBAL.googleLoginClientId = document.getElementById("googleLoginClientId").value;
 GLOBAL.loginUserDetails = document.getElementById("loginUserDetailsV2Str").value;
 GLOBAL.headingJson = document.getElementById("headingJson").value;
 GLOBAL.afterLoginLinkJson = document.getElementById("afterLoginLinkJson").value;
@@ -74,6 +76,6 @@ window.GLOBAL = GLOBAL;
 
 <script type="text/javascript" src="/assets/static/dist-react-base-1.0.0/script1.js?v=${appVersion}"></script>
 <script type="text/javascript" src="/assets/static/dist-auth-app/script2.js?v=${appVersion}"></script>
-<script type="text/javascript" src="/assets/static/dist-react-base-1.0.0/script3.js?v=${appVersion}"></script>
+<script type="text/javascript" src="/assets/static/dist-auth-app/script3.js?v=${appVersion}"></script>
 </body>
 </html>

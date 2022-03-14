@@ -1,5 +1,6 @@
 package com.project.ftp.view;
 
+import com.project.ftp.bridge.config.SocialLoginConfig;
 import com.project.ftp.config.AppConfig;
 import com.project.ftp.config.AppConstant;
 import com.project.ftp.obj.LoginUserDetailsV2;
@@ -24,15 +25,20 @@ public class AppView extends View {
     private final FtlConfig ftlConfig;
     private final String loginUserDetailsV2Str;
     private final String androidCheckEnable;
+    private final String loginWithGmailEnable;
+    private final String googleLoginClientId;
     public AppView(HttpServletRequest request, String ftl, String pageName,
                    UserService userService, AppConfig appConfig) {
         super(ftl);
         ftlConfig = appConfig.getFtlConfig();
+        SocialLoginConfig socialLoginConfig = appConfig.getFtpConfiguration().getSocialLoginConfig();
         LoginUserDetailsV2 loginUserDetailsV2 = userService.getLoginUserDetailsV2Data(request,
                 AppConstant.FromEnvConfig);
         this.loginRedirectUrl = userService.getLoginRedirectUrl(loginUserDetailsV2,
                 ftlConfig.getLoginRedirectUrl());
         Boolean isGuestEnableTemp = appConfig.getFtpConfiguration().getGuestEnable();
+        String googleLoginClientId = "";
+        String loginWithGmailEnable = "false";
         if (isGuestEnableTemp == null) {
             isGuestEnableTemp = false;
         }
@@ -43,6 +49,14 @@ public class AppView extends View {
         if (StaticService.isInValidString(pageName)) {
             pageName = "";
         }
+        if (socialLoginConfig != null) {
+            loginWithGmailEnable = Boolean.toString(socialLoginConfig.isLoginWithGmail());
+            if (AppConstant.TRUE.equals(loginWithGmailEnable) && socialLoginConfig.getGoogleLoginClientId() != null) {
+                googleLoginClientId = socialLoginConfig.getGoogleLoginClientId();
+            }
+        }
+        this.loginWithGmailEnable = loginWithGmailEnable;
+        this.googleLoginClientId = googleLoginClientId;
         this.pageName = pageName;
         this.androidCheckEnable = Boolean.toString(androidCheckEnableTemp);
         this.isGuestEnable = Boolean.toString(isGuestEnableTemp);
@@ -79,4 +93,11 @@ public class AppView extends View {
         return androidCheckEnable;
     }
 
+    public String getLoginWithGmailEnable() {
+        return loginWithGmailEnable;
+    }
+
+    public String getGoogleLoginClientId() {
+        return googleLoginClientId;
+    }
 }

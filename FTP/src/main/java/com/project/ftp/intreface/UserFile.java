@@ -76,6 +76,7 @@ public class UserFile implements UserInterface {
         text += deleted + ",";
         return text;
     }
+    @Override
     public Users getAllUsers() {
         Users users = null;
         String filepath = appConfig.getFtpConfiguration().getConfigDataFilePath()
@@ -91,6 +92,7 @@ public class UserFile implements UserInterface {
         }
         return users;
     }
+    @Override
     public MysqlUser getUserByName(String username) {
         if (username == null || username.isEmpty()) {
             return null;
@@ -103,6 +105,20 @@ public class UserFile implements UserInterface {
         }
         return null;
     }
+    @Override
+    public MysqlUser getUserByEmail(String email) {
+        if (email == null || email.isEmpty()) {
+            return null;
+        }
+        Users users = this.getAllUsers();
+        if (users != null) {
+            MysqlUser user = users.searchUserByEmail(email);
+            logger.info("User data for email: {}, is: {}", email, user);
+            return user;
+        }
+        return null;
+    }
+    @Override
     public boolean saveUser(MysqlUser user) {
         String filepath = appConfig.getFtpConfiguration().getConfigDataFilePath()
                 + AppConfigHelper.getUserDataFilename(appConfig);

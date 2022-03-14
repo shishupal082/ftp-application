@@ -9,6 +9,8 @@ public class AppStaticData {
     private String footerLinkJson;
     private String footerLinkJsonAfterLogin;
     private String title;
+    private boolean loginWithGmail;
+    private String googleLoginClientId;
     private Object jsonFileData;
 
     public String getAppVersion() {
@@ -75,6 +77,22 @@ public class AppStaticData {
         this.title = title;
     }
 
+    public boolean isLoginWithGmail() {
+        return loginWithGmail;
+    }
+
+    public void setLoginWithGmail(boolean loginWithGmail) {
+        this.loginWithGmail = loginWithGmail;
+    }
+
+    public String getGoogleLoginClientId() {
+        return googleLoginClientId;
+    }
+
+    public void setGoogleLoginClientId(String googleLoginClientId) {
+        this.googleLoginClientId = googleLoginClientId;
+    }
+
     public Object getJsonFileData() {
         return jsonFileData;
     }
@@ -94,6 +112,8 @@ public class AppStaticData {
                 ", footerLinkJson='" + footerLinkJson + '\'' +
                 ", footerLinkJsonAfterLogin='" + footerLinkJsonAfterLogin + '\'' +
                 ", title='" + title + '\'' +
+                ", loginWithGmail=" + loginWithGmail +
+                ", googleLoginClientId='" + googleLoginClientId + '\'' +
                 ", jsonFileData=" + jsonFileData +
                 '}';
     }

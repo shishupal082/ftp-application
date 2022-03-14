@@ -97,6 +97,11 @@ ftlConfig:
   footerLinkJson: '[{"tag":"div.center","text":[{"tag":"a","href":"/","className":"p-5px","text":"Footer link before login (Home page)"}]}]'
   footerLinkJsonAfterLogin: '[{"tag":"div.center","text":[{"tag":"a","href":"/users_control","name":"isUsersControlEnable","className":"p-5px d-none","text":"Users Control"},{"tag":"a","href":"/permission_control","name":"isDevUser","className":"p-5px d-none","text":"Permission Control"},{"tag":"a","href":"/compare_control","name":"isDevUser2","className":"p-5px d-none","text":"Compare Control"},{"tag":"a","href":"/login_other_user","name":"isLoginOtherUserEnable","className":"p-5px d-none","text":"Login Other Users"},{"tag":"a","href":"/database_files","name":"isDevUser4","className":"p-5px d-none","text":"Database Files"},{"tag":"a","href":"/api/update_config","name":"isDevUser3","className":"p-5px d-none","text":"Update Config"}]}]'
 
+socialLoginConfig:
+  loginWithGmail: true
+  googleLoginClientId: "googleLoginClientId"
+  googleLoginClientSecretId: "googleLoginClientSecretId"
+
 # Optional parameter
 indexPageReRoute: /login
 filenameFormat: "yyyy-MM-dd-HH-mm'-filename'"

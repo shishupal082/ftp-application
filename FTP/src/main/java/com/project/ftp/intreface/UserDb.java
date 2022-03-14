@@ -16,6 +16,7 @@ public class UserDb implements UserInterface {
     public UserDb(final DbDAO dbDAO) {
         this.dbDAO = dbDAO;
     }
+    @Override
     public Users getAllUsers() {
         List<MysqlUser> mysqlUsers = dbDAO.findAll();
         if (mysqlUsers == null) {
@@ -25,6 +26,7 @@ public class UserDb implements UserInterface {
         logger.info("Available user count: {}", users.getUserCount());
         return users;
     }
+    @Override
     public MysqlUser getUserByName(String username) {
         List<MysqlUser> users = dbDAO.findUserByName(username);
         if (users == null) {
@@ -45,6 +47,36 @@ public class UserDb implements UserInterface {
         logger.info("User data for username: {}, is: {}", username, mysqlUser1);
         return mysqlUser1;
     }
+    @Override
+    public MysqlUser getUserByEmail(String email) {
+        if (email == null) {
+            logger.info("Search parameter email is null");
+            return null;
+        }
+        List<MysqlUser> users = dbDAO.findUserByEmail(email);
+        if (users == null) {
+            logger.info("users response for email: {}, is: {}", email, null);
+            return null;
+        }
+        if (users.size() > 1) {
+            logger.info("Multiple users found for email: {}, is: {}", email, users);
+            return null;
+        }
+        MysqlUser mysqlUser1 = null;
+        for (MysqlUser mysqlUser: users) {
+            if (email.equals(mysqlUser.getEmail())) {
+                mysqlUser1 = mysqlUser;
+                break;
+            }
+        }
+        if (mysqlUser1 == null) {
+            logger.info("email: {}, not found in database", email);
+            return null;
+        }
+        logger.info("User data for email: {}, is: {}", email, mysqlUser1);
+        return mysqlUser1;
+    }
+    @Override
     public boolean saveUser(MysqlUser user) {
         user.setTimestamp(StaticService.getDateStrFromPattern(AppConstant.DateTimeFormat6));
         user.truncateString();

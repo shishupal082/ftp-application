@@ -157,6 +157,31 @@ public class EventTracking {
         String comment = this.generateCommentString(commentData, sequence);
         addEvent.addFailureEvent(username, EventName.LOGIN, errorCodes, comment);
     }
+    public void trackLoginSocialFailure(HttpServletRequest request,
+                                  RequestLoginSocial loginSocial, LoginUserDetails loginUserDetails, ErrorCodes errorCodes) {
+        String username = null;
+        HashMap<String, String> commentData = new HashMap<>();
+        ArrayList<String> sequence = new ArrayList<>();
+        sequence.add(errorCodeStr);
+        sequence.add(loginUsername);
+        sequence.add(uiUserAgent);
+        sequence.add(requestUserAgent);
+        sequence.add(sessionDataStr);
+        if (errorCodes != null) {
+            commentData.put(errorCodeStr, errorCodes.getErrorString());
+        }
+        if (loginUserDetails.getLogin()) {
+            username = loginUserDetails.getUsername();
+            commentData.put(loginUsername, "loginUsername="+username);
+        }
+        if (loginSocial != null) {
+            commentData.put(uiUserAgent, loginSocial.getUser_agent());
+        }
+        commentData.put(requestUserAgent, RequestService.getRequestUserAgent(request));
+        commentData.put(sessionDataStr, sessionService.getCurrentSessionDataV2(request));
+        String comment = this.generateCommentString(commentData, sequence);
+        addEvent.addFailureEvent(username, EventName.LOGIN_SOCIAL, errorCodes, comment);
+    }
 
     public void trackRegisterFailure(HttpServletRequest request,
                                      RequestUserRegister requestUserRegister,

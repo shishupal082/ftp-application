@@ -36,6 +36,12 @@ public enum ErrorCodes {
     // Login
     PASSWORD_NOT_MATCHING("PASSWORD_NOT_MATCHING", "Username password not matching.", 403),
     PASSWORD_REQUIRED("PASSWORD_REQUIRED", "Password required.", 403),
+    // SocialLogin
+    SOCIAL_LOGIN_TYPE_NOT_MATCHING("TYPE_NOT_MATCHING", "Social login type not matching.", 403),
+    SOCIAL_LOGIN_ID_TOKEN_REQUIRED("ID_TOKEN_REQUIRED", "Id token required.", 403),
+    SOCIAL_LOGIN_EMAIL_NOT_FOUND("EMAIL_NOT_FOUND", "Email not found.", 403),
+    SOCIAL_LOGIN_INVALID_ID_TOKEN("INVALID_ID_TOKEN", "Invalid id token.", 403),
+    SOCIAL_LOGIN_INVALID_SOCIAL_CONFIG("INVALID_SOCIAL_CONFIG", "Social config error.", 403),
     // Login, Forgot password, Create password
     USER_NOT_REGISTERED("USER_NOT_REGISTERED", "User is not registered, Please register.", 403),
     // Login, Change password, Register, Forgot password, Create password

@@ -74,6 +74,25 @@ public class Users {
         }
         return null;
     }
+    public MysqlUser searchUserByEmail(String email) {
+        if (email == null) {
+            return null;
+        }
+        MysqlUser tempUser;
+        ArrayList<MysqlUser> similarUser = new ArrayList<>();
+        if (userHashMap != null) {
+            for(Map.Entry<String, MysqlUser> entry: userHashMap.entrySet()) {
+                tempUser = entry.getValue();
+                if (tempUser != null && email.equals(tempUser.getEmail())) {
+                    similarUser.add(tempUser);
+                }
+            }
+        }
+        if (similarUser.size() == 1) {
+            return similarUser.get(0);
+        }
+        return null;
+    }
     @Override
     public String toString() {
         return "Users{" +

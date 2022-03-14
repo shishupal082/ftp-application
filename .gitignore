@@ -6,6 +6,7 @@ FTP/user_guide.pdf
 FTP/user_guide.txt
 FTP/user_guide_zonal.pdf
 FTP/user_guide_zonal.txt
+
 FTP/meta-data/FTP-*.jar
 FTP/meta-data/config-files/event_data/
-
+FTP/meta-data/app_env_config_3.yml

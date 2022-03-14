@@ -548,6 +548,39 @@ public class ApiResource {
         return response;
     }
     @POST
+    @Path("/login_social")
+    @UnitOfWork
+    public ApiResponse loginSocial(@Context HttpServletRequest request,
+                                      RequestLoginSocial loginSocial) {
+        logger.info("loginSocial: In, {}, user: {}",
+                loginSocial, userService.getUserDataForLogging(request));
+        ApiResponse response;
+        String comment = null;
+        if (authService.isLoginV2(request)) {
+            LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
+            eventTracking.trackLoginSocialFailure(request, loginSocial, loginUserDetails, ErrorCodes.USER_ALREADY_LOGIN);
+            logger.info("Error in loginSocial, user already login: {}", userService.getLoginUserDetails(request));
+            response = new ApiResponse(ErrorCodes.USER_ALREADY_LOGIN);
+            response.setData(loginUserDetails.getUsername());
+            return response;
+        }
+        try {
+            LoginUserDetails loginUserDetails = userService.loginSocial(request, loginSocial);
+            response = new ApiResponse(loginUserDetails);
+            comment = loginUserDetails.toString();
+            eventTracking.trackSuccessEventV2(request, EventName.LOGIN_SOCIAL, comment);
+        } catch (AppException ae) {
+            logger.info("Error in loginSocial: {}", ae.getErrorCode().getErrorCode());
+            if (loginSocial != null) {
+                comment = loginSocial.toString();
+            }
+            eventTracking.trackFailureEventV2(request, EventName.LOGIN_SOCIAL, ae.getErrorCode(), comment);
+            response = new ApiResponse(ae.getErrorCode());
+        }
+        logger.info("loginSocial: Out: {}", response);
+        return response;
+    }
+    @POST
     @Path("/register_user")
     @UnitOfWork
     public ApiResponse registerUser(@Context HttpServletRequest httpServletRequest,

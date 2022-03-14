@@ -6,11 +6,13 @@ import com.project.ftp.bridge.BridgeToAppInterface;
 import com.project.ftp.bridge.BridgeTracking;
 import com.project.ftp.bridge.config.BridgeConfig;
 import com.project.ftp.bridge.config.EmailConfig;
+import com.project.ftp.bridge.config.SocialLoginConfig;
 import com.project.ftp.bridge.obj.BridgeRequestSendCreatePasswordOtp;
 import com.project.ftp.bridge.obj.yamlObj.CommunicationConfig;
 import com.project.ftp.bridge.obj.yamlObj.TcpConfig;
 import com.project.ftp.bridge.roles.resource.RolesResource;
 import com.project.ftp.bridge.roles.service.RolesService;
+import com.project.ftp.bridge.service.SocialLoginService;
 import com.project.ftp.bridge.tcp.TcpClient;
 import com.project.ftp.config.AppConstant;
 import com.project.ftp.event.EventTracking;
@@ -26,17 +28,21 @@ public class AppToBridge implements AppToBridgeInterface {
     private final static Logger logger = LoggerFactory.getLogger(AppToBridge.class);
     private final BridgeResource bridgeResource;
     private final RolesResource rolesResource;
+    private final SocialLoginService socialLoginService;
     private final EmailConfig emailConfig;
     private final CommunicationConfig communicationConfig;
+    private final SocialLoginConfig socialLoginConfig;
 
     public AppToBridge(FtpConfiguration ftpConfiguration, EventTracking eventTracking) {
         emailConfig = ftpConfiguration.getEmailConfig();
         communicationConfig = ftpConfiguration.getCommunicationConfig();
+        socialLoginConfig = ftpConfiguration.getSocialLoginConfig();
         ArrayList<String> rolesConfigPath = StaticService.getRolesConfigPath(ftpConfiguration);
         BridgeConfig bridgeConfig = new BridgeConfig(emailConfig, ftpConfiguration.getCreatePasswordEmailConfig());
         BridgeToAppInterface bridgeToAppInterface = new BridgeToApp(eventTracking);
         BridgeTracking bridgeTracking = new BridgeTracking(bridgeToAppInterface);
         RolesService rolesService = new RolesService(bridgeConfig, rolesConfigPath);
+        socialLoginService = new SocialLoginService(socialLoginConfig);
         this.bridgeResource = new BridgeResource(bridgeConfig, bridgeToAppInterface, bridgeTracking);
         this.rolesResource = new RolesResource(rolesService, bridgeTracking);
         rolesResource.trackRelatedUser();
@@ -110,5 +116,9 @@ public class AppToBridge implements AppToBridgeInterface {
         }
         TcpClient tcpClient = new TcpClient(tcpConfig);
         return tcpClient.callTcpServer(data, tcpConfig.getTtl());
+    }
+    @Override
+    public String verifyGoogleIdToken(String googleIdToken) {
+        return socialLoginService.getEmailFromGoogleIdToken(googleIdToken);
     }
 }

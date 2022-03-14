@@ -206,6 +206,15 @@ public class UserService {
     public MysqlUser getUserByName(String username) {
         return userInterface.getUserByName(username);
     }
+    private MysqlUser getUserByEmail(String email) {
+        MysqlUser user = userInterface.getUserByEmail(email);
+        if (user != null) {
+            if (StaticService.isValidString(user.getUsername())) {
+                return user;
+            }
+        }
+        return null;
+    }
     private boolean changePassword(MysqlUser user) {
         if (user == null) {
             logger.info("Error in changePassword, user is null");
@@ -567,6 +576,30 @@ public class UserService {
     public LoginUserDetails loginOtherUser(HttpServletRequest request, RequestUserLogin userLogin) throws AppException {
         inputValidate.validateOtherUserLoginRequest(userLogin);
         sessionService.loginOtherUser(request, userLogin.getUsername());
+        LoginUserDetails loginUserDetails = this.getLoginUserDetails(request);
+        this.addLoginRedirectUrl(loginUserDetails);
+        return loginUserDetails;
+    }
+    public LoginUserDetails loginSocial(HttpServletRequest request, RequestLoginSocial loginSocial) throws AppException {
+        inputValidate.validateLoginSocialRequest(loginSocial);
+        String email = appConfig.getAppToBridge().verifyGoogleIdToken(loginSocial.getIdToken());
+        if (email == null) {
+            logger.info("Social login error, Invalid social config.");
+            throw new AppException(ErrorCodes.SOCIAL_LOGIN_INVALID_SOCIAL_CONFIG);
+        }
+        if (StaticService.isInValidString(email)) {
+            logger.info("Social login error, Invalid tokenId.");
+            throw new AppException(ErrorCodes.SOCIAL_LOGIN_INVALID_ID_TOKEN);
+        }
+        MysqlUser user = this.getUserByEmail(email);
+        if (user == null) {
+            ErrorCodes errorCodes = ErrorCodes.SOCIAL_LOGIN_EMAIL_NOT_FOUND;
+            errorCodes.setErrorString("Email '" + email + "' is not found.");
+            logger.info("Social login error: {}", errorCodes);
+            throw new AppException(errorCodes);
+        }
+        String username = user.getUsername();
+        sessionService.loginUser(request, username, username);
         LoginUserDetails loginUserDetails = this.getLoginUserDetails(request);
         this.addLoginRedirectUrl(loginUserDetails);
         return loginUserDetails;

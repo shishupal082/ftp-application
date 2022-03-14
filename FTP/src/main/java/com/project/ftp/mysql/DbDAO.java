@@ -15,6 +15,7 @@ public class DbDAO extends AbstractDAO<MysqlUser> {
     final static Logger logger = LoggerFactory.getLogger(DbDAO.class);
     private final String FindAllUser;
     private final String FindByUsername;
+    private final String FindByEmail;
     private final SessionFactory sessionFactory;
     private final MysqlConnection mysqlConnection;
     public DbDAO(final SessionFactory sessionFactory, final DataSourceFactory dataSourceFactory) {
@@ -23,6 +24,7 @@ public class DbDAO extends AbstractDAO<MysqlUser> {
         this.mysqlConnection = new MysqlConnection(dataSourceFactory);
         FindAllUser = "MysqlUser.findAll";
         FindByUsername = "MysqlUser.findByUsername";
+        FindByEmail = "MysqlUser.findByEmail";
     }
     public List<MysqlUser> findAll() {
         List<MysqlUser> list = new ArrayList<>();
@@ -45,6 +47,20 @@ public class DbDAO extends AbstractDAO<MysqlUser> {
             logger.info("result count: {}", list.size());
         } catch (Exception e) {
             logger.info("error in query: findUserByName: {}, {}", queryName, e.getMessage());
+//            e.printStackTrace();
+        }
+        return list;
+    }
+    public List<MysqlUser> findUserByEmail(String email) {
+        StringBuilder builder = new StringBuilder("%");
+        builder.append(email).append("%");
+        List<MysqlUser> list = new ArrayList<>();
+        String queryName = FindByEmail;
+        try {
+            list = (List<MysqlUser>) namedQuery(queryName).setParameter("email", builder.toString()).getResultList();
+            logger.info("result count: {}", list.size());
+        } catch (Exception e) {
+            logger.info("error in query: findUserByEmail: {}, {}", queryName, e.getMessage());
 //            e.printStackTrace();
         }
         return list;

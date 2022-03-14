@@ -1,5 +1,6 @@
 package com.project.ftp.service;
 
+import com.project.ftp.bridge.config.SocialLoginConfig;
 import com.project.ftp.config.AppConfig;
 import com.project.ftp.config.AppConstant;
 import com.project.ftp.exceptions.AppException;
@@ -525,6 +526,7 @@ public class FileServiceV2 {
         }
         appStaticData.setAppVersion(AppConstant.AppVersion);
         FtlConfig ftlConfig = appConfig.getFtpConfiguration().getFtlConfig();
+        SocialLoginConfig socialLoginConfig = appConfig.getFtpConfiguration().getSocialLoginConfig();
         if (ftlConfig != null) {
             appStaticData.setTitle(ftlConfig.getTitle());
             appStaticData.setHeadingJson(ftlConfig.getHeadingJson());
@@ -532,6 +534,10 @@ public class FileServiceV2 {
             appStaticData.setPageNotFoundJson(ftlConfig.getPageNotFoundJson());
             appStaticData.setFooterLinkJson(ftlConfig.getFooterLinkJson());
             appStaticData.setFooterLinkJsonAfterLogin(ftlConfig.getFooterLinkJsonAfterLogin());
+        }
+        if (socialLoginConfig != null) {
+            appStaticData.setLoginWithGmail(socialLoginConfig.isLoginWithGmail());
+            appStaticData.setGoogleLoginClientId(socialLoginConfig.getGoogleLoginClientId());
         }
         return new ApiResponse(appStaticData);
     }

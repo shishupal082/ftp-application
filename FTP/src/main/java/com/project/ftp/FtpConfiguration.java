@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.project.ftp.bridge.config.CreatePasswordEmailConfig;
 import com.project.ftp.bridge.config.EmailConfig;
+import com.project.ftp.bridge.config.SocialLoginConfig;
 import com.project.ftp.bridge.obj.yamlObj.CommunicationConfig;
 import com.project.ftp.obj.yamlObj.EventConfig;
 import com.project.ftp.obj.yamlObj.FtlConfig;
@@ -56,6 +57,7 @@ public class FtpConfiguration extends Configuration {
     private FtlConfig ftlConfig;
     private EventConfig eventConfig;
     private CommunicationConfig communicationConfig;
+    private SocialLoginConfig socialLoginConfig;
     @JsonProperty("database")
     private DataSourceFactory dataSourceFactory = new DataSourceFactory();
 
@@ -339,6 +341,14 @@ public class FtpConfiguration extends Configuration {
         this.communicationConfig = communicationConfig;
     }
 
+    public SocialLoginConfig getSocialLoginConfig() {
+        return socialLoginConfig;
+    }
+
+    public void setSocialLoginConfig(SocialLoginConfig socialLoginConfig) {
+        this.socialLoginConfig = socialLoginConfig;
+    }
+
     public DataSourceFactory getDataSourceFactory() {
         return dataSourceFactory;
     }
@@ -487,6 +497,10 @@ public class FtpConfiguration extends Configuration {
         if (communicationConfig != null) {
             this.communicationConfig = communicationConfig;
         }
+        SocialLoginConfig socialLoginConfig = tempFtpConfiguration.getSocialLoginConfig();
+        if (socialLoginConfig != null) {
+            this.socialLoginConfig = socialLoginConfig;
+        }
     }
 
     @Override
@@ -527,6 +541,7 @@ public class FtpConfiguration extends Configuration {
                 ", ftlConfig=" + ftlConfig +
                 ", eventConfig=" + eventConfig +
                 ", communicationConfig=" + communicationConfig +
+                ", socialLoginConfig=" + socialLoginConfig +
                 ", dataSourceFactory=" + "*****" +
                 '}';
     }

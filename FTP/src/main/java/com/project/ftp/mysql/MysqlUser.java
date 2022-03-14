@@ -18,7 +18,10 @@ import java.util.Objects;
                 query = "select e from MysqlUser e"),
         @NamedQuery(name = "MysqlUser.findByUsername",
                 query = "select e from MysqlUser e "
-                        + "where e.username like :name")
+                        + "where e.username like :name"),
+        @NamedQuery(name = "MysqlUser.findByEmail",
+                query = "select e from MysqlUser e "
+                        + "where e.email like :email")
 })
 
 // it will automatically fire update query when ever MysqlUser changes

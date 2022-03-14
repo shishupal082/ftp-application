@@ -148,6 +148,10 @@
     "Login Other User [POST]"
   ],
   [
+    "/api/login_social",
+    "Login Using Gmail [POST]"
+  ],
+  [
     "/api/forgot_password",
     "Forgot password [POST]"
   ],

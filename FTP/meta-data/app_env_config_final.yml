@@ -115,6 +115,11 @@ communicationConfig:
       port: 8086
       ttl: 4
 
+socialLoginConfig:
+  loginWithGmail: true
+  googleLoginClientId: "googleLoginClientId"
+  googleLoginClientSecretId: "googleLoginClientSecretId"
+
 ftlConfig:
   description: "Web Application description"
   keywords: "Web Application, File upload, PDF, JPEG, JPG, PNG"

@@ -3,6 +3,7 @@ package com.project.ftp.event;
 public enum EventName {
     LOGIN("login"),
     LOGIN_OTHER_USER("login_other_user"),
+    LOGIN_SOCIAL("login_social"),
     LOGOUT("logout"),
     REGISTER("register"),
     FORGOT_PASSWORD("forgot_password"),

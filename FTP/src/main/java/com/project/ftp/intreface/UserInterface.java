@@ -7,4 +7,5 @@ public interface UserInterface {
     Users getAllUsers();
     boolean saveUser(MysqlUser user);
     MysqlUser getUserByName(String username);
+    MysqlUser getUserByEmail(String email);
 }

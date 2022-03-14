@@ -13,4 +13,5 @@ public interface AppToBridgeInterface {
     ArrayList<String> getAllUsersName();
     Object getRolesConfig();
     String getTcpResponse(String tcpId, String data);
+    String verifyGoogleIdToken(String googleIdToken);
 }
