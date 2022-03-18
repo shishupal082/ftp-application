@@ -85,6 +85,9 @@ public enum ErrorCodes {
     FORGOT_PASSWORD_MOBILE_MISMATCH("FORGOT_PASSWORD_MOBILE_MISMATCH", "Username and mobile number not matching.", 403),
     FORGOT_PASSWORD_EMAIL_MISMATCH("FORGOT_PASSWORD_EMAIL_MISMATCH", "Username and email not matching.", 403),
     FORGOT_PASSWORD_REPEAT_REQUEST("FORGOT_PASSWORD_REPEAT_REQUEST", "Forgot password request submitted, Please create password.", 403),
+    // reset_count
+    RESET_COUNT_INVALID_USERNAME("RESET_COUNT_INVALID_USERNAME", "Username required.", 403),
+    RESET_COUNT_INVALID_METHOD("RESET_COUNT_INVALID_METHOD", "Invalid method for reset count.", 403),
     INVALID_FILE_DATA("INVALID_FILE_DATA", "Invalid file data", 403),
     INVALID_FILE_SAVE_PATH("INVALID_FILE_SAVE_PATH", "Invalid final save file path", 403),
     INVALID_SERVICE_NAME_EMPTY("Invalid service name Empty", "Invalid service name Empty", 403),

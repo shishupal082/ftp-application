@@ -711,6 +711,26 @@ public class ApiResource {
         logger.info("createPassword : Out: {}", response);
         return response;
     }
+    @POST
+    @Path("/reset_count")
+    @UnitOfWork
+    public ApiResponse resetCount(@Context HttpServletRequest request,
+                                  RequestResetCount requestResetCount) {
+        LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
+        logger.info("resetCount In: {}", loginUserDetails);
+        ApiResponse response;
+        try {
+            authService.isControlGroupUser(request);
+            response = userService.resetCount(loginUserDetails, requestResetCount);
+            eventTracking.trackSuccessEventV1(loginUserDetails.getUsername(), EventName.RESET_CHANGE_PASSWORD_COUNT);
+        } catch (AppException ae) {
+            logger.info("Error in resetCount: {}", ae.getErrorCode().getErrorCode());
+            response = new ApiResponse(ae.getErrorCode());
+            eventTracking.trackFailureEventV1(loginUserDetails.getUsername(), EventName.RESET_CHANGE_PASSWORD_COUNT, ae.getErrorCode());
+        }
+        logger.info("resetCount Out: {}", response);
+        return response;
+    }
     @GET
     @Path("/update_config")
     @UnitOfWork

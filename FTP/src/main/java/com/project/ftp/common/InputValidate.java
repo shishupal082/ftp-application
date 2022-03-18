@@ -120,6 +120,17 @@ public class InputValidate {
         }
         logger.info("Request idToken: {}", loginSocial.getIdToken());
     }
+    public void validateResetCount(RequestResetCount requestResetCount) throws AppException {
+        if (requestResetCount == null) {
+            logger.info("resetCount request is null.");
+            throw new AppException(ErrorCodes.BAD_REQUEST_ERROR);
+        }
+        String username = requestResetCount.getUsername();
+        if (StaticService.isInValidString(username)) {
+            logger.info("resetCount request invalid username: {}", username);
+            throw new AppException(ErrorCodes.RESET_COUNT_INVALID_USERNAME);
+        }
+    }
     public void validateChangePassword(RequestChangePassword changePassword) throws AppException {
         if (changePassword == null) {
             logger.info("changePassword request is null.");

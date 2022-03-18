@@ -1,0 +1,60 @@
+8.2.0.5 (2022-03-18)
+---------------------
+users_table
+method field can be Enum
+    - register
+    - register_error
+    - change_password (When user changes password after login)
+    - forgot_password
+    - create_password_error
+    - create_password
+
+BLOCKED("blocked"),
+NEW_USER("new_user"),
+REGISTER("register"),
+REGISTER_ERROR("register_error"),
+FORGOT_PASSWORD("forgot_password"),
+CREATE_PASSWORD("create_password"),
+CREATE_PASSWORD_ERROR("create_password_error"),
+CHANGE_PASSWORD("change_password");
+
+change_password_count maxvalue 32767 (smallint 2^15 = 32768)
+If it further increases, its value will not incremented and it will remain on 32767 (In case of forgot_password repeat request)
+
+
+register_error
+---------------
+1) Passcode not matching: It will keep increasing count
+2) Passcode expired. Please contact admin.: When max count reached
+
+create_password_error
+----------------------
+1) Passcode not matching: It will keep increasing count
+
+create_password allowed if, previous method is [forgot_password, create_password_error]
+
+count can be changed
+---------------------
+repeatForgotPassword
+registerError
+createPasswordError
+changePassword
+
+- register_error (It will keep increasing untill threshold reached)
+- create_password_error (It will keep increasing untill threshold reached)
+- forgot_password (It will be keep increasing but otp will not change)
+- change_password
+
+0: success /api/register, /api/create_password
+1: success /api/forgot_password
+0: 1st request opt mismatch for create password error (Then incremented and it becomes 1)
+1: success /api/reset_count, allowed if existing method is [register_error, create_password_error]
+
+blocked is used for
+--------------------
+register
+login
+change_password
+forgot_password
+create_password
+

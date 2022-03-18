@@ -176,6 +176,10 @@
     "Verify role permission [POST]"
   ],
   [
+    "/api/reset_count",
+    "Reset count for create_password_error and register_error [POST]"
+  ],
+  [
     "/api/add_text",
     "Add array text in file given by user [POST] in the pre defined pattern"
   ],

@@ -1297,12 +1297,14 @@ Added new api
     - /api/login_social [POST]
 
 Added fptConfiguration
------------------------
 socialLoginConfig:
   loginWithGmail: boolean
   GoogleLoginClientId: String
   GoogleLoginClientSecretId: String
-
+18.03.2022
+----------
+Added api
+- /api/reset_count [POST] for create_password_error and register_error
 
 Future releases
 -------------------

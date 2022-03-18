@@ -235,6 +235,14 @@ public class UserService {
         user.setCreatePasswordOtp(null);
         return userInterface.saveUser(user);
     }
+    private boolean resetCount(MysqlUser user) {
+        if (user == null) {
+            logger.info("Error in resetCount, user is null");
+            return false;
+        }
+        user.setChangePasswordCount(1);
+        return userInterface.saveUser(user);
+    }
     private void registerError(MysqlUser user) {
         if (user == null) {
             logger.info("Error in register, user is null");
@@ -484,7 +492,7 @@ public class UserService {
             throw new AppException(passwordMisMatchErrorCode);
         }
     }
-    public ArrayList<String> getAllRelatedUsersName(String username) {
+    private ArrayList<String> getAllRelatedUsersName(String username) {
         ArrayList<String> relatedUsers;
         relatedUsers = appConfig.getAppToBridge().getAllUsersName();
         if (relatedUsers == null) {
@@ -510,6 +518,17 @@ public class UserService {
             }
         }
         logger.info("RelatedUsers for username:{}, {}", username, relatedUsers);
+        return relatedUsers;
+    }
+    private ArrayList<String> getRelatedUserName(LoginUserDetails loginUserDetails) {
+        boolean isAdmin = this.isLoginUserAdmin(loginUserDetails);
+        ArrayList<String> relatedUsers;
+        if (isAdmin) {
+            relatedUsers = this.getAllRelatedUsersName(loginUserDetails.getUsername());
+        } else {
+            relatedUsers = this.getRelatedUsers(loginUserDetails.getUsername());
+        }
+        logger.info("RelatedUsers for username:{}, {}", loginUserDetails.getUsername(), relatedUsers);
         return relatedUsers;
     }
     public Object getRolesConfig() {
@@ -741,5 +760,24 @@ public class UserService {
         LoginUserDetails loginUserDetails = this.getLoginUserDetails(request);
         this.addLoginRedirectUrl(loginUserDetails);
         return loginUserDetails;
+    }
+    public ApiResponse resetCount(LoginUserDetails loginUserDetails, RequestResetCount requestResetCount) throws AppException {
+        inputValidate.validateResetCount(requestResetCount);
+        String username = requestResetCount.getUsername();
+        ArrayList<String> relatedUsers = this.getRelatedUserName(loginUserDetails);
+        if (!relatedUsers.contains(username)) {
+            logger.info("Username: {}, is not part of dependent users: {}", username, relatedUsers);
+            throw new AppException(ErrorCodes.UNAUTHORIZED_USER);
+        }
+        MysqlUser user = this.isUserBlocked(username);
+        ArrayList<String> allowedMethods = new ArrayList<>();
+        allowedMethods.add(UserMethod.REGISTER_ERROR.getUserMethod());
+        allowedMethods.add(UserMethod.CREATE_PASSWORD_ERROR.getUserMethod());
+        if (!allowedMethods.contains(user.getMethod())) {
+            logger.info("Invalid method for resetCount: {}", user.getMethod());
+            throw new AppException(ErrorCodes.RESET_COUNT_INVALID_METHOD);
+        }
+        this.resetCount(user);
+        return new ApiResponse(AppConstant.SUCCESS);
     }
 }

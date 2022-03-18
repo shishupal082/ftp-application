@@ -59,7 +59,9 @@ public class EventTracking {
         LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
         addEvent.addSuccessEventV2(loginUserDetails.getUsername(), eventName);
     }
-
+    public void trackSuccessEventV1(String username, EventName eventName) {
+        addEvent.addSuccessEventV2(username, eventName);
+    }
 
     public void trackSuccessEventV2(HttpServletRequest request, EventName eventName, String comment) {
         LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
@@ -70,6 +72,9 @@ public class EventTracking {
         LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
         addEvent.addFailureEvent(loginUserDetails.getUsername(), eventName, errorCodes, null);
     }
+    public void trackFailureEventV1(String username, EventName eventName, ErrorCodes errorCodes) {
+        addEvent.addFailureEvent(username, eventName, errorCodes, null);
+    }
     public void trackFailureEventV2(HttpServletRequest request, EventName eventName, ErrorCodes errorCodes, String comment) {
         LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
         if (comment != null) {
@@ -77,7 +82,6 @@ public class EventTracking {
         }
         addEvent.addFailureEvent(loginUserDetails.getUsername(), eventName, errorCodes, comment);
     }
-
     public void trackEventV2(String username, String eventName, String status, String reason, String comment) {
         addEvent.addCommonEventV2(username, eventName, status, reason, comment);
     }
