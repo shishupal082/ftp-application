@@ -1,5 +1,6 @@
 package com.project.ftp.service;
 
+import com.project.ftp.common.StrUtils;
 import com.project.ftp.config.AppConfig;
 import com.project.ftp.config.AppConstant;
 import com.project.ftp.config.PathType;
@@ -12,6 +13,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 
 public class FileServiceV3 {
@@ -19,6 +21,7 @@ public class FileServiceV3 {
     private final AppConfig appConfig;
     private final FileService fileService;
     private final UserService userService;
+    private final StrUtils strUtils = new StrUtils();
     public FileServiceV3(final AppConfig appConfig, final UserService userService) {
         this.appConfig = appConfig;
         this.userService = userService;
@@ -194,7 +197,7 @@ public class FileServiceV3 {
         if (rowResponse == null) {
             return false;
         }
-        return StaticService.isValidString(rowResponse.getsNo());
+        return StaticService.isValidString(rowResponse.getOrgUsername());
     }
     private ArrayList<TableRowResponse> convertTokensToTableRow(ArrayList<ArrayList<String>> tokens,
                                                                 String tableFilename) {
@@ -246,6 +249,10 @@ public class FileServiceV3 {
             logger.info("Invalid addText.text: {}", addText);
             throw new AppException(ErrorCodes.BAD_REQUEST_ERROR);
         }
+        for (int i=0; i<textData.length; i++) {
+            textData[i] = strUtils.replaceString(textData[i], "\n", ";");
+        }
+        addText.setText(textData);
     }
     public void verifyAddTextRequestV2(String saveDir, LoginUserDetails loginUserDetails,
                                      RequestAddText addText) throws AppException {
@@ -297,7 +304,9 @@ public class FileServiceV3 {
         }
         return false;
     }
-    public boolean saveAddText(String saveDir, String loginUsername, RequestAddText addText) {
+    public boolean saveAddText(String saveDir, LoginUserDetails loginUserDetails, RequestAddText addText) {
+        String loginUsername = loginUserDetails.getUsername();
+        String orgUsername = loginUserDetails.getOrgUsername();
         if (StaticService.isInValidString(saveDir) || StaticService.isInValidString(loginUsername) || addText == null) {
             logger.info("Invalid saveDir or loginUsername or addText");
             return false;
@@ -332,7 +341,7 @@ public class FileServiceV3 {
             TextFileParser textFileParser = new TextFileParser(filePath);
             String currentTimeStamp;
             currentTimeStamp = StaticService.getDateStrFromPattern(AppConstant.DateTimeFormat6);
-            finalSavingData = addText.generateAddTextResponse(loginUsername, currentTimeStamp);
+            finalSavingData = addText.generateAddTextResponse(orgUsername, loginUsername, currentTimeStamp);
             for (String str : finalSavingData) {
                 textFileParser.addText(str);
             }

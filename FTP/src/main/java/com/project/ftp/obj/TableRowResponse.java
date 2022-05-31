@@ -3,7 +3,7 @@ package com.project.ftp.obj;
 import java.util.ArrayList;
 
 public class TableRowResponse {
-    private String sNo;
+    private String orgUsername;
     private String entryTime;
     private String addedBy;
     private String tableName;
@@ -18,7 +18,7 @@ public class TableRowResponse {
             return;
         }
         if (row.size() > 0) {
-            sNo = row.get(0);
+            orgUsername = row.get(0);
         }
         if (row.size() > 1) {
             entryTime = row.get(1);
@@ -42,12 +42,12 @@ public class TableRowResponse {
             }
         }
     }
-    public String getsNo() {
-        return sNo;
+    public String getOrgUsername() {
+        return orgUsername;
     }
 
-    public void setsNo(String sNo) {
-        this.sNo = sNo;
+    public void setOrgUsername(String orgUsername) {
+        this.orgUsername = orgUsername;
     }
 
     public String getEntryTime() {
@@ -109,7 +109,7 @@ public class TableRowResponse {
     @Override
     public String toString() {
         return "TableRowResponse{" +
-                "sNo='" + sNo + '\'' +
+                "sNo='" + orgUsername + '\'' +
                 ", entryTime='" + entryTime + '\'' +
                 ", addedBy='" + addedBy + '\'' +
                 ", tableName='" + tableName + '\'' +

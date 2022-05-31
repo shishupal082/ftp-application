@@ -51,7 +51,7 @@ public class RequestAddText {
         this.uiEntryTime = uiEntryTime;
     }
 
-    public ArrayList<String> generateAddTextResponse(String loginUsername, String currentTimeStamp) {
+    public ArrayList<String> generateAddTextResponse(String orgUsername, String loginUsername, String currentTimeStamp) {
         ArrayList<String> response = new ArrayList<>();
         String result;
         if (text != null) {
@@ -59,7 +59,11 @@ public class RequestAddText {
                 if (StaticService.isInValidString(text[i])) {
                     continue;
                 }
-                result = "0,";
+                if (orgUsername == null) {
+                    result = "0,";
+                } else {
+                    result = orgUsername + ",";
+                }
                 if (currentTimeStamp == null) {
                     result += ",";
                 } else {

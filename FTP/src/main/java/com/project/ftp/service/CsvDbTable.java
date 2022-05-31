@@ -144,11 +144,9 @@ public class CsvDbTable {
         return new ApiResponse(filesInfo);
     }
     public ApiResponse addText(LoginUserDetails userDetails, RequestAddText addText) throws AppException {
-
         String saveDir = appConfig.getFileSaveDirV2(userDetails);
         fileServiceV3.verifyAddTextRequestV2(saveDir, userDetails, addText);
-        String username = userDetails.getUsername();
-        boolean textAdded = fileServiceV3.saveAddText(saveDir, username, addText);
+        boolean textAdded = fileServiceV3.saveAddText(saveDir, userDetails, addText);
         if (textAdded) {
             return new ApiResponse();
         }
@@ -248,7 +246,7 @@ public class CsvDbTable {
         String[] text = new String[1];
         text[0] = deleteId + "," + this.getTextForSaving(finalRowResponse.getText());
         addText.setText(text);
-        boolean textAdded = fileServiceV3.saveAddText(saveDir, username, addText);
+        boolean textAdded = fileServiceV3.saveAddText(saveDir, loginUserDetails, addText);
         if (textAdded) {
             return new ApiResponse();
         }

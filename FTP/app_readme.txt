@@ -1306,6 +1306,13 @@ socialLoginConfig:
 Added api
 - /api/reset_count [POST] for create_password_error and register_error
 
+8.0.2.6
+----------
+31.05.2022
+----------
+Table rowResponse 1st item: sNo changes to orgUsername
+textData replace all \n with ; in request
+
 Future releases
 -------------------
 
