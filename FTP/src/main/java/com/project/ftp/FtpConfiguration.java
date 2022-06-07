@@ -49,6 +49,7 @@ public class FtpConfiguration extends Configuration {
     private ArrayList<String> fileNotFoundMapping;
     private ArrayList<String> rolesFileName;
     private ArrayList<String> allowedTableFilename;
+    private ArrayList<String> enabledAuthPages;
     private HashMap<String, String> loginRedirectMapping;
     private HashMap<String, String> fileSaveDirMapping;
     private HashMap<String, String> tempConfig;
@@ -277,6 +278,14 @@ public class FtpConfiguration extends Configuration {
         this.allowedTableFilename = allowedTableFilename;
     }
 
+    public ArrayList<String> getEnabledAuthPages() {
+        return enabledAuthPages;
+    }
+
+    public void setEnabledAuthPages(ArrayList<String> enabledAuthPages) {
+        this.enabledAuthPages = enabledAuthPages;
+    }
+
     public HashMap<String, String> getLoginRedirectMapping() {
         return loginRedirectMapping;
     }
@@ -465,6 +474,10 @@ public class FtpConfiguration extends Configuration {
         if (allowedTableFilename != null && allowedTableFilename.size() > 0) {
             this.allowedTableFilename = allowedTableFilename;
         }
+        ArrayList<String> enabledAuthPages = tempFtpConfiguration.getEnabledAuthPages();
+        if (enabledAuthPages != null && enabledAuthPages.size() > 0) {
+            this.enabledAuthPages = enabledAuthPages;
+        }
         HashMap<String, String> loginRedirectMapping = tempFtpConfiguration.getLoginRedirectMapping();
         if (loginRedirectMapping != null) {
             this.loginRedirectMapping = loginRedirectMapping;
@@ -533,6 +546,7 @@ public class FtpConfiguration extends Configuration {
                 ", fileNotFoundMapping=" + fileNotFoundMapping +
                 ", rolesFileName=" + rolesFileName +
                 ", allowedTableFilename=" + allowedTableFilename +
+                ", enabledAuthPages=" + enabledAuthPages +
                 ", loginRedirectMapping=" + loginRedirectMapping +
                 ", fileSaveDirMapping=" + fileSaveDirMapping +
                 ", tempConfig=" + tempConfig +

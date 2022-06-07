@@ -1,5 +1,7 @@
 package com.project.ftp.obj;
 
+import java.util.ArrayList;
+
 public class AppStaticData {
     private String appVersion;
     private String uploadFileApiVersion;
@@ -12,6 +14,7 @@ public class AppStaticData {
     private boolean loginWithGmail;
     private String googleLoginClientId;
     private Object jsonFileData;
+    private ArrayList<String> allowedAuthPages;
 
     public String getAppVersion() {
         return appVersion;
@@ -101,6 +104,14 @@ public class AppStaticData {
         this.jsonFileData = jsonFileData;
     }
 
+    public ArrayList<String> getAllowedAuthPages() {
+        return allowedAuthPages;
+    }
+
+    public void setAllowedAuthPages(ArrayList<String> allowedAuthPages) {
+        this.allowedAuthPages = allowedAuthPages;
+    }
+
     @Override
     public String toString() {
         return "AppStaticData{" +
@@ -115,6 +126,7 @@ public class AppStaticData {
                 ", loginWithGmail=" + loginWithGmail +
                 ", googleLoginClientId='" + googleLoginClientId + '\'' +
                 ", jsonFileData=" + jsonFileData +
+                ", allowedAuthPages=" + allowedAuthPages +
                 '}';
     }
 }

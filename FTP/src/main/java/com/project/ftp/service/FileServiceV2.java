@@ -525,6 +525,7 @@ public class FileServiceV2 {
             logger.info("Error in reading app static file: {}", ae.getErrorCode().getErrorCode());
         }
         appStaticData.setAppVersion(AppConstant.AppVersion);
+        appStaticData.setAllowedAuthPages(appConfig.getFtpConfiguration().getEnabledAuthPages());
         FtlConfig ftlConfig = appConfig.getFtpConfiguration().getFtlConfig();
         SocialLoginConfig socialLoginConfig = appConfig.getFtpConfiguration().getSocialLoginConfig();
         if (ftlConfig != null) {

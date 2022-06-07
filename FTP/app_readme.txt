@@ -1313,6 +1313,12 @@ Added api
 Table rowResponse 1st item: sNo changes to orgUsername
 textData replace all \n with ; in request
 
+8.0.2.7
+----------
+07.06.2022
+----------
+Added enabledAuthPages in envConfig.yml
+
 Future releases
 -------------------
 

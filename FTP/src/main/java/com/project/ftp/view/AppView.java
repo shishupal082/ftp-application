@@ -12,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
 
 /**
  * Created by shishupalkumar on 11/02/17.
@@ -27,9 +28,11 @@ public class AppView extends View {
     private final String androidCheckEnable;
     private final String loginWithGmailEnable;
     private final String googleLoginClientId;
+    private final String allowedAuthPages;
     public AppView(HttpServletRequest request, String ftl, String pageName,
                    UserService userService, AppConfig appConfig) {
         super(ftl);
+        ArrayList<String> allowedAuthPagesList = appConfig.getFtpConfiguration().getEnabledAuthPages();
         ftlConfig = appConfig.getFtlConfig();
         SocialLoginConfig socialLoginConfig = appConfig.getFtpConfiguration().getSocialLoginConfig();
         LoginUserDetailsV2 loginUserDetailsV2 = userService.getLoginUserDetailsV2Data(request,
@@ -54,6 +57,11 @@ public class AppView extends View {
             if (AppConstant.TRUE.equals(loginWithGmailEnable) && socialLoginConfig.getGoogleLoginClientId() != null) {
                 googleLoginClientId = socialLoginConfig.getGoogleLoginClientId();
             }
+        }
+        if (allowedAuthPagesList != null) {
+            allowedAuthPages = String.join(AppConstant.colonDelimater, allowedAuthPagesList);
+        } else {
+            allowedAuthPages = "";
         }
         this.loginWithGmailEnable = loginWithGmailEnable;
         this.googleLoginClientId = googleLoginClientId;
@@ -99,5 +107,9 @@ public class AppView extends View {
 
     public String getGoogleLoginClientId() {
         return googleLoginClientId;
+    }
+
+    public String getAllowedAuthPages() {
+        return allowedAuthPages;
     }
 }

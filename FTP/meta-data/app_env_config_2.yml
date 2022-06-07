@@ -61,6 +61,12 @@ emailConfig:
   senderEmail: "username@gmail.com"
   senderPassword: "password"
 
+enabledAuthPages:
+  - login
+  - forgot_password
+  - create_password
+  - register
+
 createPasswordEmailConfig:
   createPasswordLink: "http://localhost:8080/create_password"
   createPasswordSubject: "Forgot your password?"

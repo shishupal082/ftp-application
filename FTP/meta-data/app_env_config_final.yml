@@ -120,6 +120,12 @@ socialLoginConfig:
   googleLoginClientId: "googleLoginClientId"
   googleLoginClientSecretId: "googleLoginClientSecretId"
 
+enabledAuthPages:
+  - login
+  - forgot_password
+  - create_password
+  - register
+
 ftlConfig:
   description: "Web Application description"
   keywords: "Web Application, File upload, PDF, JPEG, JPG, PNG"
