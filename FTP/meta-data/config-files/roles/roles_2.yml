@@ -6,10 +6,14 @@ roleAccess:
     - U7
   individualUser9:
     - U9
+  infiniteTTLLoginUser:
+    - admin
 
 roleAccessMapping:
   isAdminOrDevUser: (admin|dev)
   localSystemUser: individualUser9
+  isInfiniteTTLLoginUser: infiniteTTLLoginUser
+
 
 coRelatedUsers:
   - userGroup3

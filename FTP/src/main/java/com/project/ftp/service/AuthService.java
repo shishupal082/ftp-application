@@ -1,5 +1,6 @@
 package com.project.ftp.service;
 
+import com.project.ftp.config.AppConstant;
 import com.project.ftp.exceptions.AppException;
 import com.project.ftp.exceptions.ErrorCodes;
 import com.project.ftp.obj.LoginUserDetails;
@@ -76,5 +77,12 @@ public class AuthService {
             logger.info("UnAuthorised user: not dev user, {}", loginUserDetails);
             throw new AppException(ErrorCodes.UNAUTHORIZED_USER);
         }
+    }
+    public boolean isInfiniteTTLLoginUser(HttpServletRequest request) throws AppException {
+        LoginUserDetails userDetails = userService.getLoginUserDetails(request);
+        if (userService.isAuthorised(userDetails, AppConstant.IS_INFINITE_TTL_LOGIN_USER)) {
+            return true;
+        }
+        return false;
     }
 }

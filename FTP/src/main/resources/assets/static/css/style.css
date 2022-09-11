@@ -62,6 +62,18 @@ body.theme-grey {
 .ml-10px {
     margin-left: 10px;
 }
+.w-10px {
+    width: 10px;
+}
+.w-16px {
+    width: 16px;
+}
+.w-20px {
+    width: 20px;
+}
+.w-32px {
+    width: 32px;
+}
 .w-35px {
     width: 35px;
 }
@@ -98,11 +110,47 @@ body.theme-grey {
 .w-300px {
     width: 300px;
 }
+.max-w-120px {
+    max-width: 120px;
+}
+.max-w-160px {
+    max-width: 160px;
+}
+.max-w-200px {
+    max-width: 200px;
+}
+.h-10px {
+    height: 10px;
+}
 .h-15px {
     height: 15px;
 }
+.h-16px {
+    height: 16px;
+}
+.h-20px {
+    height: 20px;
+}
+.h-30px {
+    height: 30px;
+}
+.h-32px {
+    height: 32px;
+}
 .h-45px {
     height: 45px;
+}
+.fs-8px {
+    font-size: 8px;
+}
+.fs-10px {
+    font-size: 10px;
+}
+.fs-12px {
+    font-size: 12px;
+}
+.fs-16px {
+    font-size: 16px;
 }
 .fs-80 {
     font-size: 80%;
@@ -118,6 +166,9 @@ body.theme-grey {
 }
 .v-align-initial {
     vertical-align: initial;
+}
+.word-break-all {
+    word-break: break-all;
 }
 table.table-padded-px-5 > thead > tr > th,
 table.table-padded-px-5 > thead > tr > td,

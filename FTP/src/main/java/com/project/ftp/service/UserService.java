@@ -28,7 +28,7 @@ public class UserService {
     private final InputValidate inputValidate;
     public UserService(final AppConfig appConfig, final UserInterface userInterface) {
         this.appConfig = appConfig;
-        this.sessionService = new SessionService(appConfig);
+        this.sessionService = new SessionService(this, appConfig);
         this.userInterface = userInterface;
         this.inputValidate = new InputValidate();
     }

@@ -7,7 +7,9 @@ import com.project.ftp.event.EventTracking;
 import com.project.ftp.exceptions.AppException;
 import com.project.ftp.exceptions.ErrorCodes;
 import com.project.ftp.filters.LogFilter;
+import com.project.ftp.service.AuthService;
 import com.project.ftp.service.StaticService;
+import com.project.ftp.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,10 +21,12 @@ import java.util.Map;
 
 public class SessionService {
     final static Logger logger = LoggerFactory.getLogger(SessionService.class);
+    private final AuthService authService;
     final AppConfig appConfig;
     final SysUtils sysUtils = new SysUtils();
-    public SessionService(final AppConfig appConfig) {
+    public SessionService(final UserService userService, final AppConfig appConfig) {
         this.appConfig = appConfig;
+        this.authService = new AuthService(userService);
     }
     private SessionData getCurrentSessionData(HttpServletRequest request) throws AppException {
         String sessionId = getSessionId(request);
@@ -70,7 +74,22 @@ public class SessionService {
         sessionData.setOrgUsername(orgUsername);
         return sessionData;
     }
-
+    private ArrayList<String> getSessionIdByUsername(HashMap<String, SessionData> sessionDataHashMap, String username) {
+        ArrayList<String> sessionIdsByUsername = new ArrayList<>();
+        if (sessionDataHashMap == null || username == null) {
+            return null;
+        }
+        SessionData sessionData;
+        String sessionId;
+        for (Map.Entry<String, SessionData> sessionDataMap: sessionDataHashMap.entrySet()) {
+            sessionId = sessionDataMap.getKey();
+            sessionData = sessionDataMap.getValue();
+            if (sessionId != null && username.equals(sessionData.getUsername())) {
+                sessionIdsByUsername.add(sessionId);
+            }
+        }
+        return sessionIdsByUsername;
+    }
     public String updateSessionId(HttpServletRequest request, String currentSessionId, EventTracking eventTracking) {
         String newSessionId = StaticService.createUUIDNumber();
         if (currentSessionId.length() > 40 || currentSessionId.length() < 30) {
@@ -86,9 +105,11 @@ public class SessionService {
             for (Map.Entry<String, SessionData> sessionDataMap: sessionDataHashMap.entrySet()) {
                 sessionId = sessionDataMap.getKey();
                 sessionData = sessionDataMap.getValue();
-                if (currentTime - sessionData.getUpdatedTime() >= AppConstant.SESSION_TTL) {
-                    eventTracking.trackExpiredUserSession(sessionData);
-                    deletedSessionIds.add(sessionId);
+                if (!authService.isInfiniteTTLLoginUser(request)) {
+                    if (currentTime - sessionData.getUpdatedTime() >= AppConstant.SESSION_TTL) {
+                        eventTracking.trackExpiredUserSession(sessionData);
+                        deletedSessionIds.add(sessionId);
+                    }
                 }
                 if (currentSessionId.equals(sessionId)) {
                     sessionData.setUpdatedTime(sysUtils.getTimeInMsLong());
@@ -146,14 +167,26 @@ public class SessionService {
         HashMap<String, SessionData> sessionData = appConfig.getSessionData();
         String sessionId = this.getSessionId(request);
         SessionData currentSessionData = sessionData.get(sessionId);
+        ArrayList<String> currentUserSessionId;
         String loginUsername, orgLoginUsername;
         if (currentSessionData != null) {
             loginUsername = currentSessionData.getUsername();
             orgLoginUsername = currentSessionData.getOrgUsername();
+            currentUserSessionId = this.getSessionIdByUsername(sessionData, loginUsername);
             if (loginUsername != null && orgLoginUsername != null && !loginUsername.equals(orgLoginUsername)) {
                 currentSessionData.setUsername(orgLoginUsername);
             } else {
-                sessionData.remove(sessionId);
+                if (currentUserSessionId != null) {
+                    if (!currentUserSessionId.contains(sessionId)) {
+                        currentUserSessionId.add(sessionId);
+                    }
+                    if (currentUserSessionId.size() > 1) {
+                        logger.info("User logged in more than 1 place: loggingOut all: {}", currentUserSessionId);
+                    }
+                    for(String sId: currentUserSessionId) {
+                        sessionData.remove(sId);
+                    }
+                }
                 this.setSessionId(request, StaticService.createUUIDNumber());
             }
         }

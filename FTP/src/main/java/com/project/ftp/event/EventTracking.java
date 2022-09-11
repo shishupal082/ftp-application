@@ -41,7 +41,7 @@ public class EventTracking {
                          final UserService userService,
                          final EventInterface eventInterface) {
         this.userService = userService;
-        this.sessionService = new SessionService(appConfig);
+        this.sessionService = new SessionService(userService, appConfig);
         this.addEvent = new AddEvent(appConfig, eventInterface);
     }
 

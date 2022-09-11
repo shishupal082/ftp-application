@@ -111,7 +111,7 @@ public class FtpApplication  extends Application<FtpConfiguration> {
         environment.jersey().register(MultiPartFeature.class);
         environment.jersey().register(new AppExceptionMapper(eventTracking));
         environment.jersey().register(new LogFilter(appConfig));
-        environment.jersey().register(new RequestFilter(appConfig, eventTracking));
+        environment.jersey().register(new RequestFilter(appConfig, userService, eventTracking));
         environment.jersey().register(new ResponseFilter(appConfig));
         environment.jersey().register(new FaviconResource(appConfig));
 

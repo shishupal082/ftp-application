@@ -7,6 +7,7 @@ import com.project.ftp.exceptions.AppException;
 import com.project.ftp.exceptions.ErrorCodes;
 import com.project.ftp.service.RequestService;
 import com.project.ftp.service.StaticService;
+import com.project.ftp.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,10 +26,12 @@ public class RequestFilter implements ContainerRequestFilter {
     final static private Logger logger = LoggerFactory.getLogger(RequestFilter.class);
     @Context
     private HttpServletRequest httpServletRequest;
+    private final UserService userService;
     private final AppConfig appConfig;
     private final EventTracking eventTracking;
-    public RequestFilter(final AppConfig appConfig, EventTracking eventTracking) {
+    public RequestFilter(final AppConfig appConfig, final UserService userService, EventTracking eventTracking) {
         this.appConfig = appConfig;
+        this.userService = userService;
         this.eventTracking = eventTracking;
     }
     public void filter(final ContainerRequestContext requestContext) throws AppException {
@@ -54,7 +57,7 @@ public class RequestFilter implements ContainerRequestFilter {
             logger.info("Invalid session cookieData : {}, Created new : {}", cookieData, newCookieData);
             cookieData = newCookieData;
         }
-        cookieData = RequestService.updateSessionId(httpServletRequest, appConfig, cookieData, eventTracking);
+        cookieData = RequestService.updateSessionId(httpServletRequest, appConfig, userService, cookieData, eventTracking);
         String requestedPath = RequestService.getPathUrlV2(requestContext);
         if (!AppConstant.FAVICON_ICO_PATH.equals(requestedPath)) {
             logger.info("RequestFilter executed, cookieData : {}", cookieData);

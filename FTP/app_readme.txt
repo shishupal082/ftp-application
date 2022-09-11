@@ -1319,6 +1319,15 @@ textData replace all \n with ; in request
 ----------
 Added enabledAuthPages in envConfig.yml
 
+
+8.0.2.8
+----------
+11.09.2022
+----------
+Added new role
+    - isInfiniteTTLLoginUser
+For providing permanent login for selected user group
+
 Future releases
 -------------------
 

@@ -82,8 +82,10 @@ public class RequestService {
         }
         return new CommonView("page_not_found_404.ftl", appConfig);
     }
-    public static String updateSessionId(HttpServletRequest request, AppConfig appConfig, String cookieData, EventTracking eventTracking) {
-        SessionService sessionService = new SessionService(appConfig);
+    public static String updateSessionId(HttpServletRequest request, AppConfig appConfig,
+                                         UserService userService,
+                                         String cookieData, EventTracking eventTracking) {
+        SessionService sessionService = new SessionService(userService, appConfig);
         return sessionService.updateSessionId(request, cookieData, eventTracking);
     }
     public static String getCookieData(AppConfig appConfig, HttpServletRequest request) {
