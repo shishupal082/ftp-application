@@ -105,6 +105,7 @@ public class SessionService {
         String sessionId;
         SessionData sessionData;
         String username;
+        String orgUsername;
         ArrayList<String> deletedSessionIds = new ArrayList<>();
         Long currentTime = sysUtils.getTimeInMsLong();
         if (sessionDataHashMap != null) {
@@ -112,7 +113,8 @@ public class SessionService {
                 sessionId = sessionDataMap.getKey();
                 sessionData = sessionDataMap.getValue();
                 username = sessionData.getUsername();
-                if (!authService.isInfiniteTTLUser(username)) {
+                orgUsername = sessionData.getOrgUsername();
+                if (!(authService.isInfiniteTTLUser(username) || authService.isInfiniteTTLUser(orgUsername))) {
                     if (currentTime - sessionData.getUpdatedTime() >= AppConstant.SESSION_TTL) {
                         eventTracking.trackExpiredUserSession(sessionData);
                         deletedSessionIds.add(sessionId);
