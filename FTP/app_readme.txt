@@ -1328,6 +1328,12 @@ Added new role
     - isInfiniteTTLLoginUser
 For providing permanent login for selected user group
 
+14.09.2022
+----------
+Bug fixing for new session entry
+
+
+
 Future releases
 -------------------
 

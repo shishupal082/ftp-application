@@ -57,9 +57,9 @@ public class RequestFilter implements ContainerRequestFilter {
             logger.info("Invalid session cookieData : {}, Created new : {}", cookieData, newCookieData);
             cookieData = newCookieData;
         }
-        cookieData = RequestService.updateSessionId(httpServletRequest, appConfig, userService, cookieData, eventTracking);
         String requestedPath = RequestService.getPathUrlV2(requestContext);
         if (!AppConstant.FAVICON_ICO_PATH.equals(requestedPath)) {
+            cookieData = RequestService.updateSessionId(httpServletRequest, appConfig, userService, cookieData, eventTracking);
             logger.info("RequestFilter executed, cookieData : {}", cookieData);
         }
         StaticService.checkForDateChange(appConfig, eventTracking);

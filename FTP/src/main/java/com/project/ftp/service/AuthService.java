@@ -78,9 +78,8 @@ public class AuthService {
             throw new AppException(ErrorCodes.UNAUTHORIZED_USER);
         }
     }
-    public boolean isInfiniteTTLLoginUser(HttpServletRequest request) throws AppException {
-        LoginUserDetails userDetails = userService.getLoginUserDetails(request);
-        if (userService.isAuthorised(userDetails, AppConstant.IS_INFINITE_TTL_LOGIN_USER)) {
+    public boolean isInfiniteTTLUser(String username) {
+        if (userService.isAuthorisedV3(username, AppConstant.IS_INFINITE_TTL_LOGIN_USER)) {
             return true;
         }
         return false;

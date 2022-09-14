@@ -58,6 +58,12 @@ public class UserService {
         }
         return appConfig.getAppToBridge().isAuthorisedApi(roleAccess, username);
     }
+    public boolean isAuthorisedV3(String username, String roleAccess)  {
+        if (StaticService.isInValidString(username) || roleAccess == null) {
+            return false;
+        }
+        return appConfig.getAppToBridge().isAuthorisedApi(roleAccess, username);
+    }
     public boolean isLoginUserAdmin(LoginUserDetails loginUserDetails)  {
         return this.isAuthorised(loginUserDetails, AppConstant.IS_ADMIN_USER);
     }
@@ -330,7 +336,7 @@ public class UserService {
     public LoginUserDetails getLoginUserDetails(HttpServletRequest request) {
         LoginUserDetails loginUserDetails = new LoginUserDetails();
         String loginUserName = sessionService.getSessionParam(request, AppConstant.USERNAME);
-        String orgUsername;
+        String orgUsername = sessionService.getSessionParam(request, AppConstant.ORG_USERNAME);
         if (StaticService.isInValidString(loginUserName)) {
             loginUserName = this.getTempConfigParameter(AppConstant.USERNAME);
             orgUsername = this.getTempConfigParameter(AppConstant.ORG_USERNAME);
@@ -341,8 +347,8 @@ public class UserService {
         }
         if (loginUserName != null) {
             loginUserDetails.setUsername(loginUserName);
+            loginUserDetails.setOrgUsername(orgUsername);
             loginUserDetails.setLogin(this.isUserLogin(loginUserName));
-            loginUserDetails.setOrgUsername(sessionService.getSessionParam(request, AppConstant.ORG_USERNAME));
         }
         return loginUserDetails;
     }

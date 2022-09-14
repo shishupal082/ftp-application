@@ -28,22 +28,27 @@ public class SessionService {
         this.appConfig = appConfig;
         this.authService = new AuthService(userService);
     }
-    private SessionData getCurrentSessionData(HttpServletRequest request) throws AppException {
+    private SessionData getCurrentSessionData(HttpServletRequest request) {
         String sessionId = getSessionId(request);
+        if (sessionId == null) {
+            return null;
+        }
         HashMap<String, SessionData> sessionData = appConfig.getSessionData();
+        if (sessionData == null) {
+            return null;
+        }
         SessionData currentSessionData = sessionData.get(sessionId);
         if (currentSessionData == null) {
             logger.info("CurrentSessionId: {}, not found in: {}", sessionId, sessionData);
-            throw new AppException(ErrorCodes.INVALID_SESSION);
         }
         return currentSessionData;
     }
     public String getCurrentSessionDataV2(HttpServletRequest request) {
         String sessionDataStr = "";
-        try {
-            SessionData sessionData = this.getCurrentSessionData(request);
+        SessionData sessionData = this.getCurrentSessionData(request);
+        if (sessionData != null) {
             sessionDataStr = sessionData.toString();
-        } catch (AppException ignored) {}
+        }
         return sessionDataStr;
     }
     private String getSessionId(HttpServletRequest request) {
@@ -99,13 +104,15 @@ public class SessionService {
         HashMap<String, SessionData> sessionDataHashMap = appConfig.getSessionData();
         String sessionId;
         SessionData sessionData;
+        String username;
         ArrayList<String> deletedSessionIds = new ArrayList<>();
         Long currentTime = sysUtils.getTimeInMsLong();
         if (sessionDataHashMap != null) {
             for (Map.Entry<String, SessionData> sessionDataMap: sessionDataHashMap.entrySet()) {
                 sessionId = sessionDataMap.getKey();
                 sessionData = sessionDataMap.getValue();
-                if (!authService.isInfiniteTTLLoginUser(request)) {
+                username = sessionData.getUsername();
+                if (!authService.isInfiniteTTLUser(username)) {
                     if (currentTime - sessionData.getUpdatedTime() >= AppConstant.SESSION_TTL) {
                         eventTracking.trackExpiredUserSession(sessionData);
                         deletedSessionIds.add(sessionId);
@@ -145,6 +152,9 @@ public class SessionService {
             orgUsername = username;
         }
         HashMap<String, SessionData> sessionData = appConfig.getSessionData();
+        if (sessionData == null) {
+            return;
+        }
         String oldSessionId = this.getSessionId(request);
         String newSessionId = StaticService.createUUIDNumber();
         sessionData.remove(oldSessionId);
@@ -195,6 +205,9 @@ public class SessionService {
         String result = null;
         try {
             SessionData sessionData = this.getCurrentSessionData(request);
+            if (sessionData == null) {
+                return null;
+            }
             if (AppConstant.USERNAME.equals(param)) {
                 result = sessionData.getUsername();
             } else if (AppConstant.ORG_USERNAME.equals(param)) {
