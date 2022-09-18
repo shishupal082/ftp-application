@@ -9,6 +9,7 @@ public class SessionData {
     private String orgUsername;
     private String username;
     private String visibleDate;
+    private boolean isInfiniteTTL;
     public SessionData(String sessionId, Long updatedTime) {
         this.sessionId = sessionId;
         this.updatedTime = updatedTime;
@@ -46,13 +47,19 @@ public class SessionData {
     public void setUsername(String username) {
         this.username = username;
     }
-
     public String getVisibleDate() {
         return visibleDate;
     }
 
     public void setVisibleDate(String visibleDate) {
         this.visibleDate = visibleDate;
+    }
+    public boolean isInfiniteTTL() {
+        return isInfiniteTTL;
+    }
+
+    public void setInfiniteTTL(boolean infiniteTTL) {
+        isInfiniteTTL = infiniteTTL;
     }
 
     @Override
@@ -63,6 +70,7 @@ public class SessionData {
                 ", orgUsername='" + orgUsername + '\'' +
                 ", username='" + username + '\'' +
                 ", visibleDate='" + visibleDate + '\'' +
+                ", isInfiniteTTL=" + isInfiniteTTL +
                 '}';
     }
 }

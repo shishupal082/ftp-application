@@ -9,6 +9,7 @@ import com.project.ftp.FtpConfiguration;
 import com.project.ftp.exceptions.AppException;
 import com.project.ftp.exceptions.ErrorCodes;
 import com.project.ftp.intreface.AppToBridge;
+import com.project.ftp.obj.AppConfigObj;
 import com.project.ftp.obj.LoginUserDetails;
 import com.project.ftp.obj.PathInfo;
 import com.project.ftp.obj.yamlObj.FtlConfig;
@@ -224,20 +225,12 @@ public class AppConfig {
         pageConfig404 = yamlFileParser.getPageConfig404(this);
         logger.info("PageConfig404 update complete: {}", pageConfig404);
     }
+    public AppConfigObj getAppConfigObj() {
+        return new AppConfigObj(publicDir, configDate, appVersion, cmdArguments,
+                logFilePath, requestCount, sessionData, ftpConfiguration, pageConfig404);
+    }
     @Override
     public String toString() {
-        return "AppConfig{" +
-                "publicDir='" + publicDir + '\'' +
-                ", configDate='" + configDate + '\'' +
-                ", appVersion='" + appVersion + '\'' +
-                ", cmdArguments=" + cmdArguments +
-                ", logFilePath='" + logFilePath + '\'' +
-                ", requestCount=" + requestCount +
-                ", logFiles='" + "*****" + '\'' +
-                ", sessionData=" + sessionData +
-                ", ftpConfiguration=" + ftpConfiguration +
-                ", pageConfig404=" + pageConfig404 +
-                ", appToBridge=" + appToBridge +
-                '}';
+        return this.getAppConfigObj().toString();
     }
 }

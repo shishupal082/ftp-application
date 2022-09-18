@@ -77,6 +77,11 @@ public class SessionService {
         SessionData sessionData = this.getNewSession(sessionId);
         sessionData.setUsername(username);
         sessionData.setOrgUsername(orgUsername);
+        if (authService.isInfiniteTTLUser(username)) {
+            sessionData.setInfiniteTTL(true);
+        } else if (authService.isInfiniteTTLUser(orgUsername)) {
+            sessionData.setInfiniteTTL(true);
+        }
         return sessionData;
     }
     private ArrayList<String> getSessionIdByUsername(HashMap<String, SessionData> sessionDataHashMap, String username) {
@@ -104,17 +109,13 @@ public class SessionService {
         HashMap<String, SessionData> sessionDataHashMap = appConfig.getSessionData();
         String sessionId;
         SessionData sessionData;
-        String username;
-        String orgUsername;
         ArrayList<String> deletedSessionIds = new ArrayList<>();
         Long currentTime = sysUtils.getTimeInMsLong();
         if (sessionDataHashMap != null) {
             for (Map.Entry<String, SessionData> sessionDataMap: sessionDataHashMap.entrySet()) {
                 sessionId = sessionDataMap.getKey();
                 sessionData = sessionDataMap.getValue();
-                username = sessionData.getUsername();
-                orgUsername = sessionData.getOrgUsername();
-                if (!(authService.isInfiniteTTLUser(username) || authService.isInfiniteTTLUser(orgUsername))) {
+                if (!sessionData.isInfiniteTTL()) {
                     if (currentTime - sessionData.getUpdatedTime() >= AppConstant.SESSION_TTL) {
                         eventTracking.trackExpiredUserSession(sessionData);
                         deletedSessionIds.add(sessionId);
@@ -187,6 +188,7 @@ public class SessionService {
             currentUserSessionId = this.getSessionIdByUsername(sessionData, loginUsername);
             if (loginUsername != null && orgLoginUsername != null && !loginUsername.equals(orgLoginUsername)) {
                 currentSessionData.setUsername(orgLoginUsername);
+                currentSessionData.setInfiniteTTL(authService.isInfiniteTTLUser(orgLoginUsername));
             } else {
                 if (currentUserSessionId != null) {
                     if (!currentUserSessionId.contains(sessionId)) {
