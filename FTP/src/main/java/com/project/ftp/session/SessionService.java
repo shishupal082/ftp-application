@@ -72,16 +72,17 @@ public class SessionService {
         Long currentTime = sysUtils.getTimeInMsLong();
         return new SessionData(sessionId, currentTime);
     }
-
+    private boolean isInfiniteTTLUser(String username, String orgUsername) {
+        if (authService.isInfiniteTTLUser(orgUsername)) {
+            return true;
+        }
+        return authService.isInfiniteTTLUser(username);
+    }
     private SessionData getNewSessionV2(String sessionId, String username, String orgUsername) {
         SessionData sessionData = this.getNewSession(sessionId);
         sessionData.setUsername(username);
         sessionData.setOrgUsername(orgUsername);
-        if (authService.isInfiniteTTLUser(username)) {
-            sessionData.setInfiniteTTL(true);
-        } else if (authService.isInfiniteTTLUser(orgUsername)) {
-            sessionData.setInfiniteTTL(true);
-        }
+        sessionData.setInfiniteTTL(this.isInfiniteTTLUser(username, orgUsername));
         return sessionData;
     }
     private ArrayList<String> getSessionIdByUsername(HashMap<String, SessionData> sessionDataHashMap, String username) {
@@ -172,8 +173,11 @@ public class SessionService {
         HashMap<String, SessionData> sessionData = appConfig.getSessionData();
         String sessionId = this.getSessionId(request);
         SessionData currentSessionData = sessionData.get(sessionId);
+        String orgUsername;
         if (currentSessionData != null) {
             currentSessionData.setUsername(username);
+            orgUsername = currentSessionData.getOrgUsername();
+            currentSessionData.setInfiniteTTL(this.isInfiniteTTLUser(username, orgUsername));
         }
     }
     public void logoutUser(HttpServletRequest request) {
@@ -188,7 +192,7 @@ public class SessionService {
             currentUserSessionId = this.getSessionIdByUsername(sessionData, loginUsername);
             if (loginUsername != null && orgLoginUsername != null && !loginUsername.equals(orgLoginUsername)) {
                 currentSessionData.setUsername(orgLoginUsername);
-                currentSessionData.setInfiniteTTL(authService.isInfiniteTTLUser(orgLoginUsername));
+                currentSessionData.setInfiniteTTL(this.isInfiniteTTLUser(null, orgLoginUsername));
             } else {
                 if (currentUserSessionId != null) {
                     if (!currentUserSessionId.contains(sessionId)) {

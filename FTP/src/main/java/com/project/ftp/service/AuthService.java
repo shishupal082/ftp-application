@@ -79,9 +79,6 @@ public class AuthService {
         }
     }
     public boolean isInfiniteTTLUser(String username) {
-        if (userService.isAuthorisedV3(username, AppConstant.IS_INFINITE_TTL_LOGIN_USER)) {
-            return true;
-        }
-        return false;
+        return userService.isAuthorisedV3(username, AppConstant.IS_INFINITE_TTL_LOGIN_USER);
     }
 }
