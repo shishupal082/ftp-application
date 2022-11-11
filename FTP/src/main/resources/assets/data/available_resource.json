@@ -210,5 +210,9 @@
   [
     "/api/call_tcp",
     "Call TCP IP [POST]"
+  ],
+  [
+    "/assets-dir/{default: *}",
+    "Load assets data [GET]"
   ]
 ]
