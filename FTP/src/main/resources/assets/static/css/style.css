@@ -1,0 +1,207 @@
+body.theme-green {
+    background-color: #8ab794;
+    color: #eee;
+}
+body.theme-grey {
+    background-color: #eee;
+}
+.b-none {
+    border: none;
+}
+.b-1px {
+    border: 1px solid;
+}
+.p-0 {
+    padding: 0;
+}
+.p-5px {
+    padding: 5px;
+}
+.p-10px {
+    padding: 10px;
+}
+.pt-0 {
+    padding-top: 0px;
+}
+.pt-1px {
+    padding-top: 1px;
+}
+.pt-10px {
+    padding-top: 10px;
+}
+.pt-25px {
+    padding-top: 25px;
+}
+.pt-40px {
+    padding-top: 40px;
+}
+.pr-5px {
+    padding-right: 5px;
+}
+.pb-0 {
+    padding-bottom: 0px;
+}
+.pr-10px {
+    padding-right: 10px;
+}
+.pl-0 {
+    padding-left: 0px;
+}
+.pl-5px {
+    padding-left: 5px;
+}
+.pl-10px {
+    padding-left: 10px;
+}
+.pl-15px {
+    padding-left: 15px;
+}
+.ml-5px {
+    margin-left: 5px;
+}
+.ml-10px {
+    margin-left: 10px;
+}
+.w-10px {
+    width: 10px;
+}
+.w-16px {
+    width: 16px;
+}
+.w-20px {
+    width: 20px;
+}
+.w-32px {
+    width: 32px;
+}
+.w-35px {
+    width: 35px;
+}
+.w-40px {
+    width: 40px;
+}
+.w-45px {
+    width: 45px;
+}
+.w-55px {
+    width: 55px;
+}
+.w-60px {
+    width: 60px;
+}
+.w-75px {
+    width: 75px;
+}
+.w-80px {
+    width: 80px;
+}
+.w-90px {
+    width: 90px;
+}
+.w-100px {
+    width: 100px;
+}
+.w-105px {
+    width: 105px;
+}
+.w-120px {
+    width: 120px;
+}
+.w-160px {
+    width: 160px;
+}
+.w-200px {
+    width: 200px;
+}
+.w-300px {
+    width: 300px;
+}
+.max-w-120px {
+    max-width: 120px;
+}
+.max-w-160px {
+    max-width: 160px;
+}
+.max-w-200px {
+    max-width: 200px;
+}
+.h-10px {
+    height: 10px;
+}
+.h-15px {
+    height: 15px;
+}
+.h-16px {
+    height: 16px;
+}
+.h-20px {
+    height: 20px;
+}
+.h-30px {
+    height: 30px;
+}
+.h-32px {
+    height: 32px;
+}
+.h-40px {
+    height: 40px;
+}
+.h-45px {
+    height: 45px;
+}
+.fs-8px {
+    font-size: 8px;
+}
+.fs-10px {
+    font-size: 10px;
+}
+.fs-12px {
+    font-size: 12px;
+}
+.fs-16px {
+    font-size: 16px;
+}
+.fs-90 {
+    font-size: 90%;
+}
+.fs-80 {
+    font-size: 80%;
+}
+.fs-60 {
+    font-size: 60%;
+}
+.fs-50 {
+    font-size: 50%;
+}
+.fs-40 {
+    font-size: 40%;
+}
+.v-align-initial,
+td.v-align-initial,
+th.v-align-initial {
+    vertical-align: initial;
+}
+.v-align-middle,
+td.v-align-middle,
+th.v-align-middle {
+    vertical-align: middle;
+}
+.word-break-all {
+    word-break: break-all;
+}
+tr.tr-bordered > td,
+tr.tr-bordered > th {
+    border: 1px solid;
+}
+table.table-padded-px-5 > thead > tr > th,
+table.table-padded-px-5 > thead > tr > td,
+table.table-padded-px-5 > tbody > tr > th,
+table.table-padded-px-5 > tbody > tr > td {
+    padding: 5px;
+}
+table.table-padded-px-2 > thead > tr > th,
+table.table-padded-px-2 > thead > tr > td,
+table.table-padded-px-2 > tbody > tr > th,
+table.table-padded-px-2 > tbody > tr > td {
+    padding: 2px;
+}
