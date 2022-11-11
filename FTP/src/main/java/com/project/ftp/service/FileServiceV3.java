@@ -41,6 +41,27 @@ public class FileServiceV3 {
         }
         return userFilename;
     }
+    public String parseAssetsDirFilepath(String filePath) {
+        if (filePath == null) {
+            return null;
+        }
+        StringBuilder result = new StringBuilder();
+        filePath = strUtils.replaceDynamicPathDir(filePath, "");
+        String[] filePathArr = strUtils.stringSplit(filePath, AppConstant.ASSETS_DIR, -1);
+        if (filePathArr.length >= 2) {
+            for(int i=1; i<filePathArr.length; i++) {
+                if (!filePathArr[i].isEmpty()) {
+                    if (i>1) {
+                        result.append(AppConstant.ASSETS_DIR);
+                    }
+                    result.append(filePathArr[i]);
+                } else {
+                    result.append(AppConstant.ASSETS_DIR);
+                }
+            }
+        }
+        return result.toString();
+    }
     public void generateApiResponse(String fileSaveDir, ArrayList<ScanResult> scanResults,
                                      ArrayList<String> response) {
         if (scanResults == null) {

@@ -2,6 +2,7 @@ fileSaveDir: "D:/workspace/project/ftp-app/saved-files/"
 configDataFilePath: "D:/workspace/project/ftp-app/config-files/"
 publicDir: "../.."
 publicPostDir: "/project"
+assetsDir: "D:/workspace/project/"
 
 eventConfig:
   enabled: true

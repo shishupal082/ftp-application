@@ -411,6 +411,28 @@ public class FileServiceV2 {
         logger.info("final pathInfo: {}", pathInfo);
         return pathInfo;
     }
+    public PathInfo getFileResponseV2(String filePath) {
+        String assetsDir = appConfig.getFtpConfiguration().getAssetsDir();
+        if (assetsDir == null) {
+            return null;
+        }
+        if (filePath == null) {
+            return null;
+        }
+        filePath = fileServiceV3.parseAssetsDirFilepath(filePath);
+        PathInfo pathInfo = null;
+        if (StaticService.isValidString(filePath)) {
+            filePath = assetsDir + filePath;
+            logger.info("Searching filePath: {}", filePath);
+            pathInfo = fileService.getPathInfo(filePath);
+            if (AppConstant.FOLDER.equals(pathInfo.getType())) {
+                logger.info("Requested filePath is a folder: {}", filePath);
+                pathInfo = null;
+            }
+        }
+        logger.info("final pathInfo: {}", pathInfo);
+        return pathInfo;
+    }
     public PathInfo doUpload(String fileSaveDir, InputStream uploadedInputStream,
                              String fileName, String orgFilename,  int count) throws AppException {
         PathInfo pathInfo = fileService.getPathInfo(fileName);

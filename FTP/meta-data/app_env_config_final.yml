@@ -53,6 +53,7 @@ fileSaveDir: "invalid-save-dir"
 configDataFilePath: "invalid-config-dir"
 publicDir: ""
 publicPostDir: ""
+assetsDir: ""
 
 #  forgotPasswordMessage: "Forgot password request submitted, Please check your email."
 forgotPasswordMessage: "Forgot password request submitted, Please create password."

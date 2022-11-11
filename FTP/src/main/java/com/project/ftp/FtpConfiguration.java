@@ -23,6 +23,7 @@ public class FtpConfiguration extends Configuration {
     private String fileSaveDir;
     private String publicDir;
     private String publicPostDir;
+    private String assetsDir;
     private String filenameFormat;
     private String instance;
     private String appRestartCommand;
@@ -100,6 +101,14 @@ public class FtpConfiguration extends Configuration {
 
     public void setPublicPostDir(String publicPostDir) {
         this.publicPostDir = publicPostDir;
+    }
+
+    public String getAssetsDir() {
+        return assetsDir;
+    }
+
+    public void setAssetsDir(String assetsDir) {
+        this.assetsDir = assetsDir;
     }
 
     public String getFilenameFormat() {
@@ -390,6 +399,10 @@ public class FtpConfiguration extends Configuration {
         if (publicPostDir != null) {
             this.publicPostDir = publicPostDir;
         }
+        String assetsDir = tempFtpConfiguration.getAssetsDir();
+        if (assetsDir != null) {
+            this.assetsDir = assetsDir;
+        }
         String filenameFormat = tempFtpConfiguration.getFilenameFormat();
         if (filenameFormat != null) {
             this.filenameFormat = filenameFormat;
@@ -524,6 +537,7 @@ public class FtpConfiguration extends Configuration {
                 ", fileSaveDir='" + fileSaveDir + '\'' +
                 ", publicDir='" + publicDir + '\'' +
                 ", publicPostDir='" + publicPostDir + '\'' +
+                ", assetsDir='" + assetsDir + '\'' +
                 ", filenameFormat='" + filenameFormat + '\'' +
                 ", instance='" + instance + '\'' +
                 ", appRestartCommand='" + appRestartCommand + '\'' +

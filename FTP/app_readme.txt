@@ -1327,16 +1327,22 @@ Added enabledAuthPages in envConfig.yml
 Added new role
     - isInfiniteTTLLoginUser
 For providing permanent login for selected user group
-
 14.09.2022
 ----------
 Bug fixing for new session entry
 
+8.0.2.9
+----------
+11.11.2022
+----------
+Added new url for loading static files like js, css, img, ...etc
+    - /assets-dir/{default: *}
+Added config parameter:
+    assetsDir: "D:/workspace/project/"
 
 
 Future releases
 -------------------
-
 Add new role called
 New role implemented
     - isDeleteFileEnable

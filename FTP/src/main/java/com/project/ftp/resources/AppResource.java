@@ -227,6 +227,14 @@ public class AppResource {
         return new AppView(request, appViewFtlFileName, "database_files", userService, appConfig);
     }
     /**
+     * Used for loading static files like css, js, img, ...etc
+     */
+    @Path("/assets-dir/{default: .*}")
+    @GET
+    public Object assetsDir(@Context HttpServletRequest request) {
+        return requestService.getAssets(request);
+    }
+    /**
      * Used when accessing from browser
      */
     @Path("{default: .*}")

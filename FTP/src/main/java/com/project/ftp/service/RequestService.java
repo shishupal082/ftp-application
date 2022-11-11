@@ -56,6 +56,31 @@ public class RequestService {
         }
         return path;
     }
+    public Object getAssets(HttpServletRequest request) {
+        String requestedPath = this.getPathUrl(request);
+        logger.info("Loading getAssets: {}, user: {}",
+                requestedPath, userService.getUserDataForLogging(request));
+        PathInfo pathInfo = fileServiceV2.getFileResponseV2(requestedPath);
+        Response.ResponseBuilder r;
+        if (pathInfo!= null && AppConstant.FILE.equals(pathInfo.getType())) {
+            File file = new File(pathInfo.getPath());
+            try {
+                InputStream inputStream = new FileInputStream(file);
+                r = Response.ok(inputStream);
+                if (pathInfo.getMediaType() == null) {
+                    logger.info("MediaType is not found (download now): {}", pathInfo);
+                    String responseHeader = "attachment; filename=" + pathInfo.getFileName();
+                    r.header(HttpHeaders.CONTENT_DISPOSITION, responseHeader);
+                } else {
+                    r.header(HttpHeaders.CONTENT_TYPE, pathInfo.getMediaType());
+                }
+                return r.build();
+            } catch (Exception e) {
+                logger.info("Error in loading file: {}", pathInfo);
+            }
+        }
+        return new CommonView("page_not_found_404.ftl", appConfig);
+    }
     public Object handleDefaultUrl(HttpServletRequest request) {
         String requestedPath = this.getPathUrl(request);
         logger.info("Loading defaultMethod: {}, user: {}",

@@ -18,6 +18,13 @@ public class StrUtils {
     public String replaceBackSlashToSlash(String str) {
         return this.replaceChar(str, "\\\\", "/");
     }
+    public String replaceDynamicPathDir(String filePath, String replacement) {
+        if (filePath == null) {
+            return null;
+        }
+        filePath = filePath.replaceAll("/\\./", replacement);
+        return filePath.replaceAll("/\\.\\./", replacement);
+    }
     public String replaceChar(String str, String find, String replace) {
         if (str == null || find == null || replace == null) {
             return null;
@@ -47,6 +54,12 @@ public class StrUtils {
         }
         str = str.trim();
         return str.isEmpty();
+    }
+    public String[] stringSplit(String str, String regex, int limit) {
+        if (str == null) {
+            return null;
+        }
+        return str.split(regex, limit);
     }
     public int strToInt(String str) {
         int result = 0;

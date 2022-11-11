@@ -29,7 +29,7 @@ public class AppConstant {
     public static final String ALLOWED_HEADERS= "Access-Control-Allow-Headers";
     public static final String FILE = "FILE";
     public static final String FOLDER = "FOLDER";
-    public static final String AppVersion = "8.0.2.8";
+    public static final String AppVersion = "8.0.2.9";
     public static final String DATE_FORMAT = "yyyy-MM-dd";
     public static final String TIME_FORMAT = "HHmmss";
     public static final String FILENAME_FORMAT = "yyyy-MM-dd-HH-mm'-filename'";
@@ -42,6 +42,7 @@ public class AppConstant {
     public static final String UTF8 = "UTF-8";
     public static final String FAVICON_ICO_PATH = "favicon.ico";
     public static final String INDEX_PAGE_RE_ROUTE = "/login";
+    public static final String ASSETS_DIR = "/assets-dir/";
     public static final String APP_STATIC_DATA_FILENAME = "app_static_data.json";
     public static final String USER_DATA_FILENAME = "user_data.csv";
     public static final String EVENT_DATA_FILENAME = "event_data.csv";
