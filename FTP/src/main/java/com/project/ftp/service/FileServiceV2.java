@@ -341,12 +341,16 @@ public class FileServiceV2 {
             HashMap<String, Page404Entry> pageMapping = pageConfig404.getPageMapping404();
             if (pageMapping != null) {
                 page404Entry = this.getFinal404Entry(pageMapping, requestPath);
-                if (page404Entry != null && page404Entry.getFileName() != null) {
-                    if (fileService.isFile(publicDir + page404Entry.getFileName())) {
-                        logger.info("page404Entry found for '{}', {}", requestPath, page404Entry);
+                if (page404Entry != null) {
+                    if (AppConstant.FTL_VIEW_TYPE.equals(page404Entry.getViewType())) {
                         return page404Entry;
-                    } else {
-                        logger.info("invalid filename for '{}', {}", requestPath, page404Entry);
+                    } else if (page404Entry.getFileName() != null) {
+                        if (fileService.isFile(publicDir + page404Entry.getFileName())) {
+                            logger.info("page404Entry found for '{}', {}", requestPath, page404Entry);
+                            return page404Entry;
+                        } else {
+                            logger.info("invalid filename for '{}', {}", requestPath, page404Entry);
+                        }
                     }
                 }
             }
@@ -362,7 +366,7 @@ public class FileServiceV2 {
             return null;
         }
         PageConfig404 pageConfig404 = appConfig.getPageConfig404();
-        Page404Entry page404Entry;
+        Page404Entry page404Entry = null;
         if (pageConfig404 != null) {
             page404Entry = this.getFileNotFoundMapping(pageConfig404, filePath);
             if (page404Entry != null) {
@@ -385,7 +389,12 @@ public class FileServiceV2 {
             }
         }
         PathInfo pathInfo = null;
-        if (StaticService.isValidString(filePath)) {
+        if (page404Entry != null && AppConstant.FTL_VIEW_TYPE.equals(page404Entry.getViewType())) {
+            pathInfo = new PathInfo();
+            pathInfo.setType(AppConstant.FTL_VIEW_TYPE);
+            pathInfo.setFileName(page404Entry.getFileName());
+            return pathInfo;
+        } else if (StaticService.isValidString(filePath)) {
             pathInfo = fileService.getPathInfo(publicDir + filePath);
             if (AppConstant.FOLDER.equals(pathInfo.getType())) {
                 pathInfo = fileService.searchIndexHtmlInFolder(pathInfo);

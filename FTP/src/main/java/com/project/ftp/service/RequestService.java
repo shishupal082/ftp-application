@@ -11,6 +11,7 @@ import com.project.ftp.obj.PathInfo;
 import com.project.ftp.obj.RequestTcp;
 import com.project.ftp.session.SessionService;
 import com.project.ftp.view.CommonView;
+import com.project.ftp.view.UiView;
 import org.glassfish.jersey.server.ContainerRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -104,6 +105,9 @@ public class RequestService {
             } catch (Exception e) {
                 logger.info("Error in loading file: {}", pathInfo);
             }
+        } else if (pathInfo != null && AppConstant.FTL_VIEW_TYPE.equals(pathInfo.getType())) {
+            String ftlViewMappingId = pathInfo.getFileName();
+            return new UiView(appConfig, ftlViewMappingId);
         }
         return new CommonView("page_not_found_404.ftl", appConfig);
     }

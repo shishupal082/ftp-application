@@ -1340,6 +1340,15 @@ Added new url for loading static files like js, css, img, ...etc
 Added config parameter:
     assetsDir: "D:/workspace/project/"
 
+8.0.2.010
+----------
+13.11.2022
+----------
+Added common view for loading html page mapping from file_not_found_config.yml
+Added config parameter in file_not_found_config.yml:
+ftlViewMapping:
+    string: UiViewObject
+
 
 Future releases
 -------------------

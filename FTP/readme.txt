@@ -13,7 +13,7 @@ Then open below url in browser (Preferably Chrome)
 ****************
 Pre requisite
 ------------------
-System should have installed java version-1.7 or above
+System should have installed java version-1.8 or above
 
 *****************
 If not working

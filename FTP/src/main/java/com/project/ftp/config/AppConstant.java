@@ -29,7 +29,7 @@ public class AppConstant {
     public static final String ALLOWED_HEADERS= "Access-Control-Allow-Headers";
     public static final String FILE = "FILE";
     public static final String FOLDER = "FOLDER";
-    public static final String AppVersion = "8.0.2.9";
+    public static final String AppVersion = "8.0.2.010";
     public static final String DATE_FORMAT = "yyyy-MM-dd";
     public static final String TIME_FORMAT = "HHmmss";
     public static final String FILENAME_FORMAT = "yyyy-MM-dd-HH-mm'-filename'";
@@ -75,6 +75,8 @@ public class AppConstant {
     public static final String DEFAULT_TABLE_NAME = "default_table";
     public static final String DELETE_TABLE_FILE_NAME = "delete_table.csv";
     public static final String DELETE_TABLE_NAME = "delete_table";
+
+    public static final String FTL_VIEW_TYPE = "ftl.view";
 
 
     public static final String IS_DEV_USER = "isDevUser";

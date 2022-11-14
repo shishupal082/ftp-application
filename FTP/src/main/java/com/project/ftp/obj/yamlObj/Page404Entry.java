@@ -6,7 +6,8 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 public class Page404Entry {
     private String roleAccess;
-    private String fileName;
+    private String fileName; // It can be publicFilePath or ftlViewMapping.id
+    private String viewType; // ftl.view
 
     public String getRoleAccess() {
         return roleAccess;
@@ -24,11 +25,20 @@ public class Page404Entry {
         this.fileName = fileName;
     }
 
+    public String getViewType() {
+        return viewType;
+    }
+
+    public void setViewType(String viewType) {
+        this.viewType = viewType;
+    }
+
     @Override
     public String toString() {
         return "Page404Entry{" +
                 "roleAccess='" + roleAccess + '\'' +
                 ", fileName='" + fileName + '\'' +
+                ", viewType='" + viewType + '\'' +
                 '}';
     }
 }

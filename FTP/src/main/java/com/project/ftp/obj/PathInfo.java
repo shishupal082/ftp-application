@@ -10,7 +10,7 @@ public class PathInfo {
     private String path;
     private String type;
     private String parentFolder; // In case of file only
-    private String fileName;
+    private String fileName; // fileName can be ftl.view.id also
     private String filenameWithoutExt;
     private String extension;
     private String mediaType;

@@ -9,3 +9,38 @@ pageMapping404:
     fileName: "/temp.txt"
   /bye/readme.txt:
     fileName: "/temp.txt"
+  /test-1:
+    viewType: "ftl.view"
+    fileName: "ftl-view-mapping-id-1"
+
+ftlViewMapping:
+  ftl-view-mapping-id-1:
+    pageDescription: "pageDescription"
+    pageKeywords: "x,y,z"
+    pageAuthor: "developer"
+    pageTitle: "title"
+    bodyClass: "theme-grey"
+    baseApi: "http://127.0.0.1:8080"
+    basePathName: "/app/project-tracking"
+    appControlDataPath: "/project-tracking/json/"
+    appControlApi: "/project-tracking/json/appControlData.json"
+    projectHeading: "App Heading"
+    forceLogin: true
+    customPageData: "pageName:manageFiles.appIndex=1"
+    validAppControl:
+      - appControlTeam10
+    addBasePathLinkName:
+      - pageHeading:viewPageName.dashboardLink
+      - pageHeading:pageId.displayUploadedFiles
+      - pageFooter:pageName.manageFiles
+    jQueryFilePath: /assets/static/libs/jquery-2.1.3.js
+    cssFiles:
+      - /assets/static/libs/bootstrap-v4.4.1.css
+      - /assets-dir/static/css/style.css
+      - /assets-dir/static/css/react-app.css
+      - /assets/static/dist-auth-app/auth-style.css
+      - /assets-dir/static/css/project-tracking/project-tracking-style.css
+    jsFiles:
+      - /assets/static/dist-react-base-1.0.0/script1.js
+      - /assets-dir/static/js/dist-project-tracking-app/script2.js
+      - /assets-dir/static/js/dist-project-tracking-app/script3.js
