@@ -357,11 +357,52 @@ public class FileServiceV2 {
         }
         return null;
     }
-    public PathInfo getFileResponse(String filePath, LoginUserDetails userDetails) {
+    private PathInfo getFileFromPublicFolder(String filePath, LoginUserDetails userDetails,
+                                             PageConfig404 pageConfig404) {
         String publicDir = appConfig.getPublicDir();
         if (publicDir == null) {
             return null;
         }
+        if (filePath == null) {
+            return null;
+        }
+        Page404Entry page404Entry;
+        PathInfo pathInfo = null;
+        if (StaticService.isValidString(filePath)) {
+            pathInfo = fileService.getPathInfo(publicDir + filePath);
+            if (AppConstant.FOLDER.equals(pathInfo.getType())) {
+                pathInfo = fileService.searchIndexHtmlInFolder(pathInfo);
+            }
+        }
+        if (pathInfo == null || !AppConstant.FILE.equals(pathInfo.getType())) {
+            logger.info("pathInfo is not found for '{}': searching default404 page.", filePath);
+            page404Entry = this.getFileNotFoundMapping(pageConfig404, AppConstant.DEFAULT);
+            if (page404Entry != null) {
+                if (AppConstant.FTL_VIEW_TYPE.equals(page404Entry.getViewType())) {
+                    pathInfo = new PathInfo();
+                    pathInfo.setType(AppConstant.FTL_VIEW_TYPE);
+                    pathInfo.setFileName(page404Entry.getFileName());
+                } else {
+                    pathInfo = fileService.getPathInfo(publicDir + page404Entry.getFileName());
+                }
+            }
+            return pathInfo;
+        } else if (!this.isFolderAuthorised(userDetails, pageConfig404, pathInfo.getParentFolder())) {
+            page404Entry = this.getFileNotFoundMapping(pageConfig404, AppConstant.UN_AUTHORISED);
+            pathInfo = null;
+            if (page404Entry != null) {
+                if (AppConstant.FTL_VIEW_TYPE.equals(page404Entry.getViewType())) {
+                    pathInfo = new PathInfo();
+                    pathInfo.setType(AppConstant.FTL_VIEW_TYPE);
+                    pathInfo.setFileName(page404Entry.getFileName());
+                } else {
+                    pathInfo = fileService.getPathInfo(publicDir + page404Entry.getFileName());
+                }
+            }
+        }
+        return pathInfo;
+    }
+    public PathInfo getFileResponse(String filePath, LoginUserDetails userDetails) {
         if (filePath == null) {
             return null;
         }
@@ -388,33 +429,16 @@ public class FileServiceV2 {
                 }
             }
         }
-        PathInfo pathInfo = null;
-        if (page404Entry != null && AppConstant.FTL_VIEW_TYPE.equals(page404Entry.getViewType())) {
-            pathInfo = new PathInfo();
-            pathInfo.setType(AppConstant.FTL_VIEW_TYPE);
-            pathInfo.setFileName(page404Entry.getFileName());
-            return pathInfo;
-        } else if (StaticService.isValidString(filePath)) {
-            pathInfo = fileService.getPathInfo(publicDir + filePath);
-            if (AppConstant.FOLDER.equals(pathInfo.getType())) {
-                pathInfo = fileService.searchIndexHtmlInFolder(pathInfo);
-            }
-        }
-        if (pathInfo == null || !AppConstant.FILE.equals(pathInfo.getType())) {
-            logger.info("pathInfo is not found for '{}': searching default404 page.", filePath);
-            page404Entry = this.getFileNotFoundMapping(pageConfig404, AppConstant.DEFAULT);
-            if (page404Entry != null) {
-                pathInfo = fileService.getPathInfo(publicDir + page404Entry.getFileName());
-            }
-        }
-        if (pathInfo != null) {
-            if (!this.isFolderAuthorised(userDetails, pageConfig404, pathInfo.getParentFolder())) {
-                page404Entry = this.getFileNotFoundMapping(pageConfig404, AppConstant.UN_AUTHORISED);
-                if (page404Entry != null) {
-                    pathInfo = fileService.getPathInfo(publicDir + page404Entry.getFileName());
-                } else {
-                    pathInfo = null;
-                }
+        PathInfo pathInfo;
+        if (page404Entry == null) {
+            pathInfo = this.getFileFromPublicFolder(filePath, userDetails, pageConfig404);
+        } else {
+            if (AppConstant.FTL_VIEW_TYPE.equals(page404Entry.getViewType())) {
+                pathInfo = new PathInfo();
+                pathInfo.setType(AppConstant.FTL_VIEW_TYPE);
+                pathInfo.setFileName(page404Entry.getFileName());
+            } else {
+                pathInfo = this.getFileFromPublicFolder(filePath, userDetails, pageConfig404);
             }
         }
         logger.info("final pathInfo: {}", pathInfo);
