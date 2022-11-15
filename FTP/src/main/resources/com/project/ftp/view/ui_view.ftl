@@ -40,13 +40,13 @@
 </#if>
 <script type="text/javascript">
 var GLOBAL = {
-    baseApi: "${uiViewObject.baseApi}",
-    basepathname: "${uiViewObject.basePathName}",
+    baseApi: "<#if uiViewObject.baseApi??>${uiViewObject.baseApi}<#else></#if>",
+    basepathname: "<#if uiViewObject.basePathName??>${uiViewObject.basePathName}<#else></#if>",
     loginUserDetailsApi: "/api/get_login_user_details",
     relatedUsersDataApi: "/api/get_related_users_data_v2",
-    appControlDataPath: "${uiViewObject.appControlDataPath}",
-    appControlApi: "${uiViewObject.appControlApi}",
-    projectHeading: "${uiViewObject.projectHeading}",
+    appControlDataPath: "<#if uiViewObject.appControlDataPath??>${uiViewObject.appControlDataPath}<#else></#if>",
+    appControlApi: "<#if uiViewObject.appControlApi??>${uiViewObject.appControlApi}<#else></#if>",
+    projectHeading: "<#if uiViewObject.projectHeading??>${uiViewObject.projectHeading}<#else></#if>",
     forceLogin: ${uiViewObject.forceLogin?c}
 };
 GLOBAL.appVersion = "${appVersion}";
