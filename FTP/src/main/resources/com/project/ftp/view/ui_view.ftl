@@ -42,12 +42,10 @@
 var GLOBAL = {
     baseApi: "<#if uiViewObject.baseApi??>${uiViewObject.baseApi}<#else></#if>",
     basepathname: "<#if uiViewObject.basePathName??>${uiViewObject.basePathName}<#else></#if>",
-    loginUserDetailsApi: "/api/get_login_user_details",
-    relatedUsersDataApi: "/api/get_related_users_data_v2",
     appControlDataPath: "<#if uiViewObject.appControlDataPath??>${uiViewObject.appControlDataPath}<#else></#if>",
     appControlApi: "<#if uiViewObject.appControlApi??>${uiViewObject.appControlApi}<#else></#if>",
     projectHeading: "<#if uiViewObject.projectHeading??>${uiViewObject.projectHeading}<#else></#if>",
-    forceLogin: ${uiViewObject.forceLogin?c}
+    forceLogin: ${forceLogin?c}
 };
 GLOBAL.appVersion = "${appVersion}";
 <#if uiViewObject.jQueryFilePath??>
@@ -65,9 +63,13 @@ GLOBAL.gtag = null;
 GLOBAL.validAppControl = [<#list uiViewObject.validAppControl as appControl>"${appControl}",</#list>];
 </#if>
 <#if uiViewObject.customPageData??>
-GLOBAL.customPageData = "${uiViewObject.customPageData}";
+GLOBAL.customPageData = {
+<#list uiViewObject.customPageData?keys as key>
+    "${key}": "${uiViewObject.customPageData[key]}",
+</#list>
+};
 <#else>
-GLOBAL.customPageData = "";
+GLOBAL.customPageData = {};
 </#if>
 window.GLOBAL = GLOBAL;
 </script>

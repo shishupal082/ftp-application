@@ -26,7 +26,6 @@ ftlViewMapping:
     appControlApi: "/project-tracking/json/appControlData.json"
     projectHeading: "App Heading"
     forceLogin: true
-    customPageData: "pageName:manageFiles.appIndex=1"
     validAppControl:
       - appControlTeam10
     addBasePathLinkName:
@@ -44,3 +43,10 @@ ftlViewMapping:
       - /assets/static/dist-react-base-1.0.0/script1.js
       - /assets-dir/static/js/dist-project-tracking-app/script2.js
       - /assets-dir/static/js/dist-project-tracking-app/script3.js
+    customPageData:
+      number: 1
+      string: "str"
+      boolean: true
+      boolean1: false
+#      arr: [] // Invalid data
+#      obj: {} // Invalid data

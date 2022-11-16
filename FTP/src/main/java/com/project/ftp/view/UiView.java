@@ -18,11 +18,13 @@ public class UiView extends View {
     private final static Logger logger = LoggerFactory.getLogger(UiView.class);
     private final String appVersion;
     private final FtlConfig ftlConfig;
+    private boolean forceLogin;
     private UiViewObject uiViewObject;
     public UiView(AppConfig appConfig, String ftlViewMappingId) {
         super("ui_view.ftl");
         ftlConfig = appConfig.getFtlConfig();
         this.appVersion = AppConstant.AppVersion;
+        this.forceLogin = true;
         PageConfig404 pageConfig404 = appConfig.getPageConfig404();
         uiViewObject = new UiViewObject();
         if (pageConfig404 != null && ftlViewMappingId != null) {
@@ -30,6 +32,9 @@ public class UiView extends View {
             if (uiViewObjectHashMap != null) {
                 uiViewObject = uiViewObjectHashMap.get(ftlViewMappingId);
             }
+        }
+        if (uiViewObject.getForceLogin() != null) {
+            forceLogin = uiViewObject.getForceLogin();
         }
         logger.info("Loading UiView.");
     }
@@ -39,6 +44,11 @@ public class UiView extends View {
     public FtlConfig getFtlConfig() {
         return ftlConfig;
     }
+
+    public boolean isForceLogin() {
+        return forceLogin;
+    }
+
     public UiViewObject getUiViewObject() {
         return uiViewObject;
     }

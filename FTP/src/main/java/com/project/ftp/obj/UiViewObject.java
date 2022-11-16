@@ -3,6 +3,7 @@ package com.project.ftp.obj;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 
@@ -20,9 +21,9 @@ public class UiViewObject {
     private String appControlDataPath;
     private String appControlApi;
     private String projectHeading;
-    private boolean forceLogin;
+    private Boolean forceLogin;
     private ArrayList<String> validAppControl;
-    private String customPageData;
+    private HashMap<String, String> customPageData;
     public UiViewObject() {}
     public String getPageDescription() {
         return pageDescription;
@@ -128,11 +129,11 @@ public class UiViewObject {
         this.projectHeading = projectHeading;
     }
 
-    public boolean isForceLogin() {
+    public Boolean getForceLogin() {
         return forceLogin;
     }
 
-    public void setForceLogin(boolean forceLogin) {
+    public void setForceLogin(Boolean forceLogin) {
         this.forceLogin = forceLogin;
     }
 
@@ -144,11 +145,11 @@ public class UiViewObject {
         this.validAppControl = validAppControl;
     }
 
-    public String getCustomPageData() {
+    public HashMap<String, String> getCustomPageData() {
         return customPageData;
     }
 
-    public void setCustomPageData(String customPageData) {
+    public void setCustomPageData(HashMap<String, String> customPageData) {
         this.customPageData = customPageData;
     }
 
