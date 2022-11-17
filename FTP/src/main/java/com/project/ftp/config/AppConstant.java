@@ -77,7 +77,7 @@ public class AppConstant {
     public static final String DELETE_TABLE_NAME = "delete_table";
 
     public static final String FTL_VIEW_TYPE = "ftl.view";
-
+    public static final String UNAUTHORISED_JSON_DATA = "unauthorised_json_data";
 
     public static final String IS_DEV_USER = "isDevUser";
     public static final String IS_ADMIN_USER = "isAdminUser";

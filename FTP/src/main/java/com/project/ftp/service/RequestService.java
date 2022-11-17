@@ -89,25 +89,29 @@ public class RequestService {
         LoginUserDetails userDetails = userService.getLoginUserDetails(request);
         PathInfo pathInfo = fileServiceV2.getFileResponse(requestedPath, userDetails);
         Response.ResponseBuilder r;
-        if (pathInfo!= null && AppConstant.FILE.equals(pathInfo.getType())) {
-            File file = new File(pathInfo.getPath());
-            try {
-                InputStream inputStream = new FileInputStream(file);
-                r = Response.ok(inputStream);
-                if (pathInfo.getMediaType() == null) {
-                    logger.info("MediaType is not found (download now): {}", pathInfo);
-                    String responseHeader = "attachment; filename=" + pathInfo.getFileName();
-                    r.header(HttpHeaders.CONTENT_DISPOSITION, responseHeader);
-                } else {
-                    r.header(HttpHeaders.CONTENT_TYPE, pathInfo.getMediaType());
+        if (pathInfo!= null) {
+            if (AppConstant.FILE.equals(pathInfo.getType())) {
+                File file = new File(pathInfo.getPath());
+                try {
+                    InputStream inputStream = new FileInputStream(file);
+                    r = Response.ok(inputStream);
+                    if (pathInfo.getMediaType() == null) {
+                        logger.info("MediaType is not found (download now): {}", pathInfo);
+                        String responseHeader = "attachment; filename=" + pathInfo.getFileName();
+                        r.header(HttpHeaders.CONTENT_DISPOSITION, responseHeader);
+                    } else {
+                        r.header(HttpHeaders.CONTENT_TYPE, pathInfo.getMediaType());
+                    }
+                    return r.build();
+                } catch (Exception e) {
+                    logger.info("Error in loading file: {}", pathInfo);
                 }
-                return r.build();
-            } catch (Exception e) {
-                logger.info("Error in loading file: {}", pathInfo);
+            } else if (AppConstant.FTL_VIEW_TYPE.equals(pathInfo.getType())) {
+                String ftlViewMappingId = pathInfo.getFileName();
+                return new UiView(appConfig, ftlViewMappingId);
+            } else if (AppConstant.UNAUTHORISED_JSON_DATA.equals(pathInfo.getType())) {
+                return new ApiResponse(ErrorCodes.UNAUTHORIZED_USER).toJsonString();
             }
-        } else if (pathInfo != null && AppConstant.FTL_VIEW_TYPE.equals(pathInfo.getType())) {
-            String ftlViewMappingId = pathInfo.getFileName();
-            return new UiView(appConfig, ftlViewMappingId);
         }
         return new CommonView("page_not_found_404.ftl", appConfig);
     }

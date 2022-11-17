@@ -389,7 +389,6 @@ public class FileServiceV2 {
             return pathInfo;
         } else if (!this.isFolderAuthorised(userDetails, pageConfig404, pathInfo.getParentFolder())) {
             page404Entry = this.getFileNotFoundMapping(pageConfig404, AppConstant.UN_AUTHORISED);
-            pathInfo = null;
             if (page404Entry != null) {
                 if (AppConstant.FTL_VIEW_TYPE.equals(page404Entry.getViewType())) {
                     pathInfo = new PathInfo();
@@ -398,6 +397,9 @@ public class FileServiceV2 {
                 } else {
                     pathInfo = fileService.getPathInfo(publicDir + page404Entry.getFileName());
                 }
+            } else {
+                pathInfo = new PathInfo();
+                pathInfo.setType(AppConstant.UNAUTHORISED_JSON_DATA);
             }
         }
         return pathInfo;
@@ -408,6 +410,7 @@ public class FileServiceV2 {
         }
         PageConfig404 pageConfig404 = appConfig.getPageConfig404();
         Page404Entry page404Entry = null;
+        boolean isFilePathAuthorised = true;
         if (pageConfig404 != null) {
             page404Entry = this.getFileNotFoundMapping(pageConfig404, filePath);
             if (page404Entry != null) {
@@ -421,6 +424,7 @@ public class FileServiceV2 {
                         if (page404Entry != null) {
                             filePath = page404Entry.getFileName();
                         } else {
+                            isFilePathAuthorised = false;
                             filePath = null;
                         }
                     }
@@ -431,7 +435,12 @@ public class FileServiceV2 {
         }
         PathInfo pathInfo;
         if (page404Entry == null) {
-            pathInfo = this.getFileFromPublicFolder(filePath, userDetails, pageConfig404);
+            if (isFilePathAuthorised) {
+                pathInfo = this.getFileFromPublicFolder(filePath, userDetails, pageConfig404);
+            } else {
+                pathInfo = new PathInfo();
+                pathInfo.setType(AppConstant.UNAUTHORISED_JSON_DATA);
+            }
         } else {
             if (AppConstant.FTL_VIEW_TYPE.equals(page404Entry.getViewType())) {
                 pathInfo = new PathInfo();

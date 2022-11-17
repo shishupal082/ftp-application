@@ -8,7 +8,7 @@ import org.slf4j.LoggerFactory;
 public class PathInfo {
     final static Logger logger = LoggerFactory.getLogger(PathInfo.class);
     private String path;
-    private String type;
+    private String type; // file, folder, AppConstant.FTL_VIEW_TYPE, AppConstant.UNAUTHORISED_JSON_DATA
     private String parentFolder; // In case of file only
     private String fileName; // fileName can be ftl.view.id also
     private String filenameWithoutExt;
