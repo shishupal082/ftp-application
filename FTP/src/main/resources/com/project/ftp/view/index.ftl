@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <link rel="stylesheet" type="text/css" href="/assets/static/libs/bootstrap-v3.1.1.css">
+    <link rel="stylesheet" type="text/css" href="/assets/static/libs/bootstrap-v3.1.1.css"/>
     <title>FTP App</title>
     <#if ftlConfig.tempGaEnable??>
         <!-- If condition -->

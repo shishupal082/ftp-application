@@ -7,15 +7,15 @@
     <meta name="description" content="${uiViewObject.pageDescription}"/>
     </#if>
     <#if uiViewObject.pageKeywords??>
-    <meta name="keywords" content="${uiViewObject.pageKeywords}">
+    <meta name="keywords" content="${uiViewObject.pageKeywords}"/>
     </#if>
     <#if uiViewObject.pageAuthor??>
-    <meta name="author" content="${uiViewObject.pageAuthor}">
+    <meta name="author" content="${uiViewObject.pageAuthor}"/>
     </#if>
     <title><#if uiViewObject.pageTitle??>${uiViewObject.pageTitle}<#else></#if></title>
     <#if uiViewObject.cssFiles??>
     <#list uiViewObject.cssFiles as css_file>
-    <link rel="stylesheet" type="text/css" href="${css_file}?v=${appVersion}">
+    <link rel="stylesheet" type="text/css" href="${css_file}?v=${appVersion}"/>
     </#list>
     </#if>
     <#if ftlConfig.tempGaEnable??>

@@ -4,12 +4,12 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
     <meta name="description" content="<#if ftlConfig.description??>${ftlConfig.description}<#else></#if>"/>
-    <meta name="keywords" content="<#if ftlConfig.keywords??>${ftlConfig.keywords}<#else></#if>">
-    <meta name="author" content="<#if ftlConfig.author??>${ftlConfig.author}<#else></#if>">
+    <meta name="keywords" content="<#if ftlConfig.keywords??>${ftlConfig.keywords}<#else></#if>"/>
+    <meta name="author" content="<#if ftlConfig.author??>${ftlConfig.author}<#else></#if>"/>
     <title><#if ftlConfig.title??>${ftlConfig.title}<#else></#if></title>
-    <link rel="stylesheet" type="text/css" href="/assets/static/libs/bootstrap-v4.4.1.css">
-    <link rel="stylesheet" type="text/css" href="/assets/static/css/style.css?v=${appVersion}">
-    <link rel="stylesheet" type="text/css" href="/assets/static/dist-auth-app/auth-style.css?v=${appVersion}">
+    <link rel="stylesheet" type="text/css" href="/assets/static/libs/bootstrap-v4.4.1.css"/>
+    <link rel="stylesheet" type="text/css" href="/assets/static/css/style.css?v=${appVersion}"/>
+    <link rel="stylesheet" type="text/css" href="/assets/static/dist-auth-app/auth-style.css?v=${appVersion}"/>
     <#if ftlConfig.tempGaEnable??>
         <!-- If condition -->
         <!-- Global site tag (gtag.js) - Google Analytics -->

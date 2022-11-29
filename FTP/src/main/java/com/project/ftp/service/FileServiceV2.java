@@ -333,9 +333,6 @@ public class FileServiceV2 {
     }
     private Page404Entry getFileNotFoundMapping(PageConfig404 pageConfig404, String requestPath) {
         String publicDir = appConfig.getPublicDir();
-        if (publicDir == null) {
-            return  null;
-        }
         Page404Entry page404Entry;
         if (pageConfig404 != null) {
             HashMap<String, Page404Entry> pageMapping = pageConfig404.getPageMapping404();
@@ -345,7 +342,7 @@ public class FileServiceV2 {
                     if (AppConstant.FTL_VIEW_TYPE.equals(page404Entry.getViewType())) {
                         return page404Entry;
                     } else if (page404Entry.getFileName() != null) {
-                        if (fileService.isFile(publicDir + page404Entry.getFileName())) {
+                        if (publicDir != null && fileService.isFile(publicDir + page404Entry.getFileName())) {
                             logger.info("page404Entry found for '{}', {}", requestPath, page404Entry);
                             return page404Entry;
                         } else {
