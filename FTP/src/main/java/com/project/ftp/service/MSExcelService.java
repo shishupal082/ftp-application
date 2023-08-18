@@ -50,12 +50,15 @@ public class MSExcelService {
                 csvData.add(temp);
             }
         }
+        if (copyOldData) {
+            fileService.copyFile(destination, destination, true);
+        }
         fileService.deleteFileV2(destination);
         boolean status = fileServiceV3.saveAddTextV3(destination, csvData, false);
         if (status) {
             logger.info("csv data saved: {}", destination);
             if (!destination.equals(copyDestination) && StaticService.isValidString(copyDestination)) {
-                fileService.copyFile(destination, copyDestination, copyOldData);
+                fileService.copyFile(destination, copyDestination, false);
             }
         } else {
             logger.info("Error in saving csv data: {}", destination);

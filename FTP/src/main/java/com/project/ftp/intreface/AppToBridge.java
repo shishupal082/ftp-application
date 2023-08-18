@@ -138,9 +138,9 @@ public class AppToBridge implements AppToBridgeInterface {
         }
         ArrayList<BridgeResponseSheetData> result = msExcelBridgeService.readExcelSheetData(excelDataConfigById);
         if (result != null) {
-            logger.info("excelSheetDataRead completed: result size: {}", result.size());
+            logger.info("excelSheetDataRead completed for request id: {}", requestId);
         } else {
-            logger.info("excelSheetDataRead completed: {}, and result size: null", excelDataConfigById);
+            logger.info("excelSheetDataRead completed: {}, and result is null.", excelDataConfigById);
         }
         return result;
     }

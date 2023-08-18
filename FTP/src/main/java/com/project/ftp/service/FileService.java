@@ -86,9 +86,9 @@ public class FileService {
                 return false;
             }
             if (this.isFile(destinationFilepath)) {
-                logger.info("filename: {}, exist in the destination folder, renaming it.", destinationFilepath);
-                String filename2 = filename + "-" + StaticService.getDateStrFromPattern(AppConstant.DateTimeFormat);
-                this.renameExistingFile(parentFolder,  filename+ "." + ext, filename2 + "." + ext);
+                String filename2 = filename + "-" + StaticService.getDateStrFromPattern(AppConstant.DateTimeFormat) + "." + ext;
+                logger.info("filename: {}, exist in the destination folder, copy it as: {}", destinationFilepath, filename2);
+                return this.copyFileV2(sourceFilepath,  parentFolder + "/" + filename2);
             }
         }
         return this.copyFileV2(sourceFilepath, destinationFilepath);
