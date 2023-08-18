@@ -363,7 +363,7 @@ public class StaticService {
                     String str2;
                     if (!availableLogFiles.contains(str1)) {
                         str2 = newLogFilePath + "-" + (i++) + ".log";
-                        Boolean copyStatus = fileService.copyFileV2(str1, str2);
+                        boolean copyStatus = fileService.copyFileV2(str1, str2);
                         if (copyStatus) {
                             nextAvailableLogFiles.add(str2);
                             eventTracking.trackLogFileChange(AppConstant.SUCCESS, str1, str2);

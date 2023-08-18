@@ -37,6 +37,7 @@ public class ApiResource {
     private final SecurityService securityService;
     private final EventTracking eventTracking;
     private final RequestService requestService;
+    private final MSExcelService msExcelService;
     public ApiResource(final AppConfig appConfig,
                        final UserService userService,
                        final EventTracking eventTracking,
@@ -48,6 +49,7 @@ public class ApiResource {
         this.authService = authService;
         this.securityService = new SecurityService();
         this.requestService = new RequestService(appConfig, userService, fileServiceV2);
+        this.msExcelService = new MSExcelService(appConfig, userService);
     }
     @GET
     @Produces(MediaType.TEXT_HTML)
@@ -872,6 +874,25 @@ public class ApiResource {
             response = new ApiResponse(ae.getErrorCode());
         }
         logger.info("callTcp: Out, {}", response.toStringV2());
+        return response;
+    }
+    @POST
+    @Path("/update_excel_data")
+    @UnitOfWork
+    public ApiResponse updateMSExcelData(@Context HttpServletRequest request,
+                               RequestTcp requestTcp) {
+        LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
+        logger.info("updateMSExcelData: In, user: {}, request: {}", loginUserDetails, requestTcp);
+        ApiResponse response;
+        try {
+            authService.isLogin(request);
+            response = msExcelService.updateMSExcelSheetData(requestTcp);
+        } catch (AppException ae) {
+            logger.info("Error in updateMSExcelData: {}", ae.getErrorCode().getErrorCode());
+            eventTracking.trackFailureEvent(request, EventName.MS_EXCEL_DATA, ae.getErrorCode());
+            response = new ApiResponse(ae.getErrorCode());
+        }
+        logger.info("updateMSExcelData: Out, {}", response.toStringV2());
         return response;
     }
     /**

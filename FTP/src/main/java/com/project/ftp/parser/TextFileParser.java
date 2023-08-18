@@ -77,7 +77,7 @@ public class TextFileParser {
         }
         return String.join("\n", result);
     }
-    public boolean addText(String text) {
+    public boolean addText(String text, boolean logFilename) {
         if (text == null) {
             text = "";
         }
@@ -96,7 +96,9 @@ public class TextFileParser {
             }
             writer.append(text);
             writer.close();
-            logger.info("Text added in: {}", filepath);
+            if (logFilename) {
+                logger.info("Text added in: {}", filepath);
+            }
             textAddStatus = true;
         } catch (Exception e) {
             logger.info("Error in adding text in filename: {}", filepath);

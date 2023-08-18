@@ -64,7 +64,7 @@ public class EventFile implements EventInterface {
         String eventDataFilepath = this.getEventDataFileName();
         fileService.createNewFile(eventDataFilepath);
         TextFileParser textFileParser = new TextFileParser(eventDataFilepath, false);
-        textFileParser.addText(eventLog);
+        textFileParser.addText(eventLog, false);
         logger.info("Event added: {}", eventLog);
     }
 

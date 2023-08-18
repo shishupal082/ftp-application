@@ -7,6 +7,7 @@ import com.project.ftp.bridge.config.CreatePasswordEmailConfig;
 import com.project.ftp.bridge.config.EmailConfig;
 import com.project.ftp.bridge.config.SocialLoginConfig;
 import com.project.ftp.bridge.obj.yamlObj.CommunicationConfig;
+import com.project.ftp.bridge.obj.yamlObj.ExcelDataConfig;
 import com.project.ftp.obj.yamlObj.EventConfig;
 import com.project.ftp.obj.yamlObj.FtlConfig;
 import io.dropwizard.Configuration;
@@ -59,6 +60,7 @@ public class FtpConfiguration extends Configuration {
     private FtlConfig ftlConfig;
     private EventConfig eventConfig;
     private CommunicationConfig communicationConfig;
+    private HashMap<String, ExcelDataConfig> excelConfig;
     private SocialLoginConfig socialLoginConfig;
     @JsonProperty("database")
     private DataSourceFactory dataSourceFactory = new DataSourceFactory();
@@ -359,6 +361,14 @@ public class FtpConfiguration extends Configuration {
         this.communicationConfig = communicationConfig;
     }
 
+    public HashMap<String, ExcelDataConfig> getExcelConfig() {
+        return excelConfig;
+    }
+
+    public void setExcelConfig(HashMap<String, ExcelDataConfig> excelConfig) {
+        this.excelConfig = excelConfig;
+    }
+
     public SocialLoginConfig getSocialLoginConfig() {
         return socialLoginConfig;
     }
@@ -523,6 +533,14 @@ public class FtpConfiguration extends Configuration {
         if (communicationConfig != null) {
             this.communicationConfig = communicationConfig;
         }
+        HashMap<String, ExcelDataConfig> excelConfig = tempFtpConfiguration.getExcelConfig();
+        if (excelConfig != null) {
+            if (this.excelConfig != null) {
+                this.excelConfig.putAll(excelConfig);
+            } else {
+                this.excelConfig = excelConfig;
+            }
+        }
         SocialLoginConfig socialLoginConfig = tempFtpConfiguration.getSocialLoginConfig();
         if (socialLoginConfig != null) {
             this.socialLoginConfig = socialLoginConfig;
@@ -569,6 +587,7 @@ public class FtpConfiguration extends Configuration {
                 ", ftlConfig=" + ftlConfig +
                 ", eventConfig=" + eventConfig +
                 ", communicationConfig=" + communicationConfig +
+                ", excelConfig=" + excelConfig +
                 ", socialLoginConfig=" + socialLoginConfig +
                 ", dataSourceFactory=" + "*****" +
                 '}';

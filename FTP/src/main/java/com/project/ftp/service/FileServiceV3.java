@@ -363,7 +363,7 @@ public class FileServiceV3 {
             currentTimeStamp = StaticService.getDateStrFromPattern(AppConstant.DateTimeFormat6);
             finalSavingData = addText.generateAddTextResponse(orgUsername, loginUsername, currentTimeStamp);
             for (String str : finalSavingData) {
-                textFileParser.addText(str);
+                textFileParser.addText(str, false);
             }
             return true;
         }
@@ -389,17 +389,28 @@ public class FileServiceV3 {
             logger.info("Invalid final filePath: {}", filePath);
             return false;
         }
+        String[] text = addText.getText();
+        ArrayList<String> textData = new ArrayList<>();
+        if (text != null) {
+            for (String s : text) {
+                if (StaticService.isValidString(s)) {
+                    textData.add(s);
+                }
+            }
+        }
+        return this.saveAddTextV3(filePath, textData, true);
+    }
+    public boolean saveAddTextV3(String filePath, ArrayList<String> textData, boolean logFilename) {
         boolean fileExist = true;
         if (!fileService.isFile(filePath)) {
             fileExist = fileService.createNewFile(filePath);
         }
         if (fileExist) {
             TextFileParser textFileParser = new TextFileParser(filePath);
-            String[] text = addText.getText();
-            if (text != null) {
-                for (int i=0; i<text.length; i++) {
-                    if (StaticService.isValidString(text[i])) {
-                        textFileParser.addText(text[i]);
+            if (textData != null) {
+                for (String s : textData) {
+                    if (s != null) {
+                        textFileParser.addText(s, logFilename);
                     }
                 }
             }

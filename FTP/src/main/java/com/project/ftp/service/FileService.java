@@ -34,7 +34,7 @@ public class FileService {
         return pathInfo;
     }
 
-    public Boolean copyFileV2(String oldFilePath, String newFilePath) {
+    public boolean copyFileV2(String oldFilePath, String newFilePath) {
         boolean fileCopyStatus = false;
         InputStream is = null;
         OutputStream os = null;
@@ -42,6 +42,7 @@ public class FileService {
             File file = new File(oldFilePath);
             if (!file.isFile()) {
                 logger.info("oldFilePath is not a file: {}", oldFilePath);
+                return false;
             }
             File newFile = new File(newFilePath);
             is = new FileInputStream(file);
@@ -59,8 +60,40 @@ public class FileService {
         }
         return fileCopyStatus;
     }
-
-    public Boolean moveFile(String source, String destination, String filename, String ext) {
+    public boolean copyFile(String sourceFilepath, String destinationFilepath, boolean saveOldData) {
+        // Here source and destination both does not contain / in the end
+        if (sourceFilepath == null || destinationFilepath == null) {
+            logger.info("Invalid request to copyFile: {}", sourceFilepath + "--" + destinationFilepath);
+            return false;
+        }
+        if (!this.isFile(sourceFilepath)) {
+            logger.info("sourceFilepath is not a file: {}", sourceFilepath);
+            return false;
+        }
+        PathInfo pathInfo = this.getPathInfo(destinationFilepath);
+        if (!AppConstant.FILE.equals(pathInfo.getType())) {
+            boolean copyStatus = this.copyFileV2(sourceFilepath, destinationFilepath);
+            logger.info("destinationFilepath: {}, fileCopyStatus: {}", destinationFilepath, copyStatus);
+            return copyStatus;
+        }
+        if (saveOldData) {
+            String parentFolder = pathInfo.getParentFolder();
+            String filename = pathInfo.getFilenameWithoutExt();
+            String filenameWithExt = pathInfo.getFileName();
+            String ext = pathInfo.getExtension();
+            if (!this.isDirectory(parentFolder) || filenameWithExt == null || filenameWithExt.isEmpty()) {
+                logger.info("destinationFilepath is not valid: {}, {}", destinationFilepath, filenameWithExt);
+                return false;
+            }
+            if (this.isFile(destinationFilepath)) {
+                logger.info("filename: {}, exist in the destination folder, renaming it.", destinationFilepath);
+                String filename2 = filename + "-" + StaticService.getDateStrFromPattern(AppConstant.DateTimeFormat);
+                this.renameExistingFile(parentFolder,  filename+ "." + ext, filename2 + "." + ext);
+            }
+        }
+        return this.copyFileV2(sourceFilepath, destinationFilepath);
+    }
+    public boolean moveFile(String source, String destination, String filename, String ext) {
         // Here source and destination both does not contain / in the end
         if (source == null || destination == null || filename == null || ext == null) {
             logger.info("Invalid request to moveFile: {}", source + "--" + destination + "--"
@@ -82,7 +115,7 @@ public class FileService {
             String filename2 = filename + "-" + StaticService.getDateStrFromPattern(AppConstant.DateTimeFormat);
             this.renameExistingFile(destination, filename + "." + ext, filename2 + "." + ext);
         }
-        Boolean copyFileStatus = this.copyFileV2(sourceFilePath, destinationFilePath);
+        boolean copyFileStatus = this.copyFileV2(sourceFilePath, destinationFilePath);
         boolean deleteStatus = false;
         if (copyFileStatus) {
             deleteStatus = this.deleteFileV2(sourceFilePath);
@@ -94,7 +127,6 @@ public class FileService {
         }
         return deleteStatus;
     }
-
     public String createDir(ArrayList<String> dirs) {
         if (dirs == null || dirs.isEmpty()) {
             return null;

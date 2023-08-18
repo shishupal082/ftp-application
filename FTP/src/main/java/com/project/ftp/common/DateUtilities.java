@@ -5,6 +5,13 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class DateUtilities {
+    public static String getDateStrFromDateObj(String format, Date dateObj) {
+        if (format == null || dateObj == null) {
+            return "";
+        }
+        DateFormat dateFormat = new SimpleDateFormat(format);
+        return dateFormat.format(dateObj);
+    }
     public String getDateStrFromTimeMs(String format, Long timeInMs) {
         if (format == null || timeInMs == null) {
             return "";

@@ -116,6 +116,17 @@ communicationConfig:
       port: 8086
       ttl: 4
 
+excelConfig:
+  ms-award:
+    fileConfig:
+      - source: "/user-data.xlsx"
+        destination: "/07-award-data.csv"
+        sheetName: "Award"
+  gs-award:
+    gsConfig:
+      - source: "SPREADSHEET_ID"
+        destination: "/07-award-data.csv"
+        sheetName: "Award"
 socialLoginConfig:
   loginWithGmail: true
   googleLoginClientId: "googleLoginClientId"

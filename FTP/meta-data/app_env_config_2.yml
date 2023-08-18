@@ -1,5 +1,5 @@
 fileSaveDir: "D:/workspace/project/ftp-app/saved-files/"
-configDataFilePath: "D:/workspace/project/ftp-app/config-files/"
+configDataFilePath: "D:/workspace/ftp-application/FTP/meta-data/config-files/"
 publicDir: "../.."
 publicPostDir: "/project"
 assetsDir: "D:/workspace/project/"
@@ -15,8 +15,8 @@ forgotPasswordMessage: "Forgot password request submitted, Please create passwor
 loadRoleStatusOnPageLoad: "FromRoleConfig" #"isAdminUser" #FromRoleConfig
 forgotPasswordEnable: true
 rolesFileName:
-  - roles/user_roles.yml
-#  - roles/roles_2.yml
+  - roles/roles.yml
+  - roles/roles_2.yml
 fileNotFoundMapping:
 #  - "file_not_found_config.yml"
   - "file_not_found_config/file_not_found_config_v2.yml"
@@ -129,4 +129,4 @@ allowedOrigin:
 
 tempConfig:
   orgUsername: Group1Login
-  username: Group1Login
+  username: Admin

@@ -39,6 +39,7 @@ public enum EventName {
     RESET_CHANGE_PASSWORD_COUNT("reset_change_password_count"),
     VERIFY_PERMISSION("verify_permission"),
     CALL_TCP("call_tcp"),
+    MS_EXCEL_DATA("ms_excel_data"),
     GET_ROLES_CONFIG("get_roles_config"),
     AES_ENCRYPTION("aes_encryption"),
     AES_DECRYPTION("aes_decryption"),

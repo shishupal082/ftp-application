@@ -29,9 +29,10 @@ public class AppConstant {
     public static final String ALLOWED_HEADERS= "Access-Control-Allow-Headers";
     public static final String FILE = "FILE";
     public static final String FOLDER = "FOLDER";
-    public static final String AppVersion = "8.0.2.010";
+    public static final String AppVersion = "8.0.2.011";
     public static final String DATE_FORMAT = "yyyy-MM-dd";
     public static final String TIME_FORMAT = "HHmmss";
+    public static final String TIME_FORMAT2 = "HH:mm";
     public static final String FILENAME_FORMAT = "yyyy-MM-dd-HH-mm'-filename'";
     public static final String DateTimeFormat = "yyyyMMdd'T'HHmmssSSS";
     public static final String DateTimeFormat2 = "yyyy-MM-dd-HH-mm-ss-SSS";
@@ -39,6 +40,7 @@ public class AppConstant {
     public static final String DateTimeFormat4 = "yyyy-MM-dd-HH-mm-ss"; // used for log file copy
     public static final String DateTimeFormat5 = "yyyy-MM-dd-HH:mm"; // used for file_details.csv data generation
     public static final String DateTimeFormat6 = "yyyy-MM-dd HH:mm:ss"; // used for timestamp in UserFile interface
+    public static final String DateTimeFormat7 = "dd/MM/yyyy HH:mm"; // used for reading excel sheet data
     public static final String UTF8 = "UTF-8";
     public static final String FAVICON_ICO_PATH = "favicon.ico";
     public static final String INDEX_PAGE_RE_ROUTE = "/login";

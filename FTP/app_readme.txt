@@ -1349,6 +1349,22 @@ Added config parameter in file_not_found_config.yml:
 ftlViewMapping:
     string: UiViewObject
 
+8.0.2.011
+----------
+12.08.2023
+----------
+Added new api
+    - /api/update_excel_data [POST]
+It will convert excel data to csv data as per configuration added in meta-data/app_env_config_4.yml
+Sequence of operation
+- dateFormat, timeFormat and dateTimeFormat
+- change \n to ; and , to ...
+- skipRowIndex
+    - First skip row index is required to be executed
+      otherwise row index will be changed (After skipEmptyRows operation)
+- skipEmptyRows
+- copyCellDataIndex
+- cellMapping & appendCellDataIndex
 
 Future releases
 -------------------

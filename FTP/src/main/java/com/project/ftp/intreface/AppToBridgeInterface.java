@@ -1,5 +1,6 @@
 package com.project.ftp.intreface;
 
+import com.project.ftp.bridge.obj.BridgeResponseSheetData;
 import com.project.ftp.mysql.MysqlUser;
 
 import java.util.ArrayList;
@@ -13,5 +14,6 @@ public interface AppToBridgeInterface {
     ArrayList<String> getAllUsersName();
     Object getRolesConfig();
     String getTcpResponse(String tcpId, String data);
+    ArrayList<BridgeResponseSheetData> getMSExcelData(String tcpId, String data);
     String verifyGoogleIdToken(String googleIdToken);
 }

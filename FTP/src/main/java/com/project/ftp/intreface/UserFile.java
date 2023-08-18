@@ -124,6 +124,6 @@ public class UserFile implements UserInterface {
                 + AppConfigHelper.getUserDataFilename(appConfig);
         TextFileParser textFileParser = new TextFileParser(filepath);
         String text = this.getAddTextResponse(user);
-        return textFileParser.addText(text);
+        return textFileParser.addText(text, true);
     }
 }

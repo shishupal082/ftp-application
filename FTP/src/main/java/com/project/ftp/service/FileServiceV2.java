@@ -128,7 +128,7 @@ public class FileServiceV2 {
         boolean createStatus, addTextStatus = false;
         createStatus = fileService.createNewFile(responseFilename);
         if (createStatus) {
-            addTextStatus = new TextFileParser(responseFilename, true).addText(textData.toString());
+            addTextStatus = new TextFileParser(responseFilename, true).addText(textData.toString(), true);
         }
         if (createStatus && addTextStatus) {
             return fileService.getPathInfo(responseFilename);
@@ -225,7 +225,7 @@ public class FileServiceV2 {
             throw new AppException(ErrorCodes.CONFIG_ERROR);
         }
         PathInfo pathInfo = fileService.getPathInfo(saveDir + fileUsername + "/" + filename);
-        Boolean fileDeleteStatus;
+        boolean fileDeleteStatus;
         if (AppConstant.FILE.equals(pathInfo.getType())) {
             ArrayList<String> requiredDirs = new ArrayList<>();
             requiredDirs.add(saveDir);
