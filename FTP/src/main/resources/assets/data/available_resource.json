@@ -212,8 +212,8 @@
     "Call TCP IP [POST]"
   ],
   [
-    "/api/update_excel_data",
-    "Call Update GS/MS_Excel_sheet_Data [POST]"
+    "/api/update_excel_data?requestId=gs-excel-id",
+    "Call Update GS/MS_Excel_sheet_Data [GET]"
   ],
   [
     "/assets-dir/{default: *}",

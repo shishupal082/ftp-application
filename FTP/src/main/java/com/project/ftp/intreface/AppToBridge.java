@@ -123,7 +123,7 @@ public class AppToBridge implements AppToBridgeInterface {
         return tcpClient.callTcpServer(data, tcpConfig.getTtl());
     }
     @Override
-    public ArrayList<BridgeResponseSheetData> getMSExcelData(String requestId, String data) throws AppException {
+    public ArrayList<BridgeResponseSheetData> getMSExcelData(String requestId) throws AppException {
         HashMap<String, ExcelDataConfig> excelConfig = ftpConfiguration.getExcelConfig();
         if (excelConfig == null) {
             logger.info("Excel config error: excelConfig is null.");

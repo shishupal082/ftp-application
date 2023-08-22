@@ -1354,7 +1354,7 @@ ftlViewMapping:
 12.08.2023
 ----------
 Added new api
-    - /api/update_excel_data [POST]
+    - /api/update_excel_data?requestId=gs-excel-id [GET]
     - this api is used for reading both ms-excel-sheet data and google-sheet data
 
 Added config for reading google sheet data using o-auth client:

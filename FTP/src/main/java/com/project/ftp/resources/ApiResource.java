@@ -876,17 +876,17 @@ public class ApiResource {
         logger.info("callTcp: Out, {}", response.toStringV2());
         return response;
     }
-    @POST
+    @GET
     @Path("/update_excel_data")
     @UnitOfWork
     public ApiResponse updateMSExcelData(@Context HttpServletRequest request,
-                               RequestTcp requestTcp) {
+                                         @QueryParam("requestId") String requestId) {
         LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
-        logger.info("updateMSExcelData: In, user: {}, request: {}", loginUserDetails, requestTcp);
+        logger.info("updateMSExcelData: In, user: {}, requestId: {}", loginUserDetails, requestId);
         ApiResponse response;
         try {
             authService.isLogin(request);
-            response = msExcelService.updateMSExcelSheetData(requestTcp);
+            response = msExcelService.updateMSExcelSheetData(requestId);
         } catch (AppException ae) {
             logger.info("Error in updateMSExcelData: {}", ae.getErrorCode().getErrorCode());
             eventTracking.trackFailureEvent(request, EventName.MS_EXCEL_DATA, ae.getErrorCode());

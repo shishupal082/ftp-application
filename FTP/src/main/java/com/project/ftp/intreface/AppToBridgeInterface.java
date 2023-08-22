@@ -14,6 +14,6 @@ public interface AppToBridgeInterface {
     ArrayList<String> getAllUsersName();
     Object getRolesConfig();
     String getTcpResponse(String tcpId, String data);
-    ArrayList<BridgeResponseSheetData> getMSExcelData(String tcpId, String data);
+    ArrayList<BridgeResponseSheetData> getMSExcelData(String requestId);
     String verifyGoogleIdToken(String googleIdToken);
 }

@@ -93,7 +93,6 @@ public class GoogleSheetsOAuthApi {
                     credentialsFilePath, googleOAuthClientConfig);
             throw new AppException(ErrorCodes.CONFIG_ERROR);
         }
-        logger.info("googleOAuthClientConfig: {}", googleOAuthClientConfig);
     }
     public ArrayList<ArrayList<String>> readSheetData(String spreadSheetId, String sheetName) throws AppException {
         // Build a new authorized API client service.
@@ -113,6 +112,7 @@ public class GoogleSheetsOAuthApi {
         } catch (Exception e) {
             logger.info("Error in reading google sheet data: {}, {}, errorMessage: {}",
                     spreadSheetId, sheetName, e.getMessage());
+            throw new AppException(ErrorCodes.CONFIG_ERROR);
         }
 
         ArrayList<ArrayList<String>> result = new ArrayList<>();
