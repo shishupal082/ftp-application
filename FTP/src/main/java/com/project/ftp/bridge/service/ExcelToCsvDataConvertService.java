@@ -49,7 +49,9 @@ public class ExcelToCsvDataConvertService {
                 sheetData.set(j, temp);
             }
             for (i=0; i<=lastRowIndex; i++) {
-                result.add(sheetData.get(i));
+                if (i < sheetData.size()) {
+                    result.add(sheetData.get(i));
+                }
             }
         }
         return result;

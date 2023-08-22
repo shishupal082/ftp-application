@@ -44,7 +44,6 @@ public class AppConfig {
         this.configDate = StaticService.getDateStrFromPattern(AppConstant.DATE_FORMAT);
         userService = null;
     }
-
     public void setUserService(UserService userService) {
         this.userService = userService;
     }
@@ -218,6 +217,7 @@ public class AppConfig {
             temp = yamlFileParser.getFtpConfigurationFromPath(cmdArguments.get(i));
             ftpConfiguration.updateFtpConfig(temp);
         }
+        this.setFtpConfiguration(ftpConfiguration);
         logger.info("FTP configuration generate complete: {}", ftpConfiguration);
     }
     public void updatePageConfig404() {

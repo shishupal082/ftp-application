@@ -76,14 +76,13 @@ public class UserService {
     public boolean isLoginUserDev(LoginUserDetails loginUserDetails)  {
         return this.isAuthorised(loginUserDetails, AppConstant.IS_DEV_USER);
     }
-    public void updateUserRoles() throws AppException {
+    public void updateFtpConfiguration() throws AppException {
         ArrayList<String> rolesConfigPath = StaticService.getRolesConfigPath(appConfig.getFtpConfiguration());
         boolean rolesUpdateStatus = appConfig.getAppToBridge().updateUserRoles(rolesConfigPath);
         appConfig.updatePageConfig404();
         appConfig.updateFinalFtpConfiguration(appConfig.getFtpConfiguration());
         if (!rolesUpdateStatus) {
             logger.info("Error in updating user roles.");
-            throw new AppException(ErrorCodes.CONFIG_ERROR);
         }
     }
 

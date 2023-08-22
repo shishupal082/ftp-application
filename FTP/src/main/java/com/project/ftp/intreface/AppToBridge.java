@@ -34,26 +34,23 @@ public class AppToBridge implements AppToBridgeInterface {
     private final BridgeResource bridgeResource;
     private final RolesResource rolesResource;
     private final SocialLoginService socialLoginService;
-    private final MSExcelBridgeService msExcelBridgeService;
     private final EmailConfig emailConfig;
     private final CommunicationConfig communicationConfig;
-    private final HashMap<String, ExcelDataConfig> excelConfig;
-
+    private final FtpConfiguration ftpConfiguration;
     public AppToBridge(FtpConfiguration ftpConfiguration, EventTracking eventTracking) {
-        emailConfig = ftpConfiguration.getEmailConfig();
-        communicationConfig = ftpConfiguration.getCommunicationConfig();
-        excelConfig = ftpConfiguration.getExcelConfig();
+        this.ftpConfiguration = ftpConfiguration;
+        this.emailConfig = ftpConfiguration.getEmailConfig();
+        this.communicationConfig = ftpConfiguration.getCommunicationConfig();
         SocialLoginConfig socialLoginConfig = ftpConfiguration.getSocialLoginConfig();
         ArrayList<String> rolesConfigPath = StaticService.getRolesConfigPath(ftpConfiguration);
         BridgeConfig bridgeConfig = new BridgeConfig(emailConfig, ftpConfiguration.getCreatePasswordEmailConfig());
         BridgeToAppInterface bridgeToAppInterface = new BridgeToApp(eventTracking);
         BridgeTracking bridgeTracking = new BridgeTracking(bridgeToAppInterface);
         RolesService rolesService = new RolesService(bridgeConfig, rolesConfigPath);
-        socialLoginService = new SocialLoginService(socialLoginConfig);
-        msExcelBridgeService = new MSExcelBridgeService();
+        this.socialLoginService = new SocialLoginService(socialLoginConfig);
         this.bridgeResource = new BridgeResource(bridgeConfig, bridgeToAppInterface, bridgeTracking);
         this.rolesResource = new RolesResource(rolesService, bridgeTracking);
-        rolesResource.trackRelatedUser();
+        this.rolesResource.trackRelatedUser();
 
     }
     @Override
@@ -127,6 +124,7 @@ public class AppToBridge implements AppToBridgeInterface {
     }
     @Override
     public ArrayList<BridgeResponseSheetData> getMSExcelData(String requestId, String data) throws AppException {
+        HashMap<String, ExcelDataConfig> excelConfig = ftpConfiguration.getExcelConfig();
         if (excelConfig == null) {
             logger.info("Excel config error: excelConfig is null.");
             throw new AppException(ErrorCodes.CONFIG_ERROR);
@@ -136,6 +134,8 @@ public class AppToBridge implements AppToBridgeInterface {
             logger.info("excelDataConfigById is null, for requestId: {}", requestId);
             throw new AppException(ErrorCodes.BAD_REQUEST_ERROR);
         }
+        MSExcelBridgeService msExcelBridgeService = new MSExcelBridgeService(
+                ftpConfiguration.getGoogleOAuthClientConfig());
         ArrayList<BridgeResponseSheetData> result = msExcelBridgeService.readExcelSheetData(excelDataConfigById);
         if (result != null) {
             logger.info("excelSheetDataRead completed for request id: {}", requestId);

@@ -742,7 +742,7 @@ public class ApiResource {
         ApiResponse response;
         try {
             authService.isLoginUserAdmin(request);
-            userService.updateUserRoles();
+            userService.updateFtpConfiguration();
             response = new ApiResponse();
             eventTracking.trackSuccessEvent(request, EventName.UPDATE_ROLES_CONFIG);
         } catch (AppException ae) {

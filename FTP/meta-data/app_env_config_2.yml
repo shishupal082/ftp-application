@@ -109,6 +109,12 @@ socialLoginConfig:
   googleLoginClientId: "googleLoginClientId"
   googleLoginClientSecretId: "googleLoginClientSecretId"
 
+googleOAuthClientConfig:
+  applicationName: "Google Sheets API"
+  tokenDirPath: "D:/workspace/project/nodejs/google-sheets"
+  credentialFilePath: "/client_secret_o-auth-sheets-api.json"
+  localServerPort: 8888
+
 # Optional parameter
 indexPageReRoute: /login
 filenameFormat: "yyyy-MM-dd-HH-mm'-filename'"

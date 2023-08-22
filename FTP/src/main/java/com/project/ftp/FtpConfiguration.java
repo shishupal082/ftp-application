@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.project.ftp.bridge.config.CreatePasswordEmailConfig;
 import com.project.ftp.bridge.config.EmailConfig;
+import com.project.ftp.bridge.config.GoogleOAuthClientConfig;
 import com.project.ftp.bridge.config.SocialLoginConfig;
 import com.project.ftp.bridge.obj.yamlObj.CommunicationConfig;
 import com.project.ftp.bridge.obj.yamlObj.ExcelDataConfig;
@@ -62,6 +63,7 @@ public class FtpConfiguration extends Configuration {
     private CommunicationConfig communicationConfig;
     private HashMap<String, ExcelDataConfig> excelConfig;
     private SocialLoginConfig socialLoginConfig;
+    private GoogleOAuthClientConfig googleOAuthClientConfig;
     @JsonProperty("database")
     private DataSourceFactory dataSourceFactory = new DataSourceFactory();
 
@@ -377,6 +379,14 @@ public class FtpConfiguration extends Configuration {
         this.socialLoginConfig = socialLoginConfig;
     }
 
+    public GoogleOAuthClientConfig getGoogleOAuthClientConfig() {
+        return googleOAuthClientConfig;
+    }
+
+    public void setGoogleOAuthClientConfig(GoogleOAuthClientConfig googleOAuthClientConfig) {
+        this.googleOAuthClientConfig = googleOAuthClientConfig;
+    }
+
     public DataSourceFactory getDataSourceFactory() {
         return dataSourceFactory;
     }
@@ -545,6 +555,10 @@ public class FtpConfiguration extends Configuration {
         if (socialLoginConfig != null) {
             this.socialLoginConfig = socialLoginConfig;
         }
+        GoogleOAuthClientConfig googleOAuthClientConfig = tempFtpConfiguration.getGoogleOAuthClientConfig();
+        if (googleOAuthClientConfig != null) {
+            this.googleOAuthClientConfig = googleOAuthClientConfig;
+        }
     }
 
     @Override
@@ -589,6 +603,7 @@ public class FtpConfiguration extends Configuration {
                 ", communicationConfig=" + communicationConfig +
                 ", excelConfig=" + excelConfig +
                 ", socialLoginConfig=" + socialLoginConfig +
+                ", googleOAuthClientConfig=" + googleOAuthClientConfig +
                 ", dataSourceFactory=" + "*****" +
                 '}';
     }

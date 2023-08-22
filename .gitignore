@@ -7,6 +7,8 @@ FTP/user_guide.txt
 FTP/user_guide_zonal.pdf
 FTP/user_guide_zonal.txt
 
+FTP/src/main/resources/client_secret_o-auth-sheets-api.json
+
 FTP/meta-data/FTP-*.jar
 FTP/meta-data/config-files/event_data/
 FTP/meta-data/app_env_config_3.yml

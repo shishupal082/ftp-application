@@ -1355,9 +1355,18 @@ ftlViewMapping:
 ----------
 Added new api
     - /api/update_excel_data [POST]
+    - this api is used for reading both ms-excel-sheet data and google-sheet data
+
+Added config for reading google sheet data using o-auth client:
+googleOAuthClientConfig:
+  applicationName: "Google Sheets API"
+  tokenDirPath: "D:/workspace/project/nodejs/google-sheets"
+  credentialFilePath: "/client_secret_o-auth-sheets-api.json"
+  localServerPort: 8888
+
 It will convert excel data to csv data as per configuration added in meta-data/app_env_config_4.yml
 Sequence of operation
-- dateFormat, timeFormat and dateTimeFormat
+- dateFormat, timeFormat and dateTimeFormat [Only used for excel sheet reading not for google sheet]
 - change \n to ; and , to ...
 - skipRowIndex
     - First skip row index is required to be executed

@@ -127,10 +127,17 @@ excelConfig:
       - source: "SPREADSHEET_ID"
         destination: "/07-award-data.csv"
         sheetName: "Award"
+
 socialLoginConfig:
   loginWithGmail: true
   googleLoginClientId: "googleLoginClientId"
   googleLoginClientSecretId: "googleLoginClientSecretId"
+
+googleOAuthClientConfig:
+  applicationName: "Google Sheets API"
+  tokenDirPath: "D:/workspace/project/nodejs/google-sheets"
+  credentialFilePath: "/client_secret_o-auth-sheets-api.json"
+  localServerPort: 8888
 
 enabledAuthPages:
   - login

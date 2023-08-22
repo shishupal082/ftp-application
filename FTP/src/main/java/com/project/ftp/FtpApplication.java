@@ -62,7 +62,7 @@ public class FtpApplication  extends Application<FtpConfiguration> {
         appConfig.updateFinalFtpConfiguration(ftpConfiguration);
 //        ShutdownTask shutdownTask = new ShutdownTask(appConfig);
 //        appConfig.setShutdownTask(shutdownTask);
-        appConfig.setFtpConfiguration(ftpConfiguration);
+//        appConfig.setFtpConfiguration(ftpConfiguration);
         StaticService.initApplication(appConfig, arguments.get(AppConstant.CMD_LINE_ARG_1st_CONFIG_FILE));
         appConfig.updatePageConfig404();
         LOGGER.info("appConfig: {}", appConfig);
