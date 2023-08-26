@@ -4,12 +4,15 @@ import com.project.ftp.bridge.config.GoogleOAuthClientConfig;
 import com.project.ftp.bridge.obj.BridgeResponseSheetData;
 import com.project.ftp.bridge.obj.yamlObj.ExcelDataConfig;
 import com.project.ftp.bridge.obj.yamlObj.ExcelFileConfig;
+import com.project.ftp.bridge.obj.yamlObj.FileConfigMapping;
 import com.project.ftp.exceptions.AppException;
 import com.project.ftp.exceptions.ErrorCodes;
+import com.project.ftp.parser.TextFileParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class MSExcelBridgeService {
     final static Logger logger = LoggerFactory.getLogger(MSExcelBridgeService.class);
@@ -18,6 +21,16 @@ public class MSExcelBridgeService {
     public MSExcelBridgeService(GoogleOAuthClientConfig googleOAuthClientConfig){
         this.googleOAuthClientConfig = googleOAuthClientConfig;
         this.excelToCsvDataConvertService = new ExcelToCsvDataConvertService();
+    }
+    private ArrayList<ArrayList<String>> readCsvData(String srcFilepath) {
+        ArrayList<ArrayList<String>> csvData = null;
+        try {
+            TextFileParser textFileParser = new TextFileParser((srcFilepath));
+            csvData = textFileParser.getTextData();
+        } catch (Exception e) {
+            logger.info("Error in reading csvData for filePath: {}", srcFilepath);
+        }
+        return csvData;
     }
     private ArrayList<ArrayList<String>> readExcelFilePath(String srcFilepath, String sheetName,
                                                            ExcelDataConfig excelDataConfigById) throws AppException{
@@ -41,6 +54,149 @@ public class MSExcelBridgeService {
         excelToCsvDataConvertService.copyCellDataIndex(sheetData, excelDataConfigById);
         sheetData = excelToCsvDataConvertService.applyCellMapping(sheetData, excelDataConfigById);
         return sheetData;
+    }
+    public ExcelDataConfig getExcelDataConfigByIdV1(String requestId,
+                                                    HashMap<String, ExcelDataConfig> excelConfig) {
+        if (requestId == null || excelConfig == null) {
+            logger.info("Request id or excelDataConfigHashMap is null: {},{}", requestId, excelConfig);
+            return null;
+        }
+        ExcelDataConfig excelDataConfigById = excelConfig.get(requestId);
+        if (excelDataConfigById == null) {
+            logger.info("excelDataConfigById is null for request id: {}", requestId);
+        } else {
+            excelDataConfigById.setFileConfig(null);
+            excelDataConfigById.setGsConfig(null);
+            logger.info("excelDataConfigById for requestId: {}, {}", requestId, excelDataConfigById);
+        }
+        return excelDataConfigById;
+    }
+    private ArrayList<ExcelFileConfig> getFileConfigByRequestId(String requestId, FileConfigMapping fileConfigMapping,
+                                                                ArrayList<ArrayList<String>> csvData) {
+        if (fileConfigMapping == null) {
+            return null;
+        }
+        ArrayList<Integer> requiredColIndex = fileConfigMapping.getRequiredColIndex();
+        if (requiredColIndex == null || requiredColIndex.size() < 4) {
+            logger.info("requiredColIndex size is less than 4: {}", requiredColIndex);
+            return null;
+        }
+        int requestIdCol, sourceCol, sheetNameCol, destinationCol;
+        Integer copyDestinationCol = null;
+        requestIdCol = requiredColIndex.get(0);
+        sourceCol = requiredColIndex.get(1);
+        sheetNameCol = requiredColIndex.get(2);
+        destinationCol = requiredColIndex.get(3);
+        if (requiredColIndex.size() >= 5) {
+            copyDestinationCol = requiredColIndex.get(4);
+        }
+        String req, srcPath, sheet, dest, copyDest;
+        ArrayList<ExcelFileConfig> fileConfig = new ArrayList<>();
+        ExcelFileConfig excelFileConfig;
+        for(ArrayList<String> row: csvData) {
+            if (row == null) {
+                continue;
+            }
+            req = null;
+            copyDest = null;
+            if (row.size() > requestIdCol) {
+                req = row.get(requestIdCol);
+            }
+            if (!requestId.equals(req)) {
+                continue;
+            }
+            if (row.size() > sourceCol) {
+                srcPath = row.get(sourceCol);
+            } else {
+                continue;
+            }
+            if (row.size() > sheetNameCol) {
+                sheet = row.get(sheetNameCol);
+            } else {
+                continue;
+            }
+            if (row.size() > destinationCol) {
+                dest = row.get(destinationCol);
+            } else {
+                continue;
+            }
+            if (copyDestinationCol != null && row.size() > copyDestinationCol) {
+                copyDest = row.get(copyDestinationCol);
+            }
+            excelFileConfig = new ExcelFileConfig();
+            excelFileConfig.setSource(srcPath);
+            excelFileConfig.setSheetName(sheet);
+            excelFileConfig.setDestination(dest);
+            excelFileConfig.setCopyDestination(copyDest);
+            fileConfig.add(excelFileConfig);
+        }
+        if (fileConfig.size() == 0) {
+            fileConfig = null;
+        }
+        return fileConfig;
+    }
+    public ExcelDataConfig updateExcelDataConfigFromGoogle(ExcelDataConfig excelDataConfigById, String requestId,
+                                                    FileConfigMapping fileConfigMapping) {
+        if (fileConfigMapping == null || requestId == null) {
+            return excelDataConfigById;
+        }
+        ArrayList<String> fileConfig = fileConfigMapping.getFileConfig();
+        if (fileConfig == null) {
+            return excelDataConfigById;
+        }
+        if (fileConfig.size() < 2) {
+            logger.info("Invalid fileConfigMapping for requestId: {},{}", requestId, fileConfigMapping);
+            return excelDataConfigById;
+        }
+        String srcFilepath = fileConfig.get(0);
+        String sheetName = fileConfig.get(1);
+        ArrayList<ArrayList<String>> sheetData = this.readGoogleSheetData(srcFilepath, sheetName, null);
+        if (sheetData != null) {
+            ArrayList<ExcelFileConfig> gsConfig = this.getFileConfigByRequestId(requestId, fileConfigMapping, sheetData);
+            if (gsConfig != null && fileConfig.size() > 0) {
+                if (excelDataConfigById == null) {
+                    excelDataConfigById = new ExcelDataConfig();
+                }
+                excelDataConfigById.setGsConfig(gsConfig);
+            } else {
+                logger.info("fileConfig not found in googleSheetData for requestId: {}, {}",
+                        requestId, fileConfigMapping);
+            }
+        }
+        logger.info("excelDataConfigById generated from googleSheetData for requestId: {}, {}",
+                requestId, excelDataConfigById);
+        return excelDataConfigById;
+    }
+    public ExcelDataConfig updateExcelDataConfigFromCsv(ExcelDataConfig excelDataConfigById, String requestId,
+                                                           FileConfigMapping fileConfigMapping) {
+        if (fileConfigMapping == null || requestId == null) {
+            return excelDataConfigById;
+        }
+        ArrayList<String> fileConfigArray = fileConfigMapping.getFileConfig();
+        if (fileConfigArray == null) {
+            return excelDataConfigById;
+        }
+        String srcFilepath;
+        if (fileConfigArray.size() > 0) {
+            srcFilepath = fileConfigArray.get(0);
+        } else {
+            logger.info("srcFilePathCsv is not found.");
+            return null;
+        }
+        ArrayList<ArrayList<String>> csvData = this.readCsvData(srcFilepath);
+        if (csvData != null) {
+            ArrayList<ExcelFileConfig> fileConfig = this.getFileConfigByRequestId(requestId, fileConfigMapping, csvData);
+            if (fileConfig != null && fileConfig.size() > 0) {
+                if (excelDataConfigById == null) {
+                    excelDataConfigById = new ExcelDataConfig();
+                }
+                excelDataConfigById.setFileConfig(fileConfig);
+            } else {
+                logger.info("fileConfig not found in csv for requestId: {}", requestId);
+            }
+        }
+        logger.info("excelDataConfigById generated from csv for requestId: {}, {}", requestId, excelDataConfigById);
+        return excelDataConfigById;
     }
     public ArrayList<BridgeResponseSheetData> readExcelSheetData(ExcelDataConfig excelDataConfigById) throws AppException {
         if (excelDataConfigById == null) {
@@ -82,5 +238,21 @@ public class MSExcelBridgeService {
             throw new AppException(ErrorCodes.CONFIG_ERROR);
         }
         return bridgeResponseSheetsData;
+    }
+    public FileConfigMapping getValidFileConfigMapping(String requestId,
+                                                       ArrayList<FileConfigMapping> fileConfigMappings) {
+        if (fileConfigMappings == null || requestId == null) {
+            return null;
+        }
+        ArrayList<String> validRequestIds;
+        for(FileConfigMapping fileConfigMapping: fileConfigMappings) {
+            if (fileConfigMapping != null) {
+                validRequestIds = fileConfigMapping.getValidRequestId();
+                if (validRequestIds != null && validRequestIds.contains(requestId)) {
+                    return fileConfigMapping;
+                }
+            }
+        }
+        return null;
     }
 }

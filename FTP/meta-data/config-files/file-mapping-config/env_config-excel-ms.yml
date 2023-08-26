@@ -1,0 +1,10 @@
+excelDataConfig:
+  ms-award:
+    copyOldData: false
+  division-sfr:
+    skipRowIndex:
+      - [0,0]
+  rbp-rnc:
+    copyCellDataIndex:
+      - 0
+      - 1

@@ -1,16 +1,19 @@
 package com.project.ftp.service;
 
 import com.project.ftp.bridge.obj.BridgeResponseSheetData;
+import com.project.ftp.bridge.obj.yamlObj.ExcelDataConfig;
+import com.project.ftp.bridge.obj.yamlObj.FileMappingConfig;
 import com.project.ftp.config.AppConfig;
 import com.project.ftp.config.AppConstant;
 import com.project.ftp.exceptions.AppException;
 import com.project.ftp.exceptions.ErrorCodes;
 import com.project.ftp.obj.ApiResponse;
-import com.project.ftp.obj.RequestTcp;
+import com.project.ftp.parser.YamlFileParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class MSExcelService {
     private final static Logger logger = LoggerFactory.getLogger(MSExcelService.class);
@@ -70,14 +73,24 @@ public class MSExcelService {
             logger.info("requestId required: {}", requestId);
             throw new AppException(ErrorCodes.BAD_REQUEST_ERROR);
         }
-        ArrayList<BridgeResponseSheetData> response = appConfig.getAppToBridge().getMSExcelData(requestId);
-        if (response != null) {
-            for (BridgeResponseSheetData bridgeResponseSheetData: response) {
-                this.saveCsvData(bridgeResponseSheetData);
-            }
+        YamlFileParser yamlFileParser = new YamlFileParser();
+        FileMappingConfig fileMappingConfig =
+                    yamlFileParser.getFileMappingConfigFromPath(
+                            appConfig.getFtpConfiguration().getFileMappingConfigFilePath());
+        if (fileMappingConfig == null) {
+            logger.info("fileMappingConfig is null.");
+            throw new AppException(ErrorCodes.CONFIG_ERROR);
         }
+        HashMap<String, ExcelDataConfig> excelDataConfigHashMap = yamlFileParser.getExcelDataConfig(
+                fileMappingConfig.getExcelFileConfigPath());
+
+        ArrayList<BridgeResponseSheetData> response =
+                appConfig.getAppToBridge().getExcelData(requestId, fileMappingConfig, excelDataConfigHashMap);
         if (response == null) {
             throw new AppException(ErrorCodes.SERVER_ERROR);
+        }
+        for (BridgeResponseSheetData bridgeResponseSheetData: response) {
+            this.saveCsvData(bridgeResponseSheetData);
         }
         return new ApiResponse(AppConstant.SUCCESS);
     }

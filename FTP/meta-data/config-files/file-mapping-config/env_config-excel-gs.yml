@@ -1,0 +1,76 @@
+excelDataConfig:
+  gs-circuit-checking-division:
+    skipRowIndex:
+      - [0,1]
+    copyCellDataIndex:
+      - 1
+  gs-circuit-checking-rb:
+    skipRowIndex:
+      - [0,2]
+    copyCellDataIndex:
+      - 1
+  gs-rbp:
+    appendCellDataIndex:
+      - [0,8]
+    skipRowIndex:
+      - [0,1]
+    cellMapping:
+      - defaultCellData: ""
+        col_index: -1
+        mappingData:
+          - col_index: 5
+            value: "MURI-CNI"
+            range:
+              - ILO
+              - TRAN
+              - SSIA
+              - TUL
+              - LTMD
+              - JHMR
+              - GDBR
+          - col_index: 5
+            value: "MURI-BRKA"
+            range:
+              - BLNG
+              - HRBR
+              - GRE
+              - BRKP
+              - MAEL
+              - RMT
+          - col_index: 5
+            value: "MURI-KSX"
+            range:
+              - MURI
+              - THO
+              - JAA
+      - defaultCellData: ""
+        col_index: -1
+        mappingData:
+          - col_index: 5
+            value: "SL"
+            range:
+              - ILO
+              - TRAN
+              - SSIA
+              - TUL
+              - LTMD
+              - JHMR
+              - GDBR
+              - BLNG
+              - HRBR
+              - GRE
+              - BRKP
+              - MAEL
+              - RMT
+          - col_index: 5
+            value: "UP&DN"
+            range:
+              - MURI
+              - THO
+              - JAA
+      - defaultCellData: "S&T(O/L)"
+        col_index: -1
+      - defaultCellData: "WSL"
+        col_index: -1
+      - defaultCellData: "WSL"
+        col_index: -1

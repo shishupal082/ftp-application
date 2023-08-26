@@ -9,9 +9,7 @@ import com.project.ftp.bridge.config.EmailConfig;
 import com.project.ftp.bridge.config.SocialLoginConfig;
 import com.project.ftp.bridge.obj.BridgeRequestSendCreatePasswordOtp;
 import com.project.ftp.bridge.obj.BridgeResponseSheetData;
-import com.project.ftp.bridge.obj.yamlObj.CommunicationConfig;
-import com.project.ftp.bridge.obj.yamlObj.ExcelDataConfig;
-import com.project.ftp.bridge.obj.yamlObj.TcpConfig;
+import com.project.ftp.bridge.obj.yamlObj.*;
 import com.project.ftp.bridge.roles.resource.RolesResource;
 import com.project.ftp.bridge.roles.service.RolesService;
 import com.project.ftp.bridge.service.MSExcelBridgeService;
@@ -123,19 +121,47 @@ public class AppToBridge implements AppToBridgeInterface {
         return tcpClient.callTcpServer(data, tcpConfig.getTtl());
     }
     @Override
-    public ArrayList<BridgeResponseSheetData> getMSExcelData(String requestId) throws AppException {
-        HashMap<String, ExcelDataConfig> excelConfig = ftpConfiguration.getExcelConfig();
-        if (excelConfig == null) {
-            logger.info("Excel config error: excelConfig is null.");
+    public ArrayList<BridgeResponseSheetData> getExcelData(String requestId, FileMappingConfig fileMappingConfig,
+                                                             HashMap<String, ExcelDataConfig> excelConfig) throws AppException {
+        if (fileMappingConfig == null) {
+            logger.info("fileMappingConfig error: fileMappingConfig is null.");
             throw new AppException(ErrorCodes.CONFIG_ERROR);
         }
-        ExcelDataConfig excelDataConfigById = excelConfig.get(requestId);
+
+        ArrayList<FileConfigMapping> fileConfigMappingsGoogle = fileMappingConfig.getGoogleConfig();
+        ArrayList<FileConfigMapping> fileConfigMappingsCsv = fileMappingConfig.getCsvConfig();
+        ArrayList<FileConfigMapping> fileConfigMappingsGoogleToCsv = fileMappingConfig.getGoogleToCsvConfig();
+
+        MSExcelBridgeService msExcelBridgeService = new MSExcelBridgeService(
+                ftpConfiguration.getGoogleOAuthClientConfig());
+        //ExcelDataConfig excelDataConfigById =  excelConfig.get(requestId)
+        ExcelDataConfig excelDataConfigById = msExcelBridgeService.getExcelDataConfigByIdV1(requestId,
+                excelConfig);
+
+        FileConfigMapping fileConfigMapping = msExcelBridgeService.getValidFileConfigMapping(requestId,
+                fileConfigMappingsGoogle);
+        if (fileConfigMapping == null) {
+            fileConfigMapping = msExcelBridgeService.getValidFileConfigMapping(requestId,
+                    fileConfigMappingsCsv);
+            if (fileConfigMapping == null) {
+                fileConfigMapping = msExcelBridgeService.getValidFileConfigMapping(requestId,
+                        fileConfigMappingsGoogleToCsv);
+                if (fileConfigMapping == null) {
+                    logger.info("Invalid request Id '{}' is not found in: {}", requestId, fileMappingConfig);
+                    throw new AppException(ErrorCodes.CONFIG_ERROR);
+                }
+            } else {
+                excelDataConfigById = msExcelBridgeService.updateExcelDataConfigFromCsv(excelDataConfigById,
+                        requestId, fileConfigMapping);
+            }
+        } else {
+            excelDataConfigById = msExcelBridgeService.updateExcelDataConfigFromGoogle(excelDataConfigById,
+                    requestId, fileConfigMapping);
+        }
         if (excelDataConfigById == null) {
             logger.info("excelDataConfigById is null, for requestId: {}", requestId);
             throw new AppException(ErrorCodes.BAD_REQUEST_ERROR);
         }
-        MSExcelBridgeService msExcelBridgeService = new MSExcelBridgeService(
-                ftpConfiguration.getGoogleOAuthClientConfig());
         ArrayList<BridgeResponseSheetData> result = msExcelBridgeService.readExcelSheetData(excelDataConfigById);
         if (result != null) {
             logger.info("excelSheetDataRead completed for request id: {}", requestId);

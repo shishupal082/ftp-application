@@ -1,0 +1,18 @@
+excelFileConfigPath:
+  - "D:/workspace/ftp-application/FTP/meta-data/config-files/file-mapping-config/env_config-excel-gs.yml"
+  - "D:/workspace/ftp-application/FTP/meta-data/config-files/file-mapping-config/env_config-excel-ms.yml"
+googleConfig:
+  - validRequestId: [gs-award,gs-circuit-checking-division,gs-circuit-checking-rb,gs-rbp]
+    requiredColIndex: [5,2,3,4]
+    fileConfig: ["file-mapping-spreadsheet-id", "file-mapping", "MB-00-ref-data"]
+csvConfig:
+  - validRequestId:
+      - ms-award
+      - monsoon
+      - division-sfr
+      - dl-single
+      - chalakdal-complient
+      - rbp-rnc
+      - rbp-status
+    requiredColIndex: [0,1,2,3]
+    fileConfig: ["D:/workspace/ftp-application/FTP/meta-data/config-files/file-mapping-config/csv-config.csv", "CSV reading data config path"]

@@ -3,6 +3,9 @@ package com.project.ftp.parser;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.project.ftp.FtpConfiguration;
+import com.project.ftp.bridge.obj.yamlObj.ExcelConfig;
+import com.project.ftp.bridge.obj.yamlObj.ExcelDataConfig;
+import com.project.ftp.bridge.obj.yamlObj.FileMappingConfig;
 import com.project.ftp.config.AppConfig;
 import com.project.ftp.helper.AppConfigHelper;
 import com.project.ftp.obj.LoginUserDetails;
@@ -60,6 +63,49 @@ public class YamlFileParser {
             StaticService.printLog("IOE : for file : " + pathname);
         }
         return ftpConfiguration;
+    }
+    public FileMappingConfig getFileMappingConfigFromPath(String staticPath) {
+        if (staticPath == null || staticPath.isEmpty()) {
+            logger.info("Static Path for reading fileMappingConfig is invalid: {}", staticPath);
+            return null;
+        }
+        FileMappingConfig fileMappingConfig = null;
+        ObjectMapper objectMapper = new ObjectMapper(new YAMLFactory());
+        try {
+            fileMappingConfig = objectMapper.readValue(new File(staticPath), FileMappingConfig.class);
+        } catch (IOException ioe) {
+            logger.info("IOE : for file : {}", staticPath);
+        }
+        return fileMappingConfig;
+    }
+    private HashMap<String, ExcelDataConfig> getExcelDataConfigFromPath(String staticPath) {
+        if (staticPath == null || staticPath.isEmpty()) {
+            logger.info("Static Path for reading getExcelDataConfigFromPath is invalid: {}", staticPath);
+            return null;
+        }
+        ExcelConfig excelConfig;
+        ObjectMapper objectMapper = new ObjectMapper(new YAMLFactory());
+        try {
+            excelConfig = objectMapper.readValue(new File(staticPath), ExcelConfig.class);
+        } catch (IOException ioe) {
+            logger.info("IOE: for file: {}", staticPath);
+            return null;
+        }
+        return excelConfig.getExcelDataConfig();
+    }
+    public HashMap<String, ExcelDataConfig> getExcelDataConfig(ArrayList<String> excelConfigFilePaths) {
+        HashMap<String, ExcelDataConfig> excelDataConfigHashMap = new HashMap<>();
+        HashMap<String, ExcelDataConfig> temp;
+        if (excelConfigFilePaths == null) {
+            return null;
+        }
+        for(String filePath: excelConfigFilePaths) {
+            temp = this.getExcelDataConfigFromPath(filePath);
+            if (temp != null) {
+                excelDataConfigHashMap.putAll(temp);
+            }
+        }
+        return excelDataConfigHashMap;
     }
     private String get404Filename(UserService userService, LoginUserDetails userDetails, Page404Entry page404Entry) {
         String filename = null;
