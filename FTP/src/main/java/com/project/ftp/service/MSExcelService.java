@@ -26,7 +26,7 @@ public class MSExcelService {
         this.fileService = new FileService();
         this.fileServiceV3 = new FileServiceV3(appConfig, userService);
     }
-    private void saveCsvData(BridgeResponseSheetData bridgeResponseSheetData) {
+    private void saveCsvData(BridgeResponseSheetData bridgeResponseSheetData, ArrayList<String> tempSavedFilePath) {
         if (bridgeResponseSheetData == null) {
             logger.info("Invalid bridgeResponseSheetData: null");
             return;
@@ -57,7 +57,10 @@ public class MSExcelService {
         if (copyOldData) {
             fileService.copyFile(destination, destination, true);
         }
-        fileService.deleteFileV2(destination);
+        if (!tempSavedFilePath.contains(destination)) {
+            fileService.deleteFileV2(destination);
+        }
+        tempSavedFilePath.add(destination);
         boolean status = fileServiceV3.saveAddTextV3(destination, csvData, false);
         if (status) {
             logger.info("csv data saved: {}", destination);
@@ -89,8 +92,9 @@ public class MSExcelService {
         if (response == null) {
             throw new AppException(ErrorCodes.SERVER_ERROR);
         }
+        ArrayList<String> tempSavedFilePath = new ArrayList<>();
         for (BridgeResponseSheetData bridgeResponseSheetData: response) {
-            this.saveCsvData(bridgeResponseSheetData);
+            this.saveCsvData(bridgeResponseSheetData, tempSavedFilePath);
         }
         return new ApiResponse(AppConstant.SUCCESS);
     }

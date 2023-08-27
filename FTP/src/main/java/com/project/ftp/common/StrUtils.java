@@ -6,6 +6,12 @@ import org.slf4j.LoggerFactory;
 public class StrUtils {
     private final static Logger logger = LoggerFactory.getLogger(StrUtils.class);
     public StrUtils() {}
+    public String formatString(String str) {
+        if (str == null) {
+            return "";
+        }
+        return str.trim();
+    }
     public String replaceLast(String find, String replace, String string) {
         int lastIndex = string.lastIndexOf(find);
         if (lastIndex == -1) {

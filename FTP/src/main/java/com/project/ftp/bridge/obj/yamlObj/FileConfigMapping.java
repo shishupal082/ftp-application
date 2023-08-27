@@ -7,9 +7,21 @@ import java.util.ArrayList;
 @JsonIgnoreProperties(ignoreUnknown = true)
 
 public class FileConfigMapping {
+    private Boolean fileConfigSourceGoogle; // Default = true (For google)
     private ArrayList<String> validRequestId;
     private ArrayList<String> fileConfig;
     private ArrayList<Integer> requiredColIndex;
+
+    public Boolean getFileConfigSourceGoogle() {
+        if (fileConfigSourceGoogle == null) {
+            return true;
+        }
+        return fileConfigSourceGoogle;
+    }
+
+    public void setFileConfigSourceGoogle(Boolean fileConfigSourceGoogle) {
+        this.fileConfigSourceGoogle = fileConfigSourceGoogle;
+    }
 
     public ArrayList<String> getValidRequestId() {
         return validRequestId;
@@ -38,7 +50,8 @@ public class FileConfigMapping {
     @Override
     public String toString() {
         return "FileConfigMapping{" +
-                "validRequestId=" + validRequestId +
+                "fileConfigSourceGoogle=" + fileConfigSourceGoogle +
+                ", validRequestId=" + validRequestId +
                 ", fileConfig=" + fileConfig +
                 ", requiredColIndex=" + requiredColIndex +
                 '}';
