@@ -221,7 +221,7 @@ public class ExcelToCsvDataConvertService {
             }
             startIndex = indexRange.get(0);
             endIndex = indexRange.get(1);
-            if (startIndex > endIndex || startIndex >= rowData.size()) {
+            if (startIndex < 0 || startIndex >= rowData.size() || endIndex < -1) {
                 continue;
             }
             if (endIndex == -1 || endIndex >= rowData.size()) {
