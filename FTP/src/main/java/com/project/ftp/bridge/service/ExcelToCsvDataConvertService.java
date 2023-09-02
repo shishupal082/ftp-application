@@ -113,7 +113,7 @@ public class ExcelToCsvDataConvertService {
             if (colIndex == null) {
                 continue;
             }
-            isEmpty = skipRowCriteria.getEmpty();
+            isEmpty = skipRowCriteria.getIs_empty();
             regex = skipRowCriteria.getRegex();
             notRegex = skipRowCriteria.getNotRegex();
             range = skipRowCriteria.getRange();

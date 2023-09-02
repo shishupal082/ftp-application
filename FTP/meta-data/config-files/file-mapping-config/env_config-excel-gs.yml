@@ -16,7 +16,7 @@ excelDataConfig:
       - [0,1]
     skipRowCriteria:
       - col_index: 5
-        isEmpty: true
+        is_empty: true
       - col_index: 5
         range: [ "DELETED" ]
       - col_index: 0

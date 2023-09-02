@@ -8,7 +8,7 @@ import java.util.ArrayList;
 
 public class SkipRowCriteria {
     private Integer col_index;
-    private Boolean isEmpty;
+    private Boolean is_empty;
     private String regex;
     private String notRegex;
     private ArrayList<String> range;
@@ -22,12 +22,12 @@ public class SkipRowCriteria {
         this.col_index = col_index;
     }
 
-    public Boolean getEmpty() {
-        return isEmpty;
+    public Boolean getIs_empty() {
+        return is_empty;
     }
 
-    public void setEmpty(Boolean empty) {
-        isEmpty = empty;
+    public void setIs_empty(Boolean is_empty) {
+        this.is_empty = is_empty;
     }
 
     public String getRegex() {
@@ -66,7 +66,7 @@ public class SkipRowCriteria {
     public String toString() {
         return "SkipRowCriteria{" +
                 "col_index=" + col_index +
-                ", isEmpty=" + isEmpty +
+                ", is_empty=" + is_empty +
                 ", regex='" + regex + '\'' +
                 ", notRegex='" + notRegex + '\'' +
                 ", range=" + range +
