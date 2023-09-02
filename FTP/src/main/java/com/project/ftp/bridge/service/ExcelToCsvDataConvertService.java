@@ -128,10 +128,10 @@ public class ExcelToCsvDataConvertService {
                     continue;
                 }
                 if (colIndex >= rowData.size()) {
-                    removeIndex.add(i);
-                    continue;
+                    cellData = "";
+                } else {
+                    cellData = rowData.get(colIndex);
                 }
-                cellData = rowData.get(colIndex);
                 if (isEmpty != null && isEmpty) {
                     if (cellData == null || cellData.isEmpty()) {
                         removeIndex.add(i);
