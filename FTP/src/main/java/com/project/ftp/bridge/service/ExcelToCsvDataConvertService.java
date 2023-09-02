@@ -3,9 +3,11 @@ package com.project.ftp.bridge.service;
 import com.project.ftp.bridge.obj.yamlObj.CellMapping;
 import com.project.ftp.bridge.obj.yamlObj.CellMappingData;
 import com.project.ftp.bridge.obj.yamlObj.ExcelDataConfig;
+import com.project.ftp.bridge.obj.yamlObj.SkipRowCriteria;
 import com.project.ftp.config.AppConstant;
 import com.project.ftp.exceptions.AppException;
 import com.project.ftp.exceptions.ErrorCodes;
+import com.project.ftp.service.StaticService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -85,6 +87,86 @@ public class ExcelToCsvDataConvertService {
         }
         sheetData = sheetDataUpdated;
         return sheetData;
+    }
+    public ArrayList<ArrayList<String>> applySkipRowCriteria (ArrayList<ArrayList<String>> sheetData,
+                                                              ExcelDataConfig excelDataConfigById) {
+        ArrayList<ArrayList<String>> result = new ArrayList<>();
+        if (excelDataConfigById == null || sheetData == null) {
+            return sheetData;
+        }
+        ArrayList<SkipRowCriteria> skipRowCriteriaList = excelDataConfigById.getSkipRowCriteria();
+        if (skipRowCriteriaList == null) {
+            return sheetData;
+        }
+        logger.info("SheetData size before skipRowCriteria: {}", sheetData.size());
+        int i;
+        Integer colIndex;
+        Boolean isEmpty;
+        String regex, notRegex, cellData;
+        ArrayList<String> range, notInRange, rowData;
+        ArrayList<Integer> removeIndex = new ArrayList<>();
+        for(SkipRowCriteria skipRowCriteria: skipRowCriteriaList) {
+            if (skipRowCriteria == null) {
+                continue;
+            }
+            colIndex = skipRowCriteria.getCol_index();
+            if (colIndex == null) {
+                continue;
+            }
+            isEmpty = skipRowCriteria.getEmpty();
+            regex = skipRowCriteria.getRegex();
+            notRegex = skipRowCriteria.getNotRegex();
+            range = skipRowCriteria.getRange();
+            notInRange = skipRowCriteria.getNotInRange();
+            for(i=0; i<sheetData.size(); i++) {
+                rowData = sheetData.get(i);
+                if (rowData == null) {
+                    removeIndex.add(i);
+                    continue;
+                }
+                if (colIndex < 0) {
+                    continue;
+                }
+                if (colIndex >= rowData.size()) {
+                    removeIndex.add(i);
+                    continue;
+                }
+                cellData = rowData.get(colIndex);
+                if (isEmpty != null && isEmpty) {
+                    if (cellData == null || cellData.isEmpty()) {
+                        removeIndex.add(i);
+                        continue;
+                    }
+                }
+                if (range != null && range.contains(cellData)) {
+                    removeIndex.add(i);
+                    continue;
+                }
+                if (notInRange != null && !notInRange.contains(cellData)) {
+                    removeIndex.add(i);
+                    continue;
+                }
+                if (regex != null) {
+                    if (StaticService.isPatternMatching(cellData, regex, false)) {
+                        removeIndex.add(i);
+                        continue;
+                    }
+                }
+                if (notRegex != null) {
+                    if (!StaticService.isPatternMatching(cellData, notRegex, false)) {
+                        removeIndex.add(i);
+                    }
+                }
+            }
+        }
+        for(i=0; i<sheetData.size(); i++) {
+            if (removeIndex.contains(i)) {
+                continue;
+            }
+            result.add(sheetData.get(i));
+        }
+        logger.info("SheetData size after skipRowCriteria: {}", result.size());
+        return result;
     }
     public ArrayList<ArrayList<String>> applySkipRowEntry(ArrayList<ArrayList<String>> sheetData,
                                                       ExcelDataConfig excelDataConfigById) {

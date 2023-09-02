@@ -14,6 +14,17 @@ excelDataConfig:
       - [0,8]
     skipRowIndex:
       - [0,1]
+    skipRowCriteria:
+      - col_index: 5
+        isEmpty: true
+      - col_index: 5
+        range: [ "DELETED" ]
+      - col_index: 0
+        notInRange: [ "TRUE","FALSE" ]
+      - col_index: 5
+        regex: "^OK$"
+      - col_index: 5
+        notRegex: "^OK$"
     cellMapping:
       - defaultCellData: ""
         col_index: -1

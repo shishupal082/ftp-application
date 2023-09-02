@@ -41,6 +41,7 @@ public class MSExcelBridgeService {
         sheetData = excelToCsvDataConvertService.formatCellData(sheetData);
         sheetData = excelToCsvDataConvertService.applySkipRowEntry(sheetData, excelDataConfigById);
         sheetData = excelToCsvDataConvertService.skipEmptyRows(sheetData, excelDataConfigById);
+        sheetData = excelToCsvDataConvertService.applySkipRowCriteria(sheetData, excelDataConfigById);
         excelToCsvDataConvertService.copyCellDataIndex(sheetData, excelDataConfigById);
         sheetData = excelToCsvDataConvertService.applyCellMapping(sheetData, excelDataConfigById);
         return sheetData;
@@ -52,6 +53,7 @@ public class MSExcelBridgeService {
         sheetData = excelToCsvDataConvertService.formatCellData(sheetData);
         sheetData = excelToCsvDataConvertService.applySkipRowEntry(sheetData, excelDataConfigById);
         sheetData = excelToCsvDataConvertService.skipEmptyRows(sheetData, excelDataConfigById);
+        sheetData = excelToCsvDataConvertService.applySkipRowCriteria(sheetData, excelDataConfigById);
         excelToCsvDataConvertService.copyCellDataIndex(sheetData, excelDataConfigById);
         sheetData = excelToCsvDataConvertService.applyCellMapping(sheetData, excelDataConfigById);
         return sheetData;

@@ -15,6 +15,7 @@ public class ExcelDataConfig {
     private ArrayList<ExcelFileConfig> fileConfig;
     private ArrayList<ExcelFileConfig> gsConfig;
     private ArrayList<CellMapping> cellMapping;
+    private ArrayList<SkipRowCriteria> skipRowCriteria;
     private ArrayList<Integer> copyCellDataIndex;
     private ArrayList<ArrayList<Integer>> skipRowIndex;
     private ArrayList<ArrayList<Integer>> appendCellDataIndex;
@@ -86,6 +87,14 @@ public class ExcelDataConfig {
         this.cellMapping = cellMapping;
     }
 
+    public ArrayList<SkipRowCriteria> getSkipRowCriteria() {
+        return skipRowCriteria;
+    }
+
+    public void setSkipRowCriteria(ArrayList<SkipRowCriteria> skipRowCriteria) {
+        this.skipRowCriteria = skipRowCriteria;
+    }
+
     public ArrayList<Integer> getCopyCellDataIndex() {
         return copyCellDataIndex;
     }
@@ -121,6 +130,7 @@ public class ExcelDataConfig {
                 ", fileConfig=" + fileConfig +
                 ", gsConfig=" + gsConfig +
                 ", cellMapping=" + cellMapping +
+                ", skipRowCriteria=" + skipRowCriteria +
                 ", copyCellDataIndex=" + copyCellDataIndex +
                 ", skipRowIndex=" + skipRowIndex +
                 ", appendCellDataIndex=" + appendCellDataIndex +
