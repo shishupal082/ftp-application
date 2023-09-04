@@ -10,6 +10,8 @@ public class CellMappingData {
     private Integer col_index;
     private String value;
     private ArrayList<String> range;
+    private String regex;
+    private String dateRegex;
 
     public Integer getCol_index() {
         return col_index;
@@ -35,12 +37,30 @@ public class CellMappingData {
         this.range = range;
     }
 
+    public String getRegex() {
+        return regex;
+    }
+
+    public void setRegex(String regex) {
+        this.regex = regex;
+    }
+
+    public String getDateRegex() {
+        return dateRegex;
+    }
+
+    public void setDateRegex(String dateRegex) {
+        this.dateRegex = dateRegex;
+    }
+
     @Override
     public String toString() {
         return "CellMappingData{" +
                 "col_index=" + col_index +
                 ", value='" + value + '\'' +
                 ", range=" + range +
+                ", regex='" + regex + '\'' +
+                ", dateRegex='" + dateRegex + '\'' +
                 '}';
     }
 }

@@ -4,6 +4,7 @@ import com.project.ftp.bridge.obj.yamlObj.CellMapping;
 import com.project.ftp.bridge.obj.yamlObj.CellMappingData;
 import com.project.ftp.bridge.obj.yamlObj.ExcelDataConfig;
 import com.project.ftp.bridge.obj.yamlObj.SkipRowCriteria;
+import com.project.ftp.common.DateUtilities;
 import com.project.ftp.config.AppConstant;
 import com.project.ftp.exceptions.AppException;
 import com.project.ftp.exceptions.ErrorCodes;
@@ -325,9 +326,10 @@ public class ExcelToCsvDataConvertService {
         ArrayList<ArrayList<String>> result = new ArrayList<>();
         CellMapping cellMapping;
         ArrayList<CellMappingData> cellsMappingData;
-        Integer colIndex;
-        String defaultCellData, cellData, value;
+        Integer colIndex, colIndex2;
+        String defaultCellData, cellData, value, regex, dateRegex;
         ArrayList<String> rowDataFinal, range;
+        DateUtilities dateUtilities = new DateUtilities();
         for(ArrayList<String> rowData: sheetData) {
             if (rowData != null) {
                 rowDataFinal = new ArrayList<>();
@@ -347,16 +349,24 @@ public class ExcelToCsvDataConvertService {
                         if (cellsMappingData != null) {
                             for (CellMappingData cellMappingData : cellsMappingData) {
                                 if (cellMappingData != null) {
-                                    colIndex = cellMappingData.getCol_index();
+                                    colIndex2 = cellMappingData.getCol_index();
                                     value = cellMappingData.getValue();
                                     range = cellMappingData.getRange();
+                                    regex = cellMappingData.getRegex();
+                                    dateRegex = cellMappingData.getDateRegex();
                                     if (value == null) {
                                         value = "";
                                     }
-                                    if (colIndex != null && range != null) {
-                                        if (colIndex >= 0 && colIndex < rowData.size()
-                                                && range.contains(rowData.get(colIndex))) {
+                                    if (colIndex2 != null && colIndex2 >= 0 && colIndex2 < rowData.size()) {
+                                        if (dateRegex != null) {
+                                            cellData = dateUtilities.getDateStrInNewPattern(value, dateRegex, rowData.get(colIndex2));
+                                            break;
+                                        } else if (range != null && range.contains(rowData.get(colIndex2))) {
                                             cellData = value;
+                                            break;
+                                        } else if (regex != null && StaticService.isPatternMatching(rowData.get(colIndex2), regex, false)) {
+                                            cellData = value;
+                                            break;
                                         }
                                     }
                                 }

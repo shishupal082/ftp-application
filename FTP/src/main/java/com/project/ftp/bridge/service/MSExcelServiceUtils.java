@@ -71,6 +71,7 @@ public class MSExcelServiceUtils {
         dateFormat = AppConstant.DATE_FORMAT;
         timeFormat = AppConstant.TIME_FORMAT2;
         dateTimeFormat = AppConstant.DateTimeFormat7;
+        DateUtilities dateUtilities = new DateUtilities();
         if (excelDataConfigById != null) {
             if (excelDataConfigById.getDateFormat() != null) {
                 dateFormat = excelDataConfigById.getDateFormat();
@@ -85,11 +86,11 @@ public class MSExcelServiceUtils {
         if (DateUtil.isCellDateFormatted(cell)) {
             Date dateCellValue = cell.getDateCellValue();
             if (numericCellData < 1) {
-                result = DateUtilities.getDateStrFromDateObj(timeFormat, dateCellValue);
+                result = dateUtilities.getDateStrFromDateObj(timeFormat, dateCellValue);
             } else if (numericCellData % 1 == 0) {
-                result = DateUtilities.getDateStrFromDateObj(dateFormat, dateCellValue);
+                result = dateUtilities.getDateStrFromDateObj(dateFormat, dateCellValue);
             } else {
-                result = DateUtilities.getDateStrFromDateObj(dateTimeFormat, dateCellValue);
+                result = dateUtilities.getDateStrFromDateObj(dateTimeFormat, dateCellValue);
             }
         } else {
             if (numericCellData % 1 == 0) {
