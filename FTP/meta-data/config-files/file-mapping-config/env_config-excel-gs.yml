@@ -26,6 +26,14 @@ excelDataConfig:
       - col_index: 5
         notRegex: "^OK$"
     cellMapping:
+      - defaultCellData: "accountal_data_15"
+        col_index: -1
+      - defaultCellData: ""
+        col_index: 6
+        mappingData:
+          - col_index: 6
+            value: "yyyy-MM-dd"
+            dateRegex: "dd.MM.yy"
       - defaultCellData: ""
         col_index: -1
         mappingData:

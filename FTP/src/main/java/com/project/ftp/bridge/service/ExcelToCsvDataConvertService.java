@@ -327,7 +327,7 @@ public class ExcelToCsvDataConvertService {
         CellMapping cellMapping;
         ArrayList<CellMappingData> cellsMappingData;
         Integer colIndex, colIndex2;
-        String defaultCellData, cellData, value, regex, dateRegex;
+        String defaultCellData, cellData, cellData2, value, regex, dateRegex;
         ArrayList<String> rowDataFinal, range;
         DateUtilities dateUtilities = new DateUtilities();
         for(ArrayList<String> rowData: sheetData) {
@@ -358,13 +358,14 @@ public class ExcelToCsvDataConvertService {
                                         value = "";
                                     }
                                     if (colIndex2 != null && colIndex2 >= 0 && colIndex2 < rowData.size()) {
+                                        cellData2 = rowData.get(colIndex2);
                                         if (dateRegex != null) {
-                                            cellData = dateUtilities.getDateStrInNewPattern(value, dateRegex, rowData.get(colIndex2));
+                                            cellData = dateUtilities.getDateStrInNewPattern(value, dateRegex, cellData2, cellData2);
                                             break;
-                                        } else if (range != null && range.contains(rowData.get(colIndex2))) {
+                                        } else if (range != null && range.contains(cellData2)) {
                                             cellData = value;
                                             break;
-                                        } else if (regex != null && StaticService.isPatternMatching(rowData.get(colIndex2), regex, false)) {
+                                        } else if (regex != null && StaticService.isPatternMatching(cellData2, regex, false)) {
                                             cellData = value;
                                             break;
                                         }

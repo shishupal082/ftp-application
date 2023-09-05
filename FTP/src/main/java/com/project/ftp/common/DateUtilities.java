@@ -43,14 +43,21 @@ public class DateUtilities {
         }
         return true;
     }
-    public String getDateStrInNewPattern(String newPattern, String oldPattern, String dateStr) {
+    public String getDateStrInNewPattern(String newPattern, String oldPattern,
+                                         String dateStr, String defaultDate) {
+        if (newPattern == null || oldPattern == null || dateStr == null) {
+            return defaultDate;
+        }
+        if (newPattern.isEmpty() || oldPattern.isEmpty() || dateStr.isEmpty()) {
+            return defaultDate;
+        }
         String result;
         try {
             Date date = new SimpleDateFormat(oldPattern).parse(dateStr);
             DateFormat newDateFormat = new SimpleDateFormat(newPattern);
             result = newDateFormat.format(date);
         } catch (ParseException e) {
-            result = dateStr;
+            result = defaultDate;
         }
         return result;
     }
