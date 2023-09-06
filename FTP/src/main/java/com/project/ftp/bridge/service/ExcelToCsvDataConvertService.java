@@ -362,8 +362,8 @@ public class ExcelToCsvDataConvertService {
                                         if (dateRegex != null) {
                                             if (regex != null && StaticService.isPatternMatching(cellData2, regex, false)) {
                                                 cellData = dateUtilities.getDateStrInNewPattern(value, dateRegex, cellData2, cellData2);
+                                                break;
                                             }
-                                            break;
                                         } else if (range != null && range.contains(cellData2)) {
                                             cellData = value;
                                             break;
