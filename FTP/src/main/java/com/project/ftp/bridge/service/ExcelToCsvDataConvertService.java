@@ -360,7 +360,9 @@ public class ExcelToCsvDataConvertService {
                                     if (colIndex2 != null && colIndex2 >= 0 && colIndex2 < rowData.size()) {
                                         cellData2 = rowData.get(colIndex2);
                                         if (dateRegex != null) {
-                                            cellData = dateUtilities.getDateStrInNewPattern(value, dateRegex, cellData2, cellData2);
+                                            if (regex != null && StaticService.isPatternMatching(cellData2, regex, false)) {
+                                                cellData = dateUtilities.getDateStrInNewPattern(value, dateRegex, cellData2, cellData2);
+                                            }
                                             break;
                                         } else if (range != null && range.contains(cellData2)) {
                                             cellData = value;
