@@ -5,6 +5,7 @@ package com.project.ftp.exceptions;
  */
 
 public enum ErrorCodes {
+    GOOGLE_ERROR("GOOGLE_ERROR", "Error in reading data from google", 403),
     REDIRECTION_ERROR("REDIRECTION_ERROR", "Routing error", 300),
     UNABLE_TO_PARSE_JSON("Unable to parse Json", "Unable to parse Json", 400),
     BAD_REQUEST_ERROR("BAD_REQUEST_ERROR", "Bad request error", 401),

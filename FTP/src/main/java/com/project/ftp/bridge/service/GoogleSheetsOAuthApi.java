@@ -112,9 +112,10 @@ public class GoogleSheetsOAuthApi {
         } catch (Exception e) {
             logger.info("Error in reading google sheet data: {}, {}, errorMessage: {}",
                     spreadSheetId, sheetName, e.getMessage());
-            throw new AppException(ErrorCodes.CONFIG_ERROR);
+            ErrorCodes errorCodes = ErrorCodes.GOOGLE_ERROR;
+            errorCodes.setErrorString(e.getMessage());
+            throw new AppException(errorCodes);
         }
-
         ArrayList<ArrayList<String>> result = new ArrayList<>();
         ArrayList<String> row;
         if (values != null) {
