@@ -33,8 +33,13 @@ public class MSExcelServiceUtils {
         String cellData;
         FileInputStream file =null;
         boolean isError = false;
+        File file1 = new File(srcFilepath);
+        if (!file1.isFile()) {
+            logger.info("Source excel filepath: {} does not exist, {}", srcFilepath, excelDataConfigById);
+            throw new AppException(ErrorCodes.FILE_NOT_FOUND);
+        }
         try {
-            file = new FileInputStream(new File(srcFilepath));
+            file = new FileInputStream(file1);
             XSSFWorkbook workbook = new XSSFWorkbook(file);
             evaluator = workbook.getCreationHelper().createFormulaEvaluator();
             XSSFSheet sheet = workbook.getSheet(sheetName);
