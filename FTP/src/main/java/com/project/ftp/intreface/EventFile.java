@@ -30,7 +30,7 @@ public class EventFile implements EventInterface {
             isStaticDir = eventConfig.isStaticDir();
         }
         if (format != null) {
-            filename = dateUtilities.getDateStrFromPattern(format);
+            filename = dateUtilities.getDateStrFromPattern(format, AppConstant.EmptyStr);
         }
         if (isStaticDir) {
             return filename;

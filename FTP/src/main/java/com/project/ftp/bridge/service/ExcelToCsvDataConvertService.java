@@ -339,8 +339,12 @@ public class ExcelToCsvDataConvertService {
                         cellMapping = mapping;
                         colIndex = cellMapping.getCol_index();
                         defaultCellData = cellMapping.getDefaultCellData();
+                        dateRegex = cellMapping.getDateRegex();
                         cellsMappingData = cellMapping.getMappingData();
                         if (defaultCellData != null) {
+                            if (defaultCellData.equals("now") && dateRegex != null) {
+                                defaultCellData = dateUtilities.getDateStrFromPattern(dateRegex, defaultCellData);
+                            }
                             cellData = defaultCellData;
                         }
                         if (colIndex != null && colIndex >= 0 && rowData.size() > colIndex) {

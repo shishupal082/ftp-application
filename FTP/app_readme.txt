@@ -1364,7 +1364,11 @@ googleOAuthClientConfig:
   credentialFilePath: "/client_secret_o-auth-sheets-api.json"
   localServerPort: 8888
 
-It will convert excel data to csv data as per configuration added in meta-data/app_env_config_4.yml
+It will convert:
+    - excelSheetData to csv data
+    - googleSheetData to csv data
+    - csvData to csv data
+    as per configuration added in meta-data/app_env_config_4.yml
 Sequence of operation
 - dateFormat, timeFormat and dateTimeFormat [Only used for excel sheet reading not for google sheet]
 - change \n to ; and , to ...

@@ -129,26 +129,28 @@ public class AppToBridge implements AppToBridgeInterface {
         }
 
         ArrayList<FileConfigMapping> fileConfigMappingsGoogle = fileMappingConfig.getGoogleConfig();
+        ArrayList<FileConfigMapping> fileConfigMappingsExcel = fileMappingConfig.getExcelConfig();
         ArrayList<FileConfigMapping> fileConfigMappingsCsv = fileMappingConfig.getCsvConfig();
-        ArrayList<FileConfigMapping> fileConfigMappingsGoogleToCsv = fileMappingConfig.getGoogleToCsvConfig();
 
         MSExcelBridgeService msExcelBridgeService = new MSExcelBridgeService(
                 ftpConfiguration.getGoogleOAuthClientConfig());
         //ExcelDataConfig excelDataConfigById =  excelConfig.get(requestId)
         ExcelDataConfig excelDataConfigById = msExcelBridgeService.getExcelDataConfigByIdV1(requestId,
                 excelConfig);
-
         FileConfigMapping fileConfigMapping = msExcelBridgeService.getValidFileConfigMapping(requestId,
                 fileConfigMappingsGoogle);
         if (fileConfigMapping == null) {
             fileConfigMapping = msExcelBridgeService.getValidFileConfigMapping(requestId,
-                    fileConfigMappingsCsv);
+                    fileConfigMappingsExcel);
             if (fileConfigMapping == null) {
                 fileConfigMapping = msExcelBridgeService.getValidFileConfigMapping(requestId,
-                        fileConfigMappingsGoogleToCsv);
+                        fileConfigMappingsCsv);
                 if (fileConfigMapping == null) {
                     logger.info("Invalid request Id '{}' is not found in: {}", requestId, fileMappingConfig);
                     throw new AppException(ErrorCodes.CONFIG_ERROR);
+                } else {
+                    excelDataConfigById = msExcelBridgeService.updateExcelDataConfigFromCsv2(excelDataConfigById,
+                            requestId, fileConfigMapping);
                 }
             } else {
                 excelDataConfigById = msExcelBridgeService.updateExcelDataConfigFromCsv(excelDataConfigById,

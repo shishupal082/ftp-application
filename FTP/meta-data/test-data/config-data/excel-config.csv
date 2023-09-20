@@ -1,0 +1,6 @@
+excel-data-id-001,D:/workspace/project/nodejs/excel/test/test_data.xlsx,test-4,D:/workspace/project/nodejs/excel/test/test_data_4.csv
+excel-data-id-001,D:/workspace/project/nodejs/excel/test/test_data.xlsx,test-2,D:/workspace/project/nodejs/excel/test/test_data_2.csv
+excel-data-id-002-and-004,D:/workspace/project/nodejs/excel/test/test_data.xlsx,test-4,D:/workspace/project/nodejs/excel/test/test_data_4.csv
+excel-data-id-002-and-004,D:/workspace/project/nodejs/excel/test/test_data.xlsx,test-2,D:/workspace/project/nodejs/excel/test/test_data_2.csv
+csv-test-02,D:/workspace/ftp-application/FTP/meta-data/test-data/test-data/01-source-csv.csv,,D:/workspace/ftp-application/FTP/meta-data/test-data/test-data/01-test-02-destination-csv.csv
+csv-test-03,D:/workspace/ftp-application/FTP/meta-data/test-data/test-data/01-source-csv.csv,any-thing,D:/workspace/ftp-application/FTP/meta-data/test-data/test-data/01-test-03-destination-csv.csv

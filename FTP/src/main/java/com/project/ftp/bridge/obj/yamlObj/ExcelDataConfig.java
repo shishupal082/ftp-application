@@ -12,7 +12,8 @@ public class ExcelDataConfig {
     private String dateFormat;
     private String timeFormat;
     private String dateTimeFormat;
-    private ArrayList<ExcelFileConfig> fileConfig;
+    private ArrayList<ExcelFileConfig> excelConfig;
+    private ArrayList<ExcelFileConfig> csvConfig;
     private ArrayList<ExcelFileConfig> gsConfig;
     private ArrayList<CellMapping> cellMapping;
     private ArrayList<SkipRowCriteria> skipRowCriteria;
@@ -63,12 +64,20 @@ public class ExcelDataConfig {
         this.dateTimeFormat = dateTimeFormat;
     }
 
-    public ArrayList<ExcelFileConfig> getFileConfig() {
-        return fileConfig;
+    public ArrayList<ExcelFileConfig> getExcelConfig() {
+        return excelConfig;
     }
 
-    public void setFileConfig(ArrayList<ExcelFileConfig> fileConfig) {
-        this.fileConfig = fileConfig;
+    public void setExcelConfig(ArrayList<ExcelFileConfig> excelConfig) {
+        this.excelConfig = excelConfig;
+    }
+
+    public ArrayList<ExcelFileConfig> getCsvConfig() {
+        return csvConfig;
+    }
+
+    public void setCsvConfig(ArrayList<ExcelFileConfig> csvConfig) {
+        this.csvConfig = csvConfig;
     }
 
     public ArrayList<ExcelFileConfig> getGsConfig() {
@@ -127,7 +136,8 @@ public class ExcelDataConfig {
                 ", dateFormat='" + dateFormat + '\'' +
                 ", timeFormat='" + timeFormat + '\'' +
                 ", dateTimeFormat='" + dateTimeFormat + '\'' +
-                ", fileConfig=" + fileConfig +
+                ", excelConfig=" + excelConfig +
+                ", csvConfig=" + csvConfig +
                 ", gsConfig=" + gsConfig +
                 ", cellMapping=" + cellMapping +
                 ", skipRowCriteria=" + skipRowCriteria +

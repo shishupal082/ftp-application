@@ -9,8 +9,8 @@ import java.util.ArrayList;
 public class FileMappingConfig {
     private ArrayList<String> excelFileConfigPath;
     private ArrayList<FileConfigMapping> googleConfig;
+    private ArrayList<FileConfigMapping> excelConfig;
     private ArrayList<FileConfigMapping> csvConfig;
-    private ArrayList<FileConfigMapping> googleToCsvConfig;
 
     public ArrayList<String> getExcelFileConfigPath() {
         return excelFileConfigPath;
@@ -28,6 +28,14 @@ public class FileMappingConfig {
         this.googleConfig = googleConfig;
     }
 
+    public ArrayList<FileConfigMapping> getExcelConfig() {
+        return excelConfig;
+    }
+
+    public void setExcelConfig(ArrayList<FileConfigMapping> excelConfig) {
+        this.excelConfig = excelConfig;
+    }
+
     public ArrayList<FileConfigMapping> getCsvConfig() {
         return csvConfig;
     }
@@ -36,21 +44,13 @@ public class FileMappingConfig {
         this.csvConfig = csvConfig;
     }
 
-    public ArrayList<FileConfigMapping> getGoogleToCsvConfig() {
-        return googleToCsvConfig;
-    }
-
-    public void setGoogleToCsvConfig(ArrayList<FileConfigMapping> googleToCsvConfig) {
-        this.googleToCsvConfig = googleToCsvConfig;
-    }
-
     @Override
     public String toString() {
         return "FileMappingConfig{" +
                 "excelFileConfigPath=" + excelFileConfigPath +
                 ", googleConfig=" + googleConfig +
+                ", excelConfig=" + excelConfig +
                 ", csvConfig=" + csvConfig +
-                ", googleToCsvConfig=" + googleToCsvConfig +
                 '}';
     }
 }

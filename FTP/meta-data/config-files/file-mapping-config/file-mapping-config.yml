@@ -8,16 +8,17 @@ googleConfig:
     requiredColIndex: [5,2,3,4]
     fileConfig: ["file-mapping-spreadsheet-id", "file-mapping", "MB-00-ref-data"]
 
-csvConfig:
+excelConfig:
   - validRequestId:
-      - ms-award
-      - monsoon
-      - division-sfr
-      - dl-single
-      - chalakdal-complient
-      - rbp-rnc
-      - rbp-status
       - excel-data-id-001
       - excel-data-id-002-and-004
+      - csv-test-02
+      - csv-test-03
     requiredColIndex: [0,1,2,3]
-    fileConfig: ["D:/workspace/ftp-application/FTP/meta-data/config-files/file-mapping-config/csv-config.csv", "CSV reading data config path"]
+    fileConfig: ["D:/workspace/ftp-application/FTP/meta-data/test-data/config-data/excel-config.csv", "Excel reading data config path"]
+
+csvConfig:
+  - validRequestId:
+      - csv-test-01
+    requiredColIndex: [ 0,1,2,3]
+    fileConfig: [ "D:/workspace/ftp-application/FTP/meta-data/test-data/config-data/csv-config.csv", "CSV reading data config path" ]

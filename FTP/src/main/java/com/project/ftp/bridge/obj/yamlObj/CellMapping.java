@@ -8,6 +8,7 @@ import java.util.ArrayList;
 
 public class CellMapping {
     private String defaultCellData;
+    private String dateRegex;
     private Integer col_index;
     private ArrayList<CellMappingData> mappingData;
 
@@ -17,6 +18,14 @@ public class CellMapping {
 
     public void setDefaultCellData(String defaultCellData) {
         this.defaultCellData = defaultCellData;
+    }
+
+    public String getDateRegex() {
+        return dateRegex;
+    }
+
+    public void setDateRegex(String dateRegex) {
+        this.dateRegex = dateRegex;
     }
 
     public Integer getCol_index() {
@@ -39,6 +48,7 @@ public class CellMapping {
     public String toString() {
         return "CellMapping{" +
                 "defaultCellData='" + defaultCellData + '\'' +
+                ", dateRegex='" + dateRegex + '\'' +
                 ", col_index=" + col_index +
                 ", mappingData=" + mappingData +
                 '}';

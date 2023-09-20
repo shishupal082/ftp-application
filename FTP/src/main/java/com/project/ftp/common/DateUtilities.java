@@ -24,8 +24,8 @@ public class DateUtilities {
         DateFormat dateFormat = new SimpleDateFormat(format);
         return dateFormat.format(timeInMs);
     }
-    public String getDateStrFromPattern(String pattern) {
-        String result = "";
+    public String getDateStrFromPattern(String pattern, String defaultStr) {
+        String result = defaultStr;
         if (pattern == null) {
             return result;
         }

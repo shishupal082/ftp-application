@@ -31,7 +31,7 @@ public class StaticService {
         return fileService.getPathInfo(requestedPath);
     }
     public static String getDateStrFromPattern(String pattern) {
-        return dateUtilities.getDateStrFromPattern(pattern);
+        return dateUtilities.getDateStrFromPattern(pattern, AppConstant.EmptyStr);
     }
     public static String generateStringFromFormat(AppConfig appConfig, HashMap<String, String> values) {
         String format = AppConstant.FILENAME_FORMAT;
@@ -39,7 +39,7 @@ public class StaticService {
         if (configFilenameFormat != null) {
             format = configFilenameFormat;
         }
-        String result = dateUtilities.getDateStrFromPattern(format);
+        String result = dateUtilities.getDateStrFromPattern(format, AppConstant.EmptyStr);
         String key, value;
         for (Map.Entry<String, String> entry: values.entrySet()) {
             key = entry.getKey();
@@ -295,7 +295,8 @@ public class StaticService {
         PathInfo pathInfo = fileService.getPathInfo(logFilePath);
         if (AppConstant.FILE.equals(pathInfo.getType())) {
             String newLogFilePath = pathInfo.getParentFolder() + "/" + pathInfo.getFilenameWithoutExt() +
-                    "-" + dateUtilities.getDateStrFromPattern(AppConstant.DateTimeFormat4) + "." + pathInfo.getExtension();
+                    "-" + dateUtilities.getDateStrFromPattern(AppConstant.DateTimeFormat4, AppConstant.EmptyStr) +
+                    "." + pathInfo.getExtension();
             boolean copyStatus = fileService.copyFileV2(logFilePath, newLogFilePath);
             if (copyStatus) {
                 boolean deleteStatus = fileService.deleteFileV2(logFilePath);
@@ -348,7 +349,7 @@ public class StaticService {
 
             logger.info("availableLogFiles: {}, logFiles: {}", availableLogFiles, logFiles);
             String newLogFilePath = logFilePath + "application-copy-" +
-                    dateUtilities.getDateStrFromPattern(AppConstant.DateTimeFormat4);
+                    dateUtilities.getDateStrFromPattern(AppConstant.DateTimeFormat4, AppConstant.EmptyStr);
             int i = 1;
             if (availableLogFiles == null) {
                 availableLogFiles = new ArrayList<>();
