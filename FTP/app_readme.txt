@@ -1378,6 +1378,7 @@ Sequence of operation
 - skipEmptyRows
 - copyCellDataIndex
 - cellMapping & appendCellDataIndex
+- mergeColumnConfig
 
 Future releases
 -------------------

@@ -1,17 +1,19 @@
 package com.project.ftp;
 
 import com.project.ftp.config.AppConfig;
-import com.project.ftp.config.AppConstant;
-import com.project.ftp.intreface.AppToBridge;
+import com.project.ftp.event.EventTracking;
+import com.project.ftp.intreface.*;
 import com.project.ftp.obj.ApiResponse;
-import com.project.ftp.service.FileServiceV3;
+import com.project.ftp.resources.ApiResource;
+import com.project.ftp.service.AuthService;
 import com.project.ftp.service.MSExcelService;
-import com.project.ftp.service.StaticService;
+import com.project.ftp.service.UserService;
 import org.junit.Assert;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 
 public class TestMSExcelService {
@@ -22,6 +24,7 @@ public class TestMSExcelService {
         ArrayList<String> arguments = new ArrayList<>();
         arguments.add("serverName");
         arguments.add("false");
+        arguments.add("/meta-data/app_env_config_2.yml");
         arguments.add("/meta-data/app_env_config_4.yml");
         appConfig.setCmdArguments(arguments);
         appConfig.updateFinalFtpConfiguration(ftpConfiguration);
@@ -30,18 +33,51 @@ public class TestMSExcelService {
         appConfig.setFtpConfiguration(ftpConfiguration);
         return appConfig;
     }
+    private ApiResource getApiResource() {
+        AppConfig appConfig = this.getAppConfig();
+        UserInterface userInterface = new UserFile(appConfig);
+        EventInterface eventInterface = new EventFile(appConfig);
+        UserService userService = new UserService(appConfig, userInterface);
+        AuthService authService = new AuthService(userService);
+        EventTracking eventTracking = new EventTracking(appConfig, userService, eventInterface);
+        return new ApiResource(appConfig, userService, eventTracking, authService);
+    }
+    private HttpServletRequest getHttpServletRequest() {
+        return null;
+    }
     @Test
     public void testTestMSExcelServiceV1() {
-        MSExcelService msExcelService = new MSExcelService(this.getAppConfig(), null);
-        try {
-            ApiResponse apiResponse =  msExcelService.updateMSExcelSheetData("csv-test-01");
-            logger.info("{}", apiResponse);
-            apiResponse =  msExcelService.updateMSExcelSheetData("csv-test-02");
-            logger.info("{}", apiResponse);
-            apiResponse =  msExcelService.updateMSExcelSheetData("csv-test-03");
-            logger.info("{}", apiResponse);
-        } catch (Exception e) {
-            logger.info("{}", e.getMessage());
-        }
+        HttpServletRequest request = this.getHttpServletRequest();
+        String requestId;
+        ApiResponse apiResponse;
+        ApiResource apiResource = this.getApiResource();
+        requestId = null;
+        apiResponse =  apiResource.updateMSExcelData(request, requestId);
+        Assert.assertEquals("FAILURE", apiResponse.getStatus());
+        requestId = "csv-test-01";
+        apiResponse =  apiResource.updateMSExcelData(request, requestId);
+        Assert.assertEquals("SUCCESS", apiResponse.getStatus());
+        requestId = "csv-test-02";
+        apiResponse =  apiResource.updateMSExcelData(request, requestId);
+        Assert.assertEquals("SUCCESS", apiResponse.getStatus());
+        requestId = "csv-test-03";
+        apiResponse =  apiResource.updateMSExcelData(request, requestId);
+        Assert.assertEquals("FAILURE", apiResponse.getStatus());
+    }
+    @Test
+    public void testTestMSExcelServiceV2() {
+        HttpServletRequest request = this.getHttpServletRequest();
+        String requestId;
+        ApiResponse apiResponse;
+        ApiResource apiResource = this.getApiResource();
+        requestId = "csv-test-04";
+        apiResponse =  apiResource.updateMSExcelData(request, requestId);
+        Assert.assertEquals("SUCCESS", apiResponse.getStatus());
+        requestId = "csv-test-05";
+        apiResponse =  apiResource.updateMSExcelData(request, requestId);
+        Assert.assertEquals("SUCCESS", apiResponse.getStatus());
+        requestId = "csv-test-06";
+        apiResponse =  apiResource.updateMSExcelData(request, requestId);
+        Assert.assertEquals("SUCCESS", apiResponse.getStatus());
     }
 }

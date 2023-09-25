@@ -1,9 +1,6 @@
 package com.project.ftp.bridge.service;
 
-import com.project.ftp.bridge.obj.yamlObj.CellMapping;
-import com.project.ftp.bridge.obj.yamlObj.CellMappingData;
-import com.project.ftp.bridge.obj.yamlObj.ExcelDataConfig;
-import com.project.ftp.bridge.obj.yamlObj.SkipRowCriteria;
+import com.project.ftp.bridge.obj.yamlObj.*;
 import com.project.ftp.common.DateUtilities;
 import com.project.ftp.config.AppConstant;
 import com.project.ftp.exceptions.AppException;
@@ -387,5 +384,141 @@ public class ExcelToCsvDataConvertService {
             }
         }
         return result;
+    }
+    private void applyCellMerging(ArrayList<ArrayList<String>> sheetData,
+                                  ArrayList<ArrayList<String>> updatedSheetData,
+                                  MergeColumnConfig mergeColumnConfig) {
+        if (sheetData == null || mergeColumnConfig == null) {
+            return;
+        }
+        Integer finalIndex = mergeColumnConfig.getFinalIndex();
+        ArrayList<Integer> sourceIndex = mergeColumnConfig.getSourceIndex();
+        String join = mergeColumnConfig.getJoin();
+        ArrayList<String> temp;
+        ArrayList<String> rowData, updatedRowData;
+        if (join == null) {
+            join = "";
+        }
+        if (finalIndex == null || finalIndex < 0 || sourceIndex == null) {
+            return;
+        }
+        int j;
+        for(int i=0; i<sheetData.size(); i++) {
+            rowData = sheetData.get(i);
+            if (rowData == null) {
+                continue;
+            }
+            temp = new ArrayList<>();
+            for (Integer index: sourceIndex) {
+                if (index != null && index >= 0 && index < rowData.size()) {
+                    temp.add(rowData.get(index));
+                }
+            }
+            if (i < updatedSheetData.size()) {
+                updatedRowData = updatedSheetData.get(i);
+                if (finalIndex >= updatedRowData.size()) {
+                    for(j=updatedRowData.size(); j<=finalIndex; j++) {
+                        updatedRowData.add(AppConstant.EmptyStr);
+                    }
+                }
+                updatedRowData.set(finalIndex, String.join(join, temp));
+            } else {
+                logger.info("sheetData and updatedSheetData mismatch in row.");
+            }
+        }
+    }
+    public ArrayList<ArrayList<String>> applyColumnMapping(ArrayList<ArrayList<String>> sheetData,
+                                                           ExcelDataConfig excelDataConfigById) {
+        if (sheetData == null || excelDataConfigById == null) {
+            return sheetData;
+        }
+        ArrayList<MergeColumnConfig> mergeColumnConfigs = excelDataConfigById.getMergeColumnConfig();
+        if (mergeColumnConfigs == null) {
+            return  sheetData;
+        }
+        int maxColCount = 0;
+        for(ArrayList<String> rowData: sheetData) {
+            if (rowData.size() > maxColCount) {
+                maxColCount = rowData.size();
+            }
+        }
+        Integer finalIndex, tempIndex;
+        ArrayList<Integer> sourceIndex, tempSourceIndex;
+        for (MergeColumnConfig mergeColumnConfig: mergeColumnConfigs) {
+            if (mergeColumnConfig == null) {
+                continue;
+            }
+            tempSourceIndex = mergeColumnConfig.getSourceIndex();
+            sourceIndex = new ArrayList<>();
+            if (tempSourceIndex == null) {
+                continue;
+            }
+            for(Integer index: tempSourceIndex) {
+                if (index == null) {
+                    continue;
+                }
+                if (index >= 0) {
+                    sourceIndex.add(index);
+                } else if (index == -1) {
+                    if (sourceIndex.size() > 0) {
+                        tempIndex = sourceIndex.get(sourceIndex.size()-1);
+                        for (int j=tempIndex+1; j < maxColCount; j++) {
+                            sourceIndex.add(j);
+                        }
+                    }
+                    mergeColumnConfig.setSourceIndex(sourceIndex);
+                    break;
+                }
+            }
+            mergeColumnConfig.setSourceIndex(sourceIndex);
+        }
+        ArrayList<String> updatedRowData;
+        ArrayList<ArrayList<String>> updatedSheetData = new ArrayList<>();
+        for(ArrayList<String> rowData: sheetData) {
+            updatedRowData = new ArrayList<>(rowData);
+            updatedSheetData.add(updatedRowData);
+        }
+        ArrayList<Integer> finalIndexList = new ArrayList<>();
+        for (MergeColumnConfig mergeColumnConfig: mergeColumnConfigs) {
+            if (mergeColumnConfig == null) {
+                continue;
+            }
+            finalIndex = mergeColumnConfig.getFinalIndex();
+            if (finalIndex != null && finalIndex >= 0) {
+                finalIndexList.add(finalIndex);
+            }
+            this.applyCellMerging(sheetData, updatedSheetData, mergeColumnConfig);
+        }
+        ArrayList<Integer> removeIndexList = new ArrayList<>();
+        for (MergeColumnConfig mergeColumnConfig: mergeColumnConfigs) {
+            if (mergeColumnConfig == null) {
+                continue;
+            }
+            finalIndex = mergeColumnConfig.getFinalIndex();
+            sourceIndex = mergeColumnConfig.getSourceIndex();
+            if (finalIndex == null || finalIndex < 0 || sourceIndex == null) {
+                continue;
+            }
+            for(Integer index: sourceIndex) {
+                if (index == null || index < 0 || removeIndexList.contains(index) || finalIndexList.contains(index)) {
+                    continue;
+                }
+                removeIndexList.add(index);
+            }
+        }
+        ArrayList<ArrayList<String>> finalSheetData = new ArrayList<>();
+        for(ArrayList<String> rowData: updatedSheetData) {
+            updatedRowData = new ArrayList<>();
+            if (rowData == null) {
+                continue;
+            }
+            for (int i=0; i<rowData.size(); i++) {
+                if (!removeIndexList.contains(i)) {
+                    updatedRowData.add(rowData.get(i));
+                }
+            }
+            finalSheetData.add(updatedRowData);
+        }
+        return finalSheetData;
     }
 }

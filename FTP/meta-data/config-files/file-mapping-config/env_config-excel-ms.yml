@@ -89,3 +89,40 @@ excelDataConfig:
     copyCellDataIndex:
       - 0
       - 1
+  csv-test-04:
+    mergeColumnConfig:
+      - finalIndex: 1
+        sourceIndex: [1,2,3]
+        join: ".."
+      - finalIndex: 0
+        sourceIndex: [0,1,2,3]
+        join: ","
+      - finalIndex: 2
+        sourceIndex: [1,2,3]
+        join: ".."
+      - finalIndex: 3
+        sourceIndex: [3,-1]
+      - finalIndex: -1
+        sourceIndex: [0,-1]
+        join: "..."
+      - finalIndex: 4
+        sourceIndex: [0,-1]
+        join: "..."
+      - finalIndex: -4
+        sourceIndex: [0,-1]
+        join: "..."
+  csv-test-05:
+    mergeColumnConfig:
+      - finalIndex: 9
+        sourceIndex: [1,-1]
+        join: ".."
+      - finalIndex: 5
+        sourceIndex: [1,-1]
+        join: ".."
+      - finalIndex: 1
+        sourceIndex: [1]
+  csv-test-06:
+    mergeColumnConfig:
+      - finalIndex: 9
+        sourceIndex: [1,-1]
+        join: ".."

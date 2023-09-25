@@ -20,5 +20,8 @@ excelConfig:
 csvConfig:
   - validRequestId:
       - csv-test-01
-    requiredColIndex: [ 0,1,2,3]
+      - csv-test-04
+      - csv-test-05
+      - csv-test-06
+    requiredColIndex: [0,1,2,3]
     fileConfig: [ "D:/workspace/ftp-application/FTP/meta-data/test-data/config-data/csv-config.csv", "CSV reading data config path" ]

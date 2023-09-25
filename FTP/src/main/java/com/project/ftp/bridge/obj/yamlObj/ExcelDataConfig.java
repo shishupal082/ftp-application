@@ -20,7 +20,7 @@ public class ExcelDataConfig {
     private ArrayList<Integer> copyCellDataIndex;
     private ArrayList<ArrayList<Integer>> skipRowIndex;
     private ArrayList<ArrayList<Integer>> appendCellDataIndex;
-
+    private ArrayList<MergeColumnConfig> mergeColumnConfig;
     public boolean isCopyOldData() {
         return copyOldData;
     }
@@ -128,6 +128,14 @@ public class ExcelDataConfig {
         this.appendCellDataIndex = appendCellDataIndex;
     }
 
+    public ArrayList<MergeColumnConfig> getMergeColumnConfig() {
+        return mergeColumnConfig;
+    }
+
+    public void setMergeColumnConfig(ArrayList<MergeColumnConfig> mergeColumnConfig) {
+        this.mergeColumnConfig = mergeColumnConfig;
+    }
+
     @Override
     public String toString() {
         return "ExcelDataConfig{" +
@@ -144,6 +152,7 @@ public class ExcelDataConfig {
                 ", copyCellDataIndex=" + copyCellDataIndex +
                 ", skipRowIndex=" + skipRowIndex +
                 ", appendCellDataIndex=" + appendCellDataIndex +
+                ", mergeColumnConfig=" + mergeColumnConfig +
                 '}';
     }
 }
