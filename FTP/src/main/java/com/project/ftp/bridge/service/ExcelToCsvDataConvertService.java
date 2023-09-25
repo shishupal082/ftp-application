@@ -507,14 +507,22 @@ public class ExcelToCsvDataConvertService {
             }
         }
         ArrayList<ArrayList<String>> finalSheetData = new ArrayList<>();
+        int emptyItemsCount;
         for(ArrayList<String> rowData: updatedSheetData) {
             updatedRowData = new ArrayList<>();
+            emptyItemsCount = 0;
             if (rowData == null) {
                 continue;
             }
             for (int i=0; i<rowData.size(); i++) {
                 if (!removeIndexList.contains(i)) {
+                    for(int j=0; j<emptyItemsCount; j++) {
+                        updatedRowData.add(AppConstant.EmptyStr);
+                    }
+                    emptyItemsCount = 0;
                     updatedRowData.add(rowData.get(i));
+                } else {
+                    emptyItemsCount++;
                 }
             }
             finalSheetData.add(updatedRowData);

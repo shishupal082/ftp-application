@@ -123,6 +123,6 @@ excelDataConfig:
         sourceIndex: [1]
   csv-test-06:
     mergeColumnConfig:
-      - finalIndex: 9
+      - finalIndex: 1
         sourceIndex: [1,-1]
         join: ".."
