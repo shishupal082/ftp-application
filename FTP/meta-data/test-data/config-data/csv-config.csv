@@ -2,3 +2,4 @@ csv-test-01,D:/workspace/ftp-application/FTP/meta-data/test-data/test-data/01-so
 csv-test-04,D:/workspace/ftp-application/FTP/meta-data/test-data/test-data/01-source-csv.csv,sheet-name-empty,D:/workspace/ftp-application/FTP/meta-data/test-data/test-data/01-test-04-destination-csv.csv
 csv-test-05,D:/workspace/ftp-application/FTP/meta-data/test-data/test-data/01-source-csv.csv,sheet-name-empty,D:/workspace/ftp-application/FTP/meta-data/test-data/test-data/01-test-05-destination-csv.csv
 csv-test-06,D:/workspace/ftp-application/FTP/meta-data/test-data/test-data/01-source-csv.csv,sheet-name-empty,D:/workspace/ftp-application/FTP/meta-data/test-data/test-data/01-test-06-destination-csv.csv
+csv-test-07,D:/workspace/ftp-application/FTP/meta-data/test-data/test-data/01-source-csv.csv,sheet-name-empty,D:/workspace/ftp-application/FTP/meta-data/test-data/test-data/01-test-07-destination-csv.csv

@@ -50,6 +50,7 @@ public class MSExcelBridgeService {
         excelToCsvDataConvertService.copyCellDataIndex(sheetData, excelDataConfigById);
         sheetData = excelToCsvDataConvertService.applyCellMapping(sheetData, excelDataConfigById);
         sheetData = excelToCsvDataConvertService.applyColumnMapping(sheetData, excelDataConfigById);
+        sheetData = excelToCsvDataConvertService.applyRemoveColumnConfig(sheetData, excelDataConfigById);
         return sheetData;
     }
     private ArrayList<ArrayList<String>> readExcelFilePath(String srcFilepath, String sheetName,
@@ -67,6 +68,7 @@ public class MSExcelBridgeService {
         excelToCsvDataConvertService.copyCellDataIndex(sheetData, excelDataConfigById);
         sheetData = excelToCsvDataConvertService.applyCellMapping(sheetData, excelDataConfigById);
         sheetData = excelToCsvDataConvertService.applyColumnMapping(sheetData, excelDataConfigById);
+        sheetData = excelToCsvDataConvertService.applyRemoveColumnConfig(sheetData, excelDataConfigById);
         return sheetData;
     }
     private ArrayList<ArrayList<String>> readGoogleSheetData(String spreadSheetId, String sheetName,
@@ -80,6 +82,7 @@ public class MSExcelBridgeService {
         excelToCsvDataConvertService.copyCellDataIndex(sheetData, excelDataConfigById);
         sheetData = excelToCsvDataConvertService.applyCellMapping(sheetData, excelDataConfigById);
         sheetData = excelToCsvDataConvertService.applyColumnMapping(sheetData, excelDataConfigById);
+        sheetData = excelToCsvDataConvertService.applyRemoveColumnConfig(sheetData, excelDataConfigById);
         return sheetData;
     }
     public ExcelDataConfig getExcelDataConfigByIdV1(String requestId,

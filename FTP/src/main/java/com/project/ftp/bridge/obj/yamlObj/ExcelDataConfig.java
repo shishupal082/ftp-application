@@ -21,6 +21,7 @@ public class ExcelDataConfig {
     private ArrayList<ArrayList<Integer>> skipRowIndex;
     private ArrayList<ArrayList<Integer>> appendCellDataIndex;
     private ArrayList<MergeColumnConfig> mergeColumnConfig;
+    private ArrayList<Integer> removeColumnConfig;
     public boolean isCopyOldData() {
         return copyOldData;
     }
@@ -136,6 +137,14 @@ public class ExcelDataConfig {
         this.mergeColumnConfig = mergeColumnConfig;
     }
 
+    public ArrayList<Integer> getRemoveColumnConfig() {
+        return removeColumnConfig;
+    }
+
+    public void setRemoveColumnConfig(ArrayList<Integer> removeColumnConfig) {
+        this.removeColumnConfig = removeColumnConfig;
+    }
+
     @Override
     public String toString() {
         return "ExcelDataConfig{" +
@@ -153,6 +162,7 @@ public class ExcelDataConfig {
                 ", skipRowIndex=" + skipRowIndex +
                 ", appendCellDataIndex=" + appendCellDataIndex +
                 ", mergeColumnConfig=" + mergeColumnConfig +
+                ", removeColumnConfig=" + removeColumnConfig +
                 '}';
     }
 }

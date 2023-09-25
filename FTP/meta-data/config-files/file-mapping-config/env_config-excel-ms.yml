@@ -119,10 +119,17 @@ excelDataConfig:
       - finalIndex: 5
         sourceIndex: [1,-1]
         join: ".."
-      - finalIndex: 1
-        sourceIndex: [1]
   csv-test-06:
     mergeColumnConfig:
       - finalIndex: 1
         sourceIndex: [1,-1]
         join: ".."
+  csv-test-07:
+    mergeColumnConfig:
+      - finalIndex: 9
+        sourceIndex: [ 1,-1 ]
+        join: ".."
+      - finalIndex: 5
+        sourceIndex: [ 1,-1 ]
+        join: ".."
+    removeColumnConfig: [2,3,4,6,7,8]

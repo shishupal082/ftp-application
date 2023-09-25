@@ -442,7 +442,7 @@ public class ExcelToCsvDataConvertService {
                 maxColCount = rowData.size();
             }
         }
-        Integer finalIndex, tempIndex;
+        Integer tempIndex;
         ArrayList<Integer> sourceIndex, tempSourceIndex;
         for (MergeColumnConfig mergeColumnConfig: mergeColumnConfigs) {
             if (mergeColumnConfig == null) {
@@ -478,54 +478,61 @@ public class ExcelToCsvDataConvertService {
             updatedRowData = new ArrayList<>(rowData);
             updatedSheetData.add(updatedRowData);
         }
-        ArrayList<Integer> finalIndexList = new ArrayList<>();
         for (MergeColumnConfig mergeColumnConfig: mergeColumnConfigs) {
             if (mergeColumnConfig == null) {
                 continue;
-            }
-            finalIndex = mergeColumnConfig.getFinalIndex();
-            if (finalIndex != null && finalIndex >= 0) {
-                finalIndexList.add(finalIndex);
             }
             this.applyCellMerging(sheetData, updatedSheetData, mergeColumnConfig);
         }
-        ArrayList<Integer> removeIndexList = new ArrayList<>();
-        for (MergeColumnConfig mergeColumnConfig: mergeColumnConfigs) {
-            if (mergeColumnConfig == null) {
-                continue;
+        return updatedSheetData;
+    }
+    public ArrayList<ArrayList<String>> applyRemoveColumnConfig(ArrayList<ArrayList<String>> sheetData,
+                                                                ExcelDataConfig excelDataConfigById) {
+        if (sheetData == null || excelDataConfigById == null) {
+            return sheetData;
+        }
+        ArrayList<Integer> removeColumnConfig = excelDataConfigById.getRemoveColumnConfig();
+        if (removeColumnConfig == null) {
+            return sheetData;
+        }
+        int i;
+        ArrayList<Integer> finalRemoveIndex = new ArrayList<>();
+        int maxColCount = 0, previousIndex = -1;
+        for(ArrayList<String> rowData: sheetData) {
+            if (rowData.size() > maxColCount) {
+                maxColCount = rowData.size();
             }
-            finalIndex = mergeColumnConfig.getFinalIndex();
-            sourceIndex = mergeColumnConfig.getSourceIndex();
-            if (finalIndex == null || finalIndex < 0 || sourceIndex == null) {
-                continue;
-            }
-            for(Integer index: sourceIndex) {
-                if (index == null || index < 0 || removeIndexList.contains(index) || finalIndexList.contains(index)) {
-                    continue;
+        }
+        for(Integer index: removeColumnConfig) {
+            if (index >= 0) {
+                previousIndex = index;
+                if (!finalRemoveIndex.contains(index)) {
+                    finalRemoveIndex.add(index);
                 }
-                removeIndexList.add(index);
+                continue;
+            }
+            if (index == -1) {
+                for(i=previousIndex+1; i<maxColCount; i++) {
+                    if (!finalRemoveIndex.contains(i)) {
+                        finalRemoveIndex.add(i);
+                    }
+                }
+                break;
             }
         }
         ArrayList<ArrayList<String>> finalSheetData = new ArrayList<>();
-        int emptyItemsCount;
-        for(ArrayList<String> rowData: updatedSheetData) {
-            updatedRowData = new ArrayList<>();
-            emptyItemsCount = 0;
+        ArrayList<String> finalRowData;
+        for(ArrayList<String> rowData: sheetData) {
             if (rowData == null) {
                 continue;
             }
-            for (int i=0; i<rowData.size(); i++) {
-                if (!removeIndexList.contains(i)) {
-                    for(int j=0; j<emptyItemsCount; j++) {
-                        updatedRowData.add(AppConstant.EmptyStr);
-                    }
-                    emptyItemsCount = 0;
-                    updatedRowData.add(rowData.get(i));
-                } else {
-                    emptyItemsCount++;
+            finalRowData = new ArrayList<>();
+            for (i=0; i<rowData.size(); i++) {
+                if (!finalRemoveIndex.contains(i)) {
+                    finalRowData.add(rowData.get(i));
                 }
             }
-            finalSheetData.add(updatedRowData);
+            finalSheetData.add(finalRowData);
         }
         return finalSheetData;
     }

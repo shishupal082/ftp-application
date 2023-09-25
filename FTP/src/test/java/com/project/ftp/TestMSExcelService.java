@@ -79,5 +79,8 @@ public class TestMSExcelService {
         requestId = "csv-test-06";
         apiResponse =  apiResource.updateMSExcelData(request, requestId);
         Assert.assertEquals("SUCCESS", apiResponse.getStatus());
+        requestId = "csv-test-07";
+        apiResponse =  apiResource.updateMSExcelData(request, requestId);
+        Assert.assertEquals("SUCCESS", apiResponse.getStatus());
     }
 }

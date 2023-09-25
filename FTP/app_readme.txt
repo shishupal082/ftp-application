@@ -1379,7 +1379,7 @@ Sequence of operation
 - copyCellDataIndex
 - cellMapping & appendCellDataIndex
 - mergeColumnConfig
-
+- removeColumnConfig
 Future releases
 -------------------
 Add new role called
