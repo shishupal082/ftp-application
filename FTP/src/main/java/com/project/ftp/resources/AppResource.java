@@ -126,6 +126,51 @@ public class AppResource {
         return Response.ok(new CommonView("page_not_found_404.ftl", appConfig)).build();
     }
     @GET
+    @Path("/view/any-file")
+    @UnitOfWork
+    public Response viewAnyFile(@Context HttpServletRequest request,
+                             @QueryParam("filepath") String filepath,
+                             @QueryParam("container") String container,
+                             @QueryParam("u") String uiUsername) {
+        logger.info("Loading viewAnyFile, filepath: {}, container: {}, u: {}", filepath, container, uiUsername);
+        logger.info("user: {}", userService.getUserDataForLogging(request));
+        PathInfo pathInfo = null;
+        Response.ResponseBuilder r;
+        ApiResponse apiResponse = new ApiResponse();
+        try {
+            authService.isLogin(request);
+            pathInfo = fileServiceV2.searchRequestedFileV3(filepath);
+            eventTracking.addSuccessViewFile(request, filepath, container, uiUsername);
+        } catch (AppException ae) {
+            logger.info("Error in searching requested file: {}", ae.getErrorCode().getErrorCode());
+            eventTracking.trackViewFileFailure(request, filepath, ae.getErrorCode(), container, uiUsername);
+            apiResponse = new ApiResponse(ae.getErrorCode());
+        }
+
+        if (pathInfo != null) {
+            File file = new File(pathInfo.getPath());
+            try {
+                InputStream inputStream = new FileInputStream(file);
+                r = Response.ok(inputStream);
+                if (pathInfo.getMediaType() == null) {
+                    logger.info("MediaType is not found (download now): {}", pathInfo);
+                    String responseHeader = "attachment; filename=" + pathInfo.getFileName();
+                    r.header(HttpHeaders.CONTENT_DISPOSITION, responseHeader);
+                } else {
+                    r.header(HttpHeaders.CONTENT_TYPE, pathInfo.getMediaType());
+                }
+                return r.build();
+            } catch (Exception e) {
+                logger.info("Error in loading file: {}", pathInfo);
+            }
+        }
+        if (AppConstant.IFRAME.equals(container)) {
+            return Response.status(Response.Status.OK).entity(
+                    apiResponse.toJsonString()).type(MediaType.APPLICATION_JSON).build();
+        }
+        return Response.ok(new CommonView("page_not_found_404.ftl", appConfig)).build();
+    }
+    @GET
     @Path("/download/file/{username}/{filename2}")
     @UnitOfWork
     public Object downloadFile(@Context HttpServletRequest request,

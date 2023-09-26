@@ -205,6 +205,19 @@ public class FileServiceV2 {
         }
         return pathInfo;
     }
+    public PathInfo searchRequestedFileV3(String filepath) throws AppException {
+        if (filepath == null || filepath.isEmpty()) {
+            logger.info("filepath can not be null or empty: {}", filepath);
+            throw new AppException(ErrorCodes.INVALID_QUERY_PARAMS);
+        }
+        PathInfo pathInfo = fileService.getPathInfo(filepath);
+        if (!AppConstant.FILE.equals(pathInfo.getType())) {
+            logger.info("file not found: {}", pathInfo);
+            throw new AppException(ErrorCodes.FILE_NOT_FOUND);
+        }
+        logger.info("Search result: {}", pathInfo);
+        return pathInfo;
+    }
     private HashMap<String, String> verifyDeleteRequestParameters(RequestDeleteFile deleteFile) throws AppException {
         if (deleteFile == null) {
             logger.info("deleteFile request is null.");

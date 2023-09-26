@@ -1380,6 +1380,14 @@ Sequence of operation
 - cellMapping & appendCellDataIndex
 - mergeColumnConfig
 - removeColumnConfig
+
+26.09.2023
+-------------------
+Added new api
+    - /view/any-file?u=requested_username&container=iframe&filepath=filepath
+this api will be used for reading any file saved in the computer
+
+
 Future releases
 -------------------
 Add new role called

@@ -56,8 +56,12 @@
     "Database files view"
   ],
   [
-    "/view/file/{username}/{filename}?u=requested_username&iframe=true",
-    "/view/file/{username}/{filename}?u=requested_username&iframe=true"
+    "/view/any-file?u=requested_username&container=iframe&filepath=filepath",
+    "/view/any-file?u=requested_username&container=iframe&filepath=filepath"
+  ],
+  [
+    "/view/file/{username}/{filename}?u=requested_username&container=iframe",
+    "/view/file/{username}/{filename}?u=requested_username&container=iframe"
   ],
   [
     "/download/file/{username}/{filename}?u=requested_username",
