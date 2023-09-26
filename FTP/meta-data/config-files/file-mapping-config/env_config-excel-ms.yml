@@ -139,3 +139,18 @@ excelDataConfig:
         sourceIndex: [ 1,-1 ]
         join: ".."
     removeColumnConfig: [2,3,4,6,7,8]
+  csv-test-08:
+    appendCellDataIndex:
+      - [ 0, -1 ]
+    cellMapping:
+      - defaultCellData: ""
+        col_index: 1
+        mappingData:
+          - col_index: 1
+            value: "yyyy-MM-dd"
+            dateRegex: "dd.MM.yyyy"
+            regex: "^[0-9]{2}.[0-9]{2}.[0-9]{4}$"
+          - col_index: 1
+            value: "yyyy-MM-dd"
+            dateRegex: "yyyy.MM.dd"
+            regex: "^[0-9]{4}.[0-9]{2}.[0-9]{2}$"
