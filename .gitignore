@@ -7,6 +7,8 @@ FTP/user_guide.txt
 FTP/user_guide_zonal.pdf
 FTP/user_guide_zonal.txt
 
+FTP/meta-data/test-data/test-data/01-test-05-destination-csv.csv
+
 FTP/src/main/resources/client_secret_o-auth-sheets-api.json
 
 FTP/meta-data/FTP-*.jar

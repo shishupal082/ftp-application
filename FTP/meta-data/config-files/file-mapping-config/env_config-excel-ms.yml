@@ -112,17 +112,23 @@ excelDataConfig:
         sourceIndex: [0,-1]
         join: "..."
   csv-test-05:
+    appendCellDataIndex:
+      - [0, -1]
+    cellMapping:
+      - defaultCellData: "now"
+        dateRegex: "YYYY-MM-dd HH:mm"
+        col_index: -1
     mergeColumnConfig:
-      - finalIndex: 9
-        sourceIndex: [1,-1]
-        join: ".."
-      - finalIndex: 5
-        sourceIndex: [1,-1]
+      - finalIndex: 2
+        sourceIndex: [2,-1]
         join: ".."
   csv-test-06:
     mergeColumnConfig:
-      - finalIndex: 1
-        sourceIndex: [1,-1]
+      - finalIndex: 9
+        sourceIndex: [ 1,-1 ]
+        join: ".."
+      - finalIndex: 5
+        sourceIndex: [ 1,-1 ]
         join: ".."
   csv-test-07:
     mergeColumnConfig:
