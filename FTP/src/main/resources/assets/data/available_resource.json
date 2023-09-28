@@ -217,7 +217,11 @@
   ],
   [
     "/api/update_excel_data?requestId=gs-excel-id",
-    "Call Update GS/MS_Excel_sheet_Data [GET]"
+    "Call Update GS/CSV/MS_Excel_sheet_Data [GET]"
+  ],
+  [
+    "/api/get_excel_data?requestId=gs-excel-id",
+    "Call get GS/CSV/MS_Excel_sheet_Data [GET]"
   ],
   [
     "/assets-dir/{default: *}",

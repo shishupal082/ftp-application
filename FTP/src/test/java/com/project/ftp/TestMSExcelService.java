@@ -52,7 +52,7 @@ public class TestMSExcelService {
         ApiResponse apiResponse;
         ApiResource apiResource = this.getApiResource();
         requestId = null;
-        apiResponse =  apiResource.updateMSExcelData(request, requestId);
+        apiResponse =  apiResource.getMSExcelData(request, requestId);
         Assert.assertEquals("FAILURE", apiResponse.getStatus());
         requestId = "csv-test-01";
         apiResponse =  apiResource.updateMSExcelData(request, requestId);
@@ -61,7 +61,7 @@ public class TestMSExcelService {
         apiResponse =  apiResource.updateMSExcelData(request, requestId);
         Assert.assertEquals("SUCCESS", apiResponse.getStatus());
         requestId = "csv-test-03";
-        apiResponse =  apiResource.updateMSExcelData(request, requestId);
+        apiResponse =  apiResource.getMSExcelData(request, requestId);
         Assert.assertEquals("FAILURE", apiResponse.getStatus());
     }
     @Test
@@ -74,7 +74,7 @@ public class TestMSExcelService {
         apiResponse =  apiResource.updateMSExcelData(request, requestId);
         Assert.assertEquals("SUCCESS", apiResponse.getStatus());
         requestId = "csv-test-05";
-        apiResponse =  apiResource.updateMSExcelData(request, requestId);
+        apiResponse =  apiResource.getMSExcelData(request, requestId);
         Assert.assertEquals("SUCCESS", apiResponse.getStatus());
         requestId = "csv-test-06";
         apiResponse =  apiResource.updateMSExcelData(request, requestId);

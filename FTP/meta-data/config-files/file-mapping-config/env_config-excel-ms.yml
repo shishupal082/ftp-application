@@ -116,7 +116,7 @@ excelDataConfig:
       - [0, -1]
     cellMapping:
       - defaultCellData: "now"
-        dateRegex: "YYYY-MM-dd HH:mm"
+        dateRegex: "YYYY-MM-dd HH:mm:ss"
         col_index: -1
     mergeColumnConfig:
       - finalIndex: 2

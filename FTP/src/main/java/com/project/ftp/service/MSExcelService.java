@@ -69,17 +69,18 @@ public class MSExcelService {
             }
         } else {
             logger.info("Error in saving csv data: {}", destination);
+            throw new AppException(ErrorCodes.CONFIG_ERROR);
         }
     }
-    public ApiResponse updateMSExcelSheetData(String requestId) throws AppException {
+    private ArrayList<BridgeResponseSheetData> getActualMSExcelSheetData(String requestId) throws AppException {
         if (requestId == null || requestId.isEmpty()) {
             logger.info("requestId required: {}", requestId);
             throw new AppException(ErrorCodes.BAD_REQUEST_ERROR);
         }
         YamlFileParser yamlFileParser = new YamlFileParser();
         FileMappingConfig fileMappingConfig =
-                    yamlFileParser.getFileMappingConfigFromPath(
-                            appConfig.getFtpConfiguration().getFileMappingConfigFilePath());
+                yamlFileParser.getFileMappingConfigFromPath(
+                        appConfig.getFtpConfiguration().getFileMappingConfigFilePath());
         if (fileMappingConfig == null) {
             logger.info("fileMappingConfig is null.");
             throw new AppException(ErrorCodes.CONFIG_ERROR);
@@ -92,6 +93,13 @@ public class MSExcelService {
         if (response == null) {
             throw new AppException(ErrorCodes.SERVER_ERROR);
         }
+        return response;
+    }
+    public ApiResponse getMSExcelSheetData(String requestId) throws AppException {
+        return new ApiResponse(this.getActualMSExcelSheetData(requestId));
+    }
+    public ApiResponse updateMSExcelSheetData(String requestId) throws AppException {
+        ArrayList<BridgeResponseSheetData> response = this.getActualMSExcelSheetData(requestId);
         ArrayList<String> tempSavedFilePath = new ArrayList<>();
         for (BridgeResponseSheetData bridgeResponseSheetData: response) {
             this.saveCsvData(bridgeResponseSheetData, tempSavedFilePath);

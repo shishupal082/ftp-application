@@ -877,6 +877,25 @@ public class ApiResource {
         return response;
     }
     @GET
+    @Path("/get_excel_data")
+    @UnitOfWork
+    public ApiResponse getMSExcelData(@Context HttpServletRequest request,
+                                      @QueryParam("requestId") String requestId) {
+        LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
+        logger.info("updateMSExcelData: In, user: {}, requestId: {}", loginUserDetails, requestId);
+        ApiResponse response;
+        try {
+            authService.isLogin(request);
+            response = msExcelService.getMSExcelSheetData(requestId);
+        } catch (AppException ae) {
+            logger.info("Error in updateMSExcelData: {}", ae.getErrorCode().getErrorCode());
+            eventTracking.trackFailureEvent(request, EventName.MS_EXCEL_DATA, ae.getErrorCode());
+            response = new ApiResponse(ae.getErrorCode());
+        }
+        logger.info("updateMSExcelData: Out, {}", response.toStringV2());
+        return response;
+    }
+    @GET
     @Path("/update_excel_data")
     @UnitOfWork
     public ApiResponse updateMSExcelData(@Context HttpServletRequest request,

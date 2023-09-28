@@ -145,12 +145,12 @@ public class MSExcelBridgeService {
             if (row.size() > sheetNameCol) {
                 sheet = row.get(sheetNameCol);
             } else {
-                continue;
+                sheet = null;
             }
             if (row.size() > destinationCol) {
                 dest = row.get(destinationCol);
             } else {
-                continue;
+                dest = null;
             }
             if (copyDestinationCol != null && row.size() > copyDestinationCol) {
                 copyDest = row.get(copyDestinationCol);
