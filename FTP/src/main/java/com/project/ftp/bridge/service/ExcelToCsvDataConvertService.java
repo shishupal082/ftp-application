@@ -385,6 +385,36 @@ public class ExcelToCsvDataConvertService {
         }
         return result;
     }
+    public void applyReplaceCellString(ArrayList<ArrayList<String>> sheetData, ExcelDataConfig excelDataConfigById) {
+        if (sheetData == null || excelDataConfigById == null) {
+            return;
+        }
+        ArrayList<ReplaceCellDataMapping> replaceCellDataMappings = excelDataConfigById.getReplaceCellString();
+        if (replaceCellDataMappings == null) {
+            return;
+        }
+        Integer index;
+        String find, replace;
+        for(ReplaceCellDataMapping replaceCellDataMapping: replaceCellDataMappings) {
+            if (replaceCellDataMapping == null) {
+                continue;
+            }
+            index = replaceCellDataMapping.getIndex();
+            find = replaceCellDataMapping.getFind();
+            replace = replaceCellDataMapping.getReplace();
+            if (index == null || find == null || replace == null) {
+                continue;
+            }
+            for(ArrayList<String> rowData: sheetData) {
+                if (rowData == null) {
+                    continue;
+                }
+                if (index < rowData.size()) {
+                    rowData.set(index, StaticService.replaceString(rowData.get(index), find, replace));
+                }
+            }
+        }
+    }
     private void applyCellMerging(ArrayList<ArrayList<String>> sheetData,
                                   ArrayList<ArrayList<String>> updatedSheetData,
                                   MergeColumnConfig mergeColumnConfig) {

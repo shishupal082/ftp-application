@@ -212,8 +212,12 @@ public class FileServiceV2 {
         }
         PathInfo pathInfo = fileService.getPathInfo(filepath);
         if (!AppConstant.FILE.equals(pathInfo.getType())) {
-            logger.info("file not found: {}", pathInfo);
-            throw new AppException(ErrorCodes.FILE_NOT_FOUND);
+            filepath = StaticService.replaceString(filepath, "...", ",");
+            pathInfo = fileService.getPathInfo(filepath);
+            if (!AppConstant.FILE.equals(pathInfo.getType())) {
+                logger.info("file not found: {}, {}", filepath, pathInfo);
+                throw new AppException(ErrorCodes.FILE_NOT_FOUND);
+            }
         }
         logger.info("Search result: {}", pathInfo);
         return pathInfo;

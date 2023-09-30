@@ -234,6 +234,9 @@ public class StaticService {
         str = str.trim();
         return strUtils.replaceString(str,"```", ",");
     }
+    public static String replaceString(String str, String find, String replace) {
+        return strUtils.replaceString(str, find, replace);
+    }
     public static boolean isInValidString(String str) {
         return strUtils.isInValidString(str);
     }

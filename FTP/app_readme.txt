@@ -1382,6 +1382,7 @@ Sequence of operation
 - skipEmptyRows
 - copyCellDataIndex
 - cellMapping & appendCellDataIndex
+- replaceCellString
 - mergeColumnConfig
 - removeColumnConfig
 

@@ -50,7 +50,7 @@ public class StrUtils {
     }
     public String replaceString(String str, String find, String replace) {
         if (str == null || find == null || replace == null) {
-            return null;
+            return str;
         }
         return str.replaceAll(find, replace);
     }

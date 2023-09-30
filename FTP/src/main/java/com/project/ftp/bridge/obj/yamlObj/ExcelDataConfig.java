@@ -16,6 +16,7 @@ public class ExcelDataConfig {
     private ArrayList<ExcelFileConfig> csvConfig;
     private ArrayList<ExcelFileConfig> gsConfig;
     private ArrayList<CellMapping> cellMapping;
+    private ArrayList<ReplaceCellDataMapping> replaceCellString;
     private ArrayList<SkipRowCriteria> skipRowCriteria;
     private ArrayList<Integer> copyCellDataIndex;
     private ArrayList<ArrayList<Integer>> skipRowIndex;
@@ -97,6 +98,14 @@ public class ExcelDataConfig {
         this.cellMapping = cellMapping;
     }
 
+    public ArrayList<ReplaceCellDataMapping> getReplaceCellString() {
+        return replaceCellString;
+    }
+
+    public void setReplaceCellString(ArrayList<ReplaceCellDataMapping> replaceCellString) {
+        this.replaceCellString = replaceCellString;
+    }
+
     public ArrayList<SkipRowCriteria> getSkipRowCriteria() {
         return skipRowCriteria;
     }
@@ -157,6 +166,7 @@ public class ExcelDataConfig {
                 ", csvConfig=" + csvConfig +
                 ", gsConfig=" + gsConfig +
                 ", cellMapping=" + cellMapping +
+                ", replaceCellString=" + replaceCellString +
                 ", skipRowCriteria=" + skipRowCriteria +
                 ", copyCellDataIndex=" + copyCellDataIndex +
                 ", skipRowIndex=" + skipRowIndex +

@@ -142,6 +142,13 @@ excelDataConfig:
   csv-test-08:
     appendCellDataIndex:
       - [ 0, -1 ]
+    replaceCellString:
+      - index: 1
+        find: "es"
+        replace: "ES"
+      - index: 4
+        find: "&"
+        replace: "%26"
     cellMapping:
       - defaultCellData: ""
         col_index: 1
