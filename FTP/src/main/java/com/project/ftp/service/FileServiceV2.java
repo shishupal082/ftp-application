@@ -205,14 +205,17 @@ public class FileServiceV2 {
         }
         return pathInfo;
     }
-    public PathInfo searchRequestedFileV3(String filepath) throws AppException {
-        if (filepath == null || filepath.isEmpty()) {
-            logger.info("filepath can not be null or empty: {}", filepath);
+    public PathInfo searchRequestedPath(String path) throws AppException {
+        if (path == null || path.isEmpty()) {
+            logger.info("path can not be null or empty: {}", path);
             throw new AppException(ErrorCodes.INVALID_QUERY_PARAMS);
         }
-        PathInfo pathInfo = fileService.getPathInfo(filepath);
+        return fileService.getPathInfo(path);
+    }
+    public PathInfo searchRequestedFileV3(String filepath) throws AppException {
+        PathInfo pathInfo = this.searchRequestedPath(filepath);
         if (!AppConstant.FILE.equals(pathInfo.getType())) {
-            filepath = StaticService.replaceString(filepath, "...", ",");
+            filepath = StaticService.replaceString(filepath, "\\.\\.\\.", ",");
             pathInfo = fileService.getPathInfo(filepath);
             if (!AppConstant.FILE.equals(pathInfo.getType())) {
                 logger.info("file not found: {}, {}", filepath, pathInfo);
@@ -221,13 +224,6 @@ public class FileServiceV2 {
         }
         logger.info("Search result: {}", pathInfo);
         return pathInfo;
-    }
-    public PathInfo searchRequestedPath(String path) throws AppException {
-        if (path == null || path.isEmpty()) {
-            logger.info("path can not be null or empty: {}", path);
-            throw new AppException(ErrorCodes.INVALID_QUERY_PARAMS);
-        }
-        return fileService.getPathInfo(path);
     }
     private HashMap<String, String> verifyDeleteRequestParameters(RequestDeleteFile deleteFile) throws AppException {
         if (deleteFile == null) {

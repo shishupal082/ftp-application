@@ -33,7 +33,7 @@ public class TestMSExcelService {
         appConfig.setFtpConfiguration(ftpConfiguration);
         return appConfig;
     }
-    private ApiResource getApiResource() {
+    public ApiResource getApiResource() {
         AppConfig appConfig = this.getAppConfig();
         UserInterface userInterface = new UserFile(appConfig);
         EventInterface eventInterface = new EventFile(appConfig);
