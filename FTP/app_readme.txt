@@ -1390,6 +1390,8 @@ Sequence of operation
 Added new api
     - /view/any-file?u=requested_username&container=iframe&filepath=filepath
 this api will be used for reading any file saved in the computer
+    - /view/redirect?u=requested_username&container=iframe&url=redirect_url
+this api will be used for redirecting to any link
 
 
 Future releases

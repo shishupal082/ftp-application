@@ -198,11 +198,7 @@ public class AppConfig {
     }
 
     public void updateFinalFtpConfiguration(final FtpConfiguration ftpConfiguration) {
-        if (StaticService.isMysqlEnable(cmdArguments)) {
-            ftpConfiguration.setMysqlEnable(true);
-        } else {
-            ftpConfiguration.setMysqlEnable(false);
-        }
+        ftpConfiguration.setMysqlEnable(StaticService.isMysqlEnable(cmdArguments));
         if (cmdArguments == null) {
             logger.info("FTP configuration generate complete 1: {}", ftpConfiguration);
             return;

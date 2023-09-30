@@ -60,6 +60,10 @@
     "/view/any-file?u=requested_username&container=iframe&filepath=filepath"
   ],
   [
+    "/view/redirect?u=requested_username&container=iframe&url=redirect_url",
+    "/view/redirect?u=requested_username&container=iframe&url=redirect_url"
+  ],
+  [
     "/view/file/{username}/{filename}?u=requested_username&container=iframe",
     "/view/file/{username}/{filename}?u=requested_username&container=iframe"
   ],

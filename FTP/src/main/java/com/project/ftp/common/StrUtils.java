@@ -71,7 +71,7 @@ public class StrUtils {
         int result = 0;
         try {
             result = Integer.parseInt(str);
-        } catch (Exception ignored) {};
+        } catch (Exception ignored) {}
         return result;
     }
 }

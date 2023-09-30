@@ -12,6 +12,7 @@ public enum EventName {
     APP_DATA("app_data"),
     UPLOAD_FILE("upload_file"),
     VIEW_FILE("view_file"),
+    VIEW_ANY_FILE("view_any_file"),
     DOWNLOAD_FILE("download_file"),
     DELETE_FILE("delete_file"),
     LOG_FILE_COPIED("log_file_copied"),

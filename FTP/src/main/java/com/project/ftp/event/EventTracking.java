@@ -364,11 +364,11 @@ public class EventTracking {
         addEvent.addFailureEvent(loginUserDetails.getUsername(), EventName.CHANGE_PASSWORD, errorCodes, comment);
     }
 
-    public void addSuccessViewFile(HttpServletRequest request,
+    public void addSuccessViewFile(HttpServletRequest request, EventName eventName,
                                    String filepath, String container, String uiUsername) {
         LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
         String comment = "filepath=" + filepath + ",container=" + container + ",uiUsername=" + uiUsername;
-        addEvent.addSuccessEvent(loginUserDetails.getUsername(), EventName.VIEW_FILE, comment);
+        addEvent.addSuccessEvent(loginUserDetails.getUsername(), eventName, comment);
     }
 
     public void addSuccessDownloadFile(HttpServletRequest request, String filepath, String uiUsername) {
@@ -391,11 +391,11 @@ public class EventTracking {
         addEvent.addSuccessEvent(loginUserDetails.getUsername(), EventName.DELETE_FILE, comment);
     }
 
-    public void trackViewFileFailure(HttpServletRequest request, String filepath,
+    public void trackViewFileFailure(HttpServletRequest request, EventName eventName, String filepath,
                                      ErrorCodes errorCodes, String container, String uiUsername) {
         LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
         String comment = "filepath=" + filepath + ",container=" + container + ",uiUsername=" + uiUsername;
-        addEvent.addFailureEvent(loginUserDetails.getUsername(), EventName.VIEW_FILE, errorCodes, comment);
+        addEvent.addFailureEvent(loginUserDetails.getUsername(), eventName, errorCodes, comment);
     }
 
     public void trackDownloadFileFailure(HttpServletRequest request, String filepath,

@@ -95,10 +95,10 @@ public class AppResource {
             authService.isLogin(request);
             LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
             pathInfo = fileServiceV2.searchRequestedFileV2(loginUserDetails, filename);
-            eventTracking.addSuccessViewFile(request, filename, container, uiUsername);
+            eventTracking.addSuccessViewFile(request, EventName.VIEW_FILE, filename, container, uiUsername);
         } catch (AppException ae) {
             logger.info("Error in searching requested file: {}", ae.getErrorCode().getErrorCode());
-            eventTracking.trackViewFileFailure(request, filename, ae.getErrorCode(), container, uiUsername);
+            eventTracking.trackViewFileFailure(request, EventName.VIEW_FILE, filename, ae.getErrorCode(), container, uiUsername);
             apiResponse = new ApiResponse(ae.getErrorCode());
         }
 
@@ -140,13 +140,13 @@ public class AppResource {
         try {
             authService.isLogin(request);
             pathInfo = fileServiceV2.searchRequestedFileV3(filepath);
-            eventTracking.addSuccessViewFile(request, filepath, container, uiUsername);
+            eventTracking.addSuccessViewFile(request, EventName.VIEW_ANY_FILE, filepath, container, uiUsername);
         } catch (AppException ae) {
             logger.info("Error in searching requested file: {}", ae.getErrorCode().getErrorCode());
-            eventTracking.trackViewFileFailure(request, filepath, ae.getErrorCode(), container, uiUsername);
+            eventTracking.trackViewFileFailure(request, EventName.VIEW_ANY_FILE, filepath, ae.getErrorCode(),
+                    container, uiUsername);
             apiResponse = new ApiResponse(ae.getErrorCode());
         }
-
         if (pathInfo != null) {
             File file = new File(pathInfo.getPath());
             try {
@@ -167,6 +167,21 @@ public class AppResource {
         if (AppConstant.IFRAME.equals(container)) {
             return Response.status(Response.Status.OK).entity(
                     apiResponse.toJsonString()).type(MediaType.APPLICATION_JSON).build();
+        }
+        return Response.ok(new CommonView("page_not_found_404.ftl", appConfig)).build();
+    }
+    @GET
+    @Path("/view/redirect")
+    @UnitOfWork
+    public Response viewRedirect(@Context HttpServletRequest request,
+                                @QueryParam("url") String url,
+                                @QueryParam("container") String container,
+                                @QueryParam("u") String uiUsername) throws URISyntaxException {
+        logger.info("Loading viewRedirect, url: {}, container: {}, u: {}", url, container, uiUsername);
+        logger.info("user: {}", userService.getUserDataForLogging(request));
+        logger.info("viewRedirect : redirect from: /view/redirect to: " + url);
+        if (url != null && !"/view/redirect".equals(url)) {
+            return Response.seeOther(new URI(url)).build();
         }
         return Response.ok(new CommonView("page_not_found_404.ftl", appConfig)).build();
     }
