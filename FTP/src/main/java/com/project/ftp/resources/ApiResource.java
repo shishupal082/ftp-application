@@ -218,7 +218,7 @@ public class ApiResource {
         ApiResponse apiResponse;
         try {
             authService.isLogin(request);
-            pathInfo = fileServiceV2.searchRequestedFileV3(path);
+            pathInfo = fileServiceV2.searchRequestedPath(path);
             eventTracking.addSuccessViewFile(request, EventName.GET_PATH_INFO, path, container, uiUsername);
             apiResponse = new ApiResponse(pathInfo);
         } catch (AppException ae) {

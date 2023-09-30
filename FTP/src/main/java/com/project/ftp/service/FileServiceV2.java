@@ -222,6 +222,13 @@ public class FileServiceV2 {
         logger.info("Search result: {}", pathInfo);
         return pathInfo;
     }
+    public PathInfo searchRequestedPath(String path) throws AppException {
+        if (path == null || path.isEmpty()) {
+            logger.info("path can not be null or empty: {}", path);
+            throw new AppException(ErrorCodes.INVALID_QUERY_PARAMS);
+        }
+        return fileService.getPathInfo(path);
+    }
     private HashMap<String, String> verifyDeleteRequestParameters(RequestDeleteFile deleteFile) throws AppException {
         if (deleteFile == null) {
             logger.info("deleteFile request is null.");
