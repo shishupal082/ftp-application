@@ -205,6 +205,31 @@ public class ApiResource {
         logger.info("getAllV4Data : Out");
         return response;
     }
+    @GET
+    @Path("/get_path_info")
+    @UnitOfWork
+    public ApiResponse getPathInfo(@Context HttpServletRequest request,
+                                   @QueryParam("path") String path,
+                                   @QueryParam("container") String container,
+                                   @QueryParam("u") String uiUsername) {
+        logger.info("getPathInfo: In, path: {}, container: {}, u: {}", path, container, uiUsername);
+        logger.info("user: {}", userService.getUserDataForLogging(request));
+        PathInfo pathInfo;
+        ApiResponse apiResponse;
+        try {
+            authService.isLogin(request);
+            pathInfo = fileServiceV2.searchRequestedFileV3(path);
+            eventTracking.addSuccessViewFile(request, EventName.GET_PATH_INFO, path, container, uiUsername);
+            apiResponse = new ApiResponse(pathInfo);
+        } catch (AppException ae) {
+            logger.info("Error in searching requested file: {}", ae.getErrorCode().getErrorCode());
+            eventTracking.trackViewFileFailure(request, EventName.GET_PATH_INFO, path, ae.getErrorCode(),
+                    container, uiUsername);
+            apiResponse = new ApiResponse(ae.getErrorCode());
+        }
+        logger.info("getPathInfo : Out, {}", apiResponse);
+        return apiResponse;
+    }
 
     @GET
     @Path("/get_database_files_info")

@@ -32,6 +32,7 @@ public enum EventName {
     GET_APP_CONFIG("get_app_config"),
     GET_SESSION_DATA("get_session_data"),
     GET_FILES_INFO("get_files_info"),
+    GET_PATH_INFO("get_path_info"),
     GET_DATABASE_FILES_INFO("get_database_files_info"),
     GET_DATABASE_TABLE_DATA("get_database_table_data"),
     GET_FILES_INFO_BY_FILENAME_PATTERN("get_files_info_by_filename_pattern"),

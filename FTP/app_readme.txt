@@ -1393,6 +1393,8 @@ Added new api
 this api will be used for reading any file saved in the computer
     - /view/redirect?u=requested_username&container=iframe&url=redirect_url
 this api will be used for redirecting to any link
+    - /api/get_path_info?u=requested_username&container=iframe&path=path
+this api will be used for checking pathInfo for any path (file / folder)
 
 
 Future releases

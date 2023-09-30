@@ -76,6 +76,10 @@
     "Scan directory based on user login [GET]"
   ],
   [
+    "/api/get_path_info?u=requested_username&container=iframe&path=path",
+    "Read pathInfo [GET]"
+  ],
+  [
     "/api/get_files_info_by_filename_pattern?filename=[.]txt&username=.",
     "Scan directory based on query parameter username and filename pattern [GET]"
   ],
