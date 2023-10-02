@@ -88,7 +88,6 @@ public class TestMSExcelService {
         String requestId;
         ApiResponse apiResponse;
         ApiResource apiResource = this.getApiResource();
-        // Both test 08 & 09 will produce same result
         requestId = "csv-test-08";
         apiResponse =  apiResource.updateMSExcelData(request, requestId);
         Assert.assertEquals("SUCCESS", apiResponse.getStatus());

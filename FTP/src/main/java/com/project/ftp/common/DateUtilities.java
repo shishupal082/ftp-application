@@ -56,7 +56,7 @@ public class DateUtilities {
             Date date = new SimpleDateFormat(oldPattern).parse(dateStr);
             DateFormat newDateFormat = new SimpleDateFormat(newPattern);
             result = newDateFormat.format(date);
-        } catch (ParseException e) {
+        } catch (Exception e) {
             result = defaultDate;
         }
         return result;

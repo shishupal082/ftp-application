@@ -183,3 +183,7 @@ excelDataConfig:
             value: "yyyy-MM-dd"
             dateRegex: "yyyy.MM.dd"
             regex: "^[0-9]{4}.[0-9]{2}.[0-9]{2}$"
+          - col_index: 1
+            value: "yyyy-MM-dd HH:mm"
+            dateRegex: "dd-MM-yyyy'T'HH:mm"
+            regex: "^[0-9]{2}-[0-9]{2}-[0-9]{4}[T][0-9]{2}[:][0-9]{2}$"
