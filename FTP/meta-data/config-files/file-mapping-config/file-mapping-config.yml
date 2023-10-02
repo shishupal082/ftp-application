@@ -25,5 +25,6 @@ csvConfig:
       - csv-test-06
       - csv-test-07
       - csv-test-08
+      - csv-test-09
     requiredColIndex: [0,1,2,3]
     fileConfig: [ "D:/workspace/ftp-application/FTP/meta-data/test-data/config-data/csv-config.csv", "CSV reading data config path" ]

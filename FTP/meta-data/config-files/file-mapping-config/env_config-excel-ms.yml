@@ -152,6 +152,28 @@ excelDataConfig:
     cellMapping:
       - defaultCellData: ""
         col_index: 1
+        rewrite: true
+        mappingData:
+          - col_index: 1
+            value: "yyyy-MM-dd"
+            dateRegex: "dd.MM.yyyy"
+            regex: "^[0-9]{2}.[0-9]{2}.[0-9]{4}$"
+          - col_index: 1
+            value: "yyyy-MM-dd"
+            dateRegex: "yyyy.MM.dd"
+            regex: "^[0-9]{4}.[0-9]{2}.[0-9]{2}$"
+  csv-test-09:
+    replaceCellString:
+      - index: 1
+        find: "es"
+        replace: "ES"
+      - index: 4
+        find: "&"
+        replace: "%26"
+    cellMapping:
+      - defaultCellData: ""
+        col_index: 1
+        rewrite: true
         mappingData:
           - col_index: 1
             value: "yyyy-MM-dd"

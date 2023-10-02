@@ -6,7 +6,6 @@ import com.project.ftp.intreface.*;
 import com.project.ftp.obj.ApiResponse;
 import com.project.ftp.resources.ApiResource;
 import com.project.ftp.service.AuthService;
-import com.project.ftp.service.MSExcelService;
 import com.project.ftp.service.UserService;
 import org.junit.Assert;
 import org.junit.Test;
@@ -82,7 +81,18 @@ public class TestMSExcelService {
         requestId = "csv-test-07";
         apiResponse =  apiResource.updateMSExcelData(request, requestId);
         Assert.assertEquals("SUCCESS", apiResponse.getStatus());
+    }
+    @Test
+    public void testTestMSExcelServiceV08() {
+        HttpServletRequest request = this.getHttpServletRequest();
+        String requestId;
+        ApiResponse apiResponse;
+        ApiResource apiResource = this.getApiResource();
+        // Both test 08 & 09 will produce same result
         requestId = "csv-test-08";
+        apiResponse =  apiResource.updateMSExcelData(request, requestId);
+        Assert.assertEquals("SUCCESS", apiResponse.getStatus());
+        requestId = "csv-test-09";
         apiResponse =  apiResource.updateMSExcelData(request, requestId);
         Assert.assertEquals("SUCCESS", apiResponse.getStatus());
     }

@@ -10,6 +10,7 @@ public class CellMapping {
     private String defaultCellData;
     private String dateRegex;
     private Integer col_index;
+    private Boolean rewrite;
     private ArrayList<CellMappingData> mappingData;
 
     public String getDefaultCellData() {
@@ -36,6 +37,14 @@ public class CellMapping {
         this.col_index = col_index;
     }
 
+    public Boolean getRewrite() {
+        return rewrite;
+    }
+
+    public void setRewrite(Boolean rewrite) {
+        this.rewrite = rewrite;
+    }
+
     public ArrayList<CellMappingData> getMappingData() {
         return mappingData;
     }
@@ -50,6 +59,7 @@ public class CellMapping {
                 "defaultCellData='" + defaultCellData + '\'' +
                 ", dateRegex='" + dateRegex + '\'' +
                 ", col_index=" + col_index +
+                ", rewrite=" + rewrite +
                 ", mappingData=" + mappingData +
                 '}';
     }

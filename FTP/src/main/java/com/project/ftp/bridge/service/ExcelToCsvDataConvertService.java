@@ -287,7 +287,7 @@ public class ExcelToCsvDataConvertService {
                                      ArrayList<CellMapping> cellMappings,
                                      ArrayList<ArrayList<Integer>> appendCellDataIndex) {
         if (appendCellDataIndex == null) {
-            if (cellMappings != null) {
+            if (cellMappings != null && rowDataFinal != null && rowDataFinal.size() > 0) {
                 return rowDataFinal;
             } else {
                 return rowData;
@@ -327,6 +327,7 @@ public class ExcelToCsvDataConvertService {
         String defaultCellData, cellData, cellData2, value, regex, dateRegex;
         ArrayList<String> rowDataFinal, range;
         DateUtilities dateUtilities = new DateUtilities();
+        Boolean rewrite;
         for(ArrayList<String> rowData: sheetData) {
             if (rowData != null) {
                 rowDataFinal = new ArrayList<>();
@@ -338,6 +339,7 @@ public class ExcelToCsvDataConvertService {
                         defaultCellData = cellMapping.getDefaultCellData();
                         dateRegex = cellMapping.getDateRegex();
                         cellsMappingData = cellMapping.getMappingData();
+                        rewrite = cellMapping.getRewrite();
                         if (defaultCellData != null) {
                             if (defaultCellData.equals("now") && dateRegex != null) {
                                 defaultCellData = dateUtilities.getDateStrFromPattern(dateRegex, defaultCellData);
@@ -376,7 +378,13 @@ public class ExcelToCsvDataConvertService {
                                 }
                             }
                         }
-                        rowDataFinal.add(cellData);
+                        if (rewrite != null && rewrite && colIndex != null && colIndex >= 0) {
+                            if (colIndex < rowData.size()) {
+                                rowData.set(colIndex, cellData);
+                            }
+                        } else {
+                            rowDataFinal.add(cellData);
+                        }
                     }
                 }
                 rowDataFinal = this.appendCellDataIndex(rowData, rowDataFinal, cellMappings, appendCellDataIndex);
