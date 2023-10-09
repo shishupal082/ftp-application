@@ -170,6 +170,30 @@ public class MSExcelBridgeService {
         }
         return fileConfig;
     }
+    private ArrayList<String> getValidIds(FileConfigMapping fileConfigMapping,
+                                          ArrayList<ArrayList<String>> csvData) {
+        ArrayList<String> result = new ArrayList<>();
+        ArrayList<Integer> requiredColIndex = fileConfigMapping.getRequiredColIndex();
+        if (requiredColIndex == null || requiredColIndex.size() < 4) {
+            logger.info("invalid requiredColIndex size is less than 4: {}", requiredColIndex);
+            return null;
+        }
+        int requestIdCol = requiredColIndex.get(0);
+        String reqId;
+        for(ArrayList<String> row: csvData) {
+            if (row == null) {
+                continue;
+            }
+            reqId = null;
+            if (row.size() > requestIdCol) {
+                reqId = row.get(requestIdCol);
+            }
+            if (reqId != null) {
+                result.add(reqId);
+            }
+        }
+        return result;
+    }
     public ExcelDataConfig updateExcelDataConfigFromGoogle(ExcelDataConfig excelDataConfigById, String requestId,
                                                     FileConfigMapping fileConfigMapping) {
         if (fileConfigMapping == null || requestId == null) {
@@ -195,8 +219,8 @@ public class MSExcelBridgeService {
                     }
                     excelDataConfigById.setGsConfig(gsConfig);
                 } else {
-                    logger.info("fileConfig not found in googleSheetData for requestId: {}, {}",
-                            requestId, fileConfigMapping);
+                    logger.info("fileConfig not found in googleSheetData for requestId: {}, googleSheetIds: {}, fileConfigMapping: {}",
+                            requestId, this.getValidIds(fileConfigMapping, sheetData), fileConfigMapping);
                 }
             } else {
                 excelDataConfigById = this.updateExcelDataConfigByIdFromCsv(requestId, excelDataConfigById,
@@ -224,8 +248,8 @@ public class MSExcelBridgeService {
                     excelDataConfigById.setExcelConfig(fileConfig);
                 }
             } else {
-                logger.info("fileConfig not found in csvData for requestId: {}, {}, {}",
-                        requestId, csvData, fileConfigMapping);
+                logger.info("fileConfig not found in csvData for requestId: {}, csvConfigIds: {}, fileConfigMapping: {}",
+                        requestId, this.getValidIds(fileConfigMapping, csvData), fileConfigMapping);
             }
         }
         return excelDataConfigById;

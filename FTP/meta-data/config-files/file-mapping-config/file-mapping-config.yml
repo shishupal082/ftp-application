@@ -26,5 +26,7 @@ csvConfig:
       - csv-test-07
       - csv-test-08
       - csv-test-09
+      - csv-test-id-not-found-in-csv-config
+      - csv-test-id-not-found-in-env_config-excel-ms_yml
     requiredColIndex: [0,1,2,3]
     fileConfig: [ "D:/workspace/ftp-application/FTP/meta-data/test-data/config-data/csv-config.csv", "CSV reading data config path" ]

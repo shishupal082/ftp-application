@@ -94,5 +94,14 @@ public class TestMSExcelService {
         requestId = "csv-test-09";
         apiResponse =  apiResource.updateMSExcelData(request, requestId);
         Assert.assertEquals("SUCCESS", apiResponse.getStatus());
+        requestId = "csv-test-id-not-found-in-csv-config";
+        apiResponse =  apiResource.getMSExcelData(request, requestId);
+        Assert.assertEquals("CONFIG_ERROR", apiResponse.getFailureCode());
+        requestId = "csv-test-id-not-found-in-env_config-excel-ms_yml";
+        apiResponse =  apiResource.getMSExcelData(request, requestId);
+        Assert.assertEquals("BAD_REQUEST_ERROR", apiResponse.getFailureCode());
+        requestId = "csv-test-id-not-found-error";
+        apiResponse =  apiResource.getMSExcelData(request, requestId);
+        Assert.assertEquals("CONFIG_ERROR", apiResponse.getFailureCode());
     }
 }
