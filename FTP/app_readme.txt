@@ -1385,6 +1385,7 @@ Sequence of operation
 - replaceCellString
 - mergeColumnConfig
 - removeColumnConfig
+- uniqueEntry
 
 26.09.2023
 -------------------

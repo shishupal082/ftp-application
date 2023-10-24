@@ -5,3 +5,5 @@ csv-test-06,D:/workspace/ftp-application/FTP/meta-data/test-data/test-data/01-so
 csv-test-07,D:/workspace/ftp-application/FTP/meta-data/test-data/test-data/01-source-csv.csv,sheet-name-empty,D:/workspace/ftp-application/FTP/meta-data/test-data/test-data/01-test-07-destination-csv.csv
 csv-test-08,D:/workspace/ftp-application/FTP/meta-data/test-data/test-data/02-source-csv.csv,sheet-name-empty,D:/workspace/ftp-application/FTP/meta-data/test-data/test-data/02-test-08-destination-csv.csv
 csv-test-09,D:/workspace/ftp-application/FTP/meta-data/test-data/test-data/02-source-csv.csv,sheet-name-empty,D:/workspace/ftp-application/FTP/meta-data/test-data/test-data/02-test-09-destination-csv.csv
+csv-test-10,D:/workspace/ftp-application/FTP/meta-data/test-data/test-data/03-source-csv.csv,sheet-name-empty,D:/workspace/ftp-application/FTP/meta-data/test-data/test-data/03-test-10-destination-csv.csv
+csv-test-11,D:/workspace/ftp-application/FTP/meta-data/test-data/test-data/04-source-csv.csv,sheet-name-empty,D:/workspace/ftp-application/FTP/meta-data/test-data/test-data/04-test-11-destination-csv.csv

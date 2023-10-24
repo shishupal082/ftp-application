@@ -1,0 +1,7 @@
+test0,20.09.2023,id1,r-1-c-2,unique
+test1,20.09.2023,id1,r-0-c-2,unique
+test2,20.09.2023,id2,r-1-c-2,unique
+test3,2023.09.20,id3,r-1-c-2,unique
+test1,Invalid-date,id1,r-1-c-2,duplicate
+test5
+test6

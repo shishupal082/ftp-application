@@ -313,6 +313,34 @@ public class ExcelToCsvDataConvertService {
         }
         return rowDataFinal;
     }
+    private String getDateTextFromCellData(ArrayList<Integer> datePosition, String cellData) {
+        String dateString = cellData;
+        Integer start, length, end;
+        int startIndex = 0, endIndex = 0;
+        if (dateString == null || datePosition == null || datePosition.size() < 3) {
+            return dateString;
+        }
+        start = datePosition.get(0);
+        length = datePosition.get(1);
+        end = datePosition.get(2);
+        if (start == null || length == null || end == null) {
+            return dateString;
+        }
+        if (dateString.length() <= length) {
+            return dateString;
+        }
+        if (start >= 0) {
+            startIndex = start;
+            endIndex = start + length;
+        } else if (end >= 0) {
+            startIndex = dateString.length()-length-end;
+            endIndex = dateString.length()-end;
+        }
+        if (startIndex >= 0 && endIndex >= 0 && startIndex < endIndex && startIndex < dateString.length() && endIndex <= dateString.length()) {
+            dateString = dateString.substring(startIndex, endIndex);
+        }
+        return dateString;
+    }
     public ArrayList<ArrayList<String>> applyCellMapping(ArrayList<ArrayList<String>> sheetData,
                                                          ExcelDataConfig excelDataConfigById) {
         if (sheetData == null || excelDataConfigById == null) {
@@ -324,8 +352,9 @@ public class ExcelToCsvDataConvertService {
         CellMapping cellMapping;
         ArrayList<CellMappingData> cellsMappingData;
         Integer colIndex, colIndex2;
-        String defaultCellData, cellData, cellData2, value, regex, dateRegex;
+        String defaultCellData, cellData, cellData2, value, regex, dateRegex, dateText;
         ArrayList<String> rowDataFinal, range;
+        ArrayList<Integer> datePosition;
         DateUtilities dateUtilities = new DateUtilities();
         Boolean rewrite;
         for(ArrayList<String> rowData: sheetData) {
@@ -356,6 +385,7 @@ public class ExcelToCsvDataConvertService {
                                     value = cellMappingData.getValue();
                                     range = cellMappingData.getRange();
                                     regex = cellMappingData.getRegex();
+                                    datePosition = cellMappingData.getDatePosition();
                                     dateRegex = cellMappingData.getDateRegex();
                                     if (value == null) {
                                         value = "";
@@ -364,7 +394,8 @@ public class ExcelToCsvDataConvertService {
                                         cellData2 = rowData.get(colIndex2);
                                         if (dateRegex != null) {
                                             if (regex != null && StaticService.isPatternMatching(cellData2, regex, false)) {
-                                                cellData = dateUtilities.getDateStrInNewPattern(value, dateRegex, cellData2, cellData2);
+                                                dateText = this.getDateTextFromCellData(datePosition, cellData2);
+                                                cellData = dateUtilities.getDateStrInNewPattern(value, dateRegex, dateText, dateText);
                                                 break;
                                             }
                                         } else if (range != null && range.contains(cellData2)) {
@@ -571,6 +602,51 @@ public class ExcelToCsvDataConvertService {
                 }
             }
             finalSheetData.add(finalRowData);
+        }
+        return finalSheetData;
+    }
+    public ArrayList<ArrayList<String>> applyUniqueEntry(ArrayList<ArrayList<String>> sheetData,
+                                                         ExcelDataConfig excelDataConfigById,
+                                                         ArrayList<String> tempUniqueStrings) {
+        if (sheetData == null || excelDataConfigById == null) {
+            return sheetData;
+        }
+        ArrayList<Integer> uniqueEntry = excelDataConfigById.getUniqueEntry();
+        if (uniqueEntry == null) {
+            return sheetData;
+        }
+        if (tempUniqueStrings == null) {
+            tempUniqueStrings = new ArrayList<>();
+        }
+        StringBuilder temp;
+        ArrayList<ArrayList<String>> finalSheetData = new ArrayList<>();
+        boolean isUniqueRow;
+        for(ArrayList<String> rowData: sheetData) {
+            if (rowData == null) {
+                continue;
+            }
+            isUniqueRow = false;
+            temp = new StringBuilder();
+            for(Integer i: uniqueEntry) {
+                if (i == null) {
+                    continue;
+                }
+                if (i < rowData.size()) {
+                    temp.append(rowData.get(i));
+                } else {
+                    isUniqueRow = true;
+                    break;
+                }
+            }
+            if (!isUniqueRow) {
+                if (!tempUniqueStrings.contains(temp.toString())) {
+                    isUniqueRow = true;
+                    tempUniqueStrings.add(temp.toString());
+                }
+            }
+            if (isUniqueRow) {
+                finalSheetData.add(rowData);
+            }
         }
         return finalSheetData;
     }

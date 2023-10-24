@@ -1,6 +1,14 @@
-test0,30-09-2023T09:30,r-1-c-2,r-1&-c-3
-test1,20.09.2023,r-0-c-2,r-0&c-3
-test2,20.09.2023,r-1-c-2,r-1-c-3
-test3,2023.09.20,r-1-c-2,r-1&-c-3
-test4,Invalid-date,r-1-c-2,r-1-c-3
-test5
+test-00,30-09-2023T09:30,r-1-c-2,r-1&-c-3
+test-01,20.09.2023,r-0-c-2,r-0&c-3
+test-02,20.09.2023,r-1-c-2,r-1-c-3
+test-03,2023.09.20,r-1-c-2,r-1&-c-3
+test-04,20/09/23,r-1-c-2,r-1&-c-3
+test-05,Dt. 20/09/23,r-1-c-2,r-1&-c-3
+test-06,20/09/2023,r-1-c-2,r-1&-c-3
+test-07,Dt. 20/09/2023,r-1-c-2,r-1&-c-3
+test-08,Variable text 20/09/2023,r-1-c-2,r-1&-c-3
+test-09,20/09/2023 Variable text,r-1-c-2,r-1&-c-3
+test-10,Fixed text 20/09/2023 Variable text,r-1-c-2,r-1&-c-3
+test-11,Variable text 20/09/2023 Fixed text,r-1-c-2,r-1&-c-3
+test-12,Invalid-date,r-1-c-2,r-1-c-3
+test-13

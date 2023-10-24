@@ -23,6 +23,7 @@ public class ExcelDataConfig {
     private ArrayList<ArrayList<Integer>> appendCellDataIndex;
     private ArrayList<MergeColumnConfig> mergeColumnConfig;
     private ArrayList<Integer> removeColumnConfig;
+    private ArrayList<Integer> uniqueEntry;
     public boolean isCopyOldData() {
         return copyOldData;
     }
@@ -154,6 +155,14 @@ public class ExcelDataConfig {
         this.removeColumnConfig = removeColumnConfig;
     }
 
+    public ArrayList<Integer> getUniqueEntry() {
+        return uniqueEntry;
+    }
+
+    public void setUniqueEntry(ArrayList<Integer> uniqueEntry) {
+        this.uniqueEntry = uniqueEntry;
+    }
+
     @Override
     public String toString() {
         return "ExcelDataConfig{" +
@@ -173,6 +182,7 @@ public class ExcelDataConfig {
                 ", appendCellDataIndex=" + appendCellDataIndex +
                 ", mergeColumnConfig=" + mergeColumnConfig +
                 ", removeColumnConfig=" + removeColumnConfig +
+                ", uniqueEntry=" + uniqueEntry +
                 '}';
     }
 }

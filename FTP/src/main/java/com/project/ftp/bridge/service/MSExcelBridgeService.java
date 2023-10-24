@@ -36,7 +36,8 @@ public class MSExcelBridgeService {
         return csvData;
     }
     private ArrayList<ArrayList<String>> readCsvFilePath(String srcFilepath,
-                                                           ExcelDataConfig excelDataConfigById) throws AppException{
+                                                           ExcelDataConfig excelDataConfigById,
+                                                         ArrayList<String> uniqueStrings) throws AppException{
         File file1 = new File(srcFilepath);
         if (!file1.isFile()) {
             logger.info("Source csv filepath: {} does not exist, {}", srcFilepath, excelDataConfigById);
@@ -52,12 +53,14 @@ public class MSExcelBridgeService {
         excelToCsvDataConvertService.applyReplaceCellString(sheetData, excelDataConfigById);
         sheetData = excelToCsvDataConvertService.applyColumnMapping(sheetData, excelDataConfigById);
         sheetData = excelToCsvDataConvertService.applyRemoveColumnConfig(sheetData, excelDataConfigById);
+        sheetData = excelToCsvDataConvertService.applyUniqueEntry(sheetData, excelDataConfigById, uniqueStrings);
         return sheetData;
     }
     private ArrayList<ArrayList<String>> readExcelFilePath(String srcFilepath, String sheetName,
-                                                           ExcelDataConfig excelDataConfigById) throws AppException{
+                                                           ExcelDataConfig excelDataConfigById,
+                                                           ArrayList<String> uniqueStrings) throws AppException{
         if (sheetName == null || sheetName.isEmpty()) {
-            return this.readCsvFilePath(srcFilepath, excelDataConfigById);
+            return this.readCsvFilePath(srcFilepath, excelDataConfigById, uniqueStrings);
         }
         MSExcelServiceUtils msExcelServiceUtils = new MSExcelServiceUtils();
         ArrayList<ArrayList<String>> sheetData = msExcelServiceUtils.readExcelSheetData(srcFilepath,
@@ -71,10 +74,12 @@ public class MSExcelBridgeService {
         excelToCsvDataConvertService.applyReplaceCellString(sheetData, excelDataConfigById);
         sheetData = excelToCsvDataConvertService.applyColumnMapping(sheetData, excelDataConfigById);
         sheetData = excelToCsvDataConvertService.applyRemoveColumnConfig(sheetData, excelDataConfigById);
+        sheetData = excelToCsvDataConvertService.applyUniqueEntry(sheetData, excelDataConfigById, uniqueStrings);
         return sheetData;
     }
     private ArrayList<ArrayList<String>> readGoogleSheetData(String spreadSheetId, String sheetName,
-                                                           ExcelDataConfig excelDataConfigById) throws AppException{
+                                                             ExcelDataConfig excelDataConfigById,
+                                                             ArrayList<String> uniqueStrings) throws AppException{
         GoogleSheetsOAuthApi googleSheetsOAuthApi = new GoogleSheetsOAuthApi(googleOAuthClientConfig);
         ArrayList<ArrayList<String>> sheetData = googleSheetsOAuthApi.readSheetData(spreadSheetId, sheetName);
         sheetData = excelToCsvDataConvertService.formatCellData(sheetData);
@@ -86,6 +91,7 @@ public class MSExcelBridgeService {
         excelToCsvDataConvertService.applyReplaceCellString(sheetData, excelDataConfigById);
         sheetData = excelToCsvDataConvertService.applyColumnMapping(sheetData, excelDataConfigById);
         sheetData = excelToCsvDataConvertService.applyRemoveColumnConfig(sheetData, excelDataConfigById);
+        sheetData = excelToCsvDataConvertService.applyUniqueEntry(sheetData, excelDataConfigById, uniqueStrings);
         return sheetData;
     }
     public ExcelDataConfig getExcelDataConfigByIdV1(String requestId,
@@ -200,6 +206,7 @@ public class MSExcelBridgeService {
             return excelDataConfigById;
         }
         ArrayList<String> fileConfig = fileConfigMapping.getFileConfig();
+        ArrayList<String> uniqueStrings = new ArrayList<>();
         if (fileConfig == null) {
             return excelDataConfigById;
         }
@@ -209,7 +216,7 @@ public class MSExcelBridgeService {
         }
         String srcFilepath = fileConfig.get(0);
         String sheetName = fileConfig.get(1);
-        ArrayList<ArrayList<String>> sheetData = this.readGoogleSheetData(srcFilepath, sheetName, null);
+        ArrayList<ArrayList<String>> sheetData = this.readGoogleSheetData(srcFilepath, sheetName, null, uniqueStrings);
         if (sheetData != null) {
             if (fileConfigMapping.getFileConfigSourceGoogle()) {
                 ArrayList<ExcelFileConfig> gsConfig = this.getFileConfigByRequestId(requestId, fileConfigMapping, sheetData);
@@ -305,6 +312,7 @@ public class MSExcelBridgeService {
         ArrayList<ExcelFileConfig> excelFileConfig = excelDataConfigById.getExcelConfig();
         ArrayList<ExcelFileConfig> csvFileConfig = excelDataConfigById.getCsvConfig();
         ArrayList<ExcelFileConfig> gsFileConfig = excelDataConfigById.getGsConfig();
+        ArrayList<String> uniqueStrings = new ArrayList<>();
         String srcFilepath, sheetName, destination, copyDestination;
         boolean copyOldData;
         ArrayList<ArrayList<String>> sheetData;
@@ -316,7 +324,7 @@ public class MSExcelBridgeService {
                 sheetName = fileConfig.getSheetName();
                 destination = fileConfig.getDestination();
                 copyDestination = fileConfig.getCopyDestination();
-                sheetData = this.readExcelFilePath(srcFilepath, sheetName, excelDataConfigById);
+                sheetData = this.readExcelFilePath(srcFilepath, sheetName, excelDataConfigById, uniqueStrings);
                 bridgeResponseSheetsData.add(new BridgeResponseSheetData(copyOldData,
                         destination, copyDestination, sheetData));
             }
@@ -327,7 +335,7 @@ public class MSExcelBridgeService {
                 srcFilepath = fileConfig.getSource();
                 destination = fileConfig.getDestination();
                 copyDestination = fileConfig.getCopyDestination();
-                sheetData = this.readCsvFilePath(srcFilepath, excelDataConfigById);
+                sheetData = this.readCsvFilePath(srcFilepath, excelDataConfigById, uniqueStrings);
                 bridgeResponseSheetsData.add(new BridgeResponseSheetData(copyOldData,
                         destination, copyDestination, sheetData));
             }
@@ -339,7 +347,7 @@ public class MSExcelBridgeService {
                 sheetName = fileConfig.getSheetName();
                 destination = fileConfig.getDestination();
                 copyDestination = fileConfig.getCopyDestination();
-                sheetData = this.readGoogleSheetData(srcFilepath, sheetName, excelDataConfigById);
+                sheetData = this.readGoogleSheetData(srcFilepath, sheetName, excelDataConfigById, uniqueStrings);
                 bridgeResponseSheetsData.add(new BridgeResponseSheetData(copyOldData,
                         destination, copyDestination, sheetData));
             }
