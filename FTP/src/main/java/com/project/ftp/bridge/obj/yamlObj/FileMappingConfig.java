@@ -3,6 +3,7 @@ package com.project.ftp.bridge.obj.yamlObj;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 
@@ -11,6 +12,7 @@ public class FileMappingConfig {
     private ArrayList<FileConfigMapping> googleConfig;
     private ArrayList<FileConfigMapping> excelConfig;
     private ArrayList<FileConfigMapping> csvConfig;
+    private HashMap<String, ArrayList<String>> combineRequestIds;
 
     public ArrayList<String> getExcelFileConfigPath() {
         return excelFileConfigPath;
@@ -44,6 +46,14 @@ public class FileMappingConfig {
         this.csvConfig = csvConfig;
     }
 
+    public HashMap<String, ArrayList<String>> getCombineRequestIds() {
+        return combineRequestIds;
+    }
+
+    public void setCombineRequestIds(HashMap<String, ArrayList<String>> combineRequestIds) {
+        this.combineRequestIds = combineRequestIds;
+    }
+
     @Override
     public String toString() {
         return "FileMappingConfig{" +
@@ -51,6 +61,7 @@ public class FileMappingConfig {
                 ", googleConfig=" + googleConfig +
                 ", excelConfig=" + excelConfig +
                 ", csvConfig=" + csvConfig +
+                ", combineRequestIds=" + combineRequestIds +
                 '}';
     }
 }

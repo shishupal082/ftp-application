@@ -88,10 +88,7 @@ public class TestMSExcelService {
         String requestId;
         ApiResponse apiResponse;
         ApiResource apiResource = this.getApiResource();
-        requestId = "csv-test-08";
-        apiResponse =  apiResource.updateMSExcelData(request, requestId);
-        Assert.assertEquals("SUCCESS", apiResponse.getStatus());
-        requestId = "csv-test-09";
+        requestId = "csv-test-08-09";
         apiResponse =  apiResource.updateMSExcelData(request, requestId);
         Assert.assertEquals("SUCCESS", apiResponse.getStatus());
         requestId = "csv-test-id-not-found-in-csv-config";

@@ -1,7 +1,10 @@
 excelFileConfigPath:
   - "D:/workspace/ftp-application/FTP/meta-data/config-files/file-mapping-config/env_config-excel-gs.yml"
   - "D:/workspace/ftp-application/FTP/meta-data/config-files/file-mapping-config/env_config-excel-ms.yml"
-
+combineRequestIds:
+  csv-test-08-09:
+    - csv-test-08
+    - csv-test-09
 googleConfig:
   - fileConfigSourceGoogle: true
     validRequestId: [gs-award,gs-circuit-checking-division,gs-circuit-checking-rb,gs-rbp]

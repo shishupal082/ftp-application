@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 public class MSExcelService {
     private final static Logger logger = LoggerFactory.getLogger(MSExcelService.class);
@@ -87,9 +88,35 @@ public class MSExcelService {
         }
         HashMap<String, ExcelDataConfig> excelDataConfigHashMap = yamlFileParser.getExcelDataConfig(
                 fileMappingConfig.getExcelFileConfigPath());
-
-        ArrayList<BridgeResponseSheetData> response =
-                appConfig.getAppToBridge().getExcelData(requestId, fileMappingConfig, excelDataConfigHashMap);
+        HashMap<String, ArrayList<String>> combineRequestIds = fileMappingConfig.getCombineRequestIds();
+        ArrayList<String> combinedIds;
+        if (excelDataConfigHashMap == null) {
+            logger.info("excelDataConfigHashMap is null.");
+            throw new AppException(ErrorCodes.CONFIG_ERROR);
+        }
+        ArrayList<BridgeResponseSheetData> response = null;
+        ArrayList<BridgeResponseSheetData> result;
+        if (combineRequestIds != null && combineRequestIds.containsKey(requestId)) {
+            for(Map.Entry<String, ArrayList<String>> entry: combineRequestIds.entrySet()) {
+                combinedIds = entry.getValue();
+                if (combinedIds != null) {
+                    for(String str: combinedIds) {
+                        result = appConfig.getAppToBridge().getExcelData(str, fileMappingConfig, excelDataConfigHashMap);
+                        if (result == null) {
+                            logger.info("Error in reading requestId: {}, partialId: {}", requestId, str);
+                        } else {
+                            if (response == null) {
+                                response = new ArrayList<>();
+                            }
+                            response.addAll(result);
+                        }
+                    }
+                }
+            }
+        }
+        if (response == null) {
+            response = appConfig.getAppToBridge().getExcelData(requestId, fileMappingConfig, excelDataConfigHashMap);
+        }
         if (response == null) {
             throw new AppException(ErrorCodes.SERVER_ERROR);
         }
