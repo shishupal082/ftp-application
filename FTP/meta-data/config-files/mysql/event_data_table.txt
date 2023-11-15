@@ -1,6 +1,5 @@
-
-create database feedback;
-
+create database ftpapp;
+use database;
 create table event_data(
     -- auto-generated primary key
     id bigint primary key not null auto_increment,

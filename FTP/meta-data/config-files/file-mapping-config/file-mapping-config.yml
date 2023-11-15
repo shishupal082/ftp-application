@@ -10,6 +10,10 @@ googleConfig:
     validRequestId: [gs-award,gs-circuit-checking-division,gs-circuit-checking-rb,gs-rbp]
     requiredColIndex: [5,2,3,4]
     fileConfig: ["file-mapping-spreadsheet-id", "file-mapping", "MB-00-ref-data"]
+  - fileConfigSourceGoogle: true
+    validRequestId: [gs-csv-test-12]
+    requiredColIndex: [5,2,3,4]
+    fileConfig: ["1kOsLTYrSJic7TpZx00R0BQnAOOyfF6flCGqtBKeltnY", "file-mapping", "MB-00-ref-data"]
 
 excelConfig:
   - validRequestId:
