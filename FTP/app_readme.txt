@@ -1398,6 +1398,14 @@ this api will be used for redirecting to any link
 this api will be used for checking pathInfo for any path (file / folder)
 
 
+8.0.2.012
+----------
+17.11.2023
+----------
+Added new api
+    - /api/get_excel_data_config?requestId=gs-excel-id [GET]
+
+
 Future releases
 -------------------
 Add new role called

@@ -73,7 +73,31 @@ public class MSExcelService {
             throw new AppException(ErrorCodes.CONFIG_ERROR);
         }
     }
-    private ArrayList<BridgeResponseSheetData> getActualMSExcelSheetData(String requestId) throws AppException {
+    private ArrayList<BridgeResponseSheetData> getActualMSExcelSheetData(ArrayList<ExcelDataConfig> excelDataConfigs,
+                                                                         HashMap<String, ArrayList<String>> tempGoogleSheetData) throws AppException {
+        ArrayList<BridgeResponseSheetData> response = null;
+        ArrayList<BridgeResponseSheetData> result;
+        if (excelDataConfigs != null) {
+            for(ExcelDataConfig excelDataConfig: excelDataConfigs) {
+                if (excelDataConfig != null) {
+                    result = appConfig.getAppToBridge().getExcelData(excelDataConfig, tempGoogleSheetData);
+                    if (result == null) {
+                        logger.info("Error in reading excelSheetData for id: {}", excelDataConfig.getId());
+                    } else {
+                        if (response == null) {
+                            response = new ArrayList<>();
+                        }
+                        response.addAll(result);
+                    }
+                }
+            }
+        }
+        if (response == null) {
+            throw new AppException(ErrorCodes.SERVER_ERROR);
+        }
+        return response;
+    }
+    private ArrayList<ExcelDataConfig> getActualMSExcelSheetDataConfig(String requestId) throws AppException {
         if (requestId == null || requestId.isEmpty()) {
             logger.info("requestId required: {}", requestId);
             throw new AppException(ErrorCodes.BAD_REQUEST_ERROR);
@@ -94,43 +118,47 @@ public class MSExcelService {
             logger.info("excelDataConfigHashMap is null.");
             throw new AppException(ErrorCodes.CONFIG_ERROR);
         }
-        ArrayList<BridgeResponseSheetData> response = null;
-        ArrayList<BridgeResponseSheetData> result;
+        ArrayList<ExcelDataConfig> response = null;
+        ExcelDataConfig result;
         if (combineRequestIds != null && combineRequestIds.containsKey(requestId)) {
-            for(Map.Entry<String, ArrayList<String>> entry: combineRequestIds.entrySet()) {
-                combinedIds = entry.getValue();
-                if (combinedIds != null) {
-                    for(String str: combinedIds) {
-                        result = appConfig.getAppToBridge().getExcelData(str, fileMappingConfig, excelDataConfigHashMap);
-                        if (result == null) {
-                            logger.info("Error in reading requestId: {}, partialId: {}", requestId, str);
-                        } else {
-                            if (response == null) {
-                                response = new ArrayList<>();
-                            }
-                            response.addAll(result);
+            combinedIds = combineRequestIds.get(requestId);
+            if (combinedIds != null) {
+                for (String str: combinedIds) {
+                    result = appConfig.getAppToBridge().getExcelDataConfig(str, fileMappingConfig, excelDataConfigHashMap);
+                    if (result == null) {
+                        logger.info("Error in reading requestId: {}, partialId: {}", requestId, str);
+                    } else {
+                        if (response == null) {
+                            response = new ArrayList<>();
                         }
+                        response.add(result);
                     }
                 }
             }
         }
         if (response == null) {
-            response = appConfig.getAppToBridge().getExcelData(requestId, fileMappingConfig, excelDataConfigHashMap);
-        }
-        if (response == null) {
-            throw new AppException(ErrorCodes.SERVER_ERROR);
+            result = appConfig.getAppToBridge().getExcelDataConfig(requestId, fileMappingConfig, excelDataConfigHashMap);
+            response = new ArrayList<>();
+            response.add(result);
         }
         return response;
     }
-    public ApiResponse getMSExcelSheetData(String requestId) throws AppException {
-        return new ApiResponse(this.getActualMSExcelSheetData(requestId));
+    public ApiResponse getMSExcelSheetData(String requestId,
+                                           HashMap<String, ArrayList<String>> tempGoogleSheetData) throws AppException {
+        ArrayList<ExcelDataConfig> excelDataConfigs = this.getActualMSExcelSheetDataConfig(requestId);
+        return new ApiResponse(this.getActualMSExcelSheetData(excelDataConfigs, tempGoogleSheetData));
     }
-    public ApiResponse updateMSExcelSheetData(String requestId) throws AppException {
-        ArrayList<BridgeResponseSheetData> response = this.getActualMSExcelSheetData(requestId);
+    public ApiResponse updateMSExcelSheetData(String requestId,
+                                              HashMap<String, ArrayList<String>> tempGoogleSheetData) throws AppException {
+        ArrayList<ExcelDataConfig> excelDataConfigs = this.getActualMSExcelSheetDataConfig(requestId);
+        ArrayList<BridgeResponseSheetData> response = this.getActualMSExcelSheetData(excelDataConfigs, tempGoogleSheetData);
         ArrayList<String> tempSavedFilePath = new ArrayList<>();
         for (BridgeResponseSheetData bridgeResponseSheetData: response) {
             this.saveCsvData(bridgeResponseSheetData, tempSavedFilePath);
         }
         return new ApiResponse(AppConstant.SUCCESS);
+    }
+    public ApiResponse getMSExcelSheetDataConfig(String requestId) throws AppException {
+        return new ApiResponse(this.getActualMSExcelSheetDataConfig(requestId));
     }
 }

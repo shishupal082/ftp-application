@@ -7,6 +7,7 @@ import java.util.ArrayList;
 @JsonIgnoreProperties(ignoreUnknown = true)
 
 public class ExcelDataConfig {
+    private String id;
     private boolean copyOldData;
     private Boolean skipEmptyRows; //default value: True
     private String dateFormat;
@@ -24,6 +25,15 @@ public class ExcelDataConfig {
     private ArrayList<MergeColumnConfig> mergeColumnConfig;
     private ArrayList<Integer> removeColumnConfig;
     private ArrayList<Integer> uniqueEntry;
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
     public boolean isCopyOldData() {
         return copyOldData;
     }
@@ -166,7 +176,8 @@ public class ExcelDataConfig {
     @Override
     public String toString() {
         return "ExcelDataConfig{" +
-                "copyOldData=" + copyOldData +
+                "id='" + id + '\'' +
+                ", copyOldData=" + copyOldData +
                 ", skipEmptyRows=" + skipEmptyRows +
                 ", dateFormat='" + dateFormat + '\'' +
                 ", timeFormat='" + timeFormat + '\'' +

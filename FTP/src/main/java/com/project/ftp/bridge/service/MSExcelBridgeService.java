@@ -169,6 +169,7 @@ public class MSExcelBridgeService {
             excelFileConfig.setSheetName(strUtils.formatString(sheet));
             excelFileConfig.setDestination(strUtils.formatString(dest));
             excelFileConfig.setCopyDestination(strUtils.formatString(copyDest));
+            excelFileConfig.setFileConfigMapping(fileConfigMapping);
             fileConfig.add(excelFileConfig);
         }
         if (fileConfig.size() == 0) {
@@ -199,6 +200,23 @@ public class MSExcelBridgeService {
             }
         }
         return result;
+    }
+    public ExcelDataConfig updateExcelDataConfigFromGoogle2(ExcelDataConfig excelDataConfigById, String requestId,
+                                                           FileConfigMapping fileConfigMapping) {
+        if (fileConfigMapping == null || requestId == null) {
+            return excelDataConfigById;
+        }
+        ExcelFileConfig excelFileConfig = new ExcelFileConfig();
+        excelFileConfig.setFileConfigMapping(fileConfigMapping);
+
+        ArrayList<ExcelFileConfig> gsConfig = new ArrayList<>();
+        gsConfig.add(excelFileConfig);
+
+        excelDataConfigById = new ExcelDataConfig();
+        excelDataConfigById.setGsConfig(gsConfig);
+        logger.info("excelDataConfigById generated from googleSheetData for requestId: {}, {}",
+                requestId, excelDataConfigById);
+        return excelDataConfigById;
     }
     public ExcelDataConfig updateExcelDataConfigFromGoogle(ExcelDataConfig excelDataConfigById, String requestId,
                                                     FileConfigMapping fileConfigMapping) {

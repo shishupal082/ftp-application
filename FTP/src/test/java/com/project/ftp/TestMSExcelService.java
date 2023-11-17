@@ -129,6 +129,19 @@ public class TestMSExcelService {
         ApiResource apiResource = this.getApiResource();
         requestId = "gs-csv-test-12";
         apiResponse =  apiResource.updateMSExcelData(request, requestId);
+        Assert.assertNotNull(apiResponse.getStatus());
+    }
+    @Test
+    public void testTestMSExcelServiceV13() {
+        HttpServletRequest request = this.getHttpServletRequest();
+        String requestId;
+        ApiResponse apiResponse;
+        ApiResource apiResource = this.getApiResource();
+        requestId = "csv-test-11";
+        apiResponse =  apiResource.getMSExcelDataConfig(request, requestId);
+        Assert.assertEquals("SUCCESS", apiResponse.getStatus());
+        requestId = "gs-csv-test-12";
+        apiResponse =  apiResource.getMSExcelDataConfig(request, requestId);
         Assert.assertEquals("SUCCESS", apiResponse.getStatus());
     }
 }
