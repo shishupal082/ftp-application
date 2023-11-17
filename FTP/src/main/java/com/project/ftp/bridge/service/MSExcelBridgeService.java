@@ -27,13 +27,37 @@ public class MSExcelBridgeService {
     }
     private ArrayList<ArrayList<String>> readCsvData(String srcFilepath) {
         ArrayList<ArrayList<String>> csvData = null;
+        ArrayList<ArrayList<String>> result = null;
+        String str;
+        boolean isEmptyRow;
         try {
             TextFileParser textFileParser = new TextFileParser((srcFilepath));
             csvData = textFileParser.getTextData();
+            isEmptyRow = true;
+            if (csvData != null) {
+                result = new ArrayList<>();
+                for(ArrayList<String> strings: csvData) {
+                    if (strings != null) {
+                        for(int i=0; i<strings.size(); i++) {
+                            str = strings.get(i);
+                            if (str != null) {
+                                str = str.trim();
+                                if (str.length() > 0) {
+                                    isEmptyRow = false;
+                                }
+                            }
+                            strings.set(i, str);
+                        }
+                        if (!isEmptyRow) {
+                            result.add(strings);
+                        }
+                    }
+                }
+            }
         } catch (Exception e) {
             logger.info("Error in reading csvData for filePath: {}", srcFilepath);
         }
-        return csvData;
+        return result;
     }
     private ArrayList<ArrayList<String>> readCsvFilePath(String srcFilepath,
                                                            ExcelDataConfig excelDataConfigById,
