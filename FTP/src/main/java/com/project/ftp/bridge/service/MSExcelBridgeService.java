@@ -26,38 +26,14 @@ public class MSExcelBridgeService {
         this.excelToCsvDataConvertService = new ExcelToCsvDataConvertService();
     }
     private ArrayList<ArrayList<String>> readCsvData(String srcFilepath) {
-        ArrayList<ArrayList<String>> csvData;
-        ArrayList<ArrayList<String>> result = null;
-        String str;
-        boolean isEmptyRow;
+        ArrayList<ArrayList<String>> csvData = null;
         try {
             TextFileParser textFileParser = new TextFileParser((srcFilepath));
             csvData = textFileParser.getTextData();
-            isEmptyRow = true;
-            if (csvData != null) {
-                result = new ArrayList<>();
-                for(ArrayList<String> strings: csvData) {
-                    if (strings != null) {
-                        for(int i=0; i<strings.size(); i++) {
-                            str = strings.get(i);
-                            if (str != null) {
-                                str = str.trim();
-                                if (str.length() > 0) {
-                                    isEmptyRow = false;
-                                }
-                            }
-                            strings.set(i, str);
-                        }
-                        if (!isEmptyRow) {
-                            result.add(strings);
-                        }
-                    }
-                }
-            }
         } catch (Exception e) {
             logger.info("Error in reading csvData for filePath: {}", srcFilepath);
         }
-        return result;
+        return csvData;
     }
     private ArrayList<ArrayList<String>> readCsvFilePath(String srcFilepath,
                                                            ExcelDataConfig excelDataConfigById,
@@ -339,6 +315,7 @@ public class MSExcelBridgeService {
             return null;
         }
         ArrayList<ArrayList<String>> csvData = this.readCsvData(srcFilepath);
+        csvData = excelToCsvDataConvertService.removeFirstEmptyRow(csvData);
         excelDataConfigById = this.updateExcelDataConfigById(excelDataConfigById, requestId, fileConfigMapping, csvData);
         logger.info("excelDataConfigById generated from csv for requestId: {}, {}", requestId, excelDataConfigById);
         return excelDataConfigById;

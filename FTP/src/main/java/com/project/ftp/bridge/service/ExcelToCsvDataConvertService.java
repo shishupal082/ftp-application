@@ -14,12 +14,39 @@ import java.util.HashMap;
 
 public class ExcelToCsvDataConvertService {
     final static Logger logger = LoggerFactory.getLogger(ExcelToCsvDataConvertService.class);
+    public ArrayList<ArrayList<String>> removeFirstEmptyRow(ArrayList<ArrayList<String>> csvData) {
+        if (csvData == null) {
+            return null;
+        }
+        ArrayList<ArrayList<String>> result = new ArrayList<>();
+        String str;
+        boolean isEmptyRow = true;
+        for(ArrayList<String> strings: csvData) {
+            if (strings != null) {
+                for(int i=0; i<strings.size(); i++) {
+                    str = strings.get(i);
+                    if (str != null) {
+                        str = str.trim();
+                        if (str.length() > 0) {
+                            isEmptyRow = false;
+                        }
+                    }
+                    strings.set(i, str);
+                }
+                if (!isEmptyRow) {
+                    result.add(strings);
+                }
+            }
+        }
+        return result;
+    }
     public ArrayList<ArrayList<String>> formatCellData(ArrayList<ArrayList<String>> sheetData) {
         String cellData;
         ArrayList<String> temp, rowData;
         ArrayList<ArrayList<String>> result = new ArrayList<>();
         int i, lastValidIndex, lastRowIndex=0;
         if (sheetData != null) {
+            sheetData = this.removeFirstEmptyRow(sheetData);
             for (int j=0; j<sheetData.size(); j++) {
                 rowData = sheetData.get(j);
                 temp = new ArrayList<>();
