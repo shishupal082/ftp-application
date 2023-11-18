@@ -1374,6 +1374,7 @@ It will convert:
     - csvData to csv data
     as per configuration added in meta-data/app_env_config_4.yml
 Sequence of operation
+- validFor: ["gs-csv-test-12-direct"]
 - dateFormat, timeFormat and dateTimeFormat [Only used for excel sheet reading not for google sheet]
 - change \n to ; and , to ...
 - skipRowIndex

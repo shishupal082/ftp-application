@@ -96,6 +96,12 @@ public class GoogleSheetsOAuthApi {
     }
     public ArrayList<ArrayList<String>> readSheetData(String spreadSheetId, String sheetName) throws AppException {
         // Build a new authorized API client service.
+        if (spreadSheetId == null || sheetName == null) {
+            logger.info("Invalid spreadSheetId or sheetName: {},{}", spreadSheetId, sheetName);
+            ErrorCodes errorCodes = ErrorCodes.CONFIG_ERROR;
+            errorCodes.setErrorString("Invalid spreadSheetId or sheetName.");
+            throw new AppException(errorCodes);
+        }
         this.isValidGoogleOAuthConfig();
         List<List<Object>> values = null;
         try {

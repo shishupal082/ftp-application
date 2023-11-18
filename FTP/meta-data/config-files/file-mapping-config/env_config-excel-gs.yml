@@ -1,4 +1,6 @@
 excelDataConfig:
+  gs-csv-test-12:
+    validFor: [gs-csv-test-12-direct, gs-csv-test-12-direct-invalid]
   gs-circuit-checking-division:
     skipRowIndex:
       - [0,1]

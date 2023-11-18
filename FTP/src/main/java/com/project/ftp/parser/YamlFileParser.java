@@ -99,13 +99,36 @@ public class YamlFileParser {
             throws AppException {
         HashMap<String, ExcelDataConfig> excelDataConfigHashMap = new HashMap<>();
         HashMap<String, ExcelDataConfig> temp;
+        ArrayList<String> validForIds;
+        HashMap<String, String> temp2 = new HashMap<>();
+        String key, newKey;
+        ExcelDataConfig value;
         if (excelConfigFilePaths == null) {
             return null;
         }
         for(String filePath: excelConfigFilePaths) {
             temp = this.getExcelDataConfigFromPath(filePath);
             if (temp != null) {
+                for(Map.Entry<String, ExcelDataConfig> entry: temp.entrySet()) {
+                    key = entry.getKey();
+                    value = entry.getValue();
+                    if (value != null) {
+                        validForIds = value.getValidFor();
+                        if (validForIds != null) {
+                            for(String str: validForIds) {
+                                temp2.put(str, key);
+                            }
+                        }
+                    }
+                }
                 excelDataConfigHashMap.putAll(temp);
+            }
+        }
+        for(Map.Entry<String, String> entry: temp2.entrySet()) {
+            key = entry.getKey();
+            newKey = entry.getValue();
+            if (key != null && !excelDataConfigHashMap.containsKey(newKey) && excelDataConfigHashMap.containsKey(key)) {
+                excelDataConfigHashMap.put(newKey, excelDataConfigHashMap.get(key));
             }
         }
         return excelDataConfigHashMap;

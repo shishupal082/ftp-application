@@ -13,6 +13,7 @@ public class ExcelDataConfig {
     private String dateFormat;
     private String timeFormat;
     private String dateTimeFormat;
+    private ArrayList<String> validFor;
     private ArrayList<ExcelFileConfig> excelConfig;
     private ArrayList<ExcelFileConfig> csvConfig;
     private ArrayList<ExcelFileConfig> gsConfig;
@@ -75,6 +76,14 @@ public class ExcelDataConfig {
 
     public void setDateTimeFormat(String dateTimeFormat) {
         this.dateTimeFormat = dateTimeFormat;
+    }
+
+    public ArrayList<String> getValidFor() {
+        return validFor;
+    }
+
+    public void setValidFor(ArrayList<String> validFor) {
+        this.validFor = validFor;
     }
 
     public ArrayList<ExcelFileConfig> getExcelConfig() {
@@ -182,6 +191,7 @@ public class ExcelDataConfig {
                 ", dateFormat='" + dateFormat + '\'' +
                 ", timeFormat='" + timeFormat + '\'' +
                 ", dateTimeFormat='" + dateTimeFormat + '\'' +
+                ", validFor=" + validFor +
                 ", excelConfig=" + excelConfig +
                 ", csvConfig=" + csvConfig +
                 ", gsConfig=" + gsConfig +

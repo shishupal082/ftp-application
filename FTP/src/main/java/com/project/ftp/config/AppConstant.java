@@ -91,6 +91,9 @@ public class AppConstant {
     public static final String IS_UPLOAD_FILE_ENABLE = "isUploadFileEnable";
     public static final String IS_DELETE_FILE_ENABLE = "isDeleteFileEnable";
     public static final String IS_GET_ALL_USERS_ENABLE = "getAllUsersEnable";
+    public static final String GOOGLE = "google";
+    public static final String MS_EXCEL = "msExcel";
+    public static final String CSV = "csv";
 
     public static final int CMD_LINE_ARG_IS_MYSQL_ENABLE = 0;
     public static final int CMD_LINE_ARG_1st_CONFIG_FILE = 1;
