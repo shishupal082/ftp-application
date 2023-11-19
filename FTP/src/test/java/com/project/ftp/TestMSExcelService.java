@@ -147,5 +147,27 @@ public class TestMSExcelService {
         ArrayList<ExcelDataConfig> excelDataConfigs =  msExcelService.getActualMSExcelSheetDataConfig(requestId);
         Assert.assertEquals(requestId, excelDataConfigs.get(0).getId());
         Assert.assertNotNull(excelDataConfigs.get(0).getValidFor());
+        Assert.assertEquals("google", excelDataConfigs.get(0).getGsConfig().get(0).getFileConfigMapping().getFileDataSource());
+
+        requestId = "gs-csv-test-12-direct";
+        //config for gs-csv-test-12 and gs-csv-test-12-direct should be same
+        excelDataConfigs =  msExcelService.getActualMSExcelSheetDataConfig(requestId);
+        Assert.assertEquals(requestId, excelDataConfigs.get(0).getId());
+        Assert.assertNotNull(excelDataConfigs.get(0).getValidFor());
+        Assert.assertEquals("google", excelDataConfigs.get(0).getGsConfig().get(0).getFileConfigMapping().getFileDataSource());
+
+        requestId = "csv-test-01";
+        excelDataConfigs =  msExcelService.getActualMSExcelSheetDataConfig(requestId);
+        Assert.assertEquals(requestId, excelDataConfigs.get(0).getId());
+        Assert.assertNull(excelDataConfigs.get(0).getValidFor());
+        Assert.assertEquals(1, excelDataConfigs.get(0).getCsvConfig().size());
+        Assert.assertEquals("csv", excelDataConfigs.get(0).getCsvConfig().get(0).getFileConfigMapping().getFileDataSource());
+
+        requestId = "csv-test-08-09";
+        excelDataConfigs =  msExcelService.getActualMSExcelSheetDataConfig(requestId);
+        Assert.assertEquals("csv-test-08", excelDataConfigs.get(0).getId());
+        Assert.assertEquals("csv-test-09", excelDataConfigs.get(1).getId());
+        Assert.assertEquals(1, excelDataConfigs.get(0).getCsvConfig().size());
+        Assert.assertEquals("csv", excelDataConfigs.get(0).getCsvConfig().get(0).getFileConfigMapping().getFileDataSource());
     }
 }

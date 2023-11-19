@@ -125,8 +125,8 @@ public class YamlFileParser {
             }
         }
         for(Map.Entry<String, String> entry: temp2.entrySet()) {
-            key = entry.getKey();
-            newKey = entry.getValue();
+            newKey = entry.getKey();
+            key = entry.getValue();
             if (key != null && !excelDataConfigHashMap.containsKey(newKey) && excelDataConfigHashMap.containsKey(key)) {
                 excelDataConfigHashMap.put(newKey, excelDataConfigHashMap.get(key));
             }
