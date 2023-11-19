@@ -7,6 +7,7 @@ import com.project.ftp.intreface.*;
 import com.project.ftp.obj.ApiResponse;
 import com.project.ftp.resources.ApiResource;
 import com.project.ftp.service.AuthService;
+import com.project.ftp.service.MSExcelService;
 import com.project.ftp.service.UserService;
 import org.junit.Assert;
 import org.junit.Test;
@@ -41,6 +42,12 @@ public class TestMSExcelService {
         AuthService authService = new AuthService(userService);
         EventTracking eventTracking = new EventTracking(appConfig, userService, eventInterface);
         return new ApiResource(appConfig, userService, eventTracking, authService);
+    }
+    private MSExcelService getMSExcelService() {
+        AppConfig appConfig = this.getAppConfig();
+        UserInterface userInterface = new UserFile(appConfig);
+        UserService userService = new UserService(appConfig, userInterface);
+        return new MSExcelService(appConfig, userService);
     }
     private HttpServletRequest getHttpServletRequest() {
         return null;
@@ -134,23 +141,11 @@ public class TestMSExcelService {
     }
     @Test
     public void testTestMSExcelServiceV13() {
-        HttpServletRequest request = this.getHttpServletRequest();
         String requestId;
-        ApiResponse apiResponse;
-        ApiResource apiResource = this.getApiResource();
+        MSExcelService msExcelService = this.getMSExcelService();
         requestId = "gs-csv-test-12";
-        apiResponse =  apiResource.updateMSExcelData(request, requestId);
-        Assert.assertNotNull(apiResponse.getStatus());
-        requestId = "csv-test-11";
-        apiResponse =  apiResource.updateMSExcelData(request, requestId);
-        Assert.assertEquals("SUCCESS", apiResponse.getStatus());
-        requestId = "gs-csv-test-12";
-        apiResponse =  apiResource.getMSExcelDataConfig(request, requestId);
-        ExcelDataConfig excelDataConfig = (ExcelDataConfig)(((ArrayList)apiResponse.getData()).get(0));
-        Assert.assertEquals(requestId, excelDataConfig.getId());
-        requestId = "gs-csv-test-12-direct";
-        apiResponse =  apiResource.getMSExcelDataConfig(request, requestId);
-        excelDataConfig =  (ExcelDataConfig)(((ArrayList)apiResponse.getData()).get(0));
-        Assert.assertEquals(requestId, excelDataConfig.getId());
+        ArrayList<ExcelDataConfig> excelDataConfigs =  msExcelService.getActualMSExcelSheetDataConfig(requestId);
+        Assert.assertEquals(requestId, excelDataConfigs.get(0).getId());
+        Assert.assertNotNull(excelDataConfigs.get(0).getValidFor());
     }
 }

@@ -207,9 +207,14 @@ public class MSExcelBridgeService {
         ArrayList<ExcelFileConfig> gsConfig = new ArrayList<>();
         gsConfig.add(excelFileConfig);
 
-        excelDataConfigById = new ExcelDataConfig();
-        excelDataConfigById.setGsConfig(gsConfig);
-        logger.info("excelDataConfigById generated: {}", excelDataConfigById);
+        if (excelDataConfigById == null) {
+            excelDataConfigById = new ExcelDataConfig();
+            excelDataConfigById.setGsConfig(gsConfig);
+            logger.info("excelDataConfigById generated: {}", excelDataConfigById);
+        } else {
+            excelDataConfigById.setGsConfig(gsConfig);
+            logger.info("excelDataConfigById updated: {}", excelDataConfigById);
+        }
         return excelDataConfigById;
     }
     public ExcelDataConfig updateExcelDataConfigById(ExcelDataConfig excelDataConfigById, String id,
@@ -227,6 +232,9 @@ public class MSExcelBridgeService {
         if (excelFileConfigs == null || excelFileConfigs.size() < 1) {
             return excelDataConfigById;
         }
+        excelDataConfigById.setCsvConfig(null);
+        excelDataConfigById.setExcelConfig(null);
+        excelDataConfigById.setGsConfig(null);
         if (AppConstant.CSV.equals(fileConfigMapping.getFileDataSource())) {
             excelDataConfigById.setCsvConfig(excelFileConfigs);
         } else if (AppConstant.MS_EXCEL.equals(fileConfigMapping.getFileDataSource())) {

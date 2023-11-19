@@ -14,7 +14,6 @@ import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
 
 public class MSExcelService {
     private final static Logger logger = LoggerFactory.getLogger(MSExcelService.class);
@@ -97,7 +96,7 @@ public class MSExcelService {
         }
         return response;
     }
-    private ArrayList<ExcelDataConfig> getActualMSExcelSheetDataConfig(String requestId) throws AppException {
+    public ArrayList<ExcelDataConfig> getActualMSExcelSheetDataConfig(String requestId) throws AppException {
         if (requestId == null || requestId.isEmpty()) {
             logger.info("requestId required: {}", requestId);
             throw new AppException(ErrorCodes.BAD_REQUEST_ERROR);
