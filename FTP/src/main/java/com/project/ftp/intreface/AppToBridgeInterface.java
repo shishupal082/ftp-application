@@ -18,8 +18,7 @@ public interface AppToBridgeInterface {
     ArrayList<String> getAllUsersName();
     Object getRolesConfig();
     String getTcpResponse(String tcpId, String data);
-    ArrayList<BridgeResponseSheetData> getExcelData(HttpServletRequest request, ExcelDataConfig excelDataConfig,
-                                                    HashMap<String, ArrayList<String>> tempGoogleSheetData);
+    ArrayList<BridgeResponseSheetData> getExcelData(HttpServletRequest request, ExcelDataConfig excelDataConfig);
     ExcelDataConfig getExcelDataConfig(HttpServletRequest request, String requestId, FileMappingConfig fileMappingConfig,
                        HashMap<String, ExcelDataConfig> excelDataConfigHashMap);
     String verifyGoogleIdToken(String googleIdToken);

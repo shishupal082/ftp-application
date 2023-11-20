@@ -170,8 +170,7 @@ public class AppToBridge implements AppToBridgeInterface {
         return excelDataConfigById;
     }
     @Override
-    public ArrayList<BridgeResponseSheetData> getExcelData(HttpServletRequest request,ExcelDataConfig excelDataConfigById,
-                                                           HashMap<String, ArrayList<String>> tempGoogleSheetData) throws AppException {
+    public ArrayList<BridgeResponseSheetData> getExcelData(HttpServletRequest request,ExcelDataConfig excelDataConfigById) throws AppException {
         if (excelDataConfigById == null) {
             logger.info("excelDataConfig error: excelDataConfig is null.");
             throw new AppException(ErrorCodes.CONFIG_ERROR);

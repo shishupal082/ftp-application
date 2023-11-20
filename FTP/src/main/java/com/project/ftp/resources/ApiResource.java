@@ -24,7 +24,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.HashMap;
 
 @Path("/api")
 @Produces(MediaType.APPLICATION_JSON)
@@ -931,10 +930,9 @@ public class ApiResource {
         LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
         logger.info("getMSExcelData: In, user: {}, requestId: {}", loginUserDetails, requestId);
         ApiResponse response;
-        HashMap<String, ArrayList<String>> tempGoogleSheetData = null;
         try {
             authService.isLogin(request);
-            response = msExcelService.getMSExcelSheetData(request, requestId, tempGoogleSheetData);
+            response = msExcelService.getMSExcelSheetData(request, requestId);
         } catch (AppException ae) {
             logger.info("Error in getMSExcelData: {}", ae.getErrorCode().getErrorCode());
             eventTracking.trackFailureEvent(request, EventName.MS_EXCEL_DATA, ae.getErrorCode());
@@ -951,10 +949,9 @@ public class ApiResource {
         LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
         logger.info("updateMSExcelData: In, user: {}, requestId: {}", loginUserDetails, requestId);
         ApiResponse response;
-        HashMap<String, ArrayList<String>> tempGoogleSheetData = null;
         try {
             authService.isLogin(request);
-            response = msExcelService.updateMSExcelSheetData(request, requestId, tempGoogleSheetData);
+            response = msExcelService.updateMSExcelSheetData(request, requestId);
         } catch (AppException ae) {
             logger.info("Error in updateMSExcelData: {}", ae.getErrorCode().getErrorCode());
             eventTracking.trackFailureEvent(request, EventName.MS_EXCEL_DATA, ae.getErrorCode());

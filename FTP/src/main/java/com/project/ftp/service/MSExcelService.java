@@ -79,14 +79,14 @@ public class MSExcelService {
             throw new AppException(ErrorCodes.CONFIG_ERROR);
         }
     }
-    private ArrayList<BridgeResponseSheetData> getActualMSExcelSheetData(HttpServletRequest request, ArrayList<ExcelDataConfig> excelDataConfigs,
-                                                                         HashMap<String, ArrayList<String>> tempGoogleSheetData) throws AppException {
+    private ArrayList<BridgeResponseSheetData> getActualMSExcelSheetData(HttpServletRequest request,
+                                                                         ArrayList<ExcelDataConfig> excelDataConfigs) throws AppException {
         ArrayList<BridgeResponseSheetData> response = null;
         ArrayList<BridgeResponseSheetData> result;
         if (excelDataConfigs != null) {
             for(ExcelDataConfig excelDataConfig: excelDataConfigs) {
                 if (excelDataConfig != null) {
-                    result = appConfig.getAppToBridge().getExcelData(request, excelDataConfig, tempGoogleSheetData);
+                    result = appConfig.getAppToBridge().getExcelData(request, excelDataConfig);
                     if (result == null) {
                         logger.info("Error in reading excelSheetData for id: {}", excelDataConfig.getId());
                     } else {
@@ -157,15 +157,13 @@ public class MSExcelService {
         }
         return response;
     }
-    public ApiResponse getMSExcelSheetData(HttpServletRequest request, String requestId,
-                                           HashMap<String, ArrayList<String>> tempGoogleSheetData) throws AppException {
+    public ApiResponse getMSExcelSheetData(HttpServletRequest request, String requestId) throws AppException {
         ArrayList<ExcelDataConfig> excelDataConfigs = this.getActualMSExcelSheetDataConfig(request, requestId, true);
-        return new ApiResponse(this.getActualMSExcelSheetData(request, excelDataConfigs, tempGoogleSheetData));
+        return new ApiResponse(this.getActualMSExcelSheetData(request, excelDataConfigs));
     }
-    public ApiResponse updateMSExcelSheetData(HttpServletRequest request, String requestId,
-                                              HashMap<String, ArrayList<String>> tempGoogleSheetData) throws AppException {
+    public ApiResponse updateMSExcelSheetData(HttpServletRequest request, String requestId) throws AppException {
         ArrayList<ExcelDataConfig> excelDataConfigs = this.getActualMSExcelSheetDataConfig(request, requestId, true);
-        ArrayList<BridgeResponseSheetData> response = this.getActualMSExcelSheetData(request, excelDataConfigs, tempGoogleSheetData);
+        ArrayList<BridgeResponseSheetData> response = this.getActualMSExcelSheetData(request, excelDataConfigs);
         ArrayList<String> tempSavedFilePath = new ArrayList<>();
         for (BridgeResponseSheetData bridgeResponseSheetData: response) {
             this.saveCsvData(bridgeResponseSheetData, tempSavedFilePath);
