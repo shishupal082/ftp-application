@@ -19,9 +19,16 @@ import java.util.ArrayList;
 
 public class TestMSExcelService {
     final static Logger logger = LoggerFactory.getLogger(TestMSExcelService.class);
+    private EventTracking getEventTracking(AppConfig appConfig) {
+        UserInterface userInterface = new UserFile(appConfig);
+        UserService userService = new UserService(appConfig, userInterface);
+        EventInterface eventInterface = new EventFile(appConfig);
+        return new EventTracking(appConfig, userService, eventInterface);
+    }
     private AppConfig getAppConfig() {
         AppConfig appConfig = new AppConfig();
         FtpConfiguration ftpConfiguration = new FtpConfiguration();
+        EventTracking eventTracking = this.getEventTracking(appConfig);
         ArrayList<String> arguments = new ArrayList<>();
         arguments.add("serverName");
         arguments.add("false");
@@ -29,7 +36,7 @@ public class TestMSExcelService {
         arguments.add("/meta-data/app_env_config_4.yml");
         appConfig.setCmdArguments(arguments);
         appConfig.updateFinalFtpConfiguration(ftpConfiguration);
-        AppToBridge appToBridge = new AppToBridge(ftpConfiguration, null);
+        AppToBridge appToBridge = new AppToBridge(ftpConfiguration, eventTracking);
         appConfig.setAppToBridge(appToBridge);
         appConfig.setFtpConfiguration(ftpConfiguration);
         return appConfig;
@@ -37,20 +44,29 @@ public class TestMSExcelService {
     public ApiResource getApiResource() {
         AppConfig appConfig = this.getAppConfig();
         UserInterface userInterface = new UserFile(appConfig);
-        EventInterface eventInterface = new EventFile(appConfig);
         UserService userService = new UserService(appConfig, userInterface);
         AuthService authService = new AuthService(userService);
-        EventTracking eventTracking = new EventTracking(appConfig, userService, eventInterface);
-        return new ApiResource(appConfig, userService, eventTracking, authService);
+        return new ApiResource(appConfig, userService, this.getEventTracking(appConfig), authService);
     }
     private MSExcelService getMSExcelService() {
         AppConfig appConfig = this.getAppConfig();
         UserInterface userInterface = new UserFile(appConfig);
         UserService userService = new UserService(appConfig, userInterface);
-        return new MSExcelService(appConfig, userService);
+        EventInterface eventInterface = new EventFile(appConfig);
+        EventTracking eventTracking = new EventTracking(appConfig, userService, eventInterface);
+        return new MSExcelService(appConfig, eventTracking, userService);
     }
     private HttpServletRequest getHttpServletRequest() {
         return null;
+    }
+    @Test
+    public void testTestMSExcelServiceV0() {
+        HttpServletRequest request = this.getHttpServletRequest();
+        String requestId;
+        MSExcelService msExcelService = this.getMSExcelService();
+        requestId = "gs-csv-test-13";
+        ArrayList<ExcelDataConfig> excelDataConfigs =  msExcelService.getActualMSExcelSheetDataConfig(request, requestId, false);
+        Assert.assertEquals(requestId, excelDataConfigs.get(0).getId());
     }
     @Test
     public void testTestMSExcelServiceV1() {
@@ -138,33 +154,37 @@ public class TestMSExcelService {
         requestId = "gs-csv-test-12";
         apiResponse =  apiResource.updateMSExcelData(request, requestId);
         Assert.assertNotNull(apiResponse.getStatus());
+        requestId = "csv-gs-csv-test-12";
+        apiResponse =  apiResource.updateMSExcelData(request, requestId);
+        Assert.assertNotNull(apiResponse.getStatus());
     }
     @Test
     public void testTestMSExcelServiceV13() {
+        HttpServletRequest request = this.getHttpServletRequest();
         String requestId;
         MSExcelService msExcelService = this.getMSExcelService();
         requestId = "gs-csv-test-12";
-        ArrayList<ExcelDataConfig> excelDataConfigs =  msExcelService.getActualMSExcelSheetDataConfig(requestId);
+        ArrayList<ExcelDataConfig> excelDataConfigs =  msExcelService.getActualMSExcelSheetDataConfig(request, requestId, false);
         Assert.assertEquals(requestId, excelDataConfigs.get(0).getId());
         Assert.assertNotNull(excelDataConfigs.get(0).getValidFor());
         Assert.assertEquals("google", excelDataConfigs.get(0).getGsConfig().get(0).getFileConfigMapping().getFileDataSource());
 
         requestId = "gs-csv-test-12-direct";
         //config for gs-csv-test-12 and gs-csv-test-12-direct should be same
-        excelDataConfigs =  msExcelService.getActualMSExcelSheetDataConfig(requestId);
+        excelDataConfigs =  msExcelService.getActualMSExcelSheetDataConfig(request, requestId, false);
         Assert.assertEquals(requestId, excelDataConfigs.get(0).getId());
         Assert.assertNotNull(excelDataConfigs.get(0).getValidFor());
         Assert.assertEquals("google", excelDataConfigs.get(0).getGsConfig().get(0).getFileConfigMapping().getFileDataSource());
 
         requestId = "csv-test-01";
-        excelDataConfigs =  msExcelService.getActualMSExcelSheetDataConfig(requestId);
+        excelDataConfigs =  msExcelService.getActualMSExcelSheetDataConfig(request, requestId, false);
         Assert.assertEquals(requestId, excelDataConfigs.get(0).getId());
         Assert.assertNull(excelDataConfigs.get(0).getValidFor());
         Assert.assertEquals(1, excelDataConfigs.get(0).getCsvConfig().size());
         Assert.assertEquals("csv", excelDataConfigs.get(0).getCsvConfig().get(0).getFileConfigMapping().getFileDataSource());
 
         requestId = "csv-test-08-09";
-        excelDataConfigs =  msExcelService.getActualMSExcelSheetDataConfig(requestId);
+        excelDataConfigs =  msExcelService.getActualMSExcelSheetDataConfig(request, requestId, false);
         Assert.assertEquals("csv-test-08", excelDataConfigs.get(0).getId());
         Assert.assertEquals("csv-test-09", excelDataConfigs.get(1).getId());
         Assert.assertEquals(1, excelDataConfigs.get(0).getCsvConfig().size());

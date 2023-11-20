@@ -17,6 +17,16 @@ googleConfig:
     fileConfig: ["1kOsLTYrSJic7TpZx00R0BQnAOOyfF6flCGqtBKeltnY", "file-mapping", "MB-00-ref-data"]
 
 csvConfig:
+  - fileDataSource: "google"
+    validRequestId:
+      - gs-csv-test-13
+    requiredColIndex: [0,1,-1,3]
+    fileConfig: [ "D:/workspace/ftp-application/FTP/meta-data/test-data/config-data/csv-config.csv", "CSV reading data config path" ]
+  - fileDataSource: "google"
+    validRequestId:
+      - csv-gs-csv-test-12
+    requiredColIndex: [0,1,2,3]
+    fileConfig: [ "D:/workspace/ftp-application/FTP/meta-data/test-data/config-data/csv-config.csv", "CSV reading data config path" ]
   - fileDataSource: "csv"
     validRequestId:
       - csv-test-01

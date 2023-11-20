@@ -5,6 +5,7 @@ import com.project.ftp.bridge.obj.yamlObj.ExcelDataConfig;
 import com.project.ftp.bridge.obj.yamlObj.FileMappingConfig;
 import com.project.ftp.mysql.MysqlUser;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -17,9 +18,9 @@ public interface AppToBridgeInterface {
     ArrayList<String> getAllUsersName();
     Object getRolesConfig();
     String getTcpResponse(String tcpId, String data);
-    ArrayList<BridgeResponseSheetData> getExcelData(ExcelDataConfig excelDataConfig,
+    ArrayList<BridgeResponseSheetData> getExcelData(HttpServletRequest request, ExcelDataConfig excelDataConfig,
                                                     HashMap<String, ArrayList<String>> tempGoogleSheetData);
-    ExcelDataConfig getExcelDataConfig(String requestId, FileMappingConfig fileMappingConfig,
+    ExcelDataConfig getExcelDataConfig(HttpServletRequest request, String requestId, FileMappingConfig fileMappingConfig,
                        HashMap<String, ExcelDataConfig> excelDataConfigHashMap);
     String verifyGoogleIdToken(String googleIdToken);
 }

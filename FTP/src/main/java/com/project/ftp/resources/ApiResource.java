@@ -50,7 +50,7 @@ public class ApiResource {
         this.authService = authService;
         this.securityService = new SecurityService();
         this.requestService = new RequestService(appConfig, userService, fileServiceV2);
-        this.msExcelService = new MSExcelService(appConfig, userService);
+        this.msExcelService = new MSExcelService(appConfig, eventTracking, userService);
     }
     @GET
     @Produces(MediaType.TEXT_HTML)
@@ -906,13 +906,15 @@ public class ApiResource {
     @Path("/get_excel_data_config")
     @UnitOfWork
     public ApiResponse getMSExcelDataConfig(@Context HttpServletRequest request,
-                                      @QueryParam("requestId") String requestId) {
+                                            @QueryParam("requestId") String requestId,
+                                            @QueryParam("update_gs_config") String updateGsConfig) {
         LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
-        logger.info("getMSExcelDataConfig: In, user: {}, requestId: {}", loginUserDetails, requestId);
+        logger.info("getMSExcelDataConfig: In, user: {}, requestId: {}, update_gs_config: {}",
+                loginUserDetails, requestId, updateGsConfig);
         ApiResponse response;
         try {
             authService.isLogin(request);
-            response = msExcelService.getMSExcelSheetDataConfig(requestId);
+            response = msExcelService.getMSExcelSheetDataConfig(request, requestId, updateGsConfig);
         } catch (AppException ae) {
             logger.info("Error in getMSExcelDataConfig: {}", ae.getErrorCode().getErrorCode());
             eventTracking.trackFailureEvent(request, EventName.MS_EXCEL_DATA, ae.getErrorCode());
@@ -932,7 +934,7 @@ public class ApiResource {
         HashMap<String, ArrayList<String>> tempGoogleSheetData = null;
         try {
             authService.isLogin(request);
-            response = msExcelService.getMSExcelSheetData(requestId, tempGoogleSheetData);
+            response = msExcelService.getMSExcelSheetData(request, requestId, tempGoogleSheetData);
         } catch (AppException ae) {
             logger.info("Error in getMSExcelData: {}", ae.getErrorCode().getErrorCode());
             eventTracking.trackFailureEvent(request, EventName.MS_EXCEL_DATA, ae.getErrorCode());
@@ -952,7 +954,7 @@ public class ApiResource {
         HashMap<String, ArrayList<String>> tempGoogleSheetData = null;
         try {
             authService.isLogin(request);
-            response = msExcelService.updateMSExcelSheetData(requestId, tempGoogleSheetData);
+            response = msExcelService.updateMSExcelSheetData(request, requestId, tempGoogleSheetData);
         } catch (AppException ae) {
             logger.info("Error in updateMSExcelData: {}", ae.getErrorCode().getErrorCode());
             eventTracking.trackFailureEvent(request, EventName.MS_EXCEL_DATA, ae.getErrorCode());

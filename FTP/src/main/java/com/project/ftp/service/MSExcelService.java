@@ -1,10 +1,13 @@
 package com.project.ftp.service;
 
+import com.project.ftp.FtpConfiguration;
 import com.project.ftp.bridge.obj.BridgeResponseSheetData;
 import com.project.ftp.bridge.obj.yamlObj.ExcelDataConfig;
 import com.project.ftp.bridge.obj.yamlObj.FileMappingConfig;
+import com.project.ftp.bridge.service.MSExcelBridgeService;
 import com.project.ftp.config.AppConfig;
 import com.project.ftp.config.AppConstant;
+import com.project.ftp.event.EventTracking;
 import com.project.ftp.exceptions.AppException;
 import com.project.ftp.exceptions.ErrorCodes;
 import com.project.ftp.obj.ApiResponse;
@@ -12,17 +15,21 @@ import com.project.ftp.parser.YamlFileParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.HashMap;
 
 public class MSExcelService {
     private final static Logger logger = LoggerFactory.getLogger(MSExcelService.class);
     private final AppConfig appConfig;
+    private final FtpConfiguration ftpConfiguration;
     private final FileService fileService;
     private final FileServiceV3 fileServiceV3;
-
-    public MSExcelService(final AppConfig appConfig, final UserService userService) {
+    private final EventTracking eventTracking;
+    public MSExcelService(final AppConfig appConfig, final EventTracking eventTracking, final UserService userService) {
         this.appConfig = appConfig;
+        this.eventTracking = eventTracking;
+        this.ftpConfiguration = appConfig.getFtpConfiguration();
         this.fileService = new FileService();
         this.fileServiceV3 = new FileServiceV3(appConfig, userService);
     }
@@ -72,14 +79,14 @@ public class MSExcelService {
             throw new AppException(ErrorCodes.CONFIG_ERROR);
         }
     }
-    private ArrayList<BridgeResponseSheetData> getActualMSExcelSheetData(ArrayList<ExcelDataConfig> excelDataConfigs,
+    private ArrayList<BridgeResponseSheetData> getActualMSExcelSheetData(HttpServletRequest request, ArrayList<ExcelDataConfig> excelDataConfigs,
                                                                          HashMap<String, ArrayList<String>> tempGoogleSheetData) throws AppException {
         ArrayList<BridgeResponseSheetData> response = null;
         ArrayList<BridgeResponseSheetData> result;
         if (excelDataConfigs != null) {
             for(ExcelDataConfig excelDataConfig: excelDataConfigs) {
                 if (excelDataConfig != null) {
-                    result = appConfig.getAppToBridge().getExcelData(excelDataConfig, tempGoogleSheetData);
+                    result = appConfig.getAppToBridge().getExcelData(request, excelDataConfig, tempGoogleSheetData);
                     if (result == null) {
                         logger.info("Error in reading excelSheetData for id: {}", excelDataConfig.getId());
                     } else {
@@ -96,15 +103,15 @@ public class MSExcelService {
         }
         return response;
     }
-    public ArrayList<ExcelDataConfig> getActualMSExcelSheetDataConfig(String requestId) throws AppException {
+    public ArrayList<ExcelDataConfig> getActualMSExcelSheetDataConfig(HttpServletRequest request, String requestId,
+                                                                      boolean updateGsConfig) throws AppException {
         if (requestId == null || requestId.isEmpty()) {
             logger.info("requestId required: {}", requestId);
             throw new AppException(ErrorCodes.BAD_REQUEST_ERROR);
         }
         YamlFileParser yamlFileParser = new YamlFileParser();
         FileMappingConfig fileMappingConfig =
-                yamlFileParser.getFileMappingConfigFromPath(
-                        appConfig.getFtpConfiguration().getFileMappingConfigFilePath());
+                yamlFileParser.getFileMappingConfigFromPath(ftpConfiguration.getFileMappingConfigFilePath());
         if (fileMappingConfig == null) {
             logger.info("fileMappingConfig is null.");
             throw new AppException(ErrorCodes.CONFIG_ERROR);
@@ -119,14 +126,19 @@ public class MSExcelService {
         }
         ArrayList<ExcelDataConfig> response = null;
         ExcelDataConfig result;
+        MSExcelBridgeService msExcelBridgeService = new MSExcelBridgeService(request, eventTracking,
+                ftpConfiguration.getGoogleOAuthClientConfig());
         if (combineRequestIds != null && combineRequestIds.containsKey(requestId)) {
             combinedIds = combineRequestIds.get(requestId);
             if (combinedIds != null) {
                 for (String str: combinedIds) {
-                    result = appConfig.getAppToBridge().getExcelDataConfig(str, fileMappingConfig, excelDataConfigHashMap);
+                    result = appConfig.getAppToBridge().getExcelDataConfig(request, str, fileMappingConfig, excelDataConfigHashMap);
                     if (result == null) {
                         logger.info("Error in reading requestId: {}, partialId: {}", requestId, str);
                     } else {
+                        if (updateGsConfig) {
+                            result = msExcelBridgeService.updateExcelDataConfigFromGoogle(result);
+                        }
                         if (response == null) {
                             response = new ArrayList<>();
                         }
@@ -136,28 +148,31 @@ public class MSExcelService {
             }
         }
         if (response == null) {
-            result = appConfig.getAppToBridge().getExcelDataConfig(requestId, fileMappingConfig, excelDataConfigHashMap);
+            result = appConfig.getAppToBridge().getExcelDataConfig(request, requestId, fileMappingConfig, excelDataConfigHashMap);
+            if (updateGsConfig) {
+                result = msExcelBridgeService.updateExcelDataConfigFromGoogle(result);
+            }
             response = new ArrayList<>();
             response.add(result);
         }
         return response;
     }
-    public ApiResponse getMSExcelSheetData(String requestId,
+    public ApiResponse getMSExcelSheetData(HttpServletRequest request, String requestId,
                                            HashMap<String, ArrayList<String>> tempGoogleSheetData) throws AppException {
-        ArrayList<ExcelDataConfig> excelDataConfigs = this.getActualMSExcelSheetDataConfig(requestId);
-        return new ApiResponse(this.getActualMSExcelSheetData(excelDataConfigs, tempGoogleSheetData));
+        ArrayList<ExcelDataConfig> excelDataConfigs = this.getActualMSExcelSheetDataConfig(request, requestId, true);
+        return new ApiResponse(this.getActualMSExcelSheetData(request, excelDataConfigs, tempGoogleSheetData));
     }
-    public ApiResponse updateMSExcelSheetData(String requestId,
+    public ApiResponse updateMSExcelSheetData(HttpServletRequest request, String requestId,
                                               HashMap<String, ArrayList<String>> tempGoogleSheetData) throws AppException {
-        ArrayList<ExcelDataConfig> excelDataConfigs = this.getActualMSExcelSheetDataConfig(requestId);
-        ArrayList<BridgeResponseSheetData> response = this.getActualMSExcelSheetData(excelDataConfigs, tempGoogleSheetData);
+        ArrayList<ExcelDataConfig> excelDataConfigs = this.getActualMSExcelSheetDataConfig(request, requestId, true);
+        ArrayList<BridgeResponseSheetData> response = this.getActualMSExcelSheetData(request, excelDataConfigs, tempGoogleSheetData);
         ArrayList<String> tempSavedFilePath = new ArrayList<>();
         for (BridgeResponseSheetData bridgeResponseSheetData: response) {
             this.saveCsvData(bridgeResponseSheetData, tempSavedFilePath);
         }
         return new ApiResponse(AppConstant.SUCCESS);
     }
-    public ApiResponse getMSExcelSheetDataConfig(String requestId) throws AppException {
-        return new ApiResponse(this.getActualMSExcelSheetDataConfig(requestId));
+    public ApiResponse getMSExcelSheetDataConfig(HttpServletRequest request, String requestId, String updateGsConfig) throws AppException {
+        return new ApiResponse(this.getActualMSExcelSheetDataConfig(request, requestId, AppConstant.TRUE.equals(updateGsConfig)));
     }
 }

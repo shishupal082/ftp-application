@@ -24,6 +24,7 @@ import com.project.ftp.service.StaticService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -35,8 +36,10 @@ public class AppToBridge implements AppToBridgeInterface {
     private final EmailConfig emailConfig;
     private final CommunicationConfig communicationConfig;
     private final FtpConfiguration ftpConfiguration;
+    private final EventTracking eventTracking;
     public AppToBridge(FtpConfiguration ftpConfiguration, EventTracking eventTracking) {
         this.ftpConfiguration = ftpConfiguration;
+        this.eventTracking = eventTracking;
         this.emailConfig = ftpConfiguration.getEmailConfig();
         this.communicationConfig = ftpConfiguration.getCommunicationConfig();
         SocialLoginConfig socialLoginConfig = ftpConfiguration.getSocialLoginConfig();
@@ -121,7 +124,7 @@ public class AppToBridge implements AppToBridgeInterface {
         return tcpClient.callTcpServer(data, tcpConfig.getTtl());
     }
     @Override
-    public ExcelDataConfig getExcelDataConfig(String requestId, FileMappingConfig fileMappingConfig,
+    public ExcelDataConfig getExcelDataConfig(HttpServletRequest request, String requestId, FileMappingConfig fileMappingConfig,
                                               HashMap<String, ExcelDataConfig> excelConfigHashMap) throws AppException {
         if (requestId == null || fileMappingConfig == null) {
             logger.info("fileMappingConfig error: requestId or fileMappingConfig is null: {},{}", requestId, fileMappingConfig);
@@ -132,7 +135,7 @@ public class AppToBridge implements AppToBridgeInterface {
         ArrayList<FileConfigMapping> fileConfigMappingsExcel = fileMappingConfig.getExcelConfig();
         ArrayList<FileConfigMapping> fileConfigMappingsCsv = fileMappingConfig.getCsvConfig();
 
-        MSExcelBridgeService msExcelBridgeService = new MSExcelBridgeService(null);
+        MSExcelBridgeService msExcelBridgeService = new MSExcelBridgeService(request, eventTracking, null);
         //ExcelDataConfig excelDataConfigById =  excelConfig.get(requestId)
         ExcelDataConfig excelDataConfigById = msExcelBridgeService.getExcelDataConfigByIdV1(requestId,
                 excelConfigHashMap);
@@ -167,15 +170,14 @@ public class AppToBridge implements AppToBridgeInterface {
         return excelDataConfigById;
     }
     @Override
-    public ArrayList<BridgeResponseSheetData> getExcelData(ExcelDataConfig excelDataConfigById,
+    public ArrayList<BridgeResponseSheetData> getExcelData(HttpServletRequest request,ExcelDataConfig excelDataConfigById,
                                                            HashMap<String, ArrayList<String>> tempGoogleSheetData) throws AppException {
         if (excelDataConfigById == null) {
             logger.info("excelDataConfig error: excelDataConfig is null.");
             throw new AppException(ErrorCodes.CONFIG_ERROR);
         }
-        MSExcelBridgeService msExcelBridgeService = new MSExcelBridgeService(
+        MSExcelBridgeService msExcelBridgeService = new MSExcelBridgeService(request, eventTracking,
                 ftpConfiguration.getGoogleOAuthClientConfig());
-        excelDataConfigById = msExcelBridgeService.updateExcelDataConfigFromGoogle(excelDataConfigById);
         ArrayList<BridgeResponseSheetData> result = msExcelBridgeService.readExcelSheetData(excelDataConfigById);
         if (result != null) {
             logger.info("excelSheetDataRead completed for excelDataConfigById.id: {}", excelDataConfigById.getId());

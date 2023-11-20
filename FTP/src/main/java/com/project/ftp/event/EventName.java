@@ -42,6 +42,7 @@ public enum EventName {
     VERIFY_PERMISSION("verify_permission"),
     CALL_TCP("call_tcp"),
     MS_EXCEL_DATA("ms_excel_data"),
+    GOOGLE_API("google_api"),
     GET_ROLES_CONFIG("get_roles_config"),
     AES_ENCRYPTION("aes_encryption"),
     AES_DECRYPTION("aes_decryption"),

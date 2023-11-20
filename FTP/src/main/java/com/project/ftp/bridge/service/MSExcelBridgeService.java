@@ -7,12 +7,15 @@ import com.project.ftp.bridge.obj.yamlObj.ExcelFileConfig;
 import com.project.ftp.bridge.obj.yamlObj.FileConfigMapping;
 import com.project.ftp.common.StrUtils;
 import com.project.ftp.config.AppConstant;
+import com.project.ftp.event.EventTracking;
 import com.project.ftp.exceptions.AppException;
 import com.project.ftp.exceptions.ErrorCodes;
 import com.project.ftp.parser.TextFileParser;
+import com.project.ftp.service.StaticService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -21,9 +24,14 @@ public class MSExcelBridgeService {
     final static Logger logger = LoggerFactory.getLogger(MSExcelBridgeService.class);
     private final ExcelToCsvDataConvertService excelToCsvDataConvertService;
     private final GoogleOAuthClientConfig googleOAuthClientConfig;
-    public MSExcelBridgeService(GoogleOAuthClientConfig googleOAuthClientConfig){
+    private final HttpServletRequest request;
+    private final EventTracking eventTracking;
+    public MSExcelBridgeService(HttpServletRequest request, EventTracking eventTracking,
+                                GoogleOAuthClientConfig googleOAuthClientConfig){
         this.googleOAuthClientConfig = googleOAuthClientConfig;
+        this.eventTracking = eventTracking;
         this.excelToCsvDataConvertService = new ExcelToCsvDataConvertService();
+        this.request = request;
     }
     private ArrayList<ArrayList<String>> readCsvData(String srcFilepath) {
         ArrayList<ArrayList<String>> csvData = null;
@@ -80,8 +88,8 @@ public class MSExcelBridgeService {
     private ArrayList<ArrayList<String>> readGoogleSheetData(String spreadSheetId, String sheetName,
                                                              ExcelDataConfig excelDataConfigById,
                                                              ArrayList<String> uniqueStrings) throws AppException{
-        GoogleSheetsOAuthApi googleSheetsOAuthApi = new GoogleSheetsOAuthApi(googleOAuthClientConfig);
-        ArrayList<ArrayList<String>> sheetData = googleSheetsOAuthApi.readSheetData(spreadSheetId, sheetName);
+        GoogleSheetsOAuthApi googleSheetsOAuthApi = new GoogleSheetsOAuthApi(eventTracking, googleOAuthClientConfig);
+        ArrayList<ArrayList<String>> sheetData = googleSheetsOAuthApi.readSheetData(request, spreadSheetId, sheetName);
         sheetData = excelToCsvDataConvertService.formatCellData(sheetData);
         sheetData = excelToCsvDataConvertService.applySkipRowEntry(sheetData, excelDataConfigById);
         sheetData = excelToCsvDataConvertService.skipEmptyRows(sheetData, excelDataConfigById);
@@ -132,7 +140,7 @@ public class MSExcelBridgeService {
     }
     private ArrayList<ExcelFileConfig> getFileConfigByRequestId(String requestId, FileConfigMapping fileConfigMapping,
                                                                 ArrayList<ArrayList<String>> csvData) {
-        if (fileConfigMapping == null) {
+        if (fileConfigMapping == null || requestId == null) {
             return null;
         }
         ArrayList<Integer> requiredColIndex = fileConfigMapping.getRequiredColIndex();
@@ -141,7 +149,7 @@ public class MSExcelBridgeService {
             return null;
         }
         int requestIdCol, sourceCol, sheetNameCol, destinationCol;
-        Integer copyDestinationCol = null;
+        int copyDestinationCol = -1;
         StrUtils strUtils = new StrUtils();
         requestIdCol = requiredColIndex.get(0);
         sourceCol = requiredColIndex.get(1);
@@ -159,28 +167,28 @@ public class MSExcelBridgeService {
             }
             req = null;
             copyDest = null;
-            if (row.size() > requestIdCol) {
+            if (requestIdCol >= 0 && row.size() > requestIdCol) {
                 req = row.get(requestIdCol);
             }
             if (!requestId.equals(req)) {
                 continue;
             }
-            if (row.size() > sourceCol) {
+            if (sourceCol >= 0 && row.size() > sourceCol) {
                 srcPath = row.get(sourceCol);
             } else {
                 continue;
             }
-            if (row.size() > sheetNameCol) {
+            if (sheetNameCol >= 0 && row.size() > sheetNameCol) {
                 sheet = row.get(sheetNameCol);
             } else {
                 sheet = null;
             }
-            if (row.size() > destinationCol) {
+            if (destinationCol >= 0 && row.size() > destinationCol) {
                 dest = row.get(destinationCol);
             } else {
                 dest = null;
             }
-            if (copyDestinationCol != null && row.size() > copyDestinationCol) {
+            if (copyDestinationCol >= 0 && row.size() > copyDestinationCol) {
                 copyDest = row.get(copyDestinationCol);
             }
             excelFileConfig = new ExcelFileConfig();
@@ -244,42 +252,70 @@ public class MSExcelBridgeService {
         }
         return excelDataConfigById;
     }
-    public ExcelDataConfig updateExcelDataConfigFromGoogle(ExcelDataConfig excelDataConfigById) {
-        if (excelDataConfigById == null) {
-            return null;
-        }
-        String id = excelDataConfigById.getId();
-        ArrayList<ExcelFileConfig> gsConfig = excelDataConfigById.getGsConfig();
-        ExcelFileConfig excelFileConfig;
+    private ArrayList<ExcelFileConfig> getGsConfigEntry(String id, ExcelFileConfig excelFileConfig) {
         FileConfigMapping fileConfigMapping;
         ArrayList<String> fileConfig;
-        if (id == null || gsConfig == null) {
-            logger.info("Invalid excelDataConfigById, id or gsConfig is null: {}, {}, {}",
-                    id, gsConfig, excelDataConfigById);
-            return excelDataConfigById;
-        }
-        if (gsConfig.size() != 1) {
-            return excelDataConfigById;
-        }
-        excelFileConfig = gsConfig.get(0);
+        ArrayList<ExcelFileConfig> gsConfig2 = new ArrayList<>();
         if (excelFileConfig == null) {
-            return excelDataConfigById;
+            return null;
+        }
+        if (StaticService.isValidString(excelFileConfig.getSource()) && StaticService.isValidString(excelFileConfig.getSheetName())) {
+            gsConfig2.add(excelFileConfig);
+            return gsConfig2;
         }
         fileConfigMapping = excelFileConfig.getFileConfigMapping();
         if (fileConfigMapping == null) {
-            return excelDataConfigById;
+            gsConfig2.add(excelFileConfig);
+            return gsConfig2;
         }
         fileConfig = fileConfigMapping.getFileConfig();
         if (fileConfig == null || fileConfig.size() < 2) {
-            return excelDataConfigById;
+            gsConfig2.add(excelFileConfig);
+            return gsConfig2;
         }
         ArrayList<String> uniqueStrings = new ArrayList<>();
         String srcFilepath = fileConfig.get(0);
         String sheetName = fileConfig.get(1);
         ArrayList<ArrayList<String>> sheetData = this.readGoogleSheetData(srcFilepath, sheetName, null, uniqueStrings);
         if (sheetData != null) {
-            excelDataConfigById.setGsConfig(null);
-            excelDataConfigById = this.updateExcelDataConfigById(excelDataConfigById, id, fileConfigMapping, sheetData);
+            gsConfig2 = this.getFileConfigByRequestId(id, fileConfigMapping, sheetData);
+        }
+        return gsConfig2;
+    }
+    public ExcelDataConfig updateExcelDataConfigFromGoogle(ExcelDataConfig excelDataConfigById) {
+        if (excelDataConfigById == null) {
+            return null;
+        }
+        String id = excelDataConfigById.getId();
+        ArrayList<ExcelFileConfig> gsConfig = excelDataConfigById.getGsConfig();
+        ArrayList<ExcelFileConfig> gsConfig2, gsConfigTemp;
+        if (gsConfig == null) {
+            return excelDataConfigById;
+        }
+        if (id == null) {
+            logger.info("Invalid excelDataConfigById, id is null");
+            return excelDataConfigById;
+        }
+        gsConfig2 = new ArrayList<>();
+        FileConfigMapping fileConfigMapping = null;
+        for(ExcelFileConfig excelFileConfig: gsConfig) {
+            fileConfigMapping = excelFileConfig.getFileConfigMapping();
+            gsConfigTemp = this.getGsConfigEntry(id, excelFileConfig);
+            if (gsConfigTemp != null) {
+                gsConfig2.addAll(gsConfigTemp);
+            }
+        }
+        excelDataConfigById.setGsConfig(null);
+        excelDataConfigById.setCsvConfig(null);
+        excelDataConfigById.setExcelConfig(null);
+        if (gsConfig2.size() > 0 && fileConfigMapping != null) {
+            if (AppConstant.CSV.equals(fileConfigMapping.getFileDataSource())) {
+                excelDataConfigById.setCsvConfig(gsConfig2);
+            } else if (AppConstant.MS_EXCEL.equals(fileConfigMapping.getFileDataSource())) {
+                excelDataConfigById.setExcelConfig(gsConfig2);
+            } else {
+                excelDataConfigById.setGsConfig(gsConfig2);
+            }
         }
         return excelDataConfigById;
     }
