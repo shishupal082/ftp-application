@@ -229,7 +229,11 @@
   ],
   [
     "/api/get_excel_data?requestId=gs-excel-id",
-    "Call get GS/CSV/MS_Excel_sheet_Data [GET]"
+    "Call get GS/CSV/MS_Excel_sheet_Data as JSON [GET]"
+  ],
+  [
+    "/api/get_excel_data_csv?requestId=gs-excel-id",
+    "Call get GS/CSV/MS_Excel_sheet_Data as CSV [GET]"
   ],
   [
     "/api/get_excel_data_config?requestId=gs-excel-id&update_gs_config=true",

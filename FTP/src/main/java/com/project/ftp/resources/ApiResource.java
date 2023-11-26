@@ -9,6 +9,7 @@ import com.project.ftp.exceptions.ErrorCodes;
 import com.project.ftp.obj.*;
 import com.project.ftp.service.*;
 import io.dropwizard.hibernate.UnitOfWork;
+import org.apache.poi.util.StringUtil;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataParam;
 import org.slf4j.Logger;
@@ -838,8 +839,6 @@ public class ApiResource {
         logger.info("md5Encrypt : Out");
         return response;
     }
-
-
     @POST
     @Path("/verify_permission")
     @UnitOfWork
@@ -940,6 +939,28 @@ public class ApiResource {
         }
         logger.info("getMSExcelData: Out, {}", response.toStringV2());
         return response;
+    }
+    @GET
+    @Path("/get_excel_data_csv")
+    @UnitOfWork
+    @Produces(MediaType.TEXT_HTML)
+    public Response getMSExcelDataCsv(@Context HttpServletRequest request,
+                                      @QueryParam("requestId") String requestId) {
+        LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
+        logger.info("getMSExcelDataCsv: In, user: {}, requestId: {}", loginUserDetails, requestId);
+        String response = null;
+        try {
+            authService.isLogin(request);
+            response = msExcelService.getMSExcelSheetDataCsv(request, requestId);
+        } catch (AppException ae) {
+            logger.info("Error in getMSExcelDataCsv: {}", ae.getErrorCode().getErrorCode());
+            eventTracking.trackFailureEvent(request, EventName.MS_EXCEL_DATA, ae.getErrorCode());
+        }
+        if (response == null) {
+            response = AppConstant.EmptyStr;
+        }
+        logger.info("getMSExcelDataCsv: Out, {}", response.length());
+        return Response.ok(response).build();
     }
     @GET
     @Path("/update_excel_data")

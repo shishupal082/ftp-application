@@ -102,6 +102,7 @@ public class AppConstant {
     public static final int maxLengthLogDisplay = 512;
     public static final String commaDelimater = ",";
     public static final String colonDelimater = ";";
+    public static final String NEW_LINE_STRING = "\n";
 }
 
 /*

@@ -5,6 +5,7 @@ import com.project.ftp.bridge.obj.BridgeResponseSheetData;
 import com.project.ftp.bridge.obj.yamlObj.ExcelDataConfig;
 import com.project.ftp.bridge.obj.yamlObj.FileMappingConfig;
 import com.project.ftp.bridge.service.MSExcelBridgeService;
+import com.project.ftp.common.StrUtils;
 import com.project.ftp.config.AppConfig;
 import com.project.ftp.config.AppConstant;
 import com.project.ftp.event.EventTracking;
@@ -26,12 +27,14 @@ public class MSExcelService {
     private final FileService fileService;
     private final FileServiceV3 fileServiceV3;
     private final EventTracking eventTracking;
+    private final StrUtils strUtils;
     public MSExcelService(final AppConfig appConfig, final EventTracking eventTracking, final UserService userService) {
         this.appConfig = appConfig;
         this.eventTracking = eventTracking;
         this.ftpConfiguration = appConfig.getFtpConfiguration();
         this.fileService = new FileService();
         this.fileServiceV3 = new FileServiceV3(appConfig, userService);
+        this.strUtils = new StrUtils();
     }
     private void saveCsvData(BridgeResponseSheetData bridgeResponseSheetData, ArrayList<String> tempSavedFilePath) {
         if (bridgeResponseSheetData == null) {
@@ -47,18 +50,9 @@ public class MSExcelService {
             return;
         }
         ArrayList<String> csvData = new ArrayList<>();
-        String temp;
         for(ArrayList<String> rowData: sheetData) {
             if (rowData != null) {
-                temp = "";
-                for(int i=0; i<rowData.size(); i++) {
-                    if (i==0) {
-                        temp = rowData.get(i);
-                    } else {
-                        temp = temp.concat("," + rowData.get(i));
-                    }
-                }
-                csvData.add(temp);
+                csvData.add(strUtils.joinArrayList(rowData, AppConstant.commaDelimater));
             }
         }
         if (copyOldData) {
@@ -160,6 +154,21 @@ public class MSExcelService {
     public ApiResponse getMSExcelSheetData(HttpServletRequest request, String requestId) throws AppException {
         ArrayList<ExcelDataConfig> excelDataConfigs = this.getActualMSExcelSheetDataConfig(request, requestId, true);
         return new ApiResponse(this.getActualMSExcelSheetData(request, excelDataConfigs));
+    }
+    public String getMSExcelSheetDataCsv(HttpServletRequest request, String requestId) throws AppException {
+        ArrayList<ExcelDataConfig> excelDataConfigs = this.getActualMSExcelSheetDataConfig(request, requestId, true);
+        ArrayList<BridgeResponseSheetData> response = this.getActualMSExcelSheetData(request, excelDataConfigs);
+        ArrayList<ArrayList<String>> sheetData = new ArrayList<>();
+        ArrayList<String> result = new ArrayList<>();
+        for (BridgeResponseSheetData bridgeResponseSheetData: response) {
+            if (bridgeResponseSheetData != null && bridgeResponseSheetData.getSheetData() != null) {
+                sheetData.addAll(bridgeResponseSheetData.getSheetData());
+            }
+        }
+        for(ArrayList<String> rowData: sheetData) {
+            result.add(strUtils.joinArrayList(rowData, AppConstant.commaDelimater));
+        }
+        return strUtils.joinArrayList(result, AppConstant.NEW_LINE_STRING);
     }
     public ApiResponse updateMSExcelSheetData(HttpServletRequest request, String requestId) throws AppException {
         ArrayList<ExcelDataConfig> excelDataConfigs = this.getActualMSExcelSheetDataConfig(request, requestId, true);
