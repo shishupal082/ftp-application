@@ -76,7 +76,7 @@ public class TestMSExcelService {
         String result;
         requestId = "csv-test-01";
         result =  msExcelService.getMSExcelSheetDataCsv(request, requestId);
-        Assert.assertEquals(65, result.length());
+        Assert.assertEquals(66, result.length());
     }
     @Test
     public void testTestMSExcelServiceV1() {

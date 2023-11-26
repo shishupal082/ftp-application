@@ -1,6 +1,9 @@
 package com.project.ftp.config;
 
 public class AppConstant {
+    private static char CR = (char) 0x0D;
+    private static char LF = (char) 0x0A;
+
     public static final String X_SESSION_ID = "X-Session-Id";
     public static final String X_REQUEST_ID = "X-Request-Id";
     public static final String COOKIE_NAME = "ftp-cookie";
@@ -102,7 +105,7 @@ public class AppConstant {
     public static final int maxLengthLogDisplay = 512;
     public static final String commaDelimater = ",";
     public static final String colonDelimater = ";";
-    public static final String NEW_LINE_STRING = "\n";
+    public static final String NEW_LINE_STRING = "" + CR + LF;
 }
 
 /*
