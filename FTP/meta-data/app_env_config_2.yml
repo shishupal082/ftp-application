@@ -110,7 +110,7 @@ socialLoginConfig:
 
 googleOAuthClientConfig:
   applicationName: "Google Sheets API"
-  tokenDirPath: "D:/workspace/project/nodejs/google-sheets"
+  tokenDirPath: "D:/workspace/venv/google/sheets"
   credentialFilePath: "/client_secret_o-auth-sheets-api.json"
   localServerPort: 8888
 

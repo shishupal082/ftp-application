@@ -1,6 +1,9 @@
 package com.project.ftp.config;
 
 public class AppConstant {
+    private static char CR = (char) 0x0D;
+    private static char LF = (char) 0x0A;
+
     public static final String X_SESSION_ID = "X-Session-Id";
     public static final String X_REQUEST_ID = "X-Request-Id";
     public static final String COOKIE_NAME = "ftp-cookie";
@@ -29,7 +32,7 @@ public class AppConstant {
     public static final String ALLOWED_HEADERS= "Access-Control-Allow-Headers";
     public static final String FILE = "FILE";
     public static final String FOLDER = "FOLDER";
-    public static final String AppVersion = "8.0.2.011";
+    public static final String AppVersion = "8.0.2.012";
     public static final String DATE_FORMAT = "yyyy-MM-dd";
     public static final String TIME_FORMAT = "HHmmss";
     public static final String TIME_FORMAT2 = "HH:mm";
@@ -91,6 +94,9 @@ public class AppConstant {
     public static final String IS_UPLOAD_FILE_ENABLE = "isUploadFileEnable";
     public static final String IS_DELETE_FILE_ENABLE = "isDeleteFileEnable";
     public static final String IS_GET_ALL_USERS_ENABLE = "getAllUsersEnable";
+    public static final String GOOGLE = "google";
+    public static final String MS_EXCEL = "msExcel";
+    public static final String CSV = "csv";
 
     public static final int CMD_LINE_ARG_IS_MYSQL_ENABLE = 0;
     public static final int CMD_LINE_ARG_1st_CONFIG_FILE = 1;
@@ -99,6 +105,7 @@ public class AppConstant {
     public static final int maxLengthLogDisplay = 512;
     public static final String commaDelimater = ",";
     public static final String colonDelimater = ";";
+    public static final String NEW_LINE_STRING = "" + CR + LF;
 }
 
 /*

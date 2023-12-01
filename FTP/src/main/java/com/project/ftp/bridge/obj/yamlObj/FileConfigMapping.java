@@ -7,20 +7,17 @@ import java.util.ArrayList;
 @JsonIgnoreProperties(ignoreUnknown = true)
 
 public class FileConfigMapping {
-    private Boolean fileConfigSourceGoogle; // Default = true (For google)
+    private String fileDataSource; // Default google, msExcel, csv
     private ArrayList<String> validRequestId;
     private ArrayList<String> fileConfig;
     private ArrayList<Integer> requiredColIndex;
 
-    public Boolean getFileConfigSourceGoogle() {
-        if (fileConfigSourceGoogle == null) {
-            return true;
-        }
-        return fileConfigSourceGoogle;
+    public String getFileDataSource() {
+        return fileDataSource;
     }
 
-    public void setFileConfigSourceGoogle(Boolean fileConfigSourceGoogle) {
-        this.fileConfigSourceGoogle = fileConfigSourceGoogle;
+    public void setFileDataSource(String fileDataSource) {
+        this.fileDataSource = fileDataSource;
     }
 
     public ArrayList<String> getValidRequestId() {
@@ -50,7 +47,7 @@ public class FileConfigMapping {
     @Override
     public String toString() {
         return "FileConfigMapping{" +
-                "fileConfigSourceGoogle=" + fileConfigSourceGoogle +
+                "fileDataSource='" + fileDataSource + '\'' +
                 ", validRequestId=" + validRequestId +
                 ", fileConfig=" + fileConfig +
                 ", requiredColIndex=" + requiredColIndex +

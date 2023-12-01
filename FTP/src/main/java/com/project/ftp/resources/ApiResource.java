@@ -9,6 +9,7 @@ import com.project.ftp.exceptions.ErrorCodes;
 import com.project.ftp.obj.*;
 import com.project.ftp.service.*;
 import io.dropwizard.hibernate.UnitOfWork;
+import org.apache.poi.util.StringUtil;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataParam;
 import org.slf4j.Logger;
@@ -49,7 +50,7 @@ public class ApiResource {
         this.authService = authService;
         this.securityService = new SecurityService();
         this.requestService = new RequestService(appConfig, userService, fileServiceV2);
-        this.msExcelService = new MSExcelService(appConfig, userService);
+        this.msExcelService = new MSExcelService(appConfig, eventTracking, userService);
     }
     @GET
     @Produces(MediaType.TEXT_HTML)
@@ -838,8 +839,6 @@ public class ApiResource {
         logger.info("md5Encrypt : Out");
         return response;
     }
-
-
     @POST
     @Path("/verify_permission")
     @UnitOfWork
@@ -902,23 +901,66 @@ public class ApiResource {
         return response;
     }
     @GET
+    @Path("/get_excel_data_config")
+    @UnitOfWork
+    public ApiResponse getMSExcelDataConfig(@Context HttpServletRequest request,
+                                            @QueryParam("requestId") String requestId,
+                                            @QueryParam("update_gs_config") String updateGsConfig) {
+        LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
+        logger.info("getMSExcelDataConfig: In, user: {}, requestId: {}, update_gs_config: {}",
+                loginUserDetails, requestId, updateGsConfig);
+        ApiResponse response;
+        try {
+            authService.isLogin(request);
+            response = msExcelService.getMSExcelSheetDataConfig(request, requestId, updateGsConfig);
+        } catch (AppException ae) {
+            logger.info("Error in getMSExcelDataConfig: {}", ae.getErrorCode().getErrorCode());
+            eventTracking.trackFailureEvent(request, EventName.MS_EXCEL_DATA, ae.getErrorCode());
+            response = new ApiResponse(ae.getErrorCode());
+        }
+        logger.info("getMSExcelDataConfig: Out, {}", response.toString());
+        return response;
+    }
+    @GET
     @Path("/get_excel_data")
     @UnitOfWork
     public ApiResponse getMSExcelData(@Context HttpServletRequest request,
                                       @QueryParam("requestId") String requestId) {
         LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
-        logger.info("updateMSExcelData: In, user: {}, requestId: {}", loginUserDetails, requestId);
+        logger.info("getMSExcelData: In, user: {}, requestId: {}", loginUserDetails, requestId);
         ApiResponse response;
         try {
             authService.isLogin(request);
-            response = msExcelService.getMSExcelSheetData(requestId);
+            response = msExcelService.getMSExcelSheetData(request, requestId);
         } catch (AppException ae) {
-            logger.info("Error in updateMSExcelData: {}", ae.getErrorCode().getErrorCode());
+            logger.info("Error in getMSExcelData: {}", ae.getErrorCode().getErrorCode());
             eventTracking.trackFailureEvent(request, EventName.MS_EXCEL_DATA, ae.getErrorCode());
             response = new ApiResponse(ae.getErrorCode());
         }
-        logger.info("updateMSExcelData: Out, {}", response.toStringV2());
+        logger.info("getMSExcelData: Out, {}", response.toStringV2());
         return response;
+    }
+    @GET
+    @Path("/get_excel_data_csv")
+    @UnitOfWork
+    @Produces(MediaType.TEXT_HTML)
+    public Response getMSExcelDataCsv(@Context HttpServletRequest request,
+                                      @QueryParam("requestId") String requestId) {
+        LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
+        logger.info("getMSExcelDataCsv: In, user: {}, requestId: {}", loginUserDetails, requestId);
+        String response = null;
+        try {
+            authService.isLogin(request);
+            response = msExcelService.getMSExcelSheetDataCsv(request, requestId);
+        } catch (AppException ae) {
+            logger.info("Error in getMSExcelDataCsv: {}", ae.getErrorCode().getErrorCode());
+            eventTracking.trackFailureEvent(request, EventName.MS_EXCEL_DATA, ae.getErrorCode());
+        }
+        if (response == null) {
+            response = AppConstant.EmptyStr;
+        }
+        logger.info("getMSExcelDataCsv: Out, {}", response.length());
+        return Response.ok(response).build();
     }
     @GET
     @Path("/update_excel_data")
@@ -930,7 +972,7 @@ public class ApiResource {
         ApiResponse response;
         try {
             authService.isLogin(request);
-            response = msExcelService.updateMSExcelSheetData(requestId);
+            response = msExcelService.updateMSExcelSheetData(request, requestId);
         } catch (AppException ae) {
             logger.info("Error in updateMSExcelData: {}", ae.getErrorCode().getErrorCode());
             eventTracking.trackFailureEvent(request, EventName.MS_EXCEL_DATA, ae.getErrorCode());

@@ -3,6 +3,8 @@ package com.project.ftp.common;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
+
 public class StrUtils {
     private final static Logger logger = LoggerFactory.getLogger(StrUtils.class);
     public StrUtils() {}
@@ -66,6 +68,22 @@ public class StrUtils {
             return null;
         }
         return str.split(regex, limit);
+    }
+    public String joinArrayList(ArrayList<String> strings, String seprator) {
+        String result = "";
+        if (seprator == null) {
+            seprator = ",";
+        }
+        if (strings != null) {
+            for(int i=0; i<strings.size(); i++) {
+                if (i==0) {
+                    result = strings.get(i);
+                } else {
+                    result = result.concat(seprator + strings.get(i));
+                }
+            }
+        }
+        return result;
     }
     public int strToInt(String str) {
         int result = 0;

@@ -52,6 +52,9 @@ public class SessionService {
         return sessionDataStr;
     }
     private String getSessionId(HttpServletRequest request) {
+        if (request == null) {
+            return null;
+        }
         HttpSession httpSession = request.getSession();
         return (String) httpSession.getAttribute(AppConstant.SESSION_COOKIE_DATA);
     }

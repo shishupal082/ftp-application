@@ -7,11 +7,13 @@ import java.util.ArrayList;
 @JsonIgnoreProperties(ignoreUnknown = true)
 
 public class ExcelDataConfig {
+    private String id;
     private boolean copyOldData;
     private Boolean skipEmptyRows; //default value: True
     private String dateFormat;
     private String timeFormat;
     private String dateTimeFormat;
+    private ArrayList<String> validFor;
     private ArrayList<ExcelFileConfig> excelConfig;
     private ArrayList<ExcelFileConfig> csvConfig;
     private ArrayList<ExcelFileConfig> gsConfig;
@@ -24,6 +26,15 @@ public class ExcelDataConfig {
     private ArrayList<MergeColumnConfig> mergeColumnConfig;
     private ArrayList<Integer> removeColumnConfig;
     private ArrayList<Integer> uniqueEntry;
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
     public boolean isCopyOldData() {
         return copyOldData;
     }
@@ -65,6 +76,14 @@ public class ExcelDataConfig {
 
     public void setDateTimeFormat(String dateTimeFormat) {
         this.dateTimeFormat = dateTimeFormat;
+    }
+
+    public ArrayList<String> getValidFor() {
+        return validFor;
+    }
+
+    public void setValidFor(ArrayList<String> validFor) {
+        this.validFor = validFor;
     }
 
     public ArrayList<ExcelFileConfig> getExcelConfig() {
@@ -166,11 +185,13 @@ public class ExcelDataConfig {
     @Override
     public String toString() {
         return "ExcelDataConfig{" +
-                "copyOldData=" + copyOldData +
+                "id='" + id + '\'' +
+                ", copyOldData=" + copyOldData +
                 ", skipEmptyRows=" + skipEmptyRows +
                 ", dateFormat='" + dateFormat + '\'' +
                 ", timeFormat='" + timeFormat + '\'' +
                 ", dateTimeFormat='" + dateTimeFormat + '\'' +
+                ", validFor=" + validFor +
                 ", excelConfig=" + excelConfig +
                 ", csvConfig=" + csvConfig +
                 ", gsConfig=" + gsConfig +

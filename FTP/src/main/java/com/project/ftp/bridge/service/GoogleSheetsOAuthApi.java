@@ -14,11 +14,14 @@ import com.google.api.services.sheets.v4.Sheets;
 import com.google.api.services.sheets.v4.SheetsScopes;
 import com.google.api.services.sheets.v4.model.ValueRange;
 import com.project.ftp.bridge.config.GoogleOAuthClientConfig;
+import com.project.ftp.event.EventName;
+import com.project.ftp.event.EventTracking;
 import com.project.ftp.exceptions.AppException;
 import com.project.ftp.exceptions.ErrorCodes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -30,7 +33,9 @@ public class GoogleSheetsOAuthApi {
     private final List<String> SCOPES =
             Collections.singletonList(SheetsScopes.SPREADSHEETS_READONLY);
     private final GoogleOAuthClientConfig googleOAuthClientConfig;
-    public GoogleSheetsOAuthApi(GoogleOAuthClientConfig googleOAuthClientConfig) {
+    private final EventTracking eventTracking;
+    public GoogleSheetsOAuthApi(EventTracking eventTracking, GoogleOAuthClientConfig googleOAuthClientConfig) {
+        this.eventTracking = eventTracking;
         this.googleOAuthClientConfig = googleOAuthClientConfig;
     }
 
@@ -94,8 +99,15 @@ public class GoogleSheetsOAuthApi {
             throw new AppException(ErrorCodes.CONFIG_ERROR);
         }
     }
-    public ArrayList<ArrayList<String>> readSheetData(String spreadSheetId, String sheetName) throws AppException {
+    public ArrayList<ArrayList<String>> readSheetData(HttpServletRequest request, String spreadSheetId, String sheetName) throws AppException {
         // Build a new authorized API client service.
+        if (spreadSheetId == null || sheetName == null) {
+            logger.info("Invalid spreadSheetId or sheetName: {},{}", spreadSheetId, sheetName);
+            ErrorCodes errorCodes = ErrorCodes.CONFIG_ERROR;
+            errorCodes.setErrorString("Invalid spreadSheetId or sheetName.");
+            eventTracking.trackFailureEventV2(request, EventName.GOOGLE_API, errorCodes, "Invalid spreadSheetId or sheetName: {}" + spreadSheetId+"-"+sheetName);
+            throw new AppException(errorCodes);
+        }
         this.isValidGoogleOAuthConfig();
         List<List<Object>> values = null;
         try {
@@ -114,6 +126,7 @@ public class GoogleSheetsOAuthApi {
                     spreadSheetId, sheetName, e.getMessage());
             ErrorCodes errorCodes = ErrorCodes.GOOGLE_ERROR;
             errorCodes.setErrorString(e.getMessage());
+            eventTracking.trackFailureEventV2(request, EventName.GOOGLE_API, errorCodes, spreadSheetId+"-"+sheetName);
             throw new AppException(errorCodes);
         }
         ArrayList<ArrayList<String>> result = new ArrayList<>();
@@ -131,6 +144,7 @@ public class GoogleSheetsOAuthApi {
                 result.add(row);
             }
         }
+        eventTracking.trackSuccessEventV2(request, EventName.GOOGLE_API, spreadSheetId+"-"+sheetName);
         return result;
     }
 }

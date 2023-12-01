@@ -9,6 +9,7 @@ public class ExcelFileConfig {
     private String destination;
     private String copyDestination;
     private String sheetName;
+    private FileConfigMapping fileConfigMapping; //used only for googleSheetReading
 
     public String getSource() {
         return source;
@@ -42,6 +43,14 @@ public class ExcelFileConfig {
         this.sheetName = sheetName;
     }
 
+    public FileConfigMapping getFileConfigMapping() {
+        return fileConfigMapping;
+    }
+
+    public void setFileConfigMapping(FileConfigMapping fileConfigMapping) {
+        this.fileConfigMapping = fileConfigMapping;
+    }
+
     @Override
     public String toString() {
         return "ExcelFileConfig{" +
@@ -49,6 +58,7 @@ public class ExcelFileConfig {
                 ", destination='" + destination + '\'' +
                 ", copyDestination='" + copyDestination + '\'' +
                 ", sheetName='" + sheetName + '\'' +
+                ", fileConfigMapping=" + fileConfigMapping +
                 '}';
     }
 }

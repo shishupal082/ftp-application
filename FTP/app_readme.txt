@@ -1374,6 +1374,7 @@ It will convert:
     - csvData to csv data
     as per configuration added in meta-data/app_env_config_4.yml
 Sequence of operation
+- validFor: ["gs-csv-test-12-direct"]
 - dateFormat, timeFormat and dateTimeFormat [Only used for excel sheet reading not for google sheet]
 - change \n to ; and , to ...
 - skipRowIndex
@@ -1396,6 +1397,21 @@ this api will be used for reading any file saved in the computer
 this api will be used for redirecting to any link
     - /api/get_path_info?u=requested_username&container=iframe&path=path
 this api will be used for checking pathInfo for any path (file / folder)
+
+
+8.0.2.012
+----------
+17.11.2023
+----------
+Added new api
+    - /api/get_excel_data_config?requestId=gs-excel-id [GET]
+    - this api is used for reading get_excel_data config
+
+26.11.2023
+----------
+Added new api
+    - /api/update_excel_data_csv?requestId=gs-excel-id [GET]
+    - this api is used for reading get_excel_data as csv
 
 
 Future releases
