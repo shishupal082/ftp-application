@@ -199,7 +199,7 @@ public class MSExcelBridgeService {
             excelFileConfig.setFileConfigMapping(fileConfigMapping);
             fileConfig.add(excelFileConfig);
         }
-        if (fileConfig.size() == 0) {
+        if (fileConfig.isEmpty()) {
             fileConfig = null;
         }
         return fileConfig;
@@ -237,7 +237,7 @@ public class MSExcelBridgeService {
             return excelDataConfigById;
         }
         ArrayList<ExcelFileConfig> excelFileConfigs = this.getFileConfigByRequestId(id, fileConfigMapping, sheetData);
-        if (excelFileConfigs == null || excelFileConfigs.size() < 1) {
+        if (excelFileConfigs == null || excelFileConfigs.isEmpty()) {
             return excelDataConfigById;
         }
         excelDataConfigById.setCsvConfig(null);
@@ -308,7 +308,7 @@ public class MSExcelBridgeService {
         excelDataConfigById.setGsConfig(null);
         excelDataConfigById.setCsvConfig(null);
         excelDataConfigById.setExcelConfig(null);
-        if (gsConfig2.size() > 0 && fileConfigMapping != null) {
+        if (!gsConfig2.isEmpty() && fileConfigMapping != null) {
             if (AppConstant.CSV.equals(fileConfigMapping.getFileDataSource())) {
                 excelDataConfigById.setCsvConfig(gsConfig2);
             } else if (AppConstant.MS_EXCEL.equals(fileConfigMapping.getFileDataSource())) {
@@ -352,7 +352,7 @@ public class MSExcelBridgeService {
             return excelDataConfigById;
         }
         String srcFilepath;
-        if (fileConfigArray.size() > 0) {
+        if (!fileConfigArray.isEmpty()) {
             srcFilepath = fileConfigArray.get(0);
         } else {
             logger.info("srcFilePathCsv is not found.");
@@ -376,7 +376,7 @@ public class MSExcelBridgeService {
         boolean copyOldData;
         ArrayList<ArrayList<String>> sheetData;
         ArrayList<BridgeResponseSheetData> bridgeResponseSheetsData = new ArrayList<>();
-        if (excelFileConfig != null && excelFileConfig.size() > 0) {
+        if (excelFileConfig != null && !excelFileConfig.isEmpty()) {
             for (ExcelFileConfig fileConfig : excelFileConfig) {
                 copyOldData = excelDataConfigById.isCopyOldData();
                 srcFilepath = fileConfig.getSource();
@@ -388,7 +388,7 @@ public class MSExcelBridgeService {
                         destination, copyDestination, sheetData));
             }
         }
-        if (csvFileConfig != null && csvFileConfig.size() > 0) {
+        if (csvFileConfig != null && !csvFileConfig.isEmpty()) {
             for (ExcelFileConfig fileConfig : csvFileConfig) {
                 copyOldData = excelDataConfigById.isCopyOldData();
                 srcFilepath = fileConfig.getSource();
@@ -399,7 +399,7 @@ public class MSExcelBridgeService {
                         destination, copyDestination, sheetData));
             }
         }
-        if (gsFileConfig != null && gsFileConfig.size() > 0) {
+        if (gsFileConfig != null && !gsFileConfig.isEmpty()) {
             for (ExcelFileConfig fileConfig : gsFileConfig) {
                 copyOldData = excelDataConfigById.isCopyOldData();
                 srcFilepath = fileConfig.getSource();
@@ -411,9 +411,9 @@ public class MSExcelBridgeService {
                         destination, copyDestination, sheetData));
             }
         }
-        if ((excelFileConfig == null || excelFileConfig.size() == 0) &&
-                (csvFileConfig == null || csvFileConfig.size() == 0) &&
-                (gsFileConfig == null || gsFileConfig.size() == 0)) {
+        if ((excelFileConfig == null || excelFileConfig.isEmpty()) &&
+                (csvFileConfig == null || csvFileConfig.isEmpty()) &&
+                (gsFileConfig == null || gsFileConfig.isEmpty())) {
             logger.info("Invalid excelFileConfig, csvFileConfig and gsFileConfig: {}", excelDataConfigById);
             throw new AppException(ErrorCodes.CONFIG_ERROR);
         }

@@ -1414,6 +1414,11 @@ Added new api
     - this api is used for reading get_excel_data as csv
 
 
+8.0.2.013 @ 05.12.2023
+-----------------------
+Project setup done in new Dell Inspiron 15 laptop
+
+
 Future releases
 -------------------
 Add new role called

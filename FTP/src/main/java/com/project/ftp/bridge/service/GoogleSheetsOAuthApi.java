@@ -49,10 +49,11 @@ public class GoogleSheetsOAuthApi {
     private Credential getCredentials(final NetHttpTransport HTTP_TRANSPORT)
             throws IOException {
         // Load client secrets.
-        InputStream in = GoogleSheetsOAuthApi.class.getResourceAsStream(
-                googleOAuthClientConfig.getCredentialFilePath());
+        String credentialFilePath = googleOAuthClientConfig.getCredentialFilePath();
+        InputStream in = GoogleSheetsOAuthApi.class.getResourceAsStream(credentialFilePath);
         if (in == null) {
-            throw new FileNotFoundException("Resource not found: " + googleOAuthClientConfig.getCredentialFilePath());
+            logger.info("Error in generating credential: {}", credentialFilePath);
+            throw new FileNotFoundException("Resource not found: " + googleOAuthClientConfig);
         }
         GoogleClientSecrets clientSecrets =
                 GoogleClientSecrets.load(JSON_FACTORY, new InputStreamReader(in));
@@ -129,6 +130,11 @@ public class GoogleSheetsOAuthApi {
             eventTracking.trackFailureEventV2(request, EventName.GOOGLE_API, errorCodes, spreadSheetId+"-"+sheetName);
             throw new AppException(errorCodes);
         }
+        ArrayList<ArrayList<String>> result = this.getArrayLists(values);
+        eventTracking.trackSuccessEventV2(request, EventName.GOOGLE_API, spreadSheetId+"-"+sheetName);
+        return result;
+    }
+    private ArrayList<ArrayList<String>> getArrayLists(List<List<Object>> values) {
         ArrayList<ArrayList<String>> result = new ArrayList<>();
         ArrayList<String> row;
         if (values != null) {
@@ -144,7 +150,6 @@ public class GoogleSheetsOAuthApi {
                 result.add(row);
             }
         }
-        eventTracking.trackSuccessEventV2(request, EventName.GOOGLE_API, spreadSheetId+"-"+sheetName);
         return result;
     }
 }
