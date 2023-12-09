@@ -200,10 +200,12 @@ public class AppConfig {
     public void updateFinalFtpConfiguration(final FtpConfiguration ftpConfiguration) {
         ftpConfiguration.setMysqlEnable(StaticService.isMysqlEnable(cmdArguments));
         if (cmdArguments == null) {
+            this.setFtpConfiguration(ftpConfiguration);
             logger.info("FTP configuration generate complete 1: {}", ftpConfiguration);
             return;
         }
         if (cmdArguments.size() <= AppConstant.CMD_LINE_ARG_MIN_SIZE) {
+            this.setFtpConfiguration(ftpConfiguration);
             logger.info("FTP configuration generate complete 2: {}", ftpConfiguration);
             return;
         }

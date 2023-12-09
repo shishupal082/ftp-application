@@ -1,3 +1,12 @@
+version change to be updated at following places (09-12-2023)
+--------------------------------------------------------------
+
+1) pom.xml
+2) AppConstant
+3) copy_build.sh
+4) app_run.bat
+5) run.bat
+
 1.0.0 (2020-07-20)
 ---------------------
 /view/file?name=filename

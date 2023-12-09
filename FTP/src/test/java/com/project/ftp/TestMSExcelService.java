@@ -2,6 +2,7 @@ package com.project.ftp;
 
 import com.project.ftp.bridge.obj.yamlObj.ExcelDataConfig;
 import com.project.ftp.config.AppConfig;
+import com.project.ftp.config.AppConstant;
 import com.project.ftp.event.EventTracking;
 import com.project.ftp.intreface.*;
 import com.project.ftp.obj.ApiResponse;
@@ -153,7 +154,7 @@ public class TestMSExcelService {
         ApiResource apiResource = this.getApiResource();
         requestId = "csv-test-11";
         apiResponse =  apiResource.updateMSExcelData(request, requestId);
-        Assert.assertEquals("SUCCESS", apiResponse.getStatus());
+        Assert.assertEquals(AppConstant.SUCCESS, apiResponse.getStatus());
     }
     @Test
     public void testTestMSExcelServiceV12() {
@@ -164,6 +165,7 @@ public class TestMSExcelService {
         requestId = "gs-csv-test-12";
         apiResponse =  apiResource.updateMSExcelData(request, requestId);
         Assert.assertNotNull(apiResponse.getStatus());
+//        Assert.assertEquals(AppConstant.SUCCESS, apiResponse.getStatus());
         requestId = "csv-gs-csv-test-12";
         apiResponse =  apiResource.updateMSExcelData(request, requestId);
         Assert.assertNotNull(apiResponse.getStatus());
