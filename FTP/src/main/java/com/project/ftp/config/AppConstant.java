@@ -32,7 +32,7 @@ public class AppConstant {
     public static final String ALLOWED_HEADERS= "Access-Control-Allow-Headers";
     public static final String FILE = "FILE";
     public static final String FOLDER = "FOLDER";
-    public static final String AppVersion = "8.0.2.013";
+    public static final String AppVersion = "8.0.2.014";
     public static final String DATE_FORMAT = "yyyy-MM-dd";
     public static final String TIME_FORMAT = "HHmmss";
     public static final String TIME_FORMAT2 = "HH:mm";
@@ -98,9 +98,7 @@ public class AppConstant {
     public static final String MS_EXCEL = "msExcel";
     public static final String CSV = "csv";
 
-    public static final int CMD_LINE_ARG_IS_MYSQL_ENABLE = 0;
-    public static final int CMD_LINE_ARG_1st_CONFIG_FILE = 1;
-    public static final int CMD_LINE_ARG_MIN_SIZE = 2;
+    public static final int CMD_LINE_ARG_MIN_SIZE = 3;
 
     public static final int maxLengthLogDisplay = 512;
     public static final String commaDelimater = ",";

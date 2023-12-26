@@ -33,6 +33,7 @@ public class TestMSExcelService {
         ArrayList<String> arguments = new ArrayList<>();
         arguments.add("serverName");
         arguments.add("false");
+        arguments.add("false");
         arguments.add("/meta-data/app_env_config_2.yml");
         arguments.add("/meta-data/app_env_config_4.yml");
         appConfig.setCmdArguments(arguments);

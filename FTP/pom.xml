@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.project.ftp</groupId>
     <artifactId>FTP</artifactId>
-    <version>8.0.2.013-SNAPSHOT</version>
+    <version>8.0.2.014-SNAPSHOT</version>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
@@ -21,6 +21,7 @@
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
         <testjunit.version>4.8.1</testjunit.version>
+        <file-nio.version>1.0.4</file-nio.version>
         <excel-sheet.version>5.0.0</excel-sheet.version>
         <google-api-client.version>1.32.1</google-api-client.version>
         <google-oauth-client.version>1.32.1</google-oauth-client.version>
@@ -132,6 +133,11 @@
             <artifactId>google-api-services-sheets</artifactId>
             <version>${google-api-services-sheets.version}</version>
         </dependency>
+<!--        <dependency>-->
+<!--            <groupId>nio</groupId>-->
+<!--            <artifactId>nio</artifactId>-->
+<!--            <version>1.0.4</version>-->
+<!--        </dependency>-->
         <!-- Dependency for Google Sheet Reading end -->
 <!--        <dependency>-->
 <!--            <groupId>org.junit.jupiter</groupId>-->

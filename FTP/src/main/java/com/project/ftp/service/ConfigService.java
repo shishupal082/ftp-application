@@ -7,6 +7,8 @@ import com.project.ftp.obj.PathInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
+
 public class ConfigService {
     private final static Logger logger = LoggerFactory.getLogger(ConfigService.class);
     private final AppConfig appConfig;
@@ -53,17 +55,20 @@ public class ConfigService {
     }
     public void setPublicDir() {
         String systemDir = sysUtils.getProjectWorkingDir();
+        ArrayList<String> cmdArgument = appConfig.getCmdArguments();
         String configPublicDir = appConfig.getFtpConfiguration().getPublicDir();
         String configPublicPostDir = appConfig.getFtpConfiguration().getPublicPostDir();
-        String setPublicDir = this.getValidPublicDir(systemDir, configPublicDir, configPublicPostDir);
+        String setPublicDir = configPublicPostDir;
+        if(!AppConstant.TRUE.equals(cmdArgument.get(AppConstant.CMD_LINE_ARG_MIN_SIZE-2))) {
+            setPublicDir = this.getValidPublicDir(systemDir, configPublicDir, configPublicPostDir);
+        }
         PathInfo publicDirPathInfo = StaticService.getPathInfo(setPublicDir);
         if (!AppConstant.FOLDER.equals(publicDirPathInfo.getType())) {
             logger.info("calculated publicDir is not a folder: {}", setPublicDir);
-            configPublicDir = null;
         } else {
-            logger.info("calculated publicDir: {}", setPublicDir);
+            logger.info("final publicDir: {}", setPublicDir);
         }
-        if (configPublicDir != null && AppConstant.FOLDER.equals(publicDirPathInfo.getType())) {
+        if (AppConstant.FOLDER.equals(publicDirPathInfo.getType())) {
             appConfig.setPublicDir(setPublicDir);
         } else {
             logger.info("appConfig publicDir set skip.");

@@ -7,6 +7,7 @@ import com.project.ftp.bridge.obj.yamlObj.ExcelConfig;
 import com.project.ftp.bridge.obj.yamlObj.ExcelDataConfig;
 import com.project.ftp.bridge.obj.yamlObj.FileMappingConfig;
 import com.project.ftp.config.AppConfig;
+import com.project.ftp.config.AppConstant;
 import com.project.ftp.exceptions.AppException;
 import com.project.ftp.exceptions.ErrorCodes;
 import com.project.ftp.helper.AppConfigHelper;
@@ -51,18 +52,21 @@ public class YamlFileParser {
         }
         return null;
     }
-    public FtpConfiguration getFtpConfigurationFromPath(String relativeConfigPath) {
+    public FtpConfiguration getFtpConfigurationFromPath(String isStaticPath, String configPath) {
         String projectWorkingDir = StaticService.getProjectWorkingDir();
-        if (relativeConfigPath == null) {
+        String pathname = configPath;
+        if (configPath == null) {
             return null;
+        }
+        if (!AppConstant.TRUE.equals(isStaticPath)) {
+            pathname = projectWorkingDir + "/" + pathname;
         }
         FtpConfiguration ftpConfiguration = null;
         ObjectMapper objectMapper = new ObjectMapper(new YAMLFactory());
-        String pathname = projectWorkingDir + "/" + relativeConfigPath;
         try {
             ftpConfiguration = objectMapper.readValue(new File(pathname), FtpConfiguration.class);
         } catch (IOException ioe) {
-            StaticService.printLog("IOE : for file : " + pathname);
+            StaticService.printLog("IOE: for file: " + pathname);
         }
         return ftpConfiguration;
     }

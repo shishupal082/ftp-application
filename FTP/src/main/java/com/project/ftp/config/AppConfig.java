@@ -212,7 +212,9 @@ public class AppConfig {
         FtpConfiguration temp;
         YamlFileParser yamlFileParser = new YamlFileParser();
         for (int i = AppConstant.CMD_LINE_ARG_MIN_SIZE; i< cmdArguments.size(); i++) {
-            temp = yamlFileParser.getFtpConfigurationFromPath(cmdArguments.get(i));
+            temp = yamlFileParser.getFtpConfigurationFromPath(
+                    cmdArguments.get(AppConstant.CMD_LINE_ARG_MIN_SIZE-2),
+                    cmdArguments.get(i));
             ftpConfiguration.updateFtpConfig(temp);
         }
         this.setFtpConfiguration(ftpConfiguration);

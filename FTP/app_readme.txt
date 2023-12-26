@@ -1427,6 +1427,13 @@ Added new api
 -----------------------
 Project setup done in new Dell Inspiron 15 laptop
 
+8.0.2.014 @ 18.12.2023
+-----------------------
+- Minimum config parameter changed from 2 to 3
+- 3rd parameter will be (true/false)
+true: config parameter path is static
+false: config parameter path is relative to working project directory
+
 
 Future releases
 -------------------

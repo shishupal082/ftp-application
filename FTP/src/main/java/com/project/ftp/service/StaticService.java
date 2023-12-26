@@ -53,7 +53,7 @@ public class StaticService {
     public static String createUUIDNumber() {
         return sysUtils.createUUIDNumber();
     }
-    public static void initApplication(final AppConfig appConfig, String relativeConfigFilePath) {
+    public static void initApplication(final AppConfig appConfig, String isStaticPath, String firstConfigPath) {
         FtpConfiguration ftpConfiguration = appConfig.getFtpConfiguration();
         ConfigService configService = new ConfigService(appConfig);
         configService.setPublicDir();
@@ -82,11 +82,14 @@ public class StaticService {
             pdfSubject = "Help to use application.";
             textToPdfService.createPdf(textFilename, pdfFilename, pdfTitle, pdfSubject);
         }
-        if (relativeConfigFilePath == null || relativeConfigFilePath.isEmpty()) {
-            logger.info("Relative config path is null or empty: {}", relativeConfigFilePath);
+        if (firstConfigPath == null || firstConfigPath.isEmpty()) {
+            logger.info("First config path is null or empty: {}", firstConfigPath);
             return;
         }
-        String configFilePath = sysUtils.getProjectWorkingDir() + "/" + relativeConfigFilePath;
+        String configFilePath = firstConfigPath;
+        if (!AppConstant.TRUE.equals(isStaticPath)) {
+            configFilePath = sysUtils.getProjectWorkingDir() + "/" + configFilePath;
+        }
         configFilePath = strUtils.replaceBackSlashToSlash(configFilePath);
         String logFilePath = ymlFileParser.getLogFilePath(configFilePath);
         appConfig.setLogFilePath(logFilePath);
@@ -288,11 +291,14 @@ public class StaticService {
         }
         return userMethod;
     }
-    public static void renameOldLogFile(final String relativeConfigFilePath) {
-        if (relativeConfigFilePath == null) {
+    public static void renameOldLogFile(final String isStaticPath, final String configPath) {
+        if (configPath == null) {
             return;
         }
-        String configFilePath = sysUtils.getProjectWorkingDir() + "/" + relativeConfigFilePath;
+        String configFilePath = configPath;
+        if (!AppConstant.TRUE.equals(isStaticPath)) {
+            configFilePath = sysUtils.getProjectWorkingDir() + "/" + configPath;
+        }
         configFilePath = strUtils.replaceBackSlashToSlash(configFilePath);
         String logFilePath = ymlFileParser.getLogFilePath(configFilePath) + "application.log";
         PathInfo pathInfo = fileService.getPathInfo(logFilePath);
@@ -320,7 +326,7 @@ public class StaticService {
         if (commandLineArg.size() < AppConstant.CMD_LINE_ARG_MIN_SIZE) {
             return  false;
         }
-        return AppConstant.TRUE.equals(commandLineArg.get(AppConstant.CMD_LINE_ARG_IS_MYSQL_ENABLE));
+        return AppConstant.TRUE.equals(commandLineArg.get(AppConstant.CMD_LINE_ARG_MIN_SIZE-3));
     }
     public static String getProjectWorkingDir() {
         String projectWorkingDirectory = sysUtils.getProjectWorkingDir();

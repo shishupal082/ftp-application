@@ -63,7 +63,7 @@ public class FtpApplication  extends Application<FtpConfiguration> {
 //        ShutdownTask shutdownTask = new ShutdownTask(appConfig);
 //        appConfig.setShutdownTask(shutdownTask);
 //        appConfig.setFtpConfiguration(ftpConfiguration);
-        StaticService.initApplication(appConfig, arguments.get(AppConstant.CMD_LINE_ARG_1st_CONFIG_FILE));
+        StaticService.initApplication(appConfig, arguments.get(AppConstant.CMD_LINE_ARG_MIN_SIZE-2), arguments.get(AppConstant.CMD_LINE_ARG_MIN_SIZE-1));
         appConfig.updatePageConfig404();
         LOGGER.info("appConfig: {}", appConfig);
         EventInterface eventInterface = null;
@@ -124,8 +124,8 @@ public class FtpApplication  extends Application<FtpConfiguration> {
         // java -jar meta-data/FTP-*-SNAPSHOT.jar <serverName> <isMySqlEnable> <config file 1> <config file 2> ...
         arguments.addAll(Arrays.asList(args));
         if (arguments.size() >= AppConstant.CMD_LINE_ARG_MIN_SIZE) {
-            StaticService.renameOldLogFile(args[AppConstant.CMD_LINE_ARG_1st_CONFIG_FILE]);
-            new FtpApplication().run(AppConstant.SERVER, args[AppConstant.CMD_LINE_ARG_1st_CONFIG_FILE]);
+            StaticService.renameOldLogFile(args[AppConstant.CMD_LINE_ARG_MIN_SIZE-2], args[AppConstant.CMD_LINE_ARG_MIN_SIZE-1]);
+            new FtpApplication().run(AppConstant.SERVER, args[AppConstant.CMD_LINE_ARG_MIN_SIZE-1]);
         }
     }
 }
