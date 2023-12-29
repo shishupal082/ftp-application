@@ -1376,26 +1376,7 @@ googleOAuthClientConfig:
   tokenDirPath: "D:/workspace/project/nodejs/google-sheets"
   credentialFilePath: "/client_secret_o-auth-sheets-api.json"
   localServerPort: 8888
-
-It will convert:
-    - excelSheetData to csv data
-    - googleSheetData to csv data
-    - csvData to csv data
-    as per configuration added in meta-data/app_env_config_4.yml
-Sequence of operation
-- validFor: ["gs-csv-test-12-direct"]
-- dateFormat, timeFormat and dateTimeFormat [Only used for excel sheet reading not for google sheet]
-- change \n to ; and , to ...
-- skipRowIndex
-    - First skip row index is required to be executed
-      otherwise row index will be changed (After skipEmptyRows operation)
-- skipEmptyRows
-- copyCellDataIndex
-- cellMapping & appendCellDataIndex
-- replaceCellString
-- mergeColumnConfig
-- removeColumnConfig
-- uniqueEntry
+config detail description added on config_data.txt
 
 26.09.2023
 -------------------
@@ -1433,6 +1414,10 @@ Project setup done in new Dell Inspiron 15 laptop
 - 3rd parameter will be (true/false)
 true: config parameter path is static
 false: config parameter path is relative to working project directory
+
+8.0.2.015 @ 29.12.2023
+-----------------------
+Added support for sheetNameMapping in excelDataConfig.
 
 
 Future releases

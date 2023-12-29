@@ -369,7 +369,7 @@ public class ExcelToCsvDataConvertService {
         return dateString;
     }
     public ArrayList<ArrayList<String>> applyCellMapping(ArrayList<ArrayList<String>> sheetData,
-                                                         ExcelDataConfig excelDataConfigById) {
+                                                         ExcelDataConfig excelDataConfigById, String sheetName) {
         if (sheetData == null || excelDataConfigById == null) {
             return sheetData;
         }
@@ -404,6 +404,8 @@ public class ExcelToCsvDataConvertService {
                         }
                         if (colIndex != null && colIndex >= 0 && rowData.size() > colIndex) {
                             cellData = rowData.get(colIndex);
+                        } else if (colIndex != null && colIndex == -2) {
+                            cellData = sheetName;
                         }
                         if (cellsMappingData != null) {
                             for (CellMappingData cellMappingData : cellsMappingData) {
@@ -417,8 +419,14 @@ public class ExcelToCsvDataConvertService {
                                     if (value == null) {
                                         value = "";
                                     }
-                                    if (colIndex2 != null && colIndex2 >= 0 && colIndex2 < rowData.size()) {
-                                        cellData2 = rowData.get(colIndex2);
+                                    if (colIndex2 != null) {
+                                        if  (colIndex2 >= 0 && colIndex2 < rowData.size()) {
+                                            cellData2 = rowData.get(colIndex2);
+                                        } else if (colIndex2 == -2) {
+                                            cellData2 = sheetName;
+                                        } else {
+                                            continue;
+                                        }
                                         if (dateRegex != null) {
                                             if (regex != null && StaticService.isPatternMatching(cellData2, regex, false)) {
                                                 dateText = this.getDateTextFromCellData(datePosition, cellData2);

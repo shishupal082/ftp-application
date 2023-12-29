@@ -220,6 +220,19 @@ excelDataConfig:
     appendCellDataIndex:
       - [ 0, -1 ]
     cellMapping:
+      - col_index: -2
+      - defaultCellData: "default-sheet-name"
+        col_index: -1
+        mappingData:
+          - col_index: -2
+            value: "valid"
+            range: ["sheet-name-empty"]
+      - defaultCellData: "default-sheet-name"
+        col_index: -1
+        mappingData:
+          - col_index: -2
+            value: "valid"
+            range: ["na_sheet-name-empty"]
       - defaultCellData: ""
         col_index: -1
         mappingData:

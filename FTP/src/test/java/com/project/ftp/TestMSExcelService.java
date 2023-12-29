@@ -145,7 +145,7 @@ public class TestMSExcelService {
         ApiResource apiResource = this.getApiResource();
         requestId = "csv-test-10";
         apiResponse =  apiResource.updateMSExcelData(request, requestId);
-        Assert.assertEquals("SUCCESS", apiResponse.getStatus());
+        Assert.assertEquals(AppConstant.SUCCESS, apiResponse.getStatus());
     }
     @Test
     public void testTestMSExcelServiceV11() {
