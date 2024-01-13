@@ -340,33 +340,33 @@ public class ExcelToCsvDataConvertService {
         }
         return rowDataFinal;
     }
-    private String getDateTextFromCellData(ArrayList<Integer> datePosition, String cellData) {
-        String dateString = cellData;
+    private String getSubStringTextFromCellData(ArrayList<Integer> subStringConfig, String cellData) {
+        String subString = cellData;
         Integer start, length, end;
         int startIndex = 0, endIndex = 0;
-        if (dateString == null || datePosition == null || datePosition.size() < 3) {
-            return dateString;
+        if (subString == null || subStringConfig == null || subStringConfig.size() < 3) {
+            return subString;
         }
-        start = datePosition.get(0);
-        length = datePosition.get(1);
-        end = datePosition.get(2);
+        start = subStringConfig.get(0);
+        length = subStringConfig.get(1);
+        end = subStringConfig.get(2);
         if (start == null || length == null || end == null) {
-            return dateString;
+            return subString;
         }
-        if (dateString.length() <= length) {
-            return dateString;
+        if (length < 0 || subString.length() <= length) {
+            return subString;
         }
         if (start >= 0) {
             startIndex = start;
             endIndex = start + length;
         } else if (end >= 0) {
-            startIndex = dateString.length()-length-end;
-            endIndex = dateString.length()-end;
+            startIndex = subString.length()-length-end;
+            endIndex = subString.length()-end;
         }
-        if (startIndex >= 0 && endIndex >= 0 && startIndex < endIndex && startIndex < dateString.length() && endIndex <= dateString.length()) {
-            dateString = dateString.substring(startIndex, endIndex);
+        if (startIndex >= 0 && endIndex >= 0 && startIndex < endIndex && startIndex < subString.length() && endIndex <= subString.length()) {
+            subString = subString.substring(startIndex, endIndex);
         }
-        return dateString;
+        return subString;
     }
     public ArrayList<ArrayList<String>> applyCellMapping(ArrayList<ArrayList<String>> sheetData,
                                                          ExcelDataConfig excelDataConfigById, String sheetName) {
@@ -381,7 +381,7 @@ public class ExcelToCsvDataConvertService {
         Integer colIndex, colIndex2;
         String defaultCellData, cellData, cellData2, value, regex, dateRegex, dateText;
         ArrayList<String> rowDataFinal, range;
-        ArrayList<Integer> datePosition;
+        ArrayList<Integer> subStringConfig;
         DateUtilities dateUtilities = new DateUtilities();
         Boolean rewrite;
         for(ArrayList<String> rowData: sheetData) {
@@ -414,7 +414,7 @@ public class ExcelToCsvDataConvertService {
                                     value = cellMappingData.getValue();
                                     range = cellMappingData.getRange();
                                     regex = cellMappingData.getRegex();
-                                    datePosition = cellMappingData.getDatePosition();
+                                    subStringConfig = cellMappingData.getSubStringConfig();
                                     dateRegex = cellMappingData.getDateRegex();
                                     if (value == null) {
                                         value = "";
@@ -429,7 +429,7 @@ public class ExcelToCsvDataConvertService {
                                         }
                                         if (dateRegex != null) {
                                             if (regex != null && StaticService.isPatternMatching(cellData2, regex, false)) {
-                                                dateText = this.getDateTextFromCellData(datePosition, cellData2);
+                                                dateText = this.getSubStringTextFromCellData(subStringConfig, cellData2);
                                                 cellData = dateUtilities.getDateStrInNewPattern(value, dateRegex, dateText, dateText);
                                                 break;
                                             }
@@ -438,6 +438,9 @@ public class ExcelToCsvDataConvertService {
                                             break;
                                         } else if (regex != null && StaticService.isPatternMatching(cellData2, regex, false)) {
                                             cellData = value;
+                                            if (subStringConfig != null) {
+                                                cellData = this.getSubStringTextFromCellData(subStringConfig, cellData2);
+                                            }
                                             break;
                                         }
                                     }

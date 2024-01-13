@@ -115,10 +115,15 @@ mappingData1:
   - col_index: Integer (Row index, -2 to ...)
     value: String
     range: [String1, String2]
-    datePosition: [start, length, end]
+    subStringConfig: [start, length, end]
     dateRegex: String
     regex: String
 
 if col_index (in cellMapping or mappingData) == -2
     - then it will treated as: sheetNameMapping
     - cellData = sheetName and cellData2 = sheetName
+
+
+
+
+

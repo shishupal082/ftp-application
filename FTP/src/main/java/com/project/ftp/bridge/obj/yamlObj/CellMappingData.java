@@ -10,7 +10,7 @@ public class CellMappingData {
     private Integer col_index;
     private String value;
     private ArrayList<String> range;
-    private ArrayList<Integer> datePosition;
+    private ArrayList<Integer> subStringConfig;
     private String regex;
     private String dateRegex;
 
@@ -38,12 +38,12 @@ public class CellMappingData {
         this.range = range;
     }
 
-    public ArrayList<Integer> getDatePosition() {
-        return datePosition;
+    public ArrayList<Integer> getSubStringConfig() {
+        return subStringConfig;
     }
 
-    public void setDatePosition(ArrayList<Integer> datePosition) {
-        this.datePosition = datePosition;
+    public void setSubStringConfig(ArrayList<Integer> subStringConfig) {
+        this.subStringConfig = subStringConfig;
     }
 
     public String getRegex() {
@@ -68,7 +68,7 @@ public class CellMappingData {
                 "col_index=" + col_index +
                 ", value='" + value + '\'' +
                 ", range=" + range +
-                ", datePosition=" + datePosition +
+                ", subStringConfig=" + subStringConfig +
                 ", regex='" + regex + '\'' +
                 ", dateRegex='" + dateRegex + '\'' +
                 '}';
