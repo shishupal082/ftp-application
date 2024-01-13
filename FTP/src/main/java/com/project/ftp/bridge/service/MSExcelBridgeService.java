@@ -57,7 +57,7 @@ public class MSExcelBridgeService {
         sheetData = excelToCsvDataConvertService.skipEmptyRows(sheetData, excelDataConfigById);
         sheetData = excelToCsvDataConvertService.applySkipRowCriteria(sheetData, excelDataConfigById);
         excelToCsvDataConvertService.copyCellDataIndex(sheetData, excelDataConfigById);
-        sheetData = excelToCsvDataConvertService.applyCellMapping(sheetData, excelDataConfigById, sheetName);
+        sheetData = excelToCsvDataConvertService.applyCellMapping(sheetData, excelDataConfigById, srcFilepath, sheetName);
         excelToCsvDataConvertService.applyReplaceCellString(sheetData, excelDataConfigById);
         sheetData = excelToCsvDataConvertService.applyColumnMapping(sheetData, excelDataConfigById);
         sheetData = excelToCsvDataConvertService.applyRemoveColumnConfig(sheetData, excelDataConfigById);
@@ -78,7 +78,7 @@ public class MSExcelBridgeService {
         sheetData = excelToCsvDataConvertService.skipEmptyRows(sheetData, excelDataConfigById);
         sheetData = excelToCsvDataConvertService.applySkipRowCriteria(sheetData, excelDataConfigById);
         excelToCsvDataConvertService.copyCellDataIndex(sheetData, excelDataConfigById);
-        sheetData = excelToCsvDataConvertService.applyCellMapping(sheetData, excelDataConfigById, sheetName);
+        sheetData = excelToCsvDataConvertService.applyCellMapping(sheetData, excelDataConfigById, srcFilepath, sheetName);
         excelToCsvDataConvertService.applyReplaceCellString(sheetData, excelDataConfigById);
         sheetData = excelToCsvDataConvertService.applyColumnMapping(sheetData, excelDataConfigById);
         sheetData = excelToCsvDataConvertService.applyRemoveColumnConfig(sheetData, excelDataConfigById);
@@ -95,7 +95,7 @@ public class MSExcelBridgeService {
         sheetData = excelToCsvDataConvertService.skipEmptyRows(sheetData, excelDataConfigById);
         sheetData = excelToCsvDataConvertService.applySkipRowCriteria(sheetData, excelDataConfigById);
         excelToCsvDataConvertService.copyCellDataIndex(sheetData, excelDataConfigById);
-        sheetData = excelToCsvDataConvertService.applyCellMapping(sheetData, excelDataConfigById, sheetName);
+        sheetData = excelToCsvDataConvertService.applyCellMapping(sheetData, excelDataConfigById, spreadSheetId, sheetName);
         excelToCsvDataConvertService.applyReplaceCellString(sheetData, excelDataConfigById);
         sheetData = excelToCsvDataConvertService.applyColumnMapping(sheetData, excelDataConfigById);
         sheetData = excelToCsvDataConvertService.applyRemoveColumnConfig(sheetData, excelDataConfigById);

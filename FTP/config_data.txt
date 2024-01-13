@@ -123,6 +123,9 @@ if col_index (in cellMapping or mappingData) == -2
     - then it will treated as: sheetNameMapping
     - cellData = sheetName and cellData2 = sheetName
 
+if col_index (in cellMapping or mappingData) == -3
+    - then it will treated as: filenameMapping
+    - cellData = filenameWithoutExt and cellData2 = filenameWithoutExt
 
 
 

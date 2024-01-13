@@ -220,6 +220,33 @@ excelDataConfig:
     appendCellDataIndex:
       - [ 0, -1 ]
     cellMapping:
+      - defaultCellData: "default-filename"
+        col_index: -1
+        mappingData:
+          - col_index: -3
+            regex: "invalid-regex"
+            subStringConfig: [ -1, 3, 0 ]
+      - col_index: -3
+      - col_index: -1
+        mappingData:
+          - col_index: -3
+            value: "0"
+            range: ["04-source-csv"]
+      - col_index: -3
+        mappingData:
+          - col_index: -3
+            value: "1"
+            regex: "04-source-csv"
+      - col_index: -3
+        mappingData:
+          - col_index: -3
+            regex: "04-source-csv"
+            subStringConfig: [ 0, 2, -1 ]
+      - col_index: -1
+        mappingData:
+          - col_index: -3
+            regex: "04-source-csv"
+            subStringConfig: [ -1, 3, 0 ]
       - col_index: -2
       - defaultCellData: "default-sheet-name"
         col_index: -1

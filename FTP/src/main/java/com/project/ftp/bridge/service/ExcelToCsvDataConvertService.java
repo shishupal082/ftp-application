@@ -5,6 +5,8 @@ import com.project.ftp.common.DateUtilities;
 import com.project.ftp.config.AppConstant;
 import com.project.ftp.exceptions.AppException;
 import com.project.ftp.exceptions.ErrorCodes;
+import com.project.ftp.obj.PathInfo;
+import com.project.ftp.service.FileService;
 import com.project.ftp.service.StaticService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,6 +16,10 @@ import java.util.HashMap;
 
 public class ExcelToCsvDataConvertService {
     final static Logger logger = LoggerFactory.getLogger(ExcelToCsvDataConvertService.class);
+    final FileService fileService;
+    public ExcelToCsvDataConvertService() {
+        this.fileService = new FileService();
+    }
     public ArrayList<ArrayList<String>> removeFirstEmptyRow(ArrayList<ArrayList<String>> csvData) {
         if (csvData == null) {
             return null;
@@ -368,8 +374,20 @@ public class ExcelToCsvDataConvertService {
         }
         return subString;
     }
+    private String getFileName(String srcFilepath, String defaultCellData) {
+        String filename = "";
+        if (defaultCellData != null) {
+            filename = defaultCellData;
+        }
+        PathInfo pathInfo = fileService.getPathInfo(srcFilepath);
+        if (AppConstant.FILE.equals(pathInfo.getType())) {
+            filename = pathInfo.getFilenameWithoutExt();
+        }
+        return filename;
+    }
     public ArrayList<ArrayList<String>> applyCellMapping(ArrayList<ArrayList<String>> sheetData,
-                                                         ExcelDataConfig excelDataConfigById, String sheetName) {
+                                                         ExcelDataConfig excelDataConfigById,
+                                                         String srcFilepath, String sheetName) {
         if (sheetData == null || excelDataConfigById == null) {
             return sheetData;
         }
@@ -406,6 +424,8 @@ public class ExcelToCsvDataConvertService {
                             cellData = rowData.get(colIndex);
                         } else if (colIndex != null && colIndex == -2) {
                             cellData = sheetName;
+                        }else if (colIndex != null && colIndex == -3) {
+                            cellData = this.getFileName(srcFilepath, defaultCellData);
                         }
                         if (cellsMappingData != null) {
                             for (CellMappingData cellMappingData : cellsMappingData) {
@@ -424,6 +444,8 @@ public class ExcelToCsvDataConvertService {
                                             cellData2 = rowData.get(colIndex2);
                                         } else if (colIndex2 == -2) {
                                             cellData2 = sheetName;
+                                        } else if (colIndex2 == -3) {
+                                            cellData2 = this.getFileName(srcFilepath, defaultCellData);
                                         } else {
                                             continue;
                                         }
