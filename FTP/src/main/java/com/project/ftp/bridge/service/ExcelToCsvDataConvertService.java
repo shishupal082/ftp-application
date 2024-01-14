@@ -457,6 +457,9 @@ public class ExcelToCsvDataConvertService {
                                             }
                                         } else if (range != null && range.contains(cellData2)) {
                                             cellData = value;
+                                            if (subStringConfig != null) {
+                                                cellData = this.getSubStringTextFromCellData(subStringConfig, cellData2);
+                                            }
                                             break;
                                         } else if (regex != null && StaticService.isPatternMatching(cellData2, regex, false)) {
                                             cellData = value;
