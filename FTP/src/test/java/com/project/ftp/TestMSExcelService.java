@@ -138,6 +138,16 @@ public class TestMSExcelService {
         Assert.assertEquals("BAD_REQUEST_ERROR", apiResponse.getFailureCode());
     }
     @Test
+    public void testTestMSExcelServiceV09() {
+        HttpServletRequest request = this.getHttpServletRequest();
+        String requestId;
+        ApiResponse apiResponse;
+        ApiResource apiResource = this.getApiResource();
+        requestId = "csv-test-09";
+        apiResponse = apiResource.updateMSExcelData(request, requestId);
+        Assert.assertEquals("SUCCESS", apiResponse.getStatus());
+    }
+    @Test
     public void testTestMSExcelServiceV10() {
         HttpServletRequest request = this.getHttpServletRequest();
         String requestId;

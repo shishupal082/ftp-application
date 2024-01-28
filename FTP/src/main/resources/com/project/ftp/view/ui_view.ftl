@@ -42,6 +42,7 @@
 var GLOBAL = {
     baseApi: "<#if uiViewObject.baseApi??>${uiViewObject.baseApi}<#else></#if>",
     basepathname: "<#if uiViewObject.basePathName??>${uiViewObject.basePathName}<#else></#if>",
+    loginUserDetailsApi: "/api/get_login_user_details",
     appControlDataPath: "<#if uiViewObject.appControlDataPath??>${uiViewObject.appControlDataPath}<#else></#if>",
     appControlApi: "<#if uiViewObject.appControlApi??>${uiViewObject.appControlApi}<#else></#if>",
     projectHeading: "<#if uiViewObject.projectHeading??>${uiViewObject.projectHeading}<#else></#if>",
@@ -61,6 +62,8 @@ GLOBAL.gtag = null;
 </#if>
 <#if uiViewObject.validAppControl ??>
 GLOBAL.validAppControl = [<#list uiViewObject.validAppControl as appControl>"${appControl}",</#list>];
+<#else>
+GLOBAL.validAppControl = [];
 </#if>
 <#if uiViewObject.customPageData??>
 GLOBAL.customPageData = {
@@ -71,6 +74,11 @@ GLOBAL.customPageData = {
 <#else>
 GLOBAL.customPageData = {};
 </#if>
+try {
+    GLOBAL.navigator = window.navigator;
+} catch (e) {
+    GLOBAL.navigator = null;
+}
 window.GLOBAL = GLOBAL;
 </script>
 <#if uiViewObject.jsFiles??>

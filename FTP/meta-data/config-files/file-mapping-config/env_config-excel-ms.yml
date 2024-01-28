@@ -191,6 +191,9 @@ excelDataConfig:
       - index: 0
         find: "es"
         replace: "ES"
+      - index: 1
+        find: "\\.\\.\\."
+        replace: "oo"
       - index: 3
         find: "&"
         replace: "%26"
