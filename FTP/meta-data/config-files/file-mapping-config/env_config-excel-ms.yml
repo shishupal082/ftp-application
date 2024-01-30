@@ -233,14 +233,14 @@ excelDataConfig:
       - col_index: -1
         mappingData:
           - col_index: -3
-            value: "0"
+            value: "0-range"
             range: ["04-source-csv"]
-      - col_index: -3
+      - col_index: -1
         mappingData:
           - col_index: -3
-            value: "1"
+            value: "1-regex"
             regex: "04-source-csv"
-      - col_index: -3
+      - col_index: -1
         mappingData:
           - col_index: -3
             regex: "04-source-csv"
@@ -250,6 +250,23 @@ excelDataConfig:
           - col_index: -3
             regex: "04-source-csv"
             subStringConfig: [ -1, 3, 0 ]
+      - col_index: -1
+        mappingData:
+          - col_index: -3
+            regex: "04-source-csv"
+            subStringConfig: [3, -1, 4]
+      - defaultCellData: "invalid-sub-str-config"
+        col_index: -1
+        mappingData:
+          - col_index: -3
+            regex: "04-source-csv"
+            subStringConfig: [20, -1, 4]
+      - defaultCellData: "invalid-sub-str-config"
+        col_index: -1
+        mappingData:
+          - col_index: -3
+            regex: "04-source-csv"
+            subStringConfig: [0, -1, 20]
       - defaultCellData: "default-sheet-name"
         col_index: -1
         mappingData:

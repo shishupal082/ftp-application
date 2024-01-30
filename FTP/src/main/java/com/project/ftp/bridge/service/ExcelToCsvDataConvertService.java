@@ -349,8 +349,12 @@ public class ExcelToCsvDataConvertService {
     private String getSubStringTextFromCellData(ArrayList<Integer> subStringConfig, String cellData) {
         String subString = cellData;
         Integer start, length, end;
-        int startIndex = 0, endIndex = 0;
+        int startIndex = -1, endIndex = -1;
         if (subString == null || subStringConfig == null || subStringConfig.size() < 3) {
+            return subString;
+        }
+        subString = subString.trim();
+        if (subString.isEmpty()) {
             return subString;
         }
         start = subStringConfig.get(0);
@@ -359,18 +363,22 @@ public class ExcelToCsvDataConvertService {
         if (start == null || length == null || end == null) {
             return subString;
         }
-        if (length < 0 || subString.length() <= length) {
-            return subString;
-        }
         if (start >= 0) {
             startIndex = start;
-            endIndex = start + length;
-        } else if (end >= 0) {
+            if (length > 0) {
+                endIndex = start + length - 1;//endIndex >= 0 && subString.length() >= 1
+                if (endIndex >= subString.length()) {
+                    endIndex = subString.length() - 1;
+                }
+            } else if (end >= 0) {
+                endIndex = subString.length() - end - 1;
+            }
+        } else if (end >= 0 && length > 0) {
             startIndex = subString.length()-length-end;
-            endIndex = subString.length()-end;
+            endIndex = subString.length()-end-1;
         }
-        if (startIndex >= 0 && endIndex >= 0 && startIndex < endIndex && startIndex < subString.length() && endIndex <= subString.length()) {
-            subString = subString.substring(startIndex, endIndex);
+        if (startIndex >= 0 && endIndex >= 0 && startIndex < endIndex && startIndex < subString.length() && endIndex < subString.length()) {
+            subString = subString.substring(startIndex, endIndex+1);
         }
         return subString;
     }
