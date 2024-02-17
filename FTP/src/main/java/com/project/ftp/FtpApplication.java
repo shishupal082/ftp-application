@@ -126,6 +126,8 @@ public class FtpApplication  extends Application<FtpConfiguration> {
         if (arguments.size() >= AppConstant.CMD_LINE_ARG_MIN_SIZE) {
             StaticService.renameOldLogFile(args[AppConstant.CMD_LINE_ARG_MIN_SIZE-2], args[AppConstant.CMD_LINE_ARG_MIN_SIZE-1]);
             new FtpApplication().run(AppConstant.SERVER, args[AppConstant.CMD_LINE_ARG_MIN_SIZE-1]);
+        } else {
+            LOGGER.info("Minimum required command line argument is: {}", AppConstant.CMD_LINE_ARG_MIN_SIZE);
         }
     }
 }
