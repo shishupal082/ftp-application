@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Page not found</title>
+    <title>Page redirect url</title>
     <#if ftlConfig.tempGaEnable??>
         <!-- If condition -->
         <!-- Global site tag (gtag.js) - Google Analytics -->
