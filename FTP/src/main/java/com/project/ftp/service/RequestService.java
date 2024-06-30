@@ -80,7 +80,7 @@ public class RequestService {
                 logger.info("Error in loading file: {}", pathInfo);
             }
         }
-        return new CommonView("page_not_found_404.ftl", appConfig);
+        return new CommonView("page_not_found_404.ftl", appConfig, AppConstant.AppVersion);
     }
     public Object handleDefaultUrl(HttpServletRequest request) {
         String requestedPath = this.getPathUrl(request);
@@ -113,7 +113,7 @@ public class RequestService {
                 return new ApiResponse(ErrorCodes.UNAUTHORIZED_USER).toJsonString();
             }
         }
-        return new CommonView("page_not_found_404.ftl", appConfig);
+        return new CommonView("page_not_found_404.ftl", appConfig, AppConstant.AppVersion);
     }
     public static String updateSessionId(HttpServletRequest request, AppConfig appConfig,
                                          UserService userService,

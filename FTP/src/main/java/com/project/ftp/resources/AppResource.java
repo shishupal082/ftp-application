@@ -8,10 +8,7 @@ import com.project.ftp.exceptions.AppException;
 import com.project.ftp.obj.ApiResponse;
 import com.project.ftp.obj.LoginUserDetails;
 import com.project.ftp.obj.PathInfo;
-import com.project.ftp.service.AuthService;
-import com.project.ftp.service.FileServiceV2;
-import com.project.ftp.service.RequestService;
-import com.project.ftp.service.UserService;
+import com.project.ftp.service.*;
 import com.project.ftp.view.AppView;
 import com.project.ftp.view.CommonView;
 import com.project.ftp.view.IndexView;
@@ -123,7 +120,7 @@ public class AppResource {
             return Response.status(Response.Status.OK).entity(
                     apiResponse.toJsonString()).type(MediaType.APPLICATION_JSON).build();
         }
-        return Response.ok(new CommonView("page_not_found_404.ftl", appConfig)).build();
+        return Response.ok(new CommonView("page_not_found_404.ftl", appConfig, AppConstant.AppVersion)).build();
     }
     @GET
     @Path("/view/any-file")
@@ -168,7 +165,7 @@ public class AppResource {
             return Response.status(Response.Status.OK).entity(
                     apiResponse.toJsonString()).type(MediaType.APPLICATION_JSON).build();
         }
-        return Response.ok(new CommonView("page_not_found_404.ftl", appConfig)).build();
+        return Response.ok(new CommonView("page_not_found_404.ftl", appConfig, AppConstant.AppVersion)).build();
     }
     @GET
     @Path("/view/redirect")
@@ -176,14 +173,12 @@ public class AppResource {
     public Response viewRedirect(@Context HttpServletRequest request,
                                 @QueryParam("url") String url,
                                 @QueryParam("container") String container,
-                                @QueryParam("u") String uiUsername) throws URISyntaxException {
+                                @QueryParam("u") String uiUsername) {
         logger.info("Loading viewRedirect, url: {}, container: {}, u: {}", url, container, uiUsername);
         logger.info("user: {}", userService.getUserDataForLogging(request));
+        url = StaticService.urlEncode(url);
         logger.info("viewRedirect : redirect from: /view/redirect to: " + url);
-        if (url != null && !"/view/redirect".equals(url)) {
-            return Response.seeOther(new URI(url)).build();
-        }
-        return Response.ok(new CommonView("page_not_found_404.ftl", appConfig)).build();
+        return Response.ok(new CommonView("page_redirect_url.ftl", appConfig, url)).build();
     }
     @GET
     @Path("/download/file/{username}/{filename2}")
@@ -218,7 +213,7 @@ public class AppResource {
                 logger.info("Error in loading file: {}", pathInfo);
             }
         }
-        return new CommonView("page_not_found_404.ftl", appConfig);
+        return new CommonView("page_not_found_404.ftl", appConfig, AppConstant.AppVersion);
     }
     @GET
     @Path("/users_control")

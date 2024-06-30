@@ -12,13 +12,22 @@ import org.slf4j.LoggerFactory;
 public class CommonView extends View {
     final static Logger logger = LoggerFactory.getLogger(CommonView.class);
     private final FtlConfig ftlConfig;
-    public CommonView(String pageName, AppConfig appConfig) {
+    private String pageData;
+    public CommonView(String pageName, AppConfig appConfig, String viewPageData) {
         super(pageName);
         ftlConfig = appConfig.getFtlConfig();
-        logger.info("Loading CommonView with page : {}", pageName);
+        if (viewPageData == null) {
+            pageData = "";
+        } else {
+            pageData = viewPageData;
+        }
+        logger.info("Loading CommonView with page: {} and pageData: {}", pageName, pageData);
     }
 
     public FtlConfig getFtlConfig() {
         return ftlConfig;
+    }
+    public String getPageData() {
+        return pageData;
     }
 }

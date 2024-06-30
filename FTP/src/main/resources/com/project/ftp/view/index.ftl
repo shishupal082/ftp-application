@@ -30,6 +30,7 @@
 
 <script type="text/javascript">
 $(document).ready(function() {
+var indexPageReRoute = $("input[name=index-page-re-route]").val();
 function formateData(response) {
     var res = [], item = [];
     if ($S.isArray(response)) {
@@ -58,7 +59,6 @@ function isValidUrl(configReRoutePath) {
     return false;
 }
 
-var indexPageReRoute = $("input[name=index-page-re-route]").val();
 if (isValidUrl(indexPageReRoute)) {
     window.location.href = indexPageReRoute.trim();
 } else {

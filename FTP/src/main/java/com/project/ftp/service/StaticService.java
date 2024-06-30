@@ -257,6 +257,16 @@ public class StaticService {
         logger.info("string truncated: {}, to {}", str, truncatedStr);
         return truncatedStr;
     }
+    public static String urlEncode(String url) {
+        if (url == null) {
+            return url;
+        }
+        url = replaceString(url, "%26", "&");
+        url = replaceString(url, "%20", " ");
+        url = replaceString(url, "\"", "");
+        url = replaceString(url, "\\.\\.\\.", ",");
+        return url;
+    }
     public static void printLog(Object logStr) {
         sysUtils.printLog(logStr);
     }
