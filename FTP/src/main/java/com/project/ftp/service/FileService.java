@@ -21,15 +21,21 @@ public class FileService {
         }
         PathInfo pathInfo = new PathInfo(requestedPath);
         File file = new File(requestedPath);
+        String fileSize;
+        double sizeInKb;
         if (file.isDirectory()) {
             pathInfo.setType(AppConstant.FOLDER);
+            pathInfo.setDetectedAt(StaticService.getDateStrFromPattern(AppConstant.DateTimeFormat6));
         } else if (file.isFile()) {
             pathInfo.setType(AppConstant.FILE);
+            pathInfo.setDetectedAt(StaticService.getDateStrFromPattern(AppConstant.DateTimeFormat6));
             pathInfo.setFileName(file.getName());
             String parentFolder = StaticService.replaceBackSlashToSlash(file.getParent());
             pathInfo.setParentFolder(parentFolder); // It does not contain "/" in the end
             pathInfo.findExtension();
             pathInfo.findMimeType();
+            sizeInKb = (double) file.length()/1024;
+            pathInfo.setSizeInKb(sizeInKb);
         }
         return pathInfo;
     }
@@ -212,7 +218,6 @@ public class FileService {
 
     public ScanResult scanDirectory(String folderPath, String staticFolderPath,
                                     boolean isRecursive, boolean isAddDatabaseDir) {
-        //folderPath and staticFolderPath should contain / in the end
         ScanResult finalFileScanResult = new ScanResult(staticFolderPath, folderPath);
         if (folderPath == null || staticFolderPath == null) {
             return finalFileScanResult;
@@ -222,6 +227,7 @@ public class FileService {
             File folder = new File(folderPath);
             if (folder.isFile()) {
                 finalFileScanResult = new ScanResult(staticFolderPath, folderPath, PathType.FILE);
+                finalFileScanResult.setPathSize((double) folder.length()/1024);
 //                logger.info("Given folder path is a file returning: {}", finalFileScanResult);
                 return finalFileScanResult;
             }
@@ -233,20 +239,24 @@ public class FileService {
                 finalFileScanResult.setScanResults(new ArrayList<ScanResult>());
                 for (File file : listOfFiles) {
                     if (file.isFile()) {
+                        folderPath = StaticService.getProperDirStringV2(folderPath);
                         fileScanResult = scanDirectory(folderPath + file.getName(),
                                 staticFolderPath, false, isAddDatabaseDir);
                     } else if (file.isDirectory()) {
                         if (isRecursive) {
                             // Setting isRecursive as false as we have to scan only up to 1 layer
                             if (isAddDatabaseDir) {
+                                folderPath = StaticService.getProperDirStringV2(folderPath);
                                 fileScanResult = scanDirectory(
                                         folderPath + file.getName() + "/" + AppConstant.DATABASE + "/",
                                         staticFolderPath, false, false);
                             } else {
+                                folderPath = StaticService.getProperDirStringV2(folderPath);
                                 fileScanResult = scanDirectory(folderPath + file.getName() + "/", staticFolderPath,
                                         true, false);
                             }
                         } else {
+                            folderPath = StaticService.getProperDirStringV2(folderPath);
                             fileScanResult = new ScanResult(staticFolderPath,
                                     folderPath + file.getName() + "/", PathType.FOLDER);
                         }
@@ -265,7 +275,6 @@ public class FileService {
         return finalFileScanResult;
     }
     public ArrayList<String> getAvailableFiles(String directory) {
-        //directory should contain / in the end
         ArrayList<String> availableFiles = new ArrayList<>();
         ScanResult scanResult = this.scanDirectory(directory, directory, false, false);
         ArrayList<ScanResult> scanResults = scanResult.getScanResults();

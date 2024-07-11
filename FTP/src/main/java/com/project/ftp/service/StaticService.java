@@ -148,10 +148,16 @@ public class StaticService {
         if (path == null) {
             return null;
         }
+        path = getProperDirStringV2(path);
+        return strUtils.replaceLast("/", "", path);
+    }
+    public static String getProperDirStringV2(String path) {
+        if (path == null) {
+            return null;
+        }
         path = replaceBackSlashToSlash(path);
         path = path + "/";
-        path = path.replaceAll("/+", "/");
-        return strUtils.replaceLast("/", "", path);
+        return path.replaceAll("/+", "/");
     }
     //Test case written for this
     public static String removeRelativePath(String path) {
@@ -201,7 +207,7 @@ public class StaticService {
         }
         if (ftpConfiguration.getRolesFileName() != null) {
             ArrayList<String> rolesFileName = ftpConfiguration.getRolesFileName();
-            if (rolesFileName.size() > 0) {
+            if (!rolesFileName.isEmpty()) {
                 for (String filename: rolesFileName) {
                     rolesConfigPath.add(configDir+filename);
                 }

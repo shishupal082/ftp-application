@@ -5,21 +5,63 @@ import com.project.ftp.service.StaticService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class PathInfo {
-    final static Logger logger = LoggerFactory.getLogger(PathInfo.class);
+public class PathInfoScanResult {
+    final static Logger logger = LoggerFactory.getLogger(PathInfoScanResult.class);
+    private String deviceId;
+    private String scanDirMappingId;
+    private String scannedDate;
     private String detectedAt;
+    private String editedAt;
+    private String remark;
     private String path;
-    private String type; // file, folder, AppConstant.FTL_VIEW_TYPE, AppConstant.UNAUTHORISED_JSON_DATA
+    private String type;
     private String parentFolder; // In case of file only
-    private String fileName; // fileName can be ftl.view.id also
+    private String fileName;
     private String filenameWithoutExt;
     private String extension;
     private String mediaType;
     private String size;
     private double sizeInKb;
-    public PathInfo() {}
-    public PathInfo(final String path) {
-        this.path = path;
+
+    public PathInfoScanResult() {}
+    public PathInfoScanResult(final PathInfo pathInfo) {
+        if (pathInfo == null) {
+            return;
+        }
+        this.detectedAt = pathInfo.getDetectedAt();
+        this.path = pathInfo.getPath();
+        this.type = pathInfo.getType();
+        this.parentFolder = pathInfo.getParentFolder();
+        this.fileName = pathInfo.getFileName();
+        this.filenameWithoutExt = pathInfo.getFilenameWithoutExt();
+        this.extension = pathInfo.getExtension();
+        this.mediaType =pathInfo.getMediaType();
+        this.size = pathInfo.getSize();
+        this.sizeInKb = pathInfo.getSizeInKb();
+    }
+
+    public String getDeviceId() {
+        return deviceId;
+    }
+
+    public void setDeviceId(String deviceId) {
+        this.deviceId = deviceId;
+    }
+
+    public String getScanDirMappingId() {
+        return scanDirMappingId;
+    }
+
+    public void setScanDirMappingId(String scanDirMappingId) {
+        this.scanDirMappingId = scanDirMappingId;
+    }
+
+    public String getScannedDate() {
+        return scannedDate;
+    }
+
+    public void setScannedDate(String scannedDate) {
+        this.scannedDate = scannedDate;
     }
 
     public String getDetectedAt() {
@@ -28,6 +70,22 @@ public class PathInfo {
 
     public void setDetectedAt(String detectedAt) {
         this.detectedAt = detectedAt;
+    }
+
+    public String getEditedAt() {
+        return editedAt;
+    }
+
+    public void setEditedAt(String editedAt) {
+        this.editedAt = editedAt;
+    }
+
+    public String getRemark() {
+        return remark;
+    }
+
+    public void setRemark(String remark) {
+        this.remark = remark;
     }
 
     public String getPath() {
@@ -77,47 +135,13 @@ public class PathInfo {
     public void setExtension(String extension) {
         this.extension = extension;
     }
+
     public String getMediaType() {
         return mediaType;
     }
 
     public void setMediaType(String mediaType) {
         this.mediaType = mediaType;
-    }
-
-    public void findExtension() {
-        if (AppConstant.FILE.equals(this.type) && fileName != null) {
-            String[] fileNameArr = fileName.split("\\.");
-            String filenameWithoutExt = "";
-            if (fileNameArr.length > 0) {
-                if (fileNameArr.length == 1) {
-                    extension = "";
-                } else {
-                    extension = fileNameArr[fileNameArr.length-1];
-                }
-            }
-            for (int i=0; i<fileNameArr.length-1; i++) {
-                if (i==0) {
-                    filenameWithoutExt = fileNameArr[i];
-                } else {
-                    filenameWithoutExt += "." + fileNameArr[i];
-                }
-            }
-            if (filenameWithoutExt.isEmpty()) {
-                filenameWithoutExt = fileName;
-            }
-            this.filenameWithoutExt = filenameWithoutExt;
-        }
-    }
-    public void findMimeType() {
-        if (extension == null) {
-            return;
-        }
-        //        if (mimeType == null) {
-            // Can be search in ftpConfiguration, but as of now not required
-//            logger.info("directoryConfig:mimeType not configured in env_config");
-//        }
-        this.mediaType = StaticService.getFileMimeTypeValue(extension);
     }
 
     public String getSize() {
@@ -127,17 +151,6 @@ public class PathInfo {
     public void setSize(String size) {
         this.size = size;
     }
-    private void setSizeFromKb(double sizeInKb) {
-        String pathSize;
-        if (sizeInKb < 1000) {
-            pathSize = String.format("%1.3f", sizeInKb) + " kb";
-        } else if (sizeInKb < 1000*1000) {
-            pathSize = String.format("%1.3f", sizeInKb/1000) + " mb";
-        } else {
-            pathSize = String.format("%1.3f", sizeInKb/(1000*1000)) + " gb";
-        }
-        this.setSize(pathSize);
-    }
 
     public double getSizeInKb() {
         return sizeInKb;
@@ -145,13 +158,18 @@ public class PathInfo {
 
     public void setSizeInKb(double sizeInKb) {
         this.sizeInKb = sizeInKb;
-        this.setSizeFromKb(sizeInKb);
     }
 
     @Override
     public String toString() {
-        return "PathInfo{" +
-                "path='" + path + '\'' +
+        return "PathInfoScanResult{" +
+                "deviceId='" + deviceId + '\'' +
+                ", scanDirMappingId='" + scanDirMappingId + '\'' +
+                ", scannedDate='" + scannedDate + '\'' +
+                ", detectedAt='" + detectedAt + '\'' +
+                ", editedAt='" + editedAt + '\'' +
+                ", remark='" + remark + '\'' +
+                ", path='" + path + '\'' +
                 ", type='" + type + '\'' +
                 ", parentFolder='" + parentFolder + '\'' +
                 ", fileName='" + fileName + '\'' +

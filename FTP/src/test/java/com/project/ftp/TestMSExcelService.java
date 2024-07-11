@@ -26,7 +26,7 @@ public class TestMSExcelService {
         EventInterface eventInterface = new EventFile(appConfig);
         return new EventTracking(appConfig, userService, eventInterface);
     }
-    private AppConfig getAppConfig() {
+    public AppConfig getAppConfig() {
         AppConfig appConfig = new AppConfig();
         FtpConfiguration ftpConfiguration = new FtpConfiguration();
         EventTracking eventTracking = this.getEventTracking(appConfig);

@@ -5,6 +5,7 @@ import com.project.ftp.config.PathType;
 import java.util.ArrayList;
 
 public class ScanResult {
+    private double pathSize;
     private String pathName;
     private PathType pathType;
     private String staticFolderPath;
@@ -18,6 +19,15 @@ public class ScanResult {
         this.pathName = pathName;
         this.pathType = pathType;
     }
+
+    public double getPathSize() {
+        return pathSize;
+    }
+
+    public void setPathSize(double pathSize) {
+        this.pathSize = pathSize;
+    }
+
     public String getPathName() {
         return pathName;
     }
@@ -53,7 +63,8 @@ public class ScanResult {
     @Override
     public String toString() {
         return "ScanResult{" +
-                "pathName='" + pathName + '\'' +
+                "pathSize=" + pathSize +
+                ", pathName='" + pathName + '\'' +
                 ", pathType=" + pathType +
                 ", staticFolderPath='" + staticFolderPath + '\'' +
                 ", scanResults=" + scanResults +

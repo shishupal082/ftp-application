@@ -26,7 +26,7 @@ Then type
 - run.bat
 
 It will give reason for not running application
-java -jar FTP-8.0.2.015-SNAPSHOT.jar false false app_env_config_final.yml
+java -jar FTP-8.0.2.016-SNAPSHOT.jar false false app_env_config_final.yml
 1st parameter (false): isMysqlEnable
 2nd parameter (false): isStaticPath
 3rd parameter (app_env_config_final.yml): 1st config path
