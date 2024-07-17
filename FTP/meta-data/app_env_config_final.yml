@@ -66,6 +66,7 @@ rateLimitThreshold: 2
 enableMysqlTableName:
   - users
   - event_data
+  - file_path
 
 
 eventDataFilenamePattern: "'event_data/'yyyy-MM-dd-HH-mm'-event_data.csv'"

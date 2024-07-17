@@ -10,10 +10,13 @@ import com.project.ftp.filters.ResponseFilter;
 import com.project.ftp.intreface.*;
 import com.project.ftp.mysql.DbDAO;
 import com.project.ftp.mysql.MysqlUser;
+import com.project.ftp.obj.yamlObj.DatabaseParams;
+import com.project.ftp.parser.YamlFileParser;
 import com.project.ftp.resources.ApiResource;
 import com.project.ftp.resources.AppResource;
 import com.project.ftp.resources.FaviconResource;
 import com.project.ftp.service.AuthService;
+import com.project.ftp.service.ScanDirService;
 import com.project.ftp.service.StaticService;
 import com.project.ftp.service.UserService;
 import io.dropwizard.Application;
@@ -54,20 +57,42 @@ public class FtpApplication  extends Application<FtpConfiguration> {
             bootstrap.addBundle(hibernateBundle);
         }
     }
-    @Override
-    public void run(FtpConfiguration ftpConfiguration, Environment environment) {
-        LOGGER.info("commandLineArguments: " + arguments.toString());
+    private DbDAO getDbDAO(AppConfig appConfig, FtpConfiguration ftpConfiguration, String source) {
+        YamlFileParser yamlFileParser = new YamlFileParser();
+        ArrayList<String> args = appConfig.getCmdArguments();
+        if (AppConstant.SOURCE_RUNTIME.equals(source)) {
+            return new DbDAO(hibernateBundle.getSessionFactory(), ftpConfiguration.getDataSourceFactory());
+        } else {
+            // Read database configuration for junit test case and put it into ftpConfiguration
+            DatabaseParams databaseParams = yamlFileParser.getDatabaseConfig(
+                    args.get(AppConstant.CMD_LINE_ARG_MIN_SIZE-2),
+                    args.get(AppConstant.CMD_LINE_ARG_MIN_SIZE-1)).getDatabase();
+            if (databaseParams != null) {
+                ftpConfiguration.getDataSourceFactory().setDriverClass(databaseParams.getDriverClass());
+                ftpConfiguration.getDataSourceFactory().setUser(databaseParams.getUser());
+                ftpConfiguration.getDataSourceFactory().setPassword(databaseParams.getPassword());
+                ftpConfiguration.getDataSourceFactory().setUrl(databaseParams.getUrl());
+            }
+            return null;
+        }
+    }
+    public AppConfig getAppConfig(final FtpConfiguration ftpConfiguration, ArrayList<String> args, String source) {
         AppConfig appConfig = new AppConfig();
-        appConfig.setCmdArguments(arguments);
+        if (args.size() < AppConstant.CMD_LINE_ARG_MIN_SIZE) {
+            LOGGER.info("Minimum required command line argument is: {}", AppConstant.CMD_LINE_ARG_MIN_SIZE);
+            return null;
+        }
+        appConfig.setCmdArguments(args);
         appConfig.updateFinalFtpConfiguration(ftpConfiguration);
 //        ShutdownTask shutdownTask = new ShutdownTask(appConfig);
 //        appConfig.setShutdownTask(shutdownTask);
 //        appConfig.setFtpConfiguration(ftpConfiguration);
-        StaticService.initApplication(appConfig, arguments.get(AppConstant.CMD_LINE_ARG_MIN_SIZE-2), arguments.get(AppConstant.CMD_LINE_ARG_MIN_SIZE-1));
+        StaticService.initApplication(appConfig, args.get(AppConstant.CMD_LINE_ARG_MIN_SIZE-2), args.get(AppConstant.CMD_LINE_ARG_MIN_SIZE-1));
         appConfig.updatePageConfig404();
         LOGGER.info("appConfig: {}", appConfig);
         EventInterface eventInterface = null;
         UserInterface userInterface = null;
+        FilepathInterface filepathInterface = null;
         if (appConfig.getFtpConfiguration().isMysqlEnable()) {
             LOGGER.info("mysql config enable");
             ArrayList<String> enableMysqlTable = null;
@@ -75,18 +100,28 @@ public class FtpApplication  extends Application<FtpConfiguration> {
                 enableMysqlTable = ftpConfiguration.getEnableMysqlTableName();
             }
             if (enableMysqlTable != null) {
-                DbDAO dbDAO = new DbDAO(hibernateBundle.getSessionFactory(), ftpConfiguration.getDataSourceFactory());
-                if (enableMysqlTable.contains(AppConstant.TABLE_NAME_EVENT)) {
-                    eventInterface = new EventDb(dbDAO);
-                    LOGGER.info("eventInterface configured from mysql");
-                } else {
-                    LOGGER.info("eventInterface not configured from mysql");
+                DbDAO dbDAO = this.getDbDAO(appConfig, ftpConfiguration, source);
+                if (appConfig.getFtpConfiguration().isMysqlEnable()) {
+                    if (enableMysqlTable.contains(AppConstant.TABLE_FILE_PATH)) {
+                        filepathInterface = new FilepathDb(ftpConfiguration.getDataSourceFactory());
+                        LOGGER.info("filepathInterface configured from mysql");
+                    } else {
+                        LOGGER.info("filepathInterface not configured from mysql");
+                    }
                 }
-                if (enableMysqlTable.contains(AppConstant.TABLE_NAME_USER)) {
-                    userInterface = new UserDb(dbDAO);
-                    LOGGER.info("userInterface configured from mysql");
-                } else {
-                    LOGGER.info("userInterface not configured from mysql");
+                if (AppConstant.SOURCE_RUNTIME.equals(source)) {
+                    if (enableMysqlTable.contains(AppConstant.TABLE_NAME_EVENT)) {
+                        eventInterface = new EventDb(dbDAO);
+                        LOGGER.info("eventInterface configured from mysql");
+                    } else {
+                        LOGGER.info("eventInterface not configured from mysql");
+                    }
+                    if (enableMysqlTable.contains(AppConstant.TABLE_NAME_USER)) {
+                        userInterface = new UserDb(dbDAO);
+                        LOGGER.info("userInterface configured from mysql");
+                    } else {
+                        LOGGER.info("userInterface not configured from mysql");
+                    }
                 }
             }
         } else {
@@ -100,28 +135,41 @@ public class FtpApplication  extends Application<FtpConfiguration> {
             userInterface = new UserFile(appConfig);
             LOGGER.info("userInterface configured from file");
         }
+        if (filepathInterface == null) {
+//            filepathInterface = null;
+            LOGGER.info("filepathInterface configured from file");
+        }
         UserService userService = new UserService(appConfig, userInterface);
-        AuthService authService = new AuthService(userService);
-        EventTracking eventTracking = new EventTracking(appConfig, userService, eventInterface);
-        // for bridge implementation
-        appConfig.setAppToBridge(new AppToBridge(ftpConfiguration, eventTracking));
         appConfig.setUserService(userService);
-        // ---for bridge implementation end----
+        EventTracking eventTracking = new EventTracking(appConfig, userService, eventInterface);
+        appConfig.setEventTracking(eventTracking);
+        AuthService authService = new AuthService(userService);
+        appConfig.setAuthService(authService);
+        ScanDirService scanDirService = new ScanDirService(appConfig, filepathInterface);
+        appConfig.setScanDirService(scanDirService);
+        appConfig.setAppToBridge(new AppToBridge(ftpConfiguration, eventTracking));
+        return appConfig;
+    }
+    @Override
+    public void run(FtpConfiguration ftpConfiguration, Environment environment) {
+        LOGGER.info("commandLineArguments: " + arguments.toString());
+        AppConfig appConfig = this.getAppConfig(ftpConfiguration, arguments, AppConstant.SOURCE_RUNTIME);
+        EventTracking eventTracking = appConfig.getEventTracking();
         environment.servlets().setSessionHandler(new SessionHandler());
         environment.jersey().register(MultiPartFeature.class);
         environment.jersey().register(new AppExceptionMapper(eventTracking));
         environment.jersey().register(new LogFilter(appConfig));
-        environment.jersey().register(new RequestFilter(appConfig, userService, eventTracking));
+        environment.jersey().register(new RequestFilter(appConfig, eventTracking));
         environment.jersey().register(new ResponseFilter(appConfig));
         environment.jersey().register(new FaviconResource(appConfig));
 
-        environment.jersey().register(new ApiResource(appConfig, userService, eventTracking, authService));
-        environment.jersey().register(new AppResource(appConfig, userService, eventTracking, authService));
+        environment.jersey().register(new ApiResource(appConfig));
+        environment.jersey().register(new AppResource(appConfig));
 //        environment.admin().addTask(shutdownTask);
         eventTracking.trackApplicationStart(ftpConfiguration.getInstance());
     }
     public static void main(String[] args) throws Exception {
-        // java -jar meta-data/FTP-*-SNAPSHOT.jar <serverName> <isMySqlEnable> <config file 1> <config file 2> ...
+        // java -jar meta-data/FTP-*-SNAPSHOT.jar <serverName> <isMySqlEnable> <isStaticPath> <config file 1> <config file 2> ...
         arguments.addAll(Arrays.asList(args));
         if (arguments.size() >= AppConstant.CMD_LINE_ARG_MIN_SIZE) {
             StaticService.renameOldLogFile(args[AppConstant.CMD_LINE_ARG_MIN_SIZE-2], args[AppConstant.CMD_LINE_ARG_MIN_SIZE-1]);

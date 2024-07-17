@@ -6,6 +6,7 @@ package com.project.ftp.config;
 */
 
 import com.project.ftp.FtpConfiguration;
+import com.project.ftp.event.EventTracking;
 import com.project.ftp.exceptions.AppException;
 import com.project.ftp.exceptions.ErrorCodes;
 import com.project.ftp.intreface.AppToBridge;
@@ -15,6 +16,8 @@ import com.project.ftp.obj.PathInfo;
 import com.project.ftp.obj.yamlObj.FtlConfig;
 import com.project.ftp.obj.yamlObj.PageConfig404;
 import com.project.ftp.parser.YamlFileParser;
+import com.project.ftp.service.AuthService;
+import com.project.ftp.service.ScanDirService;
 import com.project.ftp.service.StaticService;
 import com.project.ftp.service.UserService;
 import com.project.ftp.session.SessionData;
@@ -38,14 +41,14 @@ public class AppConfig {
     private FtpConfiguration ftpConfiguration;
     private PageConfig404 pageConfig404;
 
+    private EventTracking eventTracking;
+
     private AppToBridge appToBridge;
+    private AuthService authService;
     private UserService userService;
+    private ScanDirService scanDirService;
     public AppConfig() {
         this.configDate = StaticService.getDateStrFromPattern(AppConstant.DATE_FORMAT);
-        userService = null;
-    }
-    public void setUserService(UserService userService) {
-        this.userService = userService;
     }
 
     public AppToBridge getAppToBridge() {
@@ -211,6 +214,7 @@ public class AppConfig {
         }
         FtpConfiguration temp;
         YamlFileParser yamlFileParser = new YamlFileParser();
+        //First file path already processed through main function
         for (int i = AppConstant.CMD_LINE_ARG_MIN_SIZE; i< cmdArguments.size(); i++) {
             temp = yamlFileParser.getFtpConfigurationFromPath(
                     cmdArguments.get(AppConstant.CMD_LINE_ARG_MIN_SIZE-2),
@@ -229,6 +233,39 @@ public class AppConfig {
         return new AppConfigObj(publicDir, configDate, appVersion, cmdArguments,
                 logFilePath, requestCount, sessionData, ftpConfiguration, pageConfig404);
     }
+
+    public EventTracking getEventTracking() {
+        return eventTracking;
+    }
+
+    public void setEventTracking(EventTracking eventTracking) {
+        this.eventTracking = eventTracking;
+    }
+
+    public AuthService getAuthService() {
+        return authService;
+    }
+
+    public void setAuthService(AuthService authService) {
+        this.authService = authService;
+    }
+
+    public UserService getUserService() {
+        return userService;
+    }
+
+    public void setUserService(UserService userService) {
+        this.userService = userService;
+    }
+
+    public ScanDirService getScanDirService() {
+        return scanDirService;
+    }
+
+    public void setScanDirService(ScanDirService scanDirService) {
+        this.scanDirService = scanDirService;
+    }
+
     @Override
     public String toString() {
         return this.getAppConfigObj().toString();

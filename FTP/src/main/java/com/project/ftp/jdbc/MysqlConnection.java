@@ -20,51 +20,75 @@ public class MysqlConnection {
         username = dataSourceFactory.getUser();
         password = dataSourceFactory.getPassword();
     }
+    private boolean isConnected() {
+        try {
+            if (con == null) {
+                return false;
+            }
+            if (this.con.isClosed()) {
+                return false;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return true;
+    }
     public void close() {
         if (con == null) {
-            logger.info("MySQL connection not found");
+            return;
+        }
+        if (!this.isConnected()) {
             return;
         }
         try {
             con.close();
-            logger.info("MySQL connection closed");
+            logger.info("MysqlConnection: MySQL connection closed");
         } catch (Exception e) {
-            logger.info("Error in closing connection");
+            logger.info("MysqlConnection: Error in closing connection");
             e.printStackTrace();
         }
     }
-    public void Connect() {
+    public void connect() {
+        if (this.isConnected()) {
+            return;
+        }
         try {
             Class.forName(driver);
             con = DriverManager.getConnection(url, username, password);
-            logger.info("Connection success");
+            logger.info("MysqlConnection: Connection success");
         } catch (Exception e) {
-            logger.info("Connection fail");
+            logger.info("MysqlConnection: Connection fail");
             e.printStackTrace();
         }
     }
-    public ResultSet query(String query) {
+    public ResultSet query(String query, ArrayList<String> parameters) {
+        if (!this.isConnected()) {
+            this.connect();
+        }
         ResultSet rs = null;
         try {
-            Statement stmt = con.createStatement();
-            rs = stmt.executeQuery(query);
-            logger.info("query executed");
+//            Statement stmt = con.createStatement();
+//            rs = stmt.executeQuery(query);
+            PreparedStatement preparedStatement = con.prepareStatement(query);
+            for(int i=0; i<parameters.size(); i++) {
+                preparedStatement.setString(i+1, parameters.get(i));
+            }
+            rs = preparedStatement.executeQuery();
         } catch (Exception e) {
-            logger.info("error in query execution: {}", query);
+            logger.info("MysqlConnection: error in select query execution: {}", query);
             e.printStackTrace();
         }
         return rs;
     }
     public boolean updateQuery(String query) {
         boolean status = false;
-        this.Connect();
+        this.connect();
         try {
             Statement stmt = con.createStatement();
             stmt.executeUpdate(query);
             status = true;
-            logger.info("query executed");
         } catch (Exception e) {
-            logger.info("error in query execution: {}", query);
+            logger.info("MysqlConnection: error in update query execution: {}", query);
             e.printStackTrace();
         }
         this.close();
@@ -72,7 +96,9 @@ public class MysqlConnection {
     }
     public boolean updateQueryV2(String query, ArrayList<String> parameters) {
         boolean status = false;
-        this.Connect();
+        if (!this.isConnected()) {
+            this.connect();
+        }
         try {
             PreparedStatement preparedStatement = con.prepareStatement(query);
             for(int i=0; i<parameters.size(); i++) {
@@ -80,12 +106,10 @@ public class MysqlConnection {
             }
             preparedStatement.executeUpdate();
             status = true;
-            logger.info("query executed");
         } catch (Exception e) {
-            logger.info("error in query execution: {}", query);
+            logger.info("MysqlConnection: error in updateQueryV2 execution: {}", query);
             e.printStackTrace();
         }
-        this.close();
         return status;
     }
 }

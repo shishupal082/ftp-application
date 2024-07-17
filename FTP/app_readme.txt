@@ -325,8 +325,8 @@ Total 4 query
 
 config parameter added
     - mysqlEnable: true
-database configuration added in env_config
-    - database (dataFactory)
+databaseParams configuration added in env_config
+    - databaseParams (dataFactory)
 
 removed log for complete scan directory result
 interface added for UserDb and UserFile
@@ -454,7 +454,7 @@ Event tracking not possible for 'log file change' and 'unknown exception'
 All other event added for tracking, only change on resource file and ftpApplication file
     - no logical change
 
-Create table 'event_data' in ftpapp database and file 'event_data.csv' in config-files directory
+Create table 'event_data' in ftpapp databaseParams and file 'event_data.csv' in config-files directory
 
 event tracking required
     - register success
@@ -1014,7 +1014,7 @@ java -jar meta-data/FTP-*-SNAPSHOT.jar <serverName> <isMySqlEnable> <config file
 Config parameter which are required in 1st config file
     - logFilePath
     - server
-    - database
+    - databaseParams
 
 Removed configParameter
 isMySqlEnable: true/false
@@ -1418,6 +1418,17 @@ false: config parameter path is relative to working project directory
 8.0.2.015 @ 29.12.2023
 -----------------------
 Added support for sheetNameMapping in excelDataConfig.
+
+8.0.2.016 @ 09.07.2024
+-----------------------
+Details under meta-data/scan-dir-config/readme.txt
+
+Added new api
+    - /api/read_scan_dir?pathname=file/folder_path&recursive=true
+    - /api/update_scan_dir?pathname=file/folder_path&recursive=true
+    - /api/get_scan_dir?pathname=file/folder_path&recursive=true
+    - /api/get_scan_dir_csv?pathname=file/folder_path&recursive=true
+
 
 
 Future releases

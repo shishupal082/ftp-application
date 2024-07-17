@@ -38,15 +38,14 @@ public class ApiResource {
     private final EventTracking eventTracking;
     private final RequestService requestService;
     private final MSExcelService msExcelService;
-    public ApiResource(final AppConfig appConfig,
-                       final UserService userService,
-                       final EventTracking eventTracking,
-                       final AuthService authService) {
+    private final ScanDirService scanDirService;
+    public ApiResource(final AppConfig appConfig) {
         this.appConfig = appConfig;
-        this.fileServiceV2 = new FileServiceV2(appConfig, userService);
-        this.userService = userService;
-        this.eventTracking = eventTracking;
-        this.authService = authService;
+        this.fileServiceV2 = new FileServiceV2(appConfig, appConfig.getUserService());
+        this.userService = appConfig.getUserService();
+        this.eventTracking = appConfig.getEventTracking();
+        this.authService = appConfig.getAuthService();
+        this.scanDirService = appConfig.getScanDirService();
         this.securityService = new SecurityService();
         this.requestService = new RequestService(appConfig, userService, fileServiceV2);
         this.msExcelService = new MSExcelService(appConfig, eventTracking, userService);
@@ -979,6 +978,95 @@ public class ApiResource {
         }
         logger.info("updateMSExcelData: Out, {}", response.toStringV2());
         return response;
+    }
+    @GET
+    @Path("/read_scan_dir")
+    @UnitOfWork
+    public ApiResponse readScanDir(@Context HttpServletRequest request,
+                                   @QueryParam("pathname") String pathName,
+                                   @QueryParam("recursive") String recursive) {
+        LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
+        logger.info("readScanDir: In, user: {}, pathname: {}, recursive: {}", loginUserDetails, pathName, recursive);
+        ApiResponse response;
+        try {
+            authService.isLogin(request);
+            response = scanDirService.readScanDirectory(request, pathName, recursive);
+        } catch (AppException ae) {
+            logger.info("Error in readScanDir: {}", ae.getErrorCode().getErrorCode());
+            eventTracking.trackFailureEvent(request, EventName.SCAN_DIRECTORY, ae.getErrorCode());
+            response = new ApiResponse(ae.getErrorCode());
+        }
+        logger.info("readScanDir: Out, {}", response.toStringV2());
+        return response;
+    }
+    @GET
+    @Path("/update_scan_dir")
+    @UnitOfWork
+    public ApiResponse updateScanDir(@Context HttpServletRequest request,
+                                   @QueryParam("pathname") String pathName,
+                                   @QueryParam("recursive") String recursive) {
+        LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
+        logger.info("updateScanDir: In, user: {}, pathname: {}, recursive: {}", loginUserDetails, pathName, recursive);
+        ApiResponse response;
+        try {
+            authService.isLogin(request);
+            response = scanDirService.updateScanDirectory(request, pathName, recursive);
+        } catch (AppException ae) {
+            logger.info("Error in updateScanDir: {}", ae.getErrorCode().getErrorCode());
+            eventTracking.trackFailureEvent(request, EventName.SCAN_DIRECTORY, ae.getErrorCode());
+            response = new ApiResponse(ae.getErrorCode());
+        }
+        logger.info("updateScanDir: Out, {}", response.toStringV2());
+        return response;
+    }
+    @GET
+    @Path("/get_scan_dir")
+    @UnitOfWork
+    public ApiResponse getScanDir(@Context HttpServletRequest request,
+                                     @QueryParam("pathname") String pathName,
+                                     @QueryParam("filetype") String fileType,
+                                     @QueryParam("scan_dir_id") String scanDirId,
+                                     @QueryParam("recursive") String recursive) {
+        LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
+        logger.info("getScanDir: In, user: {}, recursive: {}, pathname: {}, filetype: {}, scan_dir_id: {}",
+                loginUserDetails, recursive, pathName, fileType, scanDirId);
+        ApiResponse response;
+        try {
+            authService.isLogin(request);
+            response = scanDirService.getScanDirectory(request, pathName, fileType, scanDirId, recursive);
+        } catch (AppException ae) {
+            logger.info("Error in getScanDir: {}", ae.getErrorCode().getErrorCode());
+            eventTracking.trackFailureEvent(request, EventName.SCAN_DIRECTORY, ae.getErrorCode());
+            response = new ApiResponse(ae.getErrorCode());
+        }
+        logger.info("getScanDir: Out, {}", response.toStringV2());
+        return response;
+    }
+    @GET
+    @Path("/get_scan_dir_csv")
+    @UnitOfWork
+    @Produces(MediaType.TEXT_HTML)
+    public Response getScanDirCsv(@Context HttpServletRequest request,
+                                  @QueryParam("pathname") String pathName,
+                                  @QueryParam("filetype") String fileType,
+                                  @QueryParam("scan_dir_id") String scanDirId,
+                                  @QueryParam("recursive") String recursive) {
+        LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
+        logger.info("getScanDirCsv: In, user: {}, recursive: {}, pathname: {}, filetype: {}, scan_dir_id: {}",
+                loginUserDetails, recursive, pathName, fileType, scanDirId);
+        String response = null;
+        try {
+            authService.isLogin(request);
+            response = scanDirService.getScanDirectoryCsv(request, pathName, fileType, scanDirId, recursive);
+        } catch (AppException ae) {
+            logger.info("Error in getScanDirCsv: {}", ae.getErrorCode().getErrorCode());
+            eventTracking.trackFailureEvent(request, EventName.SCAN_DIRECTORY, ae.getErrorCode());
+        }
+        if (response == null) {
+            response = AppConstant.EmptyStr;
+        }
+        logger.info("getScanDirCsv: Out, {}", response.length());
+        return Response.ok(response).build();
     }
     /**
      * Used when accessing from browser

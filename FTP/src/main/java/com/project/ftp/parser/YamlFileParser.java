@@ -13,6 +13,7 @@ import com.project.ftp.exceptions.ErrorCodes;
 import com.project.ftp.helper.AppConfigHelper;
 import com.project.ftp.obj.LoginUserDetails;
 import com.project.ftp.obj.PreRunConfig;
+import com.project.ftp.obj.yamlObj.DatabaseConfig;
 import com.project.ftp.obj.yamlObj.Page404Entry;
 import com.project.ftp.obj.yamlObj.PageConfig404;
 import com.project.ftp.service.StaticService;
@@ -69,6 +70,24 @@ public class YamlFileParser {
             StaticService.printLog("IOE: for file: " + pathname);
         }
         return ftpConfiguration;
+    }
+    public DatabaseConfig getDatabaseConfig(String isStaticPath, String configPath) {
+        String projectWorkingDir = StaticService.getProjectWorkingDir();
+        String pathname = configPath;
+        if (configPath == null) {
+            return null;
+        }
+        if (!AppConstant.TRUE.equals(isStaticPath)) {
+            pathname = projectWorkingDir + "/" + pathname;
+        }
+        DatabaseConfig databaseConfig = null;
+        ObjectMapper objectMapper = new ObjectMapper(new YAMLFactory());
+        try {
+            databaseConfig = objectMapper.readValue(new File(pathname), DatabaseConfig.class);
+        } catch (IOException ioe) {
+            logger.info("IOE: for file: {}", pathname);
+        }
+        return databaseConfig;
     }
     public FileMappingConfig getFileMappingConfigFromPath(String staticPath) {
         if (staticPath == null || staticPath.isEmpty()) {

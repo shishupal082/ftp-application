@@ -24,6 +24,7 @@ rateLimitThreshold: 2
 enableMysqlTableName:
   - users
   - event_data
+  - file_path
 
 allowedTableFilename:
   - "(delete_table|project_table)[.]csv"

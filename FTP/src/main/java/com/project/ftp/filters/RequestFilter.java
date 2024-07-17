@@ -29,9 +29,9 @@ public class RequestFilter implements ContainerRequestFilter {
     private final UserService userService;
     private final AppConfig appConfig;
     private final EventTracking eventTracking;
-    public RequestFilter(final AppConfig appConfig, final UserService userService, EventTracking eventTracking) {
+    public RequestFilter(final AppConfig appConfig, EventTracking eventTracking) {
         this.appConfig = appConfig;
-        this.userService = userService;
+        this.userService = appConfig.getUserService();
         this.eventTracking = eventTracking;
     }
     public void filter(final ContainerRequestContext requestContext) throws AppException {

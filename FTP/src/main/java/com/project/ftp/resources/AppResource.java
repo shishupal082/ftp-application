@@ -40,16 +40,13 @@ public class AppResource {
     private final String appViewFtlFileName;
     private final EventTracking eventTracking;
     private final RequestService requestService;
-    public AppResource(final AppConfig appConfig,
-                       final UserService userService,
-                       final EventTracking eventTracking,
-                       final AuthService authService) {
+    public AppResource(final AppConfig appConfig) {
         this.appConfig = appConfig;
-        this.fileServiceV2 = new FileServiceV2(appConfig, userService);
-        this.userService = userService;
+        this.fileServiceV2 = new FileServiceV2(appConfig, appConfig.getUserService());
+        this.userService = appConfig.getUserService();
         this.appViewFtlFileName = AppConstant.APP_VIEW_FTL_FILENAME;
-        this.eventTracking = eventTracking;
-        this.authService = authService;
+        this.eventTracking = appConfig.getEventTracking();
+        this.authService = appConfig.getAuthService();
         this.requestService = new RequestService(appConfig, userService, fileServiceV2);
     }
     @GET

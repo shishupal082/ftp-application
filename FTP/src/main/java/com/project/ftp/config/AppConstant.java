@@ -18,6 +18,8 @@ public class AppConstant {
     public static final String FAILURE = "FAILURE";
     public static final String TRUE = "true";
     public static final String FALSE = "false";
+    public static final String SOURCE_RUNTIME = "runtime";
+    public static final String SOURCE_TEST = "test";
     public static final boolean ADMIN_TRUE = true;
     public static final boolean DB_TRUE = true;
     public static final boolean EXACT_MATCH = true;
@@ -32,7 +34,7 @@ public class AppConstant {
     public static final String ALLOWED_HEADERS= "Access-Control-Allow-Headers";
     public static final String FILE = "FILE";
     public static final String FOLDER = "FOLDER";
-    public static final String AppVersion = "8.0.2.015";
+    public static final String AppVersion = "8.0.2.016";
     public static final String DATE_FORMAT = "yyyy-MM-dd";
     public static final String TIME_FORMAT = "HHmmss";
     public static final String TIME_FORMAT2 = "HH:mm";
@@ -76,6 +78,7 @@ public class AppConstant {
 
     public static final String TABLE_NAME_EVENT = "event_data";
     public static final String TABLE_NAME_USER = "users";
+    public static final String TABLE_FILE_PATH = "file_path";
     public static final String DATABASE = "database";
     public static final String DEFAULT_TABLE_NAME = "default_table";
     public static final String DELETE_TABLE_FILE_NAME = "delete_table.csv";

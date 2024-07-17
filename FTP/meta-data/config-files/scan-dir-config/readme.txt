@@ -19,13 +19,13 @@ scanDirMapping:
 If enableMysqlTableName.file_path then readDatabaseFilePath and saveDatabaseFilePath will not be used
 
 scanDirConfig:
-    - scanDirMappingId: String (It will used for scanDirMapping)
+    - scanDirMappingId: String (It will be used for scanDirMapping)
       exactPath:
         - String
       pathIndex:
-        - String (It will used when exactPath is not matching after removing :, / and \)
+        - String (It will be used when exactPath is not matching after removing :, / and \)
     - scanDirMappingId: Any
-        - If requested path parameter is not maching then it will match with Any
+        - If requested path parameter is not matching then it will match with Any
         - If Any is not defined in the config then it will show unauthorised
 
 pathIndexMapping:
@@ -45,7 +45,7 @@ Database parameter
 File parameter
 
 orgUsername,entryTime,loginUsername,tableName,tableUniqueId,uiEntryTime,
-deviceName,scanDirMappingId,Type,sizeInKb,size,scanned_date,detected_at,edited_at,deleted_at,remark,parent_path,pathname
+deviceName,scanDirMappingId,type,sizeInKb,size,scanned_date,detected_at,edited_at,deleted_at,remark,parent_path,pathname,filename
 
 Table parameter (Table name: file_path)
 
@@ -76,10 +76,27 @@ Note:
 
 Apis
 -----
-api/read_scan_dir?path=String&recursive=boolean
-api/update_scan_dir?path=String&recursive=boolean
-api/get_scan_dir?path=String&recursive=boolean
-api/get_scan_dir_csv?path=String&recursive=boolean
+api/read_scan_dir?pathname=String&recursive=boolean
+api/update_scan_dir?pathname=String&recursive=boolean
+api/get_scan_dir?pathname=str1|str2&filetype=pdf|csv&scan_dir_id=id1|id2&recursive=boolean
+api/get_scan_dir_csv?pathname=str1|str2&filetype=pdf|csv&scan_dir_id=id1|id2&recursive=boolean
+
+Query parameter for getScanDir and getScanDirCsv
+pathname (multiple separated by |), filetype (multiple separated by |), scan_dir_id,(multiple separated by |),
+recursive operated with pathname only
+i.e. and operation of filetype and pathname likewise, scan_dir_id equal to
+if recursive true return all result
+if recursive false return if query path + filename = db pathname
+
+Future parameter request id
+
+Query parameter for read_scan_dir
+pathname and recursive only
+
+Query parameter for update_scan_dir
+pathname only (recursive is always true)
+
+Handle exception when result is null
 
 boolean=true/false
 
@@ -96,15 +113,15 @@ update_scan_dir
 
 get_scan_dir & get_scan_dir_csv
 1) It will return data from readDatabaseFilePath.csv
-2) It will filter data from path=exactPath=db.pathname and path=pathIndex=db.pathIndex
+2) It will filter data from pathname=exactPath=db.pathname and pathname=pathIndex=db.pathIndex
 
 Test case to be written for all apis services
 ----------------------------------------------
 read_scan_dir
-- path=null and recursive=null
-- path=invalid path
-- path=valid file name
-- path=valid folder name
+- pathname=null and recursive=null
+- pathname=invalid path
+- pathname=valid file name
+- pathname=valid folder name
 
 UI side
 ---------

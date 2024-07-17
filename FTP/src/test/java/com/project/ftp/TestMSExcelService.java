@@ -4,10 +4,12 @@ import com.project.ftp.bridge.obj.yamlObj.ExcelDataConfig;
 import com.project.ftp.config.AppConfig;
 import com.project.ftp.config.AppConstant;
 import com.project.ftp.event.EventTracking;
-import com.project.ftp.intreface.*;
+import com.project.ftp.intreface.EventFile;
+import com.project.ftp.intreface.EventInterface;
+import com.project.ftp.intreface.UserFile;
+import com.project.ftp.intreface.UserInterface;
 import com.project.ftp.obj.ApiResponse;
 import com.project.ftp.resources.ApiResource;
-import com.project.ftp.service.AuthService;
 import com.project.ftp.service.MSExcelService;
 import com.project.ftp.service.UserService;
 import org.junit.Assert;
@@ -26,32 +28,27 @@ public class TestMSExcelService {
         EventInterface eventInterface = new EventFile(appConfig);
         return new EventTracking(appConfig, userService, eventInterface);
     }
-    public AppConfig getAppConfig() {
-        AppConfig appConfig = new AppConfig();
+    public AppConfig getAppConfig(boolean isMysqlEnable) {
+        FtpApplication ftpApplication = new FtpApplication();
         FtpConfiguration ftpConfiguration = new FtpConfiguration();
-        EventTracking eventTracking = this.getEventTracking(appConfig);
         ArrayList<String> arguments = new ArrayList<>();
-        arguments.add("serverName");
+        if (isMysqlEnable) {
+            arguments.add(AppConstant.TRUE);
+        } else {
+            arguments.add("false");
+        }
         arguments.add("false");
-        arguments.add("false");
-        arguments.add("/meta-data/app_env_config_2.yml");
-        arguments.add("/meta-data/app_env_config_4.yml");
-        appConfig.setCmdArguments(arguments);
-        appConfig.updateFinalFtpConfiguration(ftpConfiguration);
-        AppToBridge appToBridge = new AppToBridge(ftpConfiguration, eventTracking);
-        appConfig.setAppToBridge(appToBridge);
-        appConfig.setFtpConfiguration(ftpConfiguration);
-        return appConfig;
+        arguments.add("meta-data/app_env_config.yml");
+        arguments.add("meta-data/app_env_config_2.yml");
+        arguments.add("meta-data/app_env_config_4.yml");
+        return ftpApplication.getAppConfig(ftpConfiguration, arguments, AppConstant.SOURCE_TEST);
     }
     public ApiResource getApiResource() {
-        AppConfig appConfig = this.getAppConfig();
-        UserInterface userInterface = new UserFile(appConfig);
-        UserService userService = new UserService(appConfig, userInterface);
-        AuthService authService = new AuthService(userService);
-        return new ApiResource(appConfig, userService, this.getEventTracking(appConfig), authService);
+        AppConfig appConfig = this.getAppConfig(false);
+        return new ApiResource(appConfig);
     }
     private MSExcelService getMSExcelService() {
-        AppConfig appConfig = this.getAppConfig();
+        AppConfig appConfig = this.getAppConfig(false);
         UserInterface userInterface = new UserFile(appConfig);
         UserService userService = new UserService(appConfig, userInterface);
         EventInterface eventInterface = new EventFile(appConfig);
@@ -126,7 +123,7 @@ public class TestMSExcelService {
         ApiResource apiResource = this.getApiResource();
         requestId = "csv-test-08-09";
         apiResponse =  apiResource.updateMSExcelData(request, requestId);
-        Assert.assertEquals("SUCCESS", apiResponse.getStatus());
+        Assert.assertEquals(AppConstant.SUCCESS , apiResponse.getStatus());
         requestId = "csv-test-id-not-found-in-csv-config";
         apiResponse =  apiResource.getMSExcelData(request, requestId);
         Assert.assertEquals("CONFIG_ERROR", apiResponse.getFailureCode());

@@ -259,9 +259,7 @@ public class StaticService {
         if (str.length() <= maxLength) {
             return str;
         }
-        String truncatedStr = str.substring(0, maxLength);
-        logger.info("string truncated: {}, to {}", str, truncatedStr);
-        return truncatedStr;
+        return str.substring(0, maxLength);
     }
     public static String urlEncode(String url) {
         if (url == null) {
