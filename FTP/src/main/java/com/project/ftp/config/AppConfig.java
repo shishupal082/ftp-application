@@ -16,10 +16,7 @@ import com.project.ftp.obj.PathInfo;
 import com.project.ftp.obj.yamlObj.FtlConfig;
 import com.project.ftp.obj.yamlObj.PageConfig404;
 import com.project.ftp.parser.YamlFileParser;
-import com.project.ftp.service.AuthService;
-import com.project.ftp.service.ScanDirService;
-import com.project.ftp.service.StaticService;
-import com.project.ftp.service.UserService;
+import com.project.ftp.service.*;
 import com.project.ftp.session.SessionData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,6 +43,7 @@ public class AppConfig {
     private AppToBridge appToBridge;
     private AuthService authService;
     private UserService userService;
+    private MSExcelService msExcelService;
     private ScanDirService scanDirService;
     public AppConfig() {
         this.configDate = StaticService.getDateStrFromPattern(AppConstant.DATE_FORMAT);
@@ -256,6 +254,14 @@ public class AppConfig {
 
     public void setUserService(UserService userService) {
         this.userService = userService;
+    }
+
+    public MSExcelService getMsExcelService() {
+        return msExcelService;
+    }
+
+    public void setMsExcelService(MSExcelService msExcelService) {
+        this.msExcelService = msExcelService;
     }
 
     public ScanDirService getScanDirService() {

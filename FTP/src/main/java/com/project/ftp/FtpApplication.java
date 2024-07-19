@@ -15,10 +15,7 @@ import com.project.ftp.parser.YamlFileParser;
 import com.project.ftp.resources.ApiResource;
 import com.project.ftp.resources.AppResource;
 import com.project.ftp.resources.FaviconResource;
-import com.project.ftp.service.AuthService;
-import com.project.ftp.service.ScanDirService;
-import com.project.ftp.service.StaticService;
-import com.project.ftp.service.UserService;
+import com.project.ftp.service.*;
 import io.dropwizard.Application;
 import io.dropwizard.assets.AssetsBundle;
 import io.dropwizard.db.DataSourceFactory;
@@ -136,13 +133,14 @@ public class FtpApplication  extends Application<FtpConfiguration> {
             LOGGER.info("userInterface configured from file");
         }
         if (filepathInterface == null) {
-//            filepathInterface = null;
+            filepathInterface = new FilepathCsv(appConfig);
             LOGGER.info("filepathInterface configured from file");
         }
         UserService userService = new UserService(appConfig, userInterface);
         appConfig.setUserService(userService);
         EventTracking eventTracking = new EventTracking(appConfig, userService, eventInterface);
         appConfig.setEventTracking(eventTracking);
+        appConfig.setMsExcelService(new MSExcelService(appConfig, eventTracking, userService));
         AuthService authService = new AuthService(userService);
         appConfig.setAuthService(authService);
         ScanDirService scanDirService = new ScanDirService(appConfig, filepathInterface);

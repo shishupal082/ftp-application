@@ -151,6 +151,29 @@ public class MSExcelService {
         }
         return response;
     }
+    public ArrayList<ArrayList<String>> applyCsvConfigOnData(HttpServletRequest request, ArrayList<ArrayList<String>> sheetData, String requestId) throws AppException {
+        ArrayList<ExcelDataConfig> excelDataConfigs = this.getActualMSExcelSheetDataConfig(request, requestId, false);
+        MSExcelBridgeService msExcelBridgeService = new MSExcelBridgeService(request, eventTracking,
+                ftpConfiguration.getGoogleOAuthClientConfig());
+        ArrayList<ArrayList<String>> response = null;
+        ArrayList<ArrayList<String>> result;
+        if (excelDataConfigs != null) {
+            for(ExcelDataConfig excelDataConfig: excelDataConfigs) {
+                if (excelDataConfig != null) {
+                    result = msExcelBridgeService.applyCsvConfigOnData(sheetData, null, null, excelDataConfig, null);;
+                    if (result == null) {
+                        logger.info("Error in applyCsvConfigOnData for id: {}", excelDataConfig.getId());
+                    } else {
+                        if (response == null) {
+                            response = new ArrayList<>();
+                        }
+                        response.addAll(result);
+                    }
+                }
+            }
+        }
+        return response;
+    }
     public ApiResponse getMSExcelSheetData(HttpServletRequest request, String requestId) throws AppException {
         ArrayList<ExcelDataConfig> excelDataConfigs = this.getActualMSExcelSheetDataConfig(request, requestId, true);
         return new ApiResponse(this.getActualMSExcelSheetData(request, excelDataConfigs));

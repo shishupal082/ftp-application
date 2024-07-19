@@ -14,18 +14,20 @@ import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
-import java.util.HashMap;
 
 public class ScanDirService {
     final static Logger logger = LoggerFactory.getLogger(ScanDirService.class);
     private final FileService fileService;
     private final FilepathInterface filepathInterface;
     private final UserService userService;
+    private final MSExcelService msExcelService;
     private final StrUtils strUtils;
+    private final String csvMappingRequestId = "api-scan-dir";
     public ScanDirService (final AppConfig appConfig, final FilepathInterface filepathInterface) {
         this.fileService = new FileService();
         this.filepathInterface = filepathInterface;
         this.userService = appConfig.getUserService();
+        this.msExcelService = appConfig.getMsExcelService();
         this.strUtils = new StrUtils();
     }
     private void updateFolderSize(ScanResult scanResult) {
@@ -175,14 +177,15 @@ public class ScanDirService {
         filepathInterface.updateIntoDb(filePathDAO);
         return apiResponse;
     }
-    private ArrayList<HashMap<String, String>> generateUiJsonResponse(ArrayList<FilepathDBParameters> filepathDBParameters) {
-        ArrayList<HashMap<String, String>> result = null;
+    private ArrayList<ArrayList<String>> generateUiJsonResponse(HttpServletRequest request, ArrayList<FilepathDBParameters> filepathDBParameters) {
+        ArrayList<ArrayList<String>> result = null;
         if (filepathDBParameters != null) {
             result = new ArrayList<>();
             for (FilepathDBParameters dbParameters: filepathDBParameters) {
                 result.add(dbParameters.getJsonData());
             }
         }
+        result = msExcelService.applyCsvConfigOnData(request, result, this.csvMappingRequestId);
         return result;
     }
     public ApiResponse readScanDirectory(HttpServletRequest request, String path, final String recursive) throws AppException {
@@ -190,7 +193,7 @@ public class ScanDirService {
         ApiResponse apiResponse = new ApiResponse();
         ArrayList<FilepathDBParameters> filepathDBParameters = this.getPathInfoScanResult(path, path, recursive);
         this.updateDBParameter(filepathDBParameters, userService.getLoginUserDetails(request), path);
-        apiResponse.setData(this.generateUiJsonResponse(filepathDBParameters));
+        apiResponse.setData(this.generateUiJsonResponse(request, filepathDBParameters));
         return apiResponse;
     }
     public ApiResponse getScanDirectory(HttpServletRequest request, String path,
@@ -204,7 +207,7 @@ public class ScanDirService {
             throw new AppException(ErrorCodes.BAD_REQUEST_ERROR);
         }
         ApiResponse apiResponse = new ApiResponse();
-        apiResponse.setData(this.generateUiJsonResponse(filepathDBParameters));
+        apiResponse.setData(this.generateUiJsonResponse(request, filepathDBParameters));
         return apiResponse;
     }
 
@@ -221,6 +224,7 @@ public class ScanDirService {
                 sheetData.add(dbParameters.getCsvData());
             }
         }
+        sheetData = msExcelService.applyCsvConfigOnData(request, sheetData, this.csvMappingRequestId);
         for(ArrayList<String> rowData: sheetData) {
             result.add(strUtils.joinArrayList(rowData, AppConstant.commaDelimater));
         }

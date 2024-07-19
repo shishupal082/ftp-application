@@ -43,6 +43,22 @@ public class MSExcelBridgeService {
         }
         return csvData;
     }
+    public ArrayList<ArrayList<String>> applyCsvConfigOnData(ArrayList<ArrayList<String>> sheetData,
+                                                              String srcFilepath, String sheetName,
+                                                              ExcelDataConfig excelDataConfigById,
+                                                              ArrayList<String> uniqueStrings) throws AppException{
+        sheetData = excelToCsvDataConvertService.formatCellData(sheetData);
+        sheetData = excelToCsvDataConvertService.applySkipRowEntry(sheetData, excelDataConfigById);
+        sheetData = excelToCsvDataConvertService.skipEmptyRows(sheetData, excelDataConfigById);
+        sheetData = excelToCsvDataConvertService.applySkipRowCriteria(sheetData, excelDataConfigById);
+        excelToCsvDataConvertService.copyCellDataIndex(sheetData, excelDataConfigById);
+        sheetData = excelToCsvDataConvertService.applyCellMapping(sheetData, excelDataConfigById, srcFilepath, sheetName);
+        excelToCsvDataConvertService.applyReplaceCellString(sheetData, excelDataConfigById);
+        sheetData = excelToCsvDataConvertService.applyColumnMapping(sheetData, excelDataConfigById);
+        sheetData = excelToCsvDataConvertService.applyRemoveColumnConfig(sheetData, excelDataConfigById);
+        sheetData = excelToCsvDataConvertService.applyUniqueEntry(sheetData, excelDataConfigById, uniqueStrings);
+        return sheetData;
+    }
     private ArrayList<ArrayList<String>> readCsvFilePath(String srcFilepath, String sheetName,
                                                            ExcelDataConfig excelDataConfigById,
                                                          ArrayList<String> uniqueStrings) throws AppException{

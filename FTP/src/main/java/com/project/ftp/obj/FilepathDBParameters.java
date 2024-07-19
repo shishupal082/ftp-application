@@ -4,7 +4,6 @@ import com.project.ftp.config.AppConstant;
 import com.project.ftp.service.StaticService;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 public class FilepathDBParameters {
     private boolean isUpdated;
@@ -308,33 +307,32 @@ public class FilepathDBParameters {
     public void setFilePathDetails(String filePathDetails) {
         this.filePathDetails = filePathDetails;
     }
-    public HashMap<String, String> getJsonData() {
-        HashMap<String, String> result = new HashMap<>();
-        result.put("orgUsername", orgUsername);
-        result.put("entryTime", entryTime);
-        result.put("loginUsername", loginUsername);
-        result.put("tableName", tableName);
-        result.put("tableUniqueId", tableUniqueId);
-        result.put("uiEntryTime", uiEntryTime);
-        result.put("deviceName", deviceName);
-        result.put("scanDirMappingId", scanDirMappingId);
-        result.put("type", type);
-        result.put("sizeInKb", Double.toString(sizeInKb));
-        result.put("size", size);
-        result.put("scannedDate", scannedDate);
-        result.put("detectedAt", detectedAt);
-        result.put("editedAt", editedAt);
-        result.put("deletedAt", deletedAt);
-        result.put("remark", remark);
-        result.put("parentPath", parentPath);
-        result.put("pathName", pathName);
-        result.put("fileName", fileName);
+    public ArrayList<String> getJsonData() {
+        ArrayList<String> result = new ArrayList<>();
+        result.add(orgUsername);
+        result.add(entryTime);
+        result.add(loginUsername);
+        result.add(tableName);
+        result.add(tableUniqueId);
+        result.add(uiEntryTime);
+        result.add(deviceName);
+        result.add(scanDirMappingId);
+        result.add(type);
+        result.add(Double.toString(sizeInKb));
+        result.add(size);
+        result.add(scannedDate);
+        result.add(detectedAt);
+        result.add(editedAt);
+        result.add(deletedAt);
+        result.add(remark);
+        result.add(parentPath);
+        result.add(pathName);
+        result.add(fileName);
         return result;
     }
     public ArrayList<String> getCsvData() {
         ArrayList<String> result = new ArrayList<>();
         result.add(orgUsername == null ? "" : orgUsername);
-
         result.add(entryTime == null? "" : entryTime);
         result.add(loginUsername == null? "" : loginUsername);
         result.add(tableName == null? "" : tableName);

@@ -48,7 +48,7 @@ public class ApiResource {
         this.scanDirService = appConfig.getScanDirService();
         this.securityService = new SecurityService();
         this.requestService = new RequestService(appConfig, userService, fileServiceV2);
-        this.msExcelService = new MSExcelService(appConfig, eventTracking, userService);
+        this.msExcelService = appConfig.getMsExcelService();
     }
     @GET
     @Produces(MediaType.TEXT_HTML)
