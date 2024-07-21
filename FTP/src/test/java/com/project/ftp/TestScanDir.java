@@ -73,7 +73,7 @@ public class TestScanDir {
         recursive = "true";
         apiResponse = scanDirService.readScanDirectory(null, path, recursive);
         pathInfoScanResults = (ArrayList<FilepathDBParameters>) apiResponse.getData();
-        Assert.assertEquals(pathInfoScanResults.size(), 35);
+        Assert.assertEquals(pathInfoScanResults.size(), 36);
     }
     @Test
     public void testReadScanDir3() {

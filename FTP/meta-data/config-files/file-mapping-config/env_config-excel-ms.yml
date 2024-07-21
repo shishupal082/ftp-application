@@ -227,6 +227,7 @@ excelDataConfig:
         col_index: -1
         mappingData:
           - col_index: -3
+            info: "output calculated using defaultCellData i.e. default-filename"
             regex: "invalid-regex"
             subStringConfig: [ -1, 3, 0 ]
       - col_index: -3

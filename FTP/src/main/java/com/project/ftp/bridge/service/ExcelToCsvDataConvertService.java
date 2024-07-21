@@ -393,6 +393,60 @@ public class ExcelToCsvDataConvertService {
         }
         return filename;
     }
+    private String getFormatedCellData(String sheetName, String srcFilepath, ArrayList<String> rowData,
+                                       String defaultCellData, Integer colIndex, String dateRegex) {
+        DateUtilities dateUtilities = new DateUtilities();
+        String result = null;
+        if (AppConstant.NOW.equals(defaultCellData) && dateRegex != null) {
+            defaultCellData = dateUtilities.getDateStrFromPattern(dateRegex, defaultCellData);
+        }
+        result = defaultCellData;
+        if (colIndex != null && colIndex >= 0 && rowData.size() > colIndex) {
+            result = rowData.get(colIndex);
+        } else if (colIndex != null && colIndex == -2) {
+            result = sheetName;
+        }else if (colIndex != null && colIndex == -3) {
+            result = this.getFileName(srcFilepath, defaultCellData);
+        }
+        if (result == null) {
+            result = "";
+        }
+        return result;
+    }
+    private String getUpdatedCellData(String sheetName, String srcFilepath, ArrayList<String> rowData,
+                                      String cellData, CellMappingData cellMappingData) {
+        if (cellMappingData == null) {
+            return cellData;
+        }
+        DateUtilities dateUtilities = new DateUtilities();
+        Integer colIndex2 = cellMappingData.getCol_index();
+        String value = cellMappingData.getValue();
+        ArrayList<String> range = cellMappingData.getRange();
+        String regex = cellMappingData.getRegex();
+        ArrayList<Integer> subStringConfig = cellMappingData.getSubStringConfig();
+        String dateRegex = cellMappingData.getDateRegex();
+        String dateText;
+        String cellData2 = this.getFormatedCellData(sheetName, srcFilepath, rowData, cellData, colIndex2, null);
+        if (colIndex2 != null && colIndex2 != -1 && colIndex2 >= -3) {
+            if (dateRegex != null) {
+                if (regex != null && StaticService.isPatternMatching(cellData2, regex, false)) {
+                    dateText = this.getSubStringTextFromCellData(subStringConfig, cellData2);
+                    cellData = dateUtilities.getDateStrInNewPattern(value, dateRegex, dateText, dateText);
+                }
+            } else if (range != null && range.contains(cellData2)) {
+                cellData = value;
+                if (subStringConfig != null) {
+                    cellData = this.getSubStringTextFromCellData(subStringConfig, cellData2);
+                }
+            } else if (regex != null && StaticService.isPatternMatching(cellData2, regex, false)) {
+                cellData = value;
+                if (subStringConfig != null) {
+                    cellData = this.getSubStringTextFromCellData(subStringConfig, cellData2);
+                }
+            }
+        }
+        return cellData;
+    }
     public ArrayList<ArrayList<String>> applyCellMapping(ArrayList<ArrayList<String>> sheetData,
                                                          ExcelDataConfig excelDataConfigById,
                                                          String srcFilepath, String sheetName) {
@@ -404,78 +458,30 @@ public class ExcelToCsvDataConvertService {
         ArrayList<ArrayList<String>> result = new ArrayList<>();
         CellMapping cellMapping;
         ArrayList<CellMappingData> cellsMappingData;
-        Integer colIndex, colIndex2;
-        String defaultCellData, cellData, cellData2, value, regex, dateRegex, dateText;
-        ArrayList<String> rowDataFinal, range;
-        ArrayList<Integer> subStringConfig;
-        DateUtilities dateUtilities = new DateUtilities();
+        Integer colIndex;
+        String defaultCellData, cellData, cellData2, dateRegex;
+        ArrayList<String> rowDataFinal;
         Boolean rewrite;
         for(ArrayList<String> rowData: sheetData) {
             if (rowData != null) {
                 rowDataFinal = new ArrayList<>();
                 if (cellMappings != null) {
                     for (CellMapping mapping : cellMappings) {
-                        cellData = "";
                         cellMapping = mapping;
                         colIndex = cellMapping.getCol_index();
                         defaultCellData = cellMapping.getDefaultCellData();
                         dateRegex = cellMapping.getDateRegex();
                         cellsMappingData = cellMapping.getMappingData();
                         rewrite = cellMapping.getRewrite();
-                        if (defaultCellData != null) {
-                            if (defaultCellData.equals("now") && dateRegex != null) {
-                                defaultCellData = dateUtilities.getDateStrFromPattern(dateRegex, defaultCellData);
-                            }
-                            cellData = defaultCellData;
-                        }
-                        if (colIndex != null && colIndex >= 0 && rowData.size() > colIndex) {
-                            cellData = rowData.get(colIndex);
-                        } else if (colIndex != null && colIndex == -2) {
-                            cellData = sheetName;
-                        }else if (colIndex != null && colIndex == -3) {
-                            cellData = this.getFileName(srcFilepath, defaultCellData);
-                        }
+                        cellData = this.getFormatedCellData(sheetName, srcFilepath, rowData, defaultCellData, colIndex, dateRegex);
                         if (cellsMappingData != null) {
                             for (CellMappingData cellMappingData : cellsMappingData) {
                                 if (cellMappingData != null) {
-                                    colIndex2 = cellMappingData.getCol_index();
-                                    value = cellMappingData.getValue();
-                                    range = cellMappingData.getRange();
-                                    regex = cellMappingData.getRegex();
-                                    subStringConfig = cellMappingData.getSubStringConfig();
-                                    dateRegex = cellMappingData.getDateRegex();
-                                    if (value == null) {
-                                        value = "";
-                                    }
-                                    if (colIndex2 != null) {
-                                        if  (colIndex2 >= 0 && colIndex2 < rowData.size()) {
-                                            cellData2 = rowData.get(colIndex2);
-                                        } else if (colIndex2 == -2) {
-                                            cellData2 = sheetName;
-                                        } else if (colIndex2 == -3) {
-                                            cellData2 = this.getFileName(srcFilepath, defaultCellData);
-                                        } else {
-                                            continue;
-                                        }
-                                        if (dateRegex != null) {
-                                            if (regex != null && StaticService.isPatternMatching(cellData2, regex, false)) {
-                                                dateText = this.getSubStringTextFromCellData(subStringConfig, cellData2);
-                                                cellData = dateUtilities.getDateStrInNewPattern(value, dateRegex, dateText, dateText);
-                                                break;
-                                            }
-                                        } else if (range != null && range.contains(cellData2)) {
-                                            cellData = value;
-                                            if (subStringConfig != null) {
-                                                cellData = this.getSubStringTextFromCellData(subStringConfig, cellData2);
-                                            }
-                                            break;
-                                        } else if (regex != null && StaticService.isPatternMatching(cellData2, regex, false)) {
-                                            cellData = value;
-                                            if (subStringConfig != null) {
-                                                cellData = this.getSubStringTextFromCellData(subStringConfig, cellData2);
-                                            }
-                                            break;
-                                        }
+                                    cellData2 = this.getUpdatedCellData(sheetName, srcFilepath,
+                                            rowData, cellData, cellMappingData);
+                                    if (cellData2 != null && !cellData2.equals(cellData)) {
+                                        cellData = cellData2;
+                                        break;
                                     }
                                 }
                             }
