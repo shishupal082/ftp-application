@@ -396,22 +396,21 @@ public class ExcelToCsvDataConvertService {
     private String getFormatedCellData(String sheetName, String srcFilepath, ArrayList<String> rowData,
                                        String defaultCellData, Integer colIndex, String dateRegex) {
         DateUtilities dateUtilities = new DateUtilities();
-        String result = null;
         if (AppConstant.NOW.equals(defaultCellData) && dateRegex != null) {
             defaultCellData = dateUtilities.getDateStrFromPattern(dateRegex, defaultCellData);
         }
-        result = defaultCellData;
+        String cellData = defaultCellData;
         if (colIndex != null && colIndex >= 0 && rowData.size() > colIndex) {
-            result = rowData.get(colIndex);
+            cellData = rowData.get(colIndex);
         } else if (colIndex != null && colIndex == -2) {
-            result = sheetName;
+            cellData = sheetName;
         }else if (colIndex != null && colIndex == -3) {
-            result = this.getFileName(srcFilepath, defaultCellData);
+            cellData = this.getFileName(srcFilepath, defaultCellData);
         }
-        if (result == null) {
-            result = "";
+        if (cellData == null) {
+            cellData = "";
         }
-        return result;
+        return cellData;
     }
     private String getUpdatedCellData(String sheetName, String srcFilepath, ArrayList<String> rowData,
                                       String cellData, CellMappingData cellMappingData) {
