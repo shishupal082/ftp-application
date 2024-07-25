@@ -80,22 +80,37 @@ if col_index (in cellMapping or mappingData) == -3
 
 case-I
 
-if dateRegex != null
-regex matching with cellData2
-dateText extracted using subStringConfig from cellData2
-value = newDate pattern
-cellData = calculated date string using value (new pattern) + dateRegex (old pattern) + dateText or dateText 
+if range != null
+if range contains cellData2
+    cellData = value
+    if subStringConfig != null
+        cellData = subString of cellData2
+if subStringConfig != null
+    cellData2 = subString of cellData2
+    if range contains cellData2
+    cellData = value
 
 case-II
 
-if range contains cellData2
-cellData = value
-if subStringConfig != null
-cellData = subString of cellData2
-
-case-III
-
 if regex matches cellData2
-cellData = value
+
+if dateRegex != null
+    if regex matching with cellData2
+    new pattern = value
+    old pattern = dateRegex
+    oldDateText = subStringConfig from cellData2
+    defaultDateText = oldDateText
+    cellData = Required date(new pattern, old pattern, oldDateText, defaultDateText)
+else
+    cellData = value
+    if subStringConfig != null
+        cellData = subString of cellData2
+
+case -III
+
 if subStringConfig != null
-cellData = subString of cellData2
+cellData2 = subString of cellData2
+    if range contains cellData2
+    cellData = value
+    if regex == null and range == null
+    cellData = cellData2

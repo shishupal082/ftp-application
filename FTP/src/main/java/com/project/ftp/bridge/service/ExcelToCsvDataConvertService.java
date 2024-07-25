@@ -424,23 +424,35 @@ public class ExcelToCsvDataConvertService {
         String regex = cellMappingData.getRegex();
         ArrayList<Integer> subStringConfig = cellMappingData.getSubStringConfig();
         String dateRegex = cellMappingData.getDateRegex();
-        String dateText;
+        String oldDateText;
         String cellData2 = this.getFormatedCellData(sheetName, srcFilepath, rowData, cellData, colIndex2, null);
         if (colIndex2 != null && colIndex2 != -1 && colIndex2 >= -3) {
-            if (dateRegex != null) {
-                if (regex != null && StaticService.isPatternMatching(cellData2, regex, false)) {
-                    dateText = this.getSubStringTextFromCellData(subStringConfig, cellData2);
-                    cellData = dateUtilities.getDateStrInNewPattern(value, dateRegex, dateText, dateText);
-                }
-            } else if (range != null && range.contains(cellData2)) {
+            if (range != null && range.contains(cellData2)) {
                 cellData = value;
                 if (subStringConfig != null) {
                     cellData = this.getSubStringTextFromCellData(subStringConfig, cellData2);
                 }
             } else if (regex != null && StaticService.isPatternMatching(cellData2, regex, false)) {
-                cellData = value;
-                if (subStringConfig != null) {
-                    cellData = this.getSubStringTextFromCellData(subStringConfig, cellData2);
+                if (dateRegex != null) {
+                    if (StaticService.isPatternMatching(cellData2, regex, false)) {
+                        oldDateText = this.getSubStringTextFromCellData(subStringConfig, cellData2);
+                        cellData = dateUtilities.getDateStrInNewPattern(value, dateRegex, oldDateText, oldDateText);
+                    }
+                } else {
+                    cellData = value;
+                    if (subStringConfig != null) {
+                        cellData = this.getSubStringTextFromCellData(subStringConfig, cellData2);
+                    }
+                }
+            }
+            if (subStringConfig != null) {
+                cellData2 = this.getSubStringTextFromCellData(subStringConfig, cellData2);
+                if (range != null) {
+                    if (range.contains(cellData2)) {
+                        cellData = value;
+                    }
+                } else if (regex == null) {
+                    cellData = cellData2;
                 }
             }
         }
