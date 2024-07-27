@@ -76,7 +76,7 @@ public class FtpApplication  extends Application<FtpConfiguration> {
     public AppConfig getAppConfig(final FtpConfiguration ftpConfiguration, ArrayList<String> args, String source) {
         AppConfig appConfig = new AppConfig();
         if (args.size() < AppConstant.CMD_LINE_ARG_MIN_SIZE) {
-            LOGGER.info("Minimum required command line argument is: {}", AppConstant.CMD_LINE_ARG_MIN_SIZE);
+            LOGGER.info("getAppConfig: minimum required command line argument is: {}", AppConstant.CMD_LINE_ARG_MIN_SIZE);
             return null;
         }
         appConfig.setCmdArguments(args);
@@ -84,6 +84,7 @@ public class FtpApplication  extends Application<FtpConfiguration> {
 //        ShutdownTask shutdownTask = new ShutdownTask(appConfig);
 //        appConfig.setShutdownTask(shutdownTask);
 //        appConfig.setFtpConfiguration(ftpConfiguration);
+        // For log config setup
         StaticService.initApplication(appConfig, args.get(AppConstant.CMD_LINE_ARG_MIN_SIZE-2), args.get(AppConstant.CMD_LINE_ARG_MIN_SIZE-1));
         appConfig.updatePageConfig404();
         LOGGER.info("appConfig: {}", appConfig);
@@ -173,7 +174,7 @@ public class FtpApplication  extends Application<FtpConfiguration> {
             StaticService.renameOldLogFile(args[AppConstant.CMD_LINE_ARG_MIN_SIZE-2], args[AppConstant.CMD_LINE_ARG_MIN_SIZE-1]);
             new FtpApplication().run(AppConstant.SERVER, args[AppConstant.CMD_LINE_ARG_MIN_SIZE-1]);
         } else {
-            LOGGER.info("Minimum required command line argument is: {}", AppConstant.CMD_LINE_ARG_MIN_SIZE);
+            LOGGER.info("main: minimum required command line argument is: {}", AppConstant.CMD_LINE_ARG_MIN_SIZE);
         }
     }
 }

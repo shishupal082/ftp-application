@@ -240,7 +240,7 @@ public class FilepathDBParameters {
     }
 
     public String getDeletedAtV2() {
-        return StaticService.truncateString(detectedAt, deletedAtMaxLength);
+        return StaticService.truncateString(deletedAt, deletedAtMaxLength);
     }
 
     public void setDeletedAt(String deletedAt) {

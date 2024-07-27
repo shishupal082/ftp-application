@@ -10,6 +10,8 @@ import com.project.ftp.bridge.config.SocialLoginConfig;
 import com.project.ftp.bridge.obj.yamlObj.CommunicationConfig;
 import com.project.ftp.obj.yamlObj.EventConfig;
 import com.project.ftp.obj.yamlObj.FtlConfig;
+import com.project.ftp.obj.yamlObj.ScanDirConfig;
+import com.project.ftp.obj.yamlObj.ScanDirMapping;
 import io.dropwizard.Configuration;
 import io.dropwizard.db.DataSourceFactory;
 
@@ -63,6 +65,7 @@ public class FtpConfiguration extends Configuration {
     private CommunicationConfig communicationConfig;
     private SocialLoginConfig socialLoginConfig;
     private GoogleOAuthClientConfig googleOAuthClientConfig;
+    private ArrayList<ScanDirMapping> scanDirConfig;
     @JsonProperty("database")
     private DataSourceFactory dataSourceFactory = new DataSourceFactory();
 
@@ -386,6 +389,14 @@ public class FtpConfiguration extends Configuration {
         this.googleOAuthClientConfig = googleOAuthClientConfig;
     }
 
+    public ArrayList<ScanDirMapping> getScanDirConfig() {
+        return scanDirConfig;
+    }
+
+    public void setScanDirConfig(ArrayList<ScanDirMapping> scanDirConfig) {
+        this.scanDirConfig = scanDirConfig;
+    }
+
     public DataSourceFactory getDataSourceFactory() {
         return dataSourceFactory;
     }
@@ -554,6 +565,10 @@ public class FtpConfiguration extends Configuration {
         if (googleOAuthClientConfig != null) {
             this.googleOAuthClientConfig = googleOAuthClientConfig;
         }
+        ArrayList<ScanDirMapping> scanDirConfig = tempFtpConfiguration.getScanDirConfig();
+        if (scanDirConfig != null) {
+            this.scanDirConfig = scanDirConfig;
+        }
     }
 
     @Override
@@ -599,6 +614,7 @@ public class FtpConfiguration extends Configuration {
                 ", communicationConfig=" + communicationConfig +
                 ", socialLoginConfig=" + socialLoginConfig +
                 ", googleOAuthClientConfig=" + googleOAuthClientConfig +
+                ", scanDirConfig=" + scanDirConfig +
                 ", dataSourceFactory=" + "*****" +
                 '}';
     }

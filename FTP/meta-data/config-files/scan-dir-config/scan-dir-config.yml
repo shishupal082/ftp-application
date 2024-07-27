@@ -1,0 +1,42 @@
+scanDirConfig:
+  - id: "test-with-null-path-index"
+  - id: "test-1"
+    pathIndex:
+      - "E:"
+      - "E:/"
+  - id: "test-2"
+    pathIndex:
+      - "D:\\workspace"
+  - id: "test-3"
+    pathIndex:
+      - "D:/workspace/ftp-application"
+      - "D:/workspace/ftp-application/"
+  - id: "D:/workspace/ftp-application"
+    pathIndex:
+      - "D:/workspace/ftp-application"
+  - id: "d-workspace-ftp-application-ftp"
+    pathIndex:
+      - "D:/workspace/ftp-application/FTP/"
+  - id: "workspace-ftp-config-files"
+    pathIndex:
+      - "D:/workspace/ftp-application/FTP/meta-data/config-files"
+  - id: "workspace-ftp-config-files/"
+    pathIndex:
+      - "D:/workspace/ftp-application/FTP/meta-data/config-files/"
+  - id: "workspace-ftp-empty-folder"
+    pathIndex:
+      - "D:/workspace/ftp-application/FTP/meta-data/empty-folder"
+  - id: "workspace-ftp-empty-folder/"
+    pathIndex:
+      - "D:/workspace/ftp-application/FTP/meta-data/empty-folder/"
+  - id: "app-env-config-file"
+    pathIndex:
+      - "D:/workspace/ftp-application/FTP/meta-data/app_env_config.yml"
+      - "D:/workspace/ftp-application/FTP/meta-data/app_env_config_2.yml"
+      - "D:/workspace/ftp-application/FTP/meta-data/app_env_config_4.yml"
+  - id: "meta-data-dir"
+    pathIndex:
+      - "D:/workspace/ftp-application/FTP/meta-data/"
+  - id: "e-app-data-v2.1-saved-files-shishupal2"
+    pathIndex:
+      - "E:/app-data-v2.1/project-tracking/saved-files/Shishupal2/"

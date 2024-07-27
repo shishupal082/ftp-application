@@ -240,23 +240,31 @@
     "Call get GS/CSV/MS_Excel Data config [GET]"
   ],
   [
-    "/api/read_scan_dir?pathname=file/folder_path&recursive=true",
+    "/api/get_scan_dir_config?scan_dir_id=id1|id2&pathname=file/folder_path",
+    "Call get scan dir config [GET]"
+  ],
+  [
+    "/api/read_scan_dir?scan_dir_id=id1|id2&pathname=file/folder_path|folder_2&filetype=pdf|csv&recursive=true",
     "Call read scan dir [GET]"
   ],
   [
-    "/api/update_scan_dir?pathname=file/folder_path&recursive=true",
+    "/api/read_scan_dir_csv?scan_dir_id=id1|id2&pathname=file/folder_path|folder_2&filetype=pdf|csv&recursive=true",
+    "Call read scan dir [GET]"
+  ],
+  [
+    "/api/update_scan_dir?scan_dir_id=id1&pathname=file/folder_path&recursive=true",
     "Call update scan dir [GET]"
   ],
   [
-    "/api/get_scan_dir?pathname=file/folder_path&recursive=true",
+    "/api/get_scan_dir?scan_dir_id=id1|id2&pathname=file/folder_path|folder_2&filetype=pdf|csv&recursive=true",
     "Call get scan dir (From DB) [GET]"
   ],
   [
-    "/api/get_scan_dir_csv?pathname=file/folder_path&recursive=true",
+    "/api/get_scan_dir_csv?scan_dir_id=id1|id2&pathname=file/folder_path|folder_2&filetype=pdf|csv&recursive=true",
     "Call get scan dir (From DB) [GET]"
   ],
   [
     "/assets-dir/{default: *}",
-    "Load assets data [GET]"
+    "Load assets data from asses-dir folder [GET]"
   ]
 ]

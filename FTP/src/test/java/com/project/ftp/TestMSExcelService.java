@@ -38,9 +38,11 @@ public class TestMSExcelService {
             arguments.add("false");
         }
         arguments.add("false");
+        // first-file-reading-equal-to-calling-main-function-will-be-skipped same will be used for initApplication
         arguments.add("meta-data/app_env_config.yml");
         arguments.add("meta-data/app_env_config_2.yml");
         arguments.add("meta-data/app_env_config_4.yml");
+        arguments.add("meta-data/config-files/scan-dir-config/scan-dir-config.yml");
         return ftpApplication.getAppConfig(ftpConfiguration, arguments, AppConstant.SOURCE_TEST);
     }
     public ApiResource getApiResource() {

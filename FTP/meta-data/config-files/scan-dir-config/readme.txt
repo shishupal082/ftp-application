@@ -1,6 +1,11 @@
 Config
 ------------
 scanDirMapping:
+    - id: id1
+      pathIndex: ArrayList<String>
+
+
+scanDirMapping-v2:
     scanDirMappingId:
         deviceId: String (dev-computer, local-computer, ...)
         roleAccess: String (true, false, allowDirReading-Id, ...)
@@ -76,6 +81,12 @@ Note:
 
 Apis
 -----
+API-1) api/get_scan_dir_config?scan_dir_id=id1|id2
+
+Test case
+scan_dir_id = null, empty, invalid id
+
+
 api/read_scan_dir?pathname=String&recursive=boolean
 api/update_scan_dir?pathname=String&recursive=boolean
 api/get_scan_dir?pathname=str1|str2&filetype=pdf|csv&scan_dir_id=id1|id2&recursive=boolean
@@ -117,6 +128,7 @@ get_scan_dir & get_scan_dir_csv
 
 Test case to be written for all apis services
 ----------------------------------------------
+
 read_scan_dir
 - pathname=null and recursive=null
 - pathname=invalid path

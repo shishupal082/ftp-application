@@ -980,17 +980,40 @@ public class ApiResource {
         return response;
     }
     @GET
-    @Path("/read_scan_dir")
+    @Path("/get_scan_dir_config")
     @UnitOfWork
-    public ApiResponse readScanDir(@Context HttpServletRequest request,
-                                   @QueryParam("pathname") String pathName,
-                                   @QueryParam("recursive") String recursive) {
+    public ApiResponse getScanDirConfig(@Context HttpServletRequest request,
+                                        @QueryParam("scan_dir_id") String scanDirId,
+                                        @QueryParam("pathname") String pathName) {
         LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
-        logger.info("readScanDir: In, user: {}, pathname: {}, recursive: {}", loginUserDetails, pathName, recursive);
+        logger.info("getScanDirConfig: In, user: {}, scanDirId: {}, pathname: {}", loginUserDetails, scanDirId, pathName);
         ApiResponse response;
         try {
             authService.isLogin(request);
-            response = scanDirService.readScanDirectory(request, pathName, recursive);
+            response = scanDirService.getScanDirectoryConfig(request, scanDirId, pathName);
+        } catch (AppException ae) {
+            logger.info("Error in getScanDirConfig: {}", ae.getErrorCode().getErrorCode());
+            eventTracking.trackFailureEvent(request, EventName.SCAN_DIRECTORY, ae.getErrorCode());
+            response = new ApiResponse(ae.getErrorCode());
+        }
+        logger.info("getScanDirConfig: Out, {}", response.toStringV2());
+        return response;
+    }
+    @GET
+    @Path("/read_scan_dir")
+    @UnitOfWork
+    public ApiResponse readScanDir(@Context HttpServletRequest request,
+                                   @QueryParam("scan_dir_id") String scanDirId,
+                                   @QueryParam("pathname") String pathName,
+                                   @QueryParam("filetype") String fileType,
+                                   @QueryParam("recursive") String recursive) {
+        LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
+        logger.info("readScanDir: In, user: {}, scan_dir_id: {}, pathname: {}, filetype: {}, recursive: {}",
+                loginUserDetails, scanDirId, pathName, fileType, recursive);
+        ApiResponse response;
+        try {
+            authService.isLogin(request);
+            response = scanDirService.readScanDirectory(request, scanDirId, pathName, fileType, recursive);
         } catch (AppException ae) {
             logger.info("Error in readScanDir: {}", ae.getErrorCode().getErrorCode());
             eventTracking.trackFailureEvent(request, EventName.SCAN_DIRECTORY, ae.getErrorCode());
@@ -998,19 +1021,44 @@ public class ApiResource {
         }
         logger.info("readScanDir: Out, {}", response.toStringV2());
         return response;
+    }@GET
+    @Path("/read_scan_dir_csv")
+    @UnitOfWork
+    @Produces(MediaType.TEXT_HTML)
+    public Response readScanDirCsv(@Context HttpServletRequest request,
+                                   @QueryParam("scan_dir_id") String scanDirId,
+                                   @QueryParam("pathname") String pathName,
+                                   @QueryParam("filetype") String fileType,
+                                   @QueryParam("recursive") String recursive) {
+        LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
+        logger.info("readScanDirCsv: In, user: {}, scan_dir_id: {}, recursive: {}, pathname: {}, filetype: {}, ",
+                loginUserDetails, recursive, pathName, fileType, scanDirId);
+        String response = null;
+        try {
+            authService.isLogin(request);
+            response = scanDirService.readScanDirectoryCsv(request, scanDirId, pathName, fileType, recursive);
+        } catch (AppException ae) {
+            logger.info("Error in readScanDirCsv: {}", ae.getErrorCode().getErrorCode());
+            eventTracking.trackFailureEvent(request, EventName.SCAN_DIRECTORY, ae.getErrorCode());
+        }
+        if (response == null) {
+            response = AppConstant.EmptyStr;
+        }
+        logger.info("readScanDirCsv: Out, {}", response.length());
+        return Response.ok(response).build();
     }
     @GET
     @Path("/update_scan_dir")
     @UnitOfWork
     public ApiResponse updateScanDir(@Context HttpServletRequest request,
-                                   @QueryParam("pathname") String pathName,
-                                   @QueryParam("recursive") String recursive) {
+                                     @QueryParam("scan_dir_id") String scanDirId,
+                                     @QueryParam("recursive") String recursive) {
         LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
-        logger.info("updateScanDir: In, user: {}, pathname: {}, recursive: {}", loginUserDetails, pathName, recursive);
+        logger.info("updateScanDir: In, user: {}, scanDirId: {}, recursive: {}", loginUserDetails, scanDirId, recursive);
         ApiResponse response;
         try {
             authService.isLogin(request);
-            response = scanDirService.updateScanDirectory(request, pathName, recursive);
+            response = scanDirService.updateScanDirectory(request, scanDirId, recursive);
         } catch (AppException ae) {
             logger.info("Error in updateScanDir: {}", ae.getErrorCode().getErrorCode());
             eventTracking.trackFailureEvent(request, EventName.SCAN_DIRECTORY, ae.getErrorCode());
@@ -1023,23 +1071,23 @@ public class ApiResource {
     @Path("/get_scan_dir")
     @UnitOfWork
     public ApiResponse getScanDir(@Context HttpServletRequest request,
-                                     @QueryParam("pathname") String pathName,
-                                     @QueryParam("filetype") String fileType,
-                                     @QueryParam("scan_dir_id") String scanDirId,
-                                     @QueryParam("recursive") String recursive) {
+                                  @QueryParam("scan_dir_id") String scanDirId,
+                                  @QueryParam("pathname") String pathName,
+                                  @QueryParam("filetype") String fileType,
+                                  @QueryParam("recursive") String recursive) {
         LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
-        logger.info("getScanDir: In, user: {}, recursive: {}, pathname: {}, filetype: {}, scan_dir_id: {}",
-                loginUserDetails, recursive, pathName, fileType, scanDirId);
+        logger.info("getScanDir: In, user: {}, scan_dir_id: {}, pathname: {}, filetype: {}, recursive: {}",
+                loginUserDetails, scanDirId, pathName, fileType, recursive);
         ApiResponse response;
         try {
             authService.isLogin(request);
-            response = scanDirService.getScanDirectory(request, pathName, fileType, scanDirId, recursive);
+            response = scanDirService.getScanDirectory(request, scanDirId, pathName, fileType, recursive);
         } catch (AppException ae) {
             logger.info("Error in getScanDir: {}", ae.getErrorCode().getErrorCode());
             eventTracking.trackFailureEvent(request, EventName.SCAN_DIRECTORY, ae.getErrorCode());
             response = new ApiResponse(ae.getErrorCode());
         }
-        logger.info("getScanDir: Out, {}", response.toStringV2());
+        logger.info("getScanDir: Out");
         return response;
     }
     @GET
@@ -1047,17 +1095,17 @@ public class ApiResource {
     @UnitOfWork
     @Produces(MediaType.TEXT_HTML)
     public Response getScanDirCsv(@Context HttpServletRequest request,
+                                  @QueryParam("scan_dir_id") String scanDirId,
                                   @QueryParam("pathname") String pathName,
                                   @QueryParam("filetype") String fileType,
-                                  @QueryParam("scan_dir_id") String scanDirId,
                                   @QueryParam("recursive") String recursive) {
         LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
-        logger.info("getScanDirCsv: In, user: {}, recursive: {}, pathname: {}, filetype: {}, scan_dir_id: {}",
-                loginUserDetails, recursive, pathName, fileType, scanDirId);
+        logger.info("getScanDirCsv: In, user: {}, scan_dir_id: {}, pathname: {}, filetype: {}, recursive: {}",
+                loginUserDetails, scanDirId, pathName, fileType, recursive);
         String response = null;
         try {
             authService.isLogin(request);
-            response = scanDirService.getScanDirectoryCsv(request, pathName, fileType, scanDirId, recursive);
+            response = scanDirService.getScanDirectoryCsv(request, scanDirId, pathName, fileType, recursive);
         } catch (AppException ae) {
             logger.info("Error in getScanDirCsv: {}", ae.getErrorCode().getErrorCode());
             eventTracking.trackFailureEvent(request, EventName.SCAN_DIRECTORY, ae.getErrorCode());
@@ -1084,7 +1132,7 @@ public class ApiResource {
     @POST
     @Produces(MediaType.TEXT_HTML)
     public Object defaultMethodPostV2(@Context HttpServletRequest request) {
-        logger.info("Post Request received with: Consume APPLICATION_JSON and Produce APPLICATION_JSON");
+        logger.info("defaultMethodPostV2 received with: Consume APPLICATION_JSON and Produce APPLICATION_JSON");
         return requestService.handleDefaultUrl(request);
     }
     /**
@@ -1093,7 +1141,7 @@ public class ApiResource {
     @Path("{default: .*}")
     @POST
     public Object defaultMethodPostV3(@Context HttpServletRequest request) {
-        logger.info("Post Request received with: Consume APPLICATION_JSON and Produce APPLICATION_JSON");
+        logger.info("defaultMethodPostV3 received with: Consume APPLICATION_JSON and Produce APPLICATION_JSON");
         return requestService.handleDefaultUrl(request);
     }
 }
