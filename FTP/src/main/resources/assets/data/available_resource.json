@@ -244,7 +244,7 @@
     "Call get scan dir config [GET]"
   ],
   [
-    "/api/read_scan_dir?scan_dir_id=id1|id2&pathname=file/folder_path|folder_2&filetype=pdf|csv&recursive=true/false",
+    "/api/read_scan_dir?scan_dir_id=id1|id2&pathname=file/folder_path|folder_2&filetype=pdf|csv&recursive=true/false&csv_mapping=false/true",
     "Call read scan dir [GET]"
   ],
   [
@@ -256,7 +256,7 @@
     "Call update scan dir [GET]"
   ],
   [
-    "/api/get_scan_dir?scan_dir_id=id1|id2&pathname=file/folder_path|folder_2&filetype=pdf|csv&recursive=true/false",
+    "/api/get_scan_dir?scan_dir_id=id1|id2&pathname=file/folder_path|folder_2&filetype=pdf|csv&recursive=true/false&csv_mapping=false/true",
     "Call get scan dir (From DB) [GET]"
   ],
   [

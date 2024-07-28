@@ -393,26 +393,6 @@ public class FilepathDBParameters {
                 ", extension='" + extension + '\'' +
                 ", pathInfo=" + pathInfo +
                 ", filePathDetails='" + filePathDetails + '\'' +
-                ", orgUsernameMaxLength=" + orgUsernameMaxLength +
-                ", entryTimeMaxLength=" + entryTimeMaxLength +
-                ", loginUsernameMaxLength=" + loginUsernameMaxLength +
-                ", tableNameMaxLength=" + tableNameMaxLength +
-                ", tableUniqueIdMaxLength=" + tableUniqueIdMaxLength +
-                ", uiEntryTimeMaxLength=" + uiEntryTimeMaxLength +
-                ", deviceNameMaxLength=" + deviceNameMaxLength +
-                ", scanDirMappingIdMaxLength=" + scanDirMappingIdMaxLength +
-                ", typeMaxLength=" + typeMaxLength +
-                ", minSizeInKb=" + minSizeInKb +
-                ", sizeMaxLength=" + sizeMaxLength +
-                ", scannedDateMaxLength=" + scannedDateMaxLength +
-                ", detectedAtMaxLength=" + detectedAtMaxLength +
-                ", editedAtMaxLength=" + editedAtMaxLength +
-                ", deletedAtMaxLength=" + deletedAtMaxLength +
-                ", remarkMaxLength=" + remarkMaxLength +
-                ", parentPathMaxLength=" + parentPathMaxLength +
-                ", pathNameMaxLength=" + pathNameMaxLength +
-                ", fileNameMaxLength=" + fileNameMaxLength +
-                ", filePathDetailsMaxLength=" + filePathDetailsMaxLength +
                 '}';
     }
 }
