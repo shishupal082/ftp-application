@@ -27,6 +27,7 @@ public class FilepathDBParameters {
     private String parentPath;
     private String pathName;
     private String fileName;
+    private String extension;
     private PathInfo pathInfo;
     private String filePathDetails;
 
@@ -62,6 +63,7 @@ public class FilepathDBParameters {
         this.type = pathInfo.getType();
         this.parentPath = pathInfo.getParentFolder();
         this.fileName = pathInfo.getFileName();
+        this.extension = pathInfo.getExtension();
         this.size = pathInfo.getSize();
         this.sizeInKb = pathInfo.getSizeInKb();
     }
@@ -292,6 +294,14 @@ public class FilepathDBParameters {
         this.fileName = fileName;
     }
 
+    public String getExtension() {
+        return extension;
+    }
+
+    public void setExtension(String extension) {
+        this.extension = extension;
+    }
+
     public PathInfo getPathInfo() {
         return pathInfo;
     }
@@ -328,6 +338,7 @@ public class FilepathDBParameters {
         result.add(parentPath);
         result.add(pathName);
         result.add(fileName);
+        result.add(extension);
         return result;
     }
     public ArrayList<String> getCsvData() {
@@ -351,6 +362,7 @@ public class FilepathDBParameters {
         result.add(parentPath == null? "" : parentPath);
         result.add(pathName == null? "" : pathName);
         result.add(fileName == null? "" : fileName);
+        result.add(extension == null? "" : extension);
         return result;
     }
 
@@ -378,8 +390,29 @@ public class FilepathDBParameters {
                 ", parentPath='" + parentPath + '\'' +
                 ", pathName='" + pathName + '\'' +
                 ", fileName='" + fileName + '\'' +
+                ", extension='" + extension + '\'' +
                 ", pathInfo=" + pathInfo +
                 ", filePathDetails='" + filePathDetails + '\'' +
+                ", orgUsernameMaxLength=" + orgUsernameMaxLength +
+                ", entryTimeMaxLength=" + entryTimeMaxLength +
+                ", loginUsernameMaxLength=" + loginUsernameMaxLength +
+                ", tableNameMaxLength=" + tableNameMaxLength +
+                ", tableUniqueIdMaxLength=" + tableUniqueIdMaxLength +
+                ", uiEntryTimeMaxLength=" + uiEntryTimeMaxLength +
+                ", deviceNameMaxLength=" + deviceNameMaxLength +
+                ", scanDirMappingIdMaxLength=" + scanDirMappingIdMaxLength +
+                ", typeMaxLength=" + typeMaxLength +
+                ", minSizeInKb=" + minSizeInKb +
+                ", sizeMaxLength=" + sizeMaxLength +
+                ", scannedDateMaxLength=" + scannedDateMaxLength +
+                ", detectedAtMaxLength=" + detectedAtMaxLength +
+                ", editedAtMaxLength=" + editedAtMaxLength +
+                ", deletedAtMaxLength=" + deletedAtMaxLength +
+                ", remarkMaxLength=" + remarkMaxLength +
+                ", parentPathMaxLength=" + parentPathMaxLength +
+                ", pathNameMaxLength=" + pathNameMaxLength +
+                ", fileNameMaxLength=" + fileNameMaxLength +
+                ", filePathDetailsMaxLength=" + filePathDetailsMaxLength +
                 '}';
     }
 }

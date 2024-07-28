@@ -15,6 +15,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class ScanDirService {
     final static Logger logger = LoggerFactory.getLogger(ScanDirService.class);
@@ -86,8 +87,16 @@ public class ScanDirService {
             throw new AppException(ErrorCodes.BAD_REQUEST_ERROR);
         }
     }
+    private ArrayList<String> getTokenizedRequestParameter(String requestParameter) {
+        if (StaticService.isInValidString(requestParameter)) {
+            return null;
+        }
+        String[] splitResult = requestParameter.split("\\|");
+        return new ArrayList<>(Arrays.asList(splitResult));
+    }
     private ArrayList<FilepathDBParameters> getPathInfoScanResult(final String staticFolderPath,
-                                                                  final String path, final String recursive) throws AppException {
+                                                                  final String path, final ArrayList<String> fileType,
+                                                                  final String recursive) throws AppException {
         this.verifyRequestParameter(path);
         ArrayList<FilepathDBParameters> pathInfoScanResults = new ArrayList<>();
         boolean isRecursive = false;
@@ -106,33 +115,61 @@ public class ScanDirService {
         }
         this.updateFolderSize(scanResult);
         this.updatePathInfoDetails(pathInfoScanResults, scanResult, staticFolderPath);
+        ArrayList<FilepathDBParameters> pathInfoScanFinalResults = new ArrayList<>();
+        if (fileType != null && !fileType.isEmpty()) {
+            for(FilepathDBParameters dbParameters: pathInfoScanResults) {
+                if (fileType.contains(dbParameters.getExtension())) {
+                    pathInfoScanFinalResults.add(dbParameters);
+                }
+            }
+            return pathInfoScanFinalResults;
+        }
         return pathInfoScanResults;
     }
-    private ArrayList<FilepathDBParameters> getPathInfoScanResultV2(final String scanDirId,
+    private ArrayList<FilepathDBParameters> getPathInfoScanResultV2(final ArrayList<String> scanDirId,
                                                                     final String pathName,
-                                                                    final String recursive) throws AppException {
-        ScanDirMapping scanDirMapping = this.getScanDirMapping(scanDirId, pathName);
-        ArrayList<String> pathIndex = scanDirMapping.getPathIndex();
-        if (pathIndex == null) {
-            logger.info("pathIndex is null for scanDirId: {}", scanDirId);
-            throw new AppException(ErrorCodes.BAD_REQUEST_ERROR);
-        }
+                                                                    final ArrayList<String> fileType,
+                                                                    final String recursive,
+                                                                    LoginUserDetails loginUserDetails) throws AppException {
+        ArrayList<ScanDirMapping> scanDirMapping = this.getScanDirMapping(scanDirId, pathName);
         ArrayList<FilepathDBParameters> pathInfoScanResults = null;
-        ArrayList<FilepathDBParameters> tempPathInfoScanResults;
-        for(String path: pathIndex) {
-            path = StaticService.replaceBackSlashToSlash(path);
-            tempPathInfoScanResults = this.getPathInfoScanResult(path, path, recursive);
-            if (tempPathInfoScanResults != null) {
-                if (pathInfoScanResults == null) {
-                    pathInfoScanResults = new ArrayList<>();
+        ArrayList<FilepathDBParameters> tempPathInfoScanResults, tempPathInfoScanResults2;
+        ArrayList<String> pathIndex;
+        for(ScanDirMapping dirMapping: scanDirMapping) {
+            if(dirMapping == null || dirMapping.getPathIndex() == null) {
+                continue;
+            }
+            pathIndex = dirMapping.getPathIndex();
+            for(String path: pathIndex) {
+                path = StaticService.replaceBackSlashToSlash(path);
+                tempPathInfoScanResults = this.getPathInfoScanResult(path, path, fileType, recursive);
+                if (tempPathInfoScanResults != null) {
+                    if (pathInfoScanResults == null) {
+                        pathInfoScanResults = new ArrayList<>();
+                    }
+                    if (pathName != null) {
+                        tempPathInfoScanResults2 = new ArrayList<>();
+                        for(FilepathDBParameters dbParameters: tempPathInfoScanResults) {
+                            if (dbParameters == null || dbParameters.getFileName() == null) {
+                                continue;
+                            }
+                            if (dbParameters.getPathName().contains(pathName)) {
+                                tempPathInfoScanResults2.add(dbParameters);
+                            }
+                        }
+                        this.updateDBParameter(tempPathInfoScanResults2, loginUserDetails, dirMapping);
+                        pathInfoScanResults.addAll(tempPathInfoScanResults2);
+                    } else {
+                        this.updateDBParameter(tempPathInfoScanResults, loginUserDetails, dirMapping);
+                        pathInfoScanResults.addAll(tempPathInfoScanResults);
+                    }
                 }
-                pathInfoScanResults.addAll(tempPathInfoScanResults);
             }
         }
         return pathInfoScanResults;
     }
     private void updateDBParameter(ArrayList<FilepathDBParameters> filepathDBParameters,
-                                   LoginUserDetails loginUserDetails, String scanDirMappingId) {
+                                   LoginUserDetails loginUserDetails, ScanDirMapping scanDirMapping) {
         if (filepathDBParameters == null) {
             return;
         }
@@ -148,7 +185,9 @@ public class ScanDirService {
             }
             filepathDBParameters1.setOrgUsername(orgUsername);
             filepathDBParameters1.setLoginUsername(loginUsername);
-            filepathDBParameters1.setScanDirMappingId(scanDirMappingId);
+            if (scanDirMapping != null) {
+                filepathDBParameters1.setScanDirMappingId(scanDirMapping.getId());
+            }
         }
     }
     private void updateFilepath(FilePathDAO filePathDAO, FilepathDBParameters filepathDBParameters) {
@@ -179,7 +218,8 @@ public class ScanDirService {
         }
     }
     private ArrayList<FilepathDBParameters> getDbDataFilterResult(FilePathDAO filePathDAO, final String path,
-                                                                  final String fileType, final String scanDirId,
+                                                                  final ArrayList<String> fileType,
+                                                                  final ArrayList<String> scanDirId,
                                                                   final boolean recursive) throws AppException {
 
         ArrayList<FilepathDBParameters> dbData = filePathDAO.getByFilterParameter(path, fileType, scanDirId, recursive);
@@ -191,10 +231,12 @@ public class ScanDirService {
     public ApiResponse updateScanDirectory(HttpServletRequest request, String scanDirId, final String recursive) throws AppException {
         ApiResponse apiResponse = new ApiResponse();
         // It will throw an error
-        ArrayList<FilepathDBParameters> pathInfoScanResults = this.getPathInfoScanResultV2(scanDirId, null, recursive);
+        LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
+        ArrayList<String> scanDirIdList = this.getTokenizedRequestParameter(scanDirId);
+        ArrayList<FilepathDBParameters> pathInfoScanResults = this.getPathInfoScanResultV2(scanDirIdList,
+                null, null, recursive, loginUserDetails);
         FilePathDAO filePathDAO = new FilePathDAO(filepathInterface);
         if (pathInfoScanResults != null) {
-            this.updateDBParameter(pathInfoScanResults, userService.getLoginUserDetails(request), scanDirId);
             for(FilepathDBParameters row: pathInfoScanResults) {
                 this.updateFilepath(filePathDAO, row);
             }
@@ -217,13 +259,13 @@ public class ScanDirService {
         ArrayList<ScanDirMapping> scanDirMappings = appConfig.getFtpConfiguration().getScanDirConfig();
         return scanDirMappings;
     }
-    private ScanDirMapping getScanDirMapping(String scanDirId, String pathName) throws AppException {
-        if (StaticService.isInValidString(scanDirId)) {
-            logger.info("Invalid request parameter scanDirId: {}", scanDirId);
+    private ArrayList<ScanDirMapping> getScanDirMapping(ArrayList<String> scanDirId, String pathName) throws AppException {
+        if (scanDirId == null) {
+            logger.info("Invalid request parameter scanDirId is null");
             throw new AppException(ErrorCodes.BAD_REQUEST_ERROR);
         }
         ArrayList<ScanDirMapping> scanDirMappings = this.getAllScanDirMappings();
-        ScanDirMapping scanDirMappingById = null;
+        ArrayList<ScanDirMapping> scanDirMappingById = new ArrayList<>();
         if (scanDirMappings == null) {
             logger.info("scanDirMappings is null in the config.");
             throw new AppException(ErrorCodes.CONFIG_ERROR);
@@ -232,57 +274,64 @@ public class ScanDirService {
             if (scanDirMapping == null) {
                 continue;
             }
-            if (scanDirId.equals(scanDirMapping.getId())) {
-                scanDirMappingById = scanDirMapping;
-                break;
+            if (scanDirId.contains(scanDirMapping.getId())) {
+                scanDirMappingById.add(scanDirMapping);
             }
         }
-        if (scanDirMappingById == null) {
+        if (scanDirMappingById.isEmpty()) {
             logger.info("scanDirId: {}, is not available in scanDirMappings: {}", scanDirId, scanDirMappings);
             throw new AppException(ErrorCodes.BAD_REQUEST_ERROR);
         }
         if (pathName == null) {
             return scanDirMappingById;
         }
-        ArrayList<String> pathIndex = scanDirMappingById.getPathIndex();
+        ArrayList<String> pathIndex;
         ArrayList<String> finalPathIndex;
-        if (pathIndex == null) {
-            logger.info("pathIndex is null for scanDirId: {}, in scanDirMapping: {}", scanDirId, scanDirMappingById);
-            throw new AppException(ErrorCodes.CONFIG_ERROR);
-        }
-        for(String configPath: pathIndex) {
-            if (configPath == null) {
+        for(ScanDirMapping dirMapping: scanDirMappingById) {
+            if (dirMapping == null || dirMapping.getPathIndex() == null) {
                 continue;
             }
-            if (configPath.contains(pathName)) {
-                finalPathIndex = new ArrayList<>();
-                finalPathIndex.add(pathName);
-                scanDirMappingById.setPathIndex(finalPathIndex);
-                break;
+            pathIndex = dirMapping.getPathIndex();
+            finalPathIndex = new ArrayList<>();
+            for(String configPath: pathIndex) {
+                if (configPath == null) {
+                    continue;
+                }
+                if (pathName.contains(configPath)) {
+                    finalPathIndex.add(configPath);
+                }
             }
+            dirMapping.setPathIndex(finalPathIndex);
         }
         return scanDirMappingById;
     }
     public ApiResponse getScanDirectoryConfig(HttpServletRequest request,
                                               String scanDirId, String pathName) throws AppException {
         pathName = StaticService.replaceBackSlashToSlash(pathName);
-        ScanDirMapping scanDirMapping = this.getScanDirMapping(scanDirId, pathName);
+        ArrayList<String> scanDirIdList = this.getTokenizedRequestParameter(scanDirId);
+        ArrayList<ScanDirMapping> scanDirMapping = this.getScanDirMapping(scanDirIdList, pathName);
         return new ApiResponse(scanDirMapping);
     }
     public ApiResponse readScanDirectory(HttpServletRequest request, String scanDirId,
                                          String path, String fileType, final String recursive) throws AppException {
         path = StaticService.replaceBackSlashToSlash(path);
+        LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
+        ArrayList<String> scanDirIdList = this.getTokenizedRequestParameter(scanDirId);
+        ArrayList<String> fileTypeList = this.getTokenizedRequestParameter(fileType);
         ApiResponse apiResponse = new ApiResponse();
-        ArrayList<FilepathDBParameters> filepathDBParameters = this.getPathInfoScanResultV2(scanDirId, path, recursive);
-        this.updateDBParameter(filepathDBParameters, userService.getLoginUserDetails(request), path);
+        ArrayList<FilepathDBParameters> filepathDBParameters = this.getPathInfoScanResultV2(scanDirIdList, path,
+                fileTypeList, recursive, loginUserDetails);
         apiResponse.setData(this.generateUiJsonResponse(request, filepathDBParameters));
         return apiResponse;
     }
     public String readScanDirectoryCsv(HttpServletRequest request, String scanDirId,
-                                         String path, String fileType, final String recursive) throws AppException {
+                                       String path, String fileType, final String recursive,
+                                       final String applyCsvMapping) throws AppException {
         path = StaticService.replaceBackSlashToSlash(path);
-        ArrayList<FilepathDBParameters> response = this.getPathInfoScanResultV2(scanDirId, path, recursive);
-        this.updateDBParameter(response, userService.getLoginUserDetails(request), scanDirId);
+        LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
+        ArrayList<String> scanDirIdList = this.getTokenizedRequestParameter(scanDirId);
+        ArrayList<String> fileTypeList = this.getTokenizedRequestParameter(fileType);
+        ArrayList<FilepathDBParameters> response = this.getPathInfoScanResultV2(scanDirIdList, path, fileTypeList, recursive, loginUserDetails);
         ArrayList<ArrayList<String>> sheetData = new ArrayList<>();
         ArrayList<String> result = new ArrayList<>();
         if (response != null) {
@@ -290,7 +339,9 @@ public class ScanDirService {
                 sheetData.add(dbParameters.getCsvData());
             }
         }
-        sheetData = msExcelService.applyCsvConfigOnData(request, sheetData, this.csvMappingRequestId);
+        if (!AppConstant.FALSE.equals(applyCsvMapping)) {
+            sheetData = msExcelService.applyCsvConfigOnData(request, sheetData, this.csvMappingRequestId);
+        }
         for(ArrayList<String> rowData: sheetData) {
             result.add(strUtils.joinArrayList(rowData, AppConstant.commaDelimater));
         }
@@ -299,9 +350,11 @@ public class ScanDirService {
     public ApiResponse getScanDirectory(HttpServletRequest request, String scanDirId, String path,
                                         String fileType, final String recursive) throws AppException {
         path = StaticService.replaceBackSlashToSlash(path);
+        ArrayList<String> scanDirIdList = this.getTokenizedRequestParameter(scanDirId);
+        ArrayList<String> fileTypeList = this.getTokenizedRequestParameter(fileType);
         FilePathDAO filePathDAO = new FilePathDAO(filepathInterface);
         ArrayList<FilepathDBParameters> filepathDBParameters = this.getDbDataFilterResult(filePathDAO, path,
-                fileType, scanDirId, AppConstant.TRUE.equals(recursive));
+                fileTypeList, scanDirIdList, AppConstant.TRUE.equals(recursive));
         ApiResponse apiResponse = new ApiResponse();
         apiResponse.setData(this.generateUiJsonResponse(request, filepathDBParameters));
         return apiResponse;
@@ -310,9 +363,11 @@ public class ScanDirService {
     public String getScanDirectoryCsv(HttpServletRequest request, String scanDirId, String path,
                                       String fileType, final String recursive) throws AppException {
         path = StaticService.replaceBackSlashToSlash(path);
+        ArrayList<String> scanDirIdList = this.getTokenizedRequestParameter(scanDirId);
+        ArrayList<String> fileTypeList = this.getTokenizedRequestParameter(fileType);
         FilePathDAO filePathDAO = new FilePathDAO(filepathInterface);
         ArrayList<FilepathDBParameters> response = this.getDbDataFilterResult(filePathDAO, path,
-                fileType, scanDirId, AppConstant.TRUE.equals(recursive));
+                fileTypeList, scanDirIdList, AppConstant.TRUE.equals(recursive));
         ArrayList<ArrayList<String>> sheetData = new ArrayList<>();
         ArrayList<String> result = new ArrayList<>();
         if (response != null) {

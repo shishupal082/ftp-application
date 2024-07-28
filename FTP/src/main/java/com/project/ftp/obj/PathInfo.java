@@ -14,7 +14,7 @@ public class PathInfo {
     private String fileName; // fileName can be ftl.view.id also
     private String filenameWithoutExt;
     private String extension;
-    private String mediaType;
+    private String mediaType; // Mapping for mimeType
     private String size;
     private double sizeInKb;
     public PathInfo() {}

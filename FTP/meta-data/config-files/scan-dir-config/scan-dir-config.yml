@@ -23,12 +23,18 @@ scanDirConfig:
   - id: "workspace-ftp-config-files/"
     pathIndex:
       - "D:/workspace/ftp-application/FTP/meta-data/config-files/"
+  - id: "scan-dir-test-folder"
+    pathIndex:
+      - "D:/workspace/ftp-application/FTP/meta-data/scan-dir-test-folder/"
   - id: "workspace-ftp-empty-folder"
     pathIndex:
-      - "D:/workspace/ftp-application/FTP/meta-data/empty-folder"
+      - "D:/workspace/ftp-application/FTP/meta-data/scan-dir-test-folder/empty-folder"
   - id: "workspace-ftp-empty-folder/"
     pathIndex:
-      - "D:/workspace/ftp-application/FTP/meta-data/empty-folder/"
+      - "D:/workspace/ftp-application/FTP/meta-data/scan-dir-test-folder/empty-folder/"
+  - id: "workspace-ftp-single-file-folder"
+    pathIndex:
+      - "D:/workspace/ftp-application/FTP/meta-data/scan-dir-test-folder/single-file-folder"
   - id: "app-env-config-file"
     pathIndex:
       - "D:/workspace/ftp-application/FTP/meta-data/app_env_config.yml"

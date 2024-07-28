@@ -52,8 +52,8 @@ public class FilePathDAO implements Dao<FilepathDBParameters> {
         }
         return null;
     }
-    public ArrayList<FilepathDBParameters> getByFilterParameter(String pathname, String fileType,
-                                                                String scanDirId, boolean recursive) {
+    public ArrayList<FilepathDBParameters> getByFilterParameter(String pathname, ArrayList<String> fileType,
+                                                                ArrayList<String> scanDirId, boolean recursive) {
         ArrayList<String> pathnameParam = new ArrayList<>();
         ArrayList<String> filetypeParam = new ArrayList<>();
         ArrayList<String> scanDirMappingIdParam = new ArrayList<>();
@@ -67,20 +67,10 @@ public class FilePathDAO implements Dao<FilepathDBParameters> {
             }
         }
         if (fileType != null) {
-            splitResult = fileType.split("\\|");
-            for(String str: splitResult) {
-                if (StaticService.isValidString(str)) {
-                    filetypeParam.add(str.trim());
-                }
-            }
+            filetypeParam = fileType;
         }
         if (scanDirId != null) {
-            splitResult = scanDirId.split("\\|");
-            for(String str: splitResult) {
-                if (StaticService.isValidString(str)) {
-                    scanDirMappingIdParam.add(str.trim());
-                }
-            }
+            scanDirMappingIdParam = scanDirId;
         }
         ArrayList<FilepathDBParameters> filepathDBParameters =
                 filepathInterface.getByMultipleParameter(scanDirMappingIdParam, pathnameParam,

@@ -1,4 +1,37 @@
 excelDataConfig:
+  api-scan-dir:
+    cellMapping:
+      - defaultCellData: "/view/any-file?filepath="
+        col_index: -1
+      - info: "orgUsername replaced by scanDirMappingId"
+        col_index: 7
+      - info: "entryTime replaced by detected_at"
+        col_index: 12
+      - info: "loginUsername replaced by filename"
+        col_index: 18
+      - defaultCellData: "project_link"
+        info: "tableName"
+        col_index: -1
+      - info: "table-rowId"
+        col_index: 4
+      - info: "uiEntryTime replaced by edited_at"
+        col_index: 13
+      - defaultCellData: "0"
+        info: "project-id"
+        col_index: -1
+      - info: "size"
+        col_index: 10
+      - info: "filepath"
+        col_index: 17
+      - info: "filepath_type"
+        col_index: 8
+      - info: "filename_extension"
+        col_index: 19
+    mergeColumnConfig:
+      - finalIndex: 9
+        sourceIndex: [0,9]
+        join: ""
+    removeColumnConfig: [0]
   excel-data-id-001:
     dateFormat: "dd/MM/yyyy"
     timeFormat: "HH:mm"
