@@ -5,6 +5,7 @@ import com.project.ftp.config.FilepathCol;
 import com.project.ftp.dao.FilePathDAO;
 import com.project.ftp.jdbc.MysqlConnection;
 import com.project.ftp.obj.FilepathDBParameters;
+import com.project.ftp.obj.PathInfo;
 import io.dropwizard.db.DataSourceFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,6 +52,9 @@ public class FilepathDb implements FilepathInterface {
                 dbParameters.setParentPath(rs.getString(FilepathCol.parentPath.getColumnName()));
                 dbParameters.setPathName(rs.getString(FilepathCol.colPathname.getColumnName()));
                 dbParameters.setFileName(rs.getString(FilepathCol.colFilename.getColumnName()));
+                PathInfo pathInfo = new PathInfo(dbParameters.getType(), dbParameters.getFileName());
+                pathInfo.findExtension();
+                dbParameters.setExtension(pathInfo.getExtension());
                 result.add(dbParameters);
             }
         } catch (Exception e) {

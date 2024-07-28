@@ -21,7 +21,6 @@ public class FileService {
         }
         PathInfo pathInfo = new PathInfo(requestedPath);
         File file = new File(requestedPath);
-        String fileSize;
         double sizeInKb;
         if (file.isDirectory()) {
             pathInfo.setType(AppConstant.FOLDER);

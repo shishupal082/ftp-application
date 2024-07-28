@@ -21,6 +21,10 @@ public class PathInfo {
     public PathInfo(final String path) {
         this.path = path;
     }
+    public PathInfo(final String type, final String fileName) {
+        this.type = type;
+        this.fileName = fileName;
+    }
 
     public String getDetectedAt() {
         return detectedAt;
@@ -86,14 +90,14 @@ public class PathInfo {
     }
 
     public void findExtension() {
-        if (AppConstant.FILE.equals(this.type) && fileName != null) {
-            String[] fileNameArr = fileName.split("\\.");
+        if (AppConstant.FILE.equals(this.type) && this.fileName != null) {
+            String[] fileNameArr = this.fileName.split("\\.");
             String filenameWithoutExt = "";
             if (fileNameArr.length > 0) {
                 if (fileNameArr.length == 1) {
-                    extension = "";
+                    this.extension = "";
                 } else {
-                    extension = fileNameArr[fileNameArr.length-1];
+                    this.extension = fileNameArr[fileNameArr.length-1];
                 }
             }
             for (int i=0; i<fileNameArr.length-1; i++) {
@@ -104,7 +108,7 @@ public class PathInfo {
                 }
             }
             if (filenameWithoutExt.isEmpty()) {
-                filenameWithoutExt = fileName;
+                filenameWithoutExt = this.fileName;
             }
             this.filenameWithoutExt = filenameWithoutExt;
         }
