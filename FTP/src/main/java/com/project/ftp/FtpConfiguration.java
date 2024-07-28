@@ -28,6 +28,7 @@ public class FtpConfiguration extends Configuration {
     private String publicPostDir;
     private String assetsDir;
     private String fileMappingConfigFilePath;
+    private String scanDirConfigFilePath;
     private String filenameFormat;
     private String instance;
     private String appRestartCommand;
@@ -65,7 +66,6 @@ public class FtpConfiguration extends Configuration {
     private CommunicationConfig communicationConfig;
     private SocialLoginConfig socialLoginConfig;
     private GoogleOAuthClientConfig googleOAuthClientConfig;
-    private ArrayList<ScanDirMapping> scanDirConfig;
     @JsonProperty("database")
     private DataSourceFactory dataSourceFactory = new DataSourceFactory();
 
@@ -123,6 +123,14 @@ public class FtpConfiguration extends Configuration {
 
     public void setFileMappingConfigFilePath(String fileMappingConfigFilePath) {
         this.fileMappingConfigFilePath = fileMappingConfigFilePath;
+    }
+
+    public String getScanDirConfigFilePath() {
+        return scanDirConfigFilePath;
+    }
+
+    public void setScanDirConfigFilePath(String scanDirConfigFilePath) {
+        this.scanDirConfigFilePath = scanDirConfigFilePath;
     }
 
     public String getFilenameFormat() {
@@ -389,14 +397,6 @@ public class FtpConfiguration extends Configuration {
         this.googleOAuthClientConfig = googleOAuthClientConfig;
     }
 
-    public ArrayList<ScanDirMapping> getScanDirConfig() {
-        return scanDirConfig;
-    }
-
-    public void setScanDirConfig(ArrayList<ScanDirMapping> scanDirConfig) {
-        this.scanDirConfig = scanDirConfig;
-    }
-
     public DataSourceFactory getDataSourceFactory() {
         return dataSourceFactory;
     }
@@ -436,6 +436,10 @@ public class FtpConfiguration extends Configuration {
         String fileMappingConfigFilePath = tempFtpConfiguration.getFileMappingConfigFilePath();
         if (fileMappingConfigFilePath != null) {
             this.fileMappingConfigFilePath = fileMappingConfigFilePath;
+        }
+        String scanDirConfigFilePath = tempFtpConfiguration.getScanDirConfigFilePath();
+        if (scanDirConfigFilePath != null) {
+            this.scanDirConfigFilePath = scanDirConfigFilePath;
         }
         String filenameFormat = tempFtpConfiguration.getFilenameFormat();
         if (filenameFormat != null) {
@@ -565,10 +569,6 @@ public class FtpConfiguration extends Configuration {
         if (googleOAuthClientConfig != null) {
             this.googleOAuthClientConfig = googleOAuthClientConfig;
         }
-        ArrayList<ScanDirMapping> scanDirConfig = tempFtpConfiguration.getScanDirConfig();
-        if (scanDirConfig != null) {
-            this.scanDirConfig = scanDirConfig;
-        }
     }
 
     @Override
@@ -581,6 +581,7 @@ public class FtpConfiguration extends Configuration {
                 ", publicPostDir='" + publicPostDir + '\'' +
                 ", assetsDir='" + assetsDir + '\'' +
                 ", fileMappingConfigFilePath='" + fileMappingConfigFilePath + '\'' +
+                ", scanDirConfigFilePath='" + scanDirConfigFilePath + '\'' +
                 ", filenameFormat='" + filenameFormat + '\'' +
                 ", instance='" + instance + '\'' +
                 ", appRestartCommand='" + appRestartCommand + '\'' +
@@ -614,7 +615,6 @@ public class FtpConfiguration extends Configuration {
                 ", communicationConfig=" + communicationConfig +
                 ", socialLoginConfig=" + socialLoginConfig +
                 ", googleOAuthClientConfig=" + googleOAuthClientConfig +
-                ", scanDirConfig=" + scanDirConfig +
                 ", dataSourceFactory=" + "*****" +
                 '}';
     }

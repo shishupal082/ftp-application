@@ -9,7 +9,9 @@ import com.project.ftp.exceptions.AppException;
 import com.project.ftp.exceptions.ErrorCodes;
 import com.project.ftp.intreface.FilepathInterface;
 import com.project.ftp.obj.*;
+import com.project.ftp.obj.yamlObj.ScanDirConfig;
 import com.project.ftp.obj.yamlObj.ScanDirMapping;
+import com.project.ftp.parser.YamlFileParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,12 +28,14 @@ public class ScanDirService {
     private final MSExcelService msExcelService;
     private final StrUtils strUtils;
     private final String csvMappingRequestId = "api-scan-dir";
+    private final YamlFileParser yamlFileParser;
     public ScanDirService (final AppConfig appConfig, final FilepathInterface filepathInterface) {
         this.appConfig = appConfig;
         this.fileService = new FileService();
         this.filepathInterface = filepathInterface;
         this.userService = appConfig.getUserService();
         this.msExcelService = appConfig.getMsExcelService();
+        this.yamlFileParser = new YamlFileParser();
         this.strUtils = new StrUtils();
     }
     private void updateFolderSize(ScanResult scanResult) {
@@ -260,8 +264,12 @@ public class ScanDirService {
         return result;
     }
     private ArrayList<ScanDirMapping> getAllScanDirMappings() {
-        ArrayList<ScanDirMapping> scanDirMappings = appConfig.getFtpConfiguration().getScanDirConfig();
-        return scanDirMappings;
+        String scanDirConfigFilePath = appConfig.getFtpConfiguration().getScanDirConfigFilePath();
+        ScanDirConfig scanDirConfig = yamlFileParser.getScanDirConfigFromPath(scanDirConfigFilePath);
+        if (scanDirConfig == null) {
+            return null;
+        }
+        return scanDirConfig.getScanDirConfig();
     }
     private ArrayList<ScanDirMapping> getScanDirMapping(ArrayList<String> scanDirId, String pathName) throws AppException {
         if (scanDirId == null) {
@@ -365,7 +373,6 @@ public class ScanDirService {
         apiResponse.setData(this.generateUiJsonResponse(request, filepathDBParameters, !AppConstant.FALSE.equals(applyCsvMapping)));
         return apiResponse;
     }
-
     public String getScanDirectoryCsv(HttpServletRequest request, String scanDirId, String path,
                                       String fileType, final String recursive,
                                       final String applyCsvMapping) throws AppException {

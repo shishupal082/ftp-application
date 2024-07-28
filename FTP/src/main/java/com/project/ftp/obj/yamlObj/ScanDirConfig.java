@@ -7,20 +7,20 @@ import java.util.ArrayList;
 @JsonIgnoreProperties(ignoreUnknown = true)
 
 public class ScanDirConfig {
-    private ArrayList<ScanDirMapping> scanDirMapping;
+    private ArrayList<ScanDirMapping> scanDirConfig;
 
-    public ArrayList<ScanDirMapping> getScanDirMapping() {
-        return scanDirMapping;
+    public ArrayList<ScanDirMapping> getScanDirConfig() {
+        return scanDirConfig;
     }
 
-    public void setScanDirMapping(ArrayList<ScanDirMapping> scanDirMapping) {
-        this.scanDirMapping = scanDirMapping;
+    public void setScanDirConfig(ArrayList<ScanDirMapping> scanDirConfig) {
+        this.scanDirConfig = scanDirConfig;
     }
 
     @Override
     public String toString() {
         return "ScanDirConfig{" +
-                "scanDirMapping=" + scanDirMapping +
+                "scanDirConfig=" + scanDirConfig +
                 '}';
     }
 }

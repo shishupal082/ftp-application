@@ -1033,8 +1033,8 @@ public class ApiResource {
                                    @QueryParam("recursive") String recursive,
                                    @QueryParam("csv_mapping") String csvMapping) {
         LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
-        logger.info("readScanDirCsv: In, user: {}, scan_dir_id: {}, recursive: {}, pathname: {}, filetype: {}, csv_mapping: {} ",
-                loginUserDetails, recursive, pathName, fileType, scanDirId, csvMapping);
+        logger.info("readScanDirCsv: In, user: {}, scan_dir_id: {}, pathname: {}, filetype: {}, recursive: {}, csv_mapping: {}",
+                loginUserDetails, scanDirId, pathName, fileType, recursive, csvMapping);
         String response = null;
         try {
             authService.isLogin(request);

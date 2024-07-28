@@ -16,6 +16,7 @@ import com.project.ftp.obj.PreRunConfig;
 import com.project.ftp.obj.yamlObj.DatabaseConfig;
 import com.project.ftp.obj.yamlObj.Page404Entry;
 import com.project.ftp.obj.yamlObj.PageConfig404;
+import com.project.ftp.obj.yamlObj.ScanDirConfig;
 import com.project.ftp.service.StaticService;
 import com.project.ftp.service.UserService;
 import org.slf4j.Logger;
@@ -71,6 +72,20 @@ public class YamlFileParser {
         }
         return ftpConfiguration;
     }
+    public ScanDirConfig getScanDirConfigFromPath(String staticConfigPath) {
+        if (staticConfigPath == null || staticConfigPath.isEmpty()) {
+            logger.info("Static Path for reading scanDirConfigFromPath is invalid: {}", staticConfigPath);
+            return null;
+        }
+        ScanDirConfig scanDirConfig = null;
+        ObjectMapper objectMapper = new ObjectMapper(new YAMLFactory());
+        try {
+            scanDirConfig = objectMapper.readValue(new File(staticConfigPath), ScanDirConfig.class);
+        } catch (IOException ioe) {
+            logger.info("getScanDirConfigFromPath: IOE : for file : {}", staticConfigPath);
+        }
+        return scanDirConfig;
+    }
     public DatabaseConfig getDatabaseConfig(String isStaticPath, String configPath) {
         String projectWorkingDir = StaticService.getProjectWorkingDir();
         String pathname = configPath;
@@ -85,7 +100,7 @@ public class YamlFileParser {
         try {
             databaseConfig = objectMapper.readValue(new File(pathname), DatabaseConfig.class);
         } catch (IOException ioe) {
-            logger.info("IOE: for file: {}", pathname);
+            logger.info("getDatabaseConfig: IOE: for file: {}", pathname);
         }
         return databaseConfig;
     }
@@ -99,7 +114,7 @@ public class YamlFileParser {
         try {
             fileMappingConfig = objectMapper.readValue(new File(staticPath), FileMappingConfig.class);
         } catch (IOException ioe) {
-            logger.info("IOE : for file : {}", staticPath);
+            logger.info("getFileMappingConfigFromPath: IOE : for file : {}", staticPath);
         }
         return fileMappingConfig;
     }
@@ -113,7 +128,7 @@ public class YamlFileParser {
         try {
             excelConfig = objectMapper.readValue(new File(staticPath), ExcelConfig.class);
         } catch (IOException ioe) {
-            logger.info("IOE: for file: {}", staticPath);
+            logger.info("getExcelDataConfigFromPath: IOE: for file: {}", staticPath);
             throw new AppException(ErrorCodes.CONFIG_ERROR);
         }
         return excelConfig.getExcelDataConfig();
@@ -181,7 +196,7 @@ public class YamlFileParser {
         try {
             pageConfig404 = objectMapper.readValue(new File(filePath), PageConfig404.class);
         } catch (IOException ioe) {
-            logger.info("IOE : for file : {}", filePath);
+            logger.info("getPageConfig404ByFilepath: IOE : for file : {}", filePath);
         }
         /* Remove relative path for 404 page mapping fileName */
         if (pageConfig404 != null) {
