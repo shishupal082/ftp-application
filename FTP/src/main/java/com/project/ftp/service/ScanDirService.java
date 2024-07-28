@@ -18,6 +18,7 @@ import org.slf4j.LoggerFactory;
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 
 public class ScanDirService {
     final static Logger logger = LoggerFactory.getLogger(ScanDirService.class);
@@ -85,12 +86,6 @@ public class ScanDirService {
             }
         }
     }
-    private void verifyRequestParameter(String path) throws AppException {
-        if (path == null || path.isEmpty()) {
-            logger.info("Invalid requested query parameter, path: {}", path);
-            throw new AppException(ErrorCodes.BAD_REQUEST_ERROR);
-        }
-    }
     private ArrayList<String> getTokenizedRequestParameter(String requestParameter) {
         if (StaticService.isInValidString(requestParameter)) {
             return null;
@@ -98,27 +93,21 @@ public class ScanDirService {
         String[] splitResult = requestParameter.split("\\|");
         return new ArrayList<>(Arrays.asList(splitResult));
     }
-    private ArrayList<FilepathDBParameters> getPathInfoScanResult(final String staticFolderPath,
-                                                                  final String path, final ArrayList<String> fileType,
-                                                                  final String recursive) throws AppException {
-        this.verifyRequestParameter(path);
+    private ArrayList<FilepathDBParameters> getPathInfoScanResult(final String pathName, final ArrayList<String> fileType,
+                                                                  final String recursive, final String scanDirMappingId) throws AppException {
         ArrayList<FilepathDBParameters> pathInfoScanResults = new ArrayList<>();
-        boolean isRecursive = false;
-        if (recursive != null) {
-            isRecursive = recursive.equals(AppConstant.TRUE);
-        }
-        if (path == null) {
-            logger.info("getPathInfoScanResult: path is null");
+        boolean isRecursive = AppConstant.TRUE.equals(recursive);
+        if (StaticService.isInValidString(pathName)) {
+            logger.info("getPathInfoScanResult-1: scanResult: null for pathName: {}", pathName);
             return null;
         }
-        ScanResult scanResult = fileService.scanDirectory(staticFolderPath, path, isRecursive, false);
+        ScanResult scanResult = fileService.scanDirectory(pathName, pathName, isRecursive, false);
         if (scanResult == null || scanResult.getPathType() == null) {
-            logger.info("getPathInfoScanResult: invalid: {}, staticFolderPath: {}, path: {}",
-                    scanResult, staticFolderPath, path);
-            throw new AppException(ErrorCodes.BAD_REQUEST_ERROR);
+            logger.info("getPathInfoScanResult-2: scanResult: {} for pathName: {}", scanResult, pathName);
+            return null;
         }
         this.updateFolderSize(scanResult);
-        this.updatePathInfoDetails(pathInfoScanResults, scanResult, staticFolderPath);
+        this.updatePathInfoDetails(pathInfoScanResults, scanResult, scanDirMappingId);
         ArrayList<FilepathDBParameters> pathInfoScanFinalResults = new ArrayList<>();
         if (fileType != null && !fileType.isEmpty()) {
             for(FilepathDBParameters dbParameters: pathInfoScanResults) {
@@ -146,7 +135,7 @@ public class ScanDirService {
             pathIndex = dirMapping.getPathIndex();
             for(String path: pathIndex) {
                 path = StaticService.replaceBackSlashToSlash(path);
-                tempPathInfoScanResults = this.getPathInfoScanResult(path, path, fileType, recursive);
+                tempPathInfoScanResults = this.getPathInfoScanResult(path, fileType, recursive, dirMapping.getId());
                 if (tempPathInfoScanResults != null) {
                     if (pathInfoScanResults == null) {
                         pathInfoScanResults = new ArrayList<>();
@@ -233,7 +222,6 @@ public class ScanDirService {
         return dbData;
     }
     public ApiResponse updateScanDirectory(HttpServletRequest request, String scanDirId, final String recursive) throws AppException {
-        ApiResponse apiResponse = new ApiResponse();
         // It will throw an error
         LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
         ArrayList<String> scanDirIdList = this.getTokenizedRequestParameter(scanDirId);
@@ -245,8 +233,20 @@ public class ScanDirService {
                 this.updateFilepath(filePathDAO, row);
             }
         }
-        filepathInterface.updateIntoDb(filePathDAO);
-        return apiResponse;
+        HashMap<String, Integer> updateResult = filepathInterface.updateIntoDb(filePathDAO);
+        return new ApiResponse(updateResult);
+    }
+    private ArrayList<ArrayList<String>> applyCsvConfig(HttpServletRequest request,
+                                                        ArrayList<ArrayList<String>> data, boolean csvMappingRequired) {
+        if (!csvMappingRequired) {
+            return data;
+        }
+        try {
+            return msExcelService.applyCsvConfigOnData(request, data, this.csvMappingRequestId);
+        } catch (Exception e) {
+            logger.info("Error in applyCsvConfig: {}", e.toString());
+        }
+        return data;
     }
     private ArrayList<ArrayList<String>> generateUiJsonResponse(HttpServletRequest request,
                                                                 ArrayList<FilepathDBParameters> filepathDBParameters,
@@ -258,9 +258,7 @@ public class ScanDirService {
                 result.add(dbParameters.getJsonData());
             }
         }
-        if (csvMappingRequired) {
-            result = msExcelService.applyCsvConfigOnData(request, result, this.csvMappingRequestId);
-        }
+        result = this.applyCsvConfig(request, result, csvMappingRequired);
         return result;
     }
     private ArrayList<ScanDirMapping> getAllScanDirMappings() {
@@ -352,9 +350,7 @@ public class ScanDirService {
                 sheetData.add(dbParameters.getCsvData());
             }
         }
-        if (!AppConstant.FALSE.equals(applyCsvMapping)) {
-            sheetData = msExcelService.applyCsvConfigOnData(request, sheetData, this.csvMappingRequestId);
-        }
+        sheetData = this.applyCsvConfig(request, sheetData, !AppConstant.FALSE.equals(applyCsvMapping));
         for(ArrayList<String> rowData: sheetData) {
             result.add(strUtils.joinArrayList(rowData, AppConstant.commaDelimater));
         }
@@ -389,9 +385,7 @@ public class ScanDirService {
                 sheetData.add(dbParameters.getCsvData());
             }
         }
-        if (!AppConstant.FALSE.equals(applyCsvMapping)) {
-            sheetData = msExcelService.applyCsvConfigOnData(request, sheetData, this.csvMappingRequestId);
-        }
+        sheetData = this.applyCsvConfig(request, sheetData, !AppConstant.FALSE.equals(applyCsvMapping));
         for(ArrayList<String> rowData: sheetData) {
             result.add(strUtils.joinArrayList(rowData, AppConstant.commaDelimater));
         }

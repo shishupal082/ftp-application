@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 
 import java.sql.ResultSet;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class FilepathDb implements FilepathInterface {
     private final static Logger logger = LoggerFactory.getLogger(FilepathDb.class);
@@ -141,13 +142,7 @@ public class FilepathDb implements FilepathInterface {
         ResultSet rs = mysqlConnection.query(query, finalQueryParam);
         return this.generateFilepathDBParameters(rs);
     }
-    private boolean addEntry(FilepathDBParameters dbParameters) {
-        String query = "INSERT INTO " + tableName + " (org_username,entry_time,login_username," +
-                "table_name,table_unique_id,ui_entry_time," +
-                "device_name,scan_dir_mapping_id,type,size_in_kb,size," +
-                "scanned_date,detected_at,edited_at,deleted_at," +
-                "remark,parent_path,pathname,filename)" +
-                " VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+    private ArrayList<String> getDbTableParameter(FilepathDBParameters dbParameters) {
         ArrayList<String> parameters = new ArrayList<>();
         parameters.add(dbParameters.getOrgUsernameV2());
         parameters.add(dbParameters.getEntryTimeV2());
@@ -164,16 +159,25 @@ public class FilepathDb implements FilepathInterface {
         parameters.add(dbParameters.getSizeV2());
 
         parameters.add(dbParameters.getScannedDateV2());
-        parameters.add(dbParameters.getDeletedAtV2());
-        parameters.add(dbParameters.getEditedAtV2());
         parameters.add(dbParameters.getDetectedAtV2());
+        parameters.add(dbParameters.getEditedAtV2());
+        parameters.add(dbParameters.getDeletedAtV2());
 
         parameters.add(dbParameters.getRemarkV2());
         parameters.add(dbParameters.getParentPathV2());
         parameters.add(dbParameters.getPathNameV2());
         parameters.add(dbParameters.getFileNameV2());
+        return parameters;
+    }
+    private boolean addEntry(FilepathDBParameters dbParameters) {
+        String query = "INSERT INTO " + tableName + " (org_username,entry_time,login_username," +
+                "table_name,table_unique_id,ui_entry_time," +
+                "device_name,scan_dir_mapping_id,type,size_in_kb,size," +
+                "scanned_date,detected_at,edited_at,deleted_at," +
+                "remark,parent_path,pathname,filename)" +
+                " VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
         try {
-            return mysqlConnection.updateQueryV2(query, parameters);
+            return mysqlConnection.updateQueryV2(query, this.getDbTableParameter(dbParameters));
         } catch (Exception e) {
             logger.info("addEntry: error in query: {}, {}", query, e.getMessage());
         }
@@ -190,32 +194,8 @@ public class FilepathDb implements FilepathInterface {
                 "scanned_date=?,detected_at=?,edited_at=?,deleted_at=?," +
                 "remark=?,parent_path=?,pathname=?,filename=?" +
                 " WHERE id="+dbParameters.getId();
-        ArrayList<String> parameters = new ArrayList<>();
-        parameters.add(dbParameters.getOrgUsernameV2());
-        parameters.add(dbParameters.getEntryTimeV2());
-        parameters.add(dbParameters.getLoginUsernameV2());
-
-        parameters.add(dbParameters.getTableNameV2());
-        parameters.add(dbParameters.getTableUniqueIdV2());
-        parameters.add(dbParameters.getUiEntryTimeV2());
-
-        parameters.add(dbParameters.getDeviceNameV2());
-        parameters.add(dbParameters.getScanDirMappingIdV2());
-        parameters.add(dbParameters.getTypeV2());
-        parameters.add(String.valueOf(dbParameters.getSizeInKbV2()));
-        parameters.add(dbParameters.getSizeV2());
-
-        parameters.add(dbParameters.getScannedDateV2());
-        parameters.add(dbParameters.getDeletedAtV2());
-        parameters.add(dbParameters.getEditedAtV2());
-        parameters.add(dbParameters.getDetectedAtV2());
-
-        parameters.add(dbParameters.getRemarkV2());
-        parameters.add(dbParameters.getParentPathV2());
-        parameters.add(dbParameters.getPathNameV2());
-        parameters.add(dbParameters.getFileNameV2());
         try {
-            return mysqlConnection.updateQueryV2(query, parameters);
+            return mysqlConnection.updateQueryV2(query, this.getDbTableParameter(dbParameters));
         } catch (Exception e) {
             logger.info("updateEntry: error in query: {}, {}", query, e.getMessage());
             e.printStackTrace();
@@ -223,12 +203,14 @@ public class FilepathDb implements FilepathInterface {
         return false;
     }
     @Override
-    public void updateIntoDb(FilePathDAO filePathDAO) {
+    public HashMap<String, Integer> updateIntoDb(FilePathDAO filePathDAO) {
+        HashMap<String, Integer> result = new HashMap<>();
         ArrayList<FilepathDBParameters> filepathDBParameters = filePathDAO.getAll();
         int addedEntrySuccess = 0;
         int addedEntryFailure = 0;
         int updatedEntrySuccess = 0;
         int updatedEntryFailure = 0;
+        int skippedUpdate = 0;
         boolean status;
         for(FilepathDBParameters dbParameters: filepathDBParameters) {
             if (dbParameters != null && dbParameters.isUpdated()) {
@@ -247,11 +229,17 @@ public class FilepathDb implements FilepathInterface {
                         addedEntryFailure++;
                     }
                 }
+            } else {
+                skippedUpdate++;
             }
         }
-        logger.info("updateIntoDb completed, addedEntrySuccess: {}, addedEntryFailure: {}," +
-                " updatedEntrySuccess: {}, updatedEntryFailure: {}",
-                addedEntrySuccess, addedEntryFailure, updatedEntrySuccess, updatedEntryFailure);
+        result.put("addedEntrySuccess", addedEntrySuccess);
+        result.put("addedEntryFailure", addedEntryFailure);
+        result.put("updatedEntrySuccess", updatedEntrySuccess);
+        result.put("updatedEntryFailure", updatedEntryFailure);
+        result.put("skippedUpdate", skippedUpdate);
+        logger.info("updateIntoDb completed, result: {}", result);
+        return result;
     }
     @Override
     public ArrayList<FilepathDBParameters> getAll() {

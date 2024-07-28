@@ -197,8 +197,8 @@ public class TestScanDir {
         TestMSExcelService testMSExcelService = new TestMSExcelService();
         AppConfig appConfig = testMSExcelService.getAppConfig(true);
         ScanDirService scanDirService = appConfig.getScanDirService();
-        String path = "meta-data-dir";
-        ApiResponse apiResponse = scanDirService.updateScanDirectory(null, path, AppConstant.TRUE);
+        String scanDirId = "meta-data-dir";
+        ApiResponse apiResponse = scanDirService.updateScanDirectory(null, scanDirId, AppConstant.TRUE);
         Assert.assertEquals(apiResponse.getStatus(), AppConstant.SUCCESS);
     }
     @Test

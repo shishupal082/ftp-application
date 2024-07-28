@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class FilepathCsv implements FilepathInterface {
     private final static Logger logger = LoggerFactory.getLogger(FilepathCsv.class);
@@ -25,7 +26,7 @@ public class FilepathCsv implements FilepathInterface {
     }
 
     @Override
-    public void updateIntoDb(FilePathDAO filePathDAO) {
-
+    public HashMap<String, Integer> updateIntoDb(FilePathDAO filePathDAO) {
+        return null;
     }
 }

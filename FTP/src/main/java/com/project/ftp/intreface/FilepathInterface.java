@@ -4,6 +4,7 @@ import com.project.ftp.dao.FilePathDAO;
 import com.project.ftp.obj.FilepathDBParameters;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public interface FilepathInterface {
     ArrayList<FilepathDBParameters> getAll();
@@ -12,5 +13,5 @@ public interface FilepathInterface {
                                                            ArrayList<String> filetype,
                                                            boolean pathnameExact,
                                                            boolean logQuery);
-    void updateIntoDb(FilePathDAO filePathDAO);
+    HashMap<String, Integer> updateIntoDb(FilePathDAO filePathDAO);
 }
