@@ -30,6 +30,11 @@ public class FilepathDBParameters {
     private String extension;
     private PathInfo pathInfo;
     private String filePathDetails;
+    private String reqScanDirId;
+    private String reqPathName;
+    private String reqFileType;
+    private String reqRecursive;
+    private String reqCsvMappingId;
 
     private final int orgUsernameMaxLength = 255;
     private final int entryTimeMaxLength = 31;
@@ -317,8 +322,50 @@ public class FilepathDBParameters {
     public void setFilePathDetails(String filePathDetails) {
         this.filePathDetails = filePathDetails;
     }
+
+    public String getReqScanDirId() {
+        return reqScanDirId;
+    }
+
+    public void setReqScanDirId(String reqScanDirId) {
+        this.reqScanDirId = reqScanDirId;
+    }
+
+    public String getReqPathName() {
+        return reqPathName;
+    }
+
+    public void setReqPathName(String reqPathName) {
+        this.reqPathName = reqPathName;
+    }
+
+    public String getReqFileType() {
+        return reqFileType;
+    }
+
+    public void setReqFileType(String reqFileType) {
+        this.reqFileType = reqFileType;
+    }
+
+    public String getReqRecursive() {
+        return reqRecursive;
+    }
+
+    public void setReqRecursive(String reqRecursive) {
+        this.reqRecursive = reqRecursive;
+    }
+
+    public String getReqCsvMappingId() {
+        return reqCsvMappingId;
+    }
+
+    public void setReqCsvMappingId(String reqCsvMappingId) {
+        this.reqCsvMappingId = reqCsvMappingId;
+    }
+
     public ArrayList<String> getJsonData() {
         ArrayList<String> result = new ArrayList<>();
+        result.add(Long.toString(id));
         result.add(orgUsername);
         result.add(entryTime);
         result.add(loginUsername);
@@ -339,10 +386,16 @@ public class FilepathDBParameters {
         result.add(pathName);
         result.add(fileName);
         result.add(extension);
+        result.add(reqScanDirId);
+        result.add(reqPathName);
+        result.add(reqFileType);
+        result.add(reqRecursive);
+        result.add(reqCsvMappingId);
         return result;
     }
     public ArrayList<String> getCsvData() {
         ArrayList<String> result = new ArrayList<>();
+        result.add(Long.toString(id));
         result.add(orgUsername == null ? "" : orgUsername);
         result.add(entryTime == null? "" : entryTime);
         result.add(loginUsername == null? "" : loginUsername);
@@ -363,6 +416,11 @@ public class FilepathDBParameters {
         result.add(pathName == null? "" : pathName);
         result.add(fileName == null? "" : fileName);
         result.add(extension == null? "" : extension);
+        result.add(reqScanDirId == null? "": reqScanDirId);
+        result.add(reqPathName == null? "": reqPathName);
+        result.add(reqFileType == null? "": reqFileType);
+        result.add(reqRecursive == null? "": reqRecursive);
+        result.add(reqCsvMappingId == null? "": reqCsvMappingId);
         return result;
     }
 
@@ -393,6 +451,11 @@ public class FilepathDBParameters {
                 ", extension='" + extension + '\'' +
                 ", pathInfo=" + pathInfo +
                 ", filePathDetails='" + filePathDetails + '\'' +
+                ", reqScanDirId='" + reqScanDirId + '\'' +
+                ", reqPathName='" + reqPathName + '\'' +
+                ", reqFileType='" + reqFileType + '\'' +
+                ", reqRecursive='" + reqRecursive + '\'' +
+                ", reqCsvMappingId='" + reqCsvMappingId + '\'' +
                 '}';
     }
 }

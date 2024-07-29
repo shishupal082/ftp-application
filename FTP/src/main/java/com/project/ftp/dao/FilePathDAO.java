@@ -29,11 +29,11 @@ public class FilePathDAO implements Dao<FilepathDBParameters> {
     }
 
     public FilepathDBParameters getByPathname(String pathname) {
-        ArrayList<String> pathnameParam = new ArrayList<>();
+//        ArrayList<String> pathnameParam = new ArrayList<>();
         if (!StaticService.isValidString(pathname)) {
             return null;
         }
-        pathnameParam.add(pathname);
+//        pathnameParam.add(pathname);
         for(FilepathDBParameters filepathDBParameter: filepathDBParametersList) {
             if (filepathDBParameter != null) {
                 if (pathname.equals(filepathDBParameter.getPathName())) {
@@ -41,19 +41,19 @@ public class FilePathDAO implements Dao<FilepathDBParameters> {
                 }
             }
         }
-        ArrayList<FilepathDBParameters>  dbParameters = filepathInterface.getByMultipleParameter(null,
-                pathnameParam, null, true, false);
-        for(FilepathDBParameters filepathDBParameter: dbParameters) {
-            if (filepathDBParameter != null) {
-                if (pathname.equals(filepathDBParameter.getPathName())) {
-                    return filepathDBParameter;
-                }
-            }
-        }
+//        ArrayList<FilepathDBParameters>  dbParameters = filepathInterface.getByMultipleParameter(null,
+//                pathnameParam, null, true, false);
+//        for(FilepathDBParameters filepathDBParameter: dbParameters) {
+//            if (filepathDBParameter != null) {
+//                if (pathname.equals(filepathDBParameter.getPathName())) {
+//                    return filepathDBParameter;
+//                }
+//            }
+//        }
         return null;
     }
-    public ArrayList<FilepathDBParameters> getByFilterParameter(String pathname, ArrayList<String> fileType,
-                                                                ArrayList<String> scanDirId, boolean recursive) {
+    public ArrayList<FilepathDBParameters> getByFilterParameter(String pathname, ArrayList<String> scanDirId,
+                                                                ArrayList<String> fileType, boolean recursive) {
         ArrayList<String> pathnameParam = new ArrayList<>();
         ArrayList<String> filetypeParam = new ArrayList<>();
         ArrayList<String> scanDirMappingIdParam = new ArrayList<>();
@@ -119,6 +119,14 @@ public class FilePathDAO implements Dao<FilepathDBParameters> {
     @Override
     public void update() {
         ArrayList<FilepathDBParameters> filepathDBParameters = filepathInterface.getAll();
+        if (filepathDBParameters != null) {
+            filepathDBParametersList.addAll(filepathDBParameters);
+        }
+    }
+    @Override
+    public void updateFromReqScanDir(ArrayList<String> scanDirListId, boolean isRecursive) {
+        ArrayList<FilepathDBParameters> filepathDBParameters = this.getByFilterParameter(null,
+                scanDirListId, null, isRecursive);
         if (filepathDBParameters != null) {
             filepathDBParametersList.addAll(filepathDBParameters);
         }

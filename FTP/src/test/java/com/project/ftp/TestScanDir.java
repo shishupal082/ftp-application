@@ -156,13 +156,13 @@ public class TestScanDir {
         apiResponse = scanDirService.readScanDirectory(null, scanDirId, path, null, recursive, null);
         pathInfoScanResults = (ArrayList<FilepathDBParameters>) apiResponse.getData();
         Assert.assertEquals(1, pathInfoScanResults.size());
-        csvData = scanDirService.readScanDirectoryCsv(null, scanDirId, path, null, recursive, AppConstant.FALSE);
-        Assert.assertEquals(20, csvData.split(",").length);
+        csvData = scanDirService.readScanDirectoryCsv(null, scanDirId, path, null, recursive, "invalid-csv-mapping-id");
+        Assert.assertEquals(26, csvData.split(",").length);
 
         scanDirId = "scan-dir-test-folder";
         recursive = "true";
         path = "D:/workspace/ftp-application/FTP/meta-data/scan-dir-test-folder/readme.txt";
-        apiResponse = scanDirService.readScanDirectory(null, scanDirId, path, null, recursive, AppConstant.FALSE);
+        apiResponse = scanDirService.readScanDirectory(null, scanDirId, path, null, recursive, null);
         pathInfoScanResults = (ArrayList<FilepathDBParameters>) apiResponse.getData();
         Assert.assertEquals(1, pathInfoScanResults.size());
 
@@ -170,12 +170,17 @@ public class TestScanDir {
         pathInfoScanResults = (ArrayList<FilepathDBParameters>) apiResponse.getData();
         Assert.assertEquals(1, pathInfoScanResults.size());
 
-        csvData = scanDirService.readScanDirectoryCsv(null, scanDirId, path, null, recursive, AppConstant.FALSE);
-        Assert.assertEquals(20, csvData.split(",").length);
-
         csvData = scanDirService.readScanDirectoryCsv(null, scanDirId, path, null, recursive, null);
+        Assert.assertEquals(25, csvData.split(",").length);
+
+        csvData = scanDirService.readScanDirectoryCsv(null, scanDirId, path, null, recursive, "api-scan-dir");
         Assert.assertEquals(11, csvData.split(",").length);
         Assert.assertEquals("txt", csvData.split(",")[10]);
+
+
+        csvData = scanDirService.readScanDirectoryCsv(null, scanDirId, path, null, recursive, "invalid-csv-mapping-id");
+        Assert.assertEquals(26, csvData.split(",").length);
+        Assert.assertEquals("txt", csvData.split(",")[20]);
     }
     @Test
     public void testReadScanDir3() {
@@ -197,8 +202,16 @@ public class TestScanDir {
         TestMSExcelService testMSExcelService = new TestMSExcelService();
         AppConfig appConfig = testMSExcelService.getAppConfig(true);
         ScanDirService scanDirService = appConfig.getScanDirService();
-        String scanDirId = "meta-data-dir";
-        ApiResponse apiResponse = scanDirService.updateScanDirectory(null, scanDirId, AppConstant.TRUE);
+        String scanDirId;;
+        ApiResponse apiResponse;
+        try {
+            scanDirService.updateScanDirectory(null, null, null);
+            Assert.assertEquals(0, 1);
+        } catch (AppException e) {
+            Assert.assertEquals(e.getErrorCode(), ErrorCodes.BAD_REQUEST_ERROR);
+        }
+        scanDirId = "meta-data-dir";
+        apiResponse = scanDirService.updateScanDirectory(null, scanDirId, AppConstant.TRUE);
         Assert.assertEquals(apiResponse.getStatus(), AppConstant.SUCCESS);
     }
     @Test
@@ -211,20 +224,22 @@ public class TestScanDir {
         scanDirId = "meta-data-dir";
         apiResponse = scanDirService.getScanDirectory(null, scanDirId, null, null, AppConstant.TRUE, null);
         ArrayList<ArrayList<String>> result = (ArrayList<ArrayList<String>>) apiResponse.getData();
-        Assert.assertEquals(apiResponse.getStatus(), AppConstant.SUCCESS);
+        Assert.assertFalse(result.isEmpty());
         scanDirId = "invalid-id";
         apiResponse = scanDirService.getScanDirectory(null, scanDirId, null, null, AppConstant.TRUE, null);
+        Assert.assertNull(apiResponse.getData());
+        //It will return all data from database
+        apiResponse = scanDirService.getScanDirectory(null, null, null, null, AppConstant.TRUE, null);
         result = (ArrayList<ArrayList<String>>) apiResponse.getData();
-        Assert.assertEquals(result.size(), 0);
-        scanDirId = null;// "e-app-data-v2.1-saved-files-shishupal2";
+        Assert.assertFalse(result.isEmpty());
         String path = "E:/app-data-v2.1/project-tracking/saved-files/Shishupal2/2024-04-02-10-20-BD's ltr 01.04.24-Plan for Reliablitiy Improvement and Maintenance Effectiveness (PRIME) 2024-25..pdf";
         apiResponse = scanDirService.getScanDirectory(null, null, path, null, AppConstant.TRUE, null);
         result = (ArrayList<ArrayList<String>>) apiResponse.getData();
-        Assert.assertTrue(!result.isEmpty());
+        Assert.assertFalse(result.isEmpty());
         String resultStr = scanDirService.getScanDirectoryCsv(null, null, path, null, AppConstant.TRUE, null);
-        Assert.assertTrue(!resultStr.isEmpty());
+        Assert.assertFalse(resultStr.isEmpty());
         apiResponse = scanDirService.getScanDirectory(null, null, null,"pdf", AppConstant.TRUE, null);
         result = (ArrayList<ArrayList<String>>) apiResponse.getData();
-        Assert.assertTrue(!result.isEmpty());
+        Assert.assertFalse(result.isEmpty());
     }
 }

@@ -4,29 +4,29 @@ excelDataConfig:
       - defaultCellData: "/view/any-file?filepath="
         col_index: -1
       - info: "orgUsername replaced by scanDirMappingId"
-        col_index: 7
+        col_index: 8
       - info: "entryTime replaced by detected_at"
-        col_index: 12
+        col_index: 13
       - info: "loginUsername replaced by filename"
-        col_index: 18
+        col_index: 19
       - defaultCellData: "project_link"
         info: "tableName"
         col_index: -1
       - info: "table-rowId"
-        col_index: 4
+        col_index: 5
       - info: "uiEntryTime replaced by edited_at"
-        col_index: 13
+        col_index: 14
       - defaultCellData: "0"
         info: "project-id"
         col_index: -1
       - info: "size"
-        col_index: 10
+        col_index: 11
       - info: "filepath"
-        col_index: 17
+        col_index: 18
       - info: "filepath_type"
-        col_index: 8
+        col_index: 9
       - info: "filename_extension"
-        col_index: 19
+        col_index: 20
     mergeColumnConfig:
       - finalIndex: 9
         sourceIndex: [0,9]

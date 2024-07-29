@@ -1007,14 +1007,14 @@ public class ApiResource {
                                    @QueryParam("pathname") String pathName,
                                    @QueryParam("filetype") String fileType,
                                    @QueryParam("recursive") String recursive,
-                                   @QueryParam("csv_mapping") String csvMapping) {
+                                   @QueryParam("csv_mapping_id") String csvMappingId) {
         LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
-        logger.info("readScanDir: In, user: {}, scan_dir_id: {}, pathname: {}, filetype: {}, recursive: {}, csv_mapping: {}",
-                loginUserDetails, scanDirId, pathName, fileType, recursive, csvMapping);
+        logger.info("readScanDir: In, user: {}, scan_dir_id: {}, pathname: {}, filetype: {}, recursive: {}, csv_mapping_id: {}",
+                loginUserDetails, scanDirId, pathName, fileType, recursive, csvMappingId);
         ApiResponse response;
         try {
             authService.isLogin(request);
-            response = scanDirService.readScanDirectory(request, scanDirId, pathName, fileType, recursive, csvMapping);
+            response = scanDirService.readScanDirectory(request, scanDirId, pathName, fileType, recursive, csvMappingId);
         } catch (AppException ae) {
             logger.info("Error in readScanDir: {}", ae.getErrorCode().getErrorCode());
             eventTracking.trackFailureEvent(request, EventName.SCAN_DIRECTORY, ae.getErrorCode());
@@ -1031,14 +1031,14 @@ public class ApiResource {
                                    @QueryParam("pathname") String pathName,
                                    @QueryParam("filetype") String fileType,
                                    @QueryParam("recursive") String recursive,
-                                   @QueryParam("csv_mapping") String csvMapping) {
+                                   @QueryParam("csv_mapping_id") String csvMappingId) {
         LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
-        logger.info("readScanDirCsv: In, user: {}, scan_dir_id: {}, pathname: {}, filetype: {}, recursive: {}, csv_mapping: {}",
-                loginUserDetails, scanDirId, pathName, fileType, recursive, csvMapping);
+        logger.info("readScanDirCsv: In, user: {}, scan_dir_id: {}, pathname: {}, filetype: {}, recursive: {}, csv_mapping_id: {}",
+                loginUserDetails, scanDirId, pathName, fileType, recursive, csvMappingId);
         String response = null;
         try {
             authService.isLogin(request);
-            response = scanDirService.readScanDirectoryCsv(request, scanDirId, pathName, fileType, recursive, csvMapping);
+            response = scanDirService.readScanDirectoryCsv(request, scanDirId, pathName, fileType, recursive, csvMappingId);
         } catch (AppException ae) {
             logger.info("Error in readScanDirCsv: {}", ae.getErrorCode().getErrorCode());
             eventTracking.trackFailureEvent(request, EventName.SCAN_DIRECTORY, ae.getErrorCode());
@@ -1077,14 +1077,14 @@ public class ApiResource {
                                   @QueryParam("pathname") String pathName,
                                   @QueryParam("filetype") String fileType,
                                   @QueryParam("recursive") String recursive,
-                                  @QueryParam("csv_mapping") String csvMapping) {
+                                  @QueryParam("csv_mapping_id") String csvMappingId) {
         LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
-        logger.info("getScanDir: In, user: {}, scan_dir_id: {}, pathname: {}, filetype: {}, recursive: {}, csv_mapping: {}",
-                loginUserDetails, scanDirId, pathName, fileType, recursive, csvMapping);
+        logger.info("getScanDir: In, user: {}, scan_dir_id: {}, pathname: {}, filetype: {}, recursive: {}, csv_mapping_id: {}",
+                loginUserDetails, scanDirId, pathName, fileType, recursive, csvMappingId);
         ApiResponse response;
         try {
             authService.isLogin(request);
-            response = scanDirService.getScanDirectory(request, scanDirId, pathName, fileType, recursive, csvMapping);
+            response = scanDirService.getScanDirectory(request, scanDirId, pathName, fileType, recursive, csvMappingId);
         } catch (AppException ae) {
             logger.info("Error in getScanDir: {}", ae.getErrorCode().getErrorCode());
             eventTracking.trackFailureEvent(request, EventName.SCAN_DIRECTORY, ae.getErrorCode());
@@ -1102,14 +1102,14 @@ public class ApiResource {
                                   @QueryParam("pathname") String pathName,
                                   @QueryParam("filetype") String fileType,
                                   @QueryParam("recursive") String recursive,
-                                  @QueryParam("csv_mapping") String csvMapping) {
+                                  @QueryParam("csv_mapping_id") String csvMappingId) {
         LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
-        logger.info("getScanDirCsv: In, user: {}, scan_dir_id: {}, pathname: {}, filetype: {}, recursive: {}, csv_mapping: {}",
-                loginUserDetails, scanDirId, pathName, fileType, recursive, csvMapping);
+        logger.info("getScanDirCsv: In, user: {}, scan_dir_id: {}, pathname: {}, filetype: {}, recursive: {}, csv_mapping_id: {}",
+                loginUserDetails, scanDirId, pathName, fileType, recursive, csvMappingId);
         String response = null;
         try {
             authService.isLogin(request);
-            response = scanDirService.getScanDirectoryCsv(request, scanDirId, pathName, fileType, recursive, csvMapping);
+            response = scanDirService.getScanDirectoryCsv(request, scanDirId, pathName, fileType, recursive, csvMappingId);
         } catch (AppException ae) {
             logger.info("Error in getScanDirCsv: {}", ae.getErrorCode().getErrorCode());
             eventTracking.trackFailureEvent(request, EventName.SCAN_DIRECTORY, ae.getErrorCode());
