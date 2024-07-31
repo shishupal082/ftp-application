@@ -255,6 +255,10 @@ public class TestScanDir {
         scanDirId = "meta-data-dir";
         apiResponse = scanDirService.updateScanDirectory(null, scanDirId, AppConstant.TRUE);
         Assert.assertEquals(apiResponse.getStatus(), AppConstant.SUCCESS);
+
+        scanDirId = "test-4|test-5";
+        apiResponse = scanDirService.updateScanDirectory(null, scanDirId, AppConstant.TRUE);
+        Assert.assertEquals(apiResponse.getStatus(), AppConstant.SUCCESS);
     }
     @Test
     public void testGetScanDir() {

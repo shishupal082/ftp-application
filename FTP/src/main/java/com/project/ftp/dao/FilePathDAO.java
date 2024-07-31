@@ -28,28 +28,22 @@ public class FilePathDAO implements Dao<FilepathDBParameters> {
         return null;
     }
 
-    public FilepathDBParameters getByPathname(String pathname) {
-//        ArrayList<String> pathnameParam = new ArrayList<>();
-        if (!StaticService.isValidString(pathname)) {
+    public FilepathDBParameters getByScanResultData(FilepathDBParameters filepathDBParameters) {
+        if (filepathDBParameters == null) {
             return null;
         }
-//        pathnameParam.add(pathname);
+        String pathname = filepathDBParameters.getPathName();
+        String scanDirMappingId = filepathDBParameters.getScanDirMappingId();
+        if (StaticService.isInValidString(pathname) || StaticService.isInValidString(scanDirMappingId)) {
+            return null;
+        }
         for(FilepathDBParameters filepathDBParameter: filepathDBParametersList) {
-            if (filepathDBParameter != null) {
-                if (pathname.equals(filepathDBParameter.getPathName())) {
+            if (filepathDBParameter != null && pathname.equals(filepathDBParameter.getPathName())) {
+                if (scanDirMappingId.equals(filepathDBParameter.getScanDirMappingId())) {
                     return filepathDBParameter;
                 }
             }
         }
-//        ArrayList<FilepathDBParameters>  dbParameters = filepathInterface.getByMultipleParameter(null,
-//                pathnameParam, null, true, false);
-//        for(FilepathDBParameters filepathDBParameter: dbParameters) {
-//            if (filepathDBParameter != null) {
-//                if (pathname.equals(filepathDBParameter.getPathName())) {
-//                    return filepathDBParameter;
-//                }
-//            }
-//        }
         return null;
     }
     public ArrayList<FilepathDBParameters> getByFilterParameter(String pathname, ArrayList<String> scanDirId,

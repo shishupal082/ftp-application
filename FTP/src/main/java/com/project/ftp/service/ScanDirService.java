@@ -202,8 +202,7 @@ public class ScanDirService {
             return;
         }
         String currentTime;
-        String pathname = filepathDBParameters.getPathName();
-        FilepathDBParameters filepathDBParameters1 = filePathDAO.getByPathname(pathname);
+        FilepathDBParameters filepathDBParameters1 = filePathDAO.getByScanResultData(filepathDBParameters);
         if (filepathDBParameters1 == null) {
             currentTime = StaticService.getDateStrFromPattern(AppConstant.DateTimeFormat6);
             filepathDBParameters.setUpdated(true);
