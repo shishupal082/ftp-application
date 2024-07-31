@@ -188,6 +188,15 @@ public class ScanDirService {
             }
         }
     }
+    private boolean isFilepathParameterUpdated(FilepathDBParameters scanResult, FilepathDBParameters dbResult) {
+        if (scanResult == null || dbResult == null) {
+            return false;
+        }
+        if (scanResult.getDeviceName() != null) {
+            return !scanResult.getDeviceName().equals(dbResult.getTableName());
+        }
+        return false;
+    }
     private void updateFilepath(FilePathDAO filePathDAO, FilepathDBParameters filepathDBParameters) {
         if (filepathDBParameters == null) {
             return;
@@ -210,6 +219,16 @@ public class ScanDirService {
             filepathDBParameters1.setSizeInKb(filepathDBParameters.getSizeInKb());
             filepathDBParameters1.setSize(filepathDBParameters.getSize());
             filepathDBParameters1.setScannedDate(currentTime);
+            filepathDBParameters1.setDeviceName(filepathDBParameters.getDeviceName());
+            filePathDAO.updateById(filepathDBParameters1);
+        } else if (this.isFilepathParameterUpdated(filepathDBParameters, filepathDBParameters1)) {
+            currentTime = StaticService.getDateStrFromPattern(AppConstant.DateTimeFormat6);
+            filepathDBParameters1.setUpdated(true);
+            filepathDBParameters1.setEditedAt(currentTime);
+            filepathDBParameters1.setSizeInKb(filepathDBParameters.getSizeInKb());
+            filepathDBParameters1.setSize(filepathDBParameters.getSize());
+            filepathDBParameters1.setScannedDate(currentTime);
+            filepathDBParameters1.setDeviceName(filepathDBParameters.getDeviceName());
             filePathDAO.updateById(filepathDBParameters1);
         } else {
             filePathDAO.updateById(filepathDBParameters1);

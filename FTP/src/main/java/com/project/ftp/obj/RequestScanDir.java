@@ -74,6 +74,7 @@ public class RequestScanDir {
         }
         return String.join("|", result);
     }
+    // Only used for reading data but not for final api response
     public ArrayList<String> getFinalFiletypeList() {
         if (this.reqFileType != null) {
             return this.fileTypeList;
@@ -83,6 +84,7 @@ public class RequestScanDir {
         }
         return null;
     }
+    // Only used for reading data but not for final api response
     public String getFinalCsvMappingId() {
         if (this.reqCsvMappingId != null) {
             return this.reqCsvMappingId;
@@ -92,7 +94,7 @@ public class RequestScanDir {
         }
         return null;
     }
-    // Only used for reading data but not for result
+    // Only used for reading data but not for final api response
     public boolean getFinalRecursive() {
         if (this.recursive) {
             return true;
