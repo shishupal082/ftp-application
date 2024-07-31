@@ -135,6 +135,22 @@ read_scan_dir
 - pathname=valid file name
 - pathname=valid folder name
 
+finalParameter in RequestScanDir
+----------------------------------
+There are 3 final parameter
+1) fileTypeList
+2) reqCsvMappingId
+3) recursive
+
+All these 3 parameter will be used for reading data from scan dir and db data in 4 nos apis but not final response
+It is used only when corresponding request parameters are null
+
+1) read_scan_dir
+2) read_scan_dir_csv
+3) get_scan_dir
+4) get_scan_dir_csv
+
+
 UI side
 ---------
 Page may be created for recursive update_scan_dir by clicking of two link Get and Update

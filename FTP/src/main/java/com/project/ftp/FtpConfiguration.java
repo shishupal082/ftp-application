@@ -10,8 +10,6 @@ import com.project.ftp.bridge.config.SocialLoginConfig;
 import com.project.ftp.bridge.obj.yamlObj.CommunicationConfig;
 import com.project.ftp.obj.yamlObj.EventConfig;
 import com.project.ftp.obj.yamlObj.FtlConfig;
-import com.project.ftp.obj.yamlObj.ScanDirConfig;
-import com.project.ftp.obj.yamlObj.ScanDirMapping;
 import io.dropwizard.Configuration;
 import io.dropwizard.db.DataSourceFactory;
 

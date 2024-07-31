@@ -11,6 +11,21 @@ scanDirConfig:
     pathIndex:
       - "D:/workspace/ftp-application"
       - "D:/workspace/ftp-application/"
+  - id: "test-4"
+    csv_mapping_id: "--api-scan-dir-4--"
+    device_name: "dev-laptop-4"
+    pathIndex:
+      - "D:/workspace/ftp-application/FTP/meta-data/scan-dir-test-folder/single-file-folder"
+  - id: "test-5"
+    csv_mapping_id: "--api-scan-dir-5--"
+    device_name: "dev-laptop-5"
+    pathIndex:
+      - "D:/workspace/ftp-application/FTP/meta-data/scan-dir-test-folder/single-file-folder/readme.txt"
+  - id: "test-4|test-5"
+    csv_mapping_id: "--api-scan-dir--"
+    device_name: "dev-laptop"
+    pathIndex:
+      - "pathIndex parameter will be skipped"
   - id: "D:/workspace/ftp-application"
     pathIndex:
       - "D:/workspace/ftp-application"
@@ -41,6 +56,8 @@ scanDirConfig:
       - "D:/workspace/ftp-application/FTP/meta-data/app_env_config_2.yml"
       - "D:/workspace/ftp-application/FTP/meta-data/app_env_config_4.yml"
   - id: "meta-data-dir"
+    csv_mapping_id: "--api-scan-dir--"
+    device_name: "dev-laptop"
     pathIndex:
       - "D:/workspace/ftp-application/FTP/meta-data/"
   - id: "e-app-data-v2.1-saved-files-shishupal2"
