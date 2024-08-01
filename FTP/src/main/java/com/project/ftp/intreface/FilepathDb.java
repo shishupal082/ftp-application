@@ -6,6 +6,7 @@ import com.project.ftp.dao.FilePathDAO;
 import com.project.ftp.jdbc.MysqlConnection;
 import com.project.ftp.obj.FilepathDBParameters;
 import com.project.ftp.obj.PathInfo;
+import com.project.ftp.service.StaticService;
 import io.dropwizard.db.DataSourceFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -97,6 +98,57 @@ public class FilepathDb implements FilepathInterface {
         }
         filterQuery = filterQuery.concat(")");
         return filterQuery;
+    }
+    public ArrayList<FilepathDBParameters> getByFilterParameter(String pathname, ArrayList<String> scanDirId,
+                                                                ArrayList<String> fileType, boolean recursive) {
+        ArrayList<String> pathnameParam = new ArrayList<>();
+        ArrayList<String> filetypeParam = new ArrayList<>();
+        ArrayList<String> scanDirMappingIdParam = new ArrayList<>();
+        String[] splitResult;
+        if (pathname != null) {
+            splitResult = pathname.split("\\|");
+            for(String str: splitResult) {
+                if (StaticService.isValidString(str)) {
+                    pathnameParam.add(str.trim());
+                }
+            }
+        }
+        if (fileType != null) {
+            filetypeParam = fileType;
+        }
+        if (scanDirId != null) {
+            scanDirMappingIdParam = scanDirId;
+        }
+        ArrayList<FilepathDBParameters> filepathDBParameters =
+                this.getByMultipleParameter(scanDirMappingIdParam, pathnameParam,
+                        filetypeParam, false, true);
+        if (filepathDBParameters != null) {
+            logger.info("getByFilterParameter: DB result count: {}", filepathDBParameters.size());
+        }
+        if (recursive) {
+            return filepathDBParameters;
+        } else if (pathnameParam.isEmpty()) {
+            return filepathDBParameters;
+        } else if (filepathDBParameters == null) {
+            return null;
+        }
+        ArrayList<FilepathDBParameters> result = new ArrayList<>();
+        String filename;
+        String requiredFilename;
+        for(FilepathDBParameters dbParameters: filepathDBParameters) {
+            for(String requestedPathname: pathnameParam) {
+                filename = dbParameters.getFileName();
+                requiredFilename = StaticService.getProperDirString(requestedPathname+"/"+filename);
+                if (filename != null) {
+                    if (requiredFilename.equals(dbParameters.getPathName())) {
+                        result.add(dbParameters);
+                        break;
+                    }
+                }
+            }
+        }
+        logger.info("getByFilterParameter: final result count: {}", result.size());
+        return result;
     }
     @Override
     public ArrayList<FilepathDBParameters> getByMultipleParameter(ArrayList<String> scan_dir_id,
@@ -204,8 +256,8 @@ public class FilepathDb implements FilepathInterface {
     }
     @Override
     public HashMap<String, Integer> updateIntoDb(FilePathDAO filePathDAO) {
-        HashMap<String, Integer> result = new HashMap<>();
         ArrayList<FilepathDBParameters> filepathDBParameters = filePathDAO.getAll();
+        HashMap<String, Integer> result = new HashMap<>();
         int addedEntrySuccess = 0;
         int addedEntryFailure = 0;
         int updatedEntrySuccess = 0;
@@ -244,5 +296,13 @@ public class FilepathDb implements FilepathInterface {
     @Override
     public ArrayList<FilepathDBParameters> getAll() {
         return this.getByMultipleParameter(null, null, null, false, true);
+    }
+    @Override
+    public void updateFromReqScanDir(FilePathDAO filePathDAO, ArrayList<String> scanDirListId, boolean isRecursive) {
+        ArrayList<FilepathDBParameters> filepathDBParameters = this.getByFilterParameter(null, scanDirListId, null, isRecursive);
+        if (filepathDBParameters != null) {
+            filePathDAO.addAll(filepathDBParameters);
+        }
+
     }
 }

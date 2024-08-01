@@ -11,22 +11,34 @@ import java.util.HashMap;
 
 public class FilepathCsv implements FilepathInterface {
     private final static Logger logger = LoggerFactory.getLogger(FilepathCsv.class);
-    private final AppConfig appConfig;
-    public FilepathCsv(AppConfig appConfig) {
-        this.appConfig = appConfig;
-    }
+    public FilepathCsv(AppConfig appConfig) {}
     @Override
     public ArrayList<FilepathDBParameters> getAll() {
         return null;
     }
 
     @Override
-    public ArrayList<FilepathDBParameters> getByMultipleParameter(ArrayList<String> scan_dir_id, ArrayList<String> pathname, ArrayList<String> filetype, boolean pathnameExact, boolean logQuery) {
+    public ArrayList<FilepathDBParameters> getByMultipleParameter(ArrayList<String> scan_dir_id,
+                                                                  ArrayList<String> pathname,
+                                                                  ArrayList<String> filetype,
+                                                                  boolean pathnameExact,
+                                                                  boolean logQuery) {
         return null;
     }
 
     @Override
     public HashMap<String, Integer> updateIntoDb(FilePathDAO filePathDAO) {
+        return null;
+    }
+    @Override
+    public void updateFromReqScanDir(FilePathDAO filePathDAO,
+                                                                ArrayList<String> scanDirListId, boolean isRecursive) {
+        return;
+    }
+
+    @Override
+    public ArrayList<FilepathDBParameters> getByFilterParameter(String reqPathName, ArrayList<String> scanDirIdList,
+                                                         ArrayList<String> fileTypeList, boolean recursive) {
         return null;
     }
 }

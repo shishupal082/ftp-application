@@ -5,8 +5,8 @@ import java.util.ArrayList;
 public interface Dao<T> {
     T getById(long id);
     ArrayList<T> getAll();
-    void save(T t);
-    void update();
+    void add(T t);
+    void addAll(ArrayList<T> ts);
     void updateById(T t);
-    void updateFromReqScanDir(ArrayList<String> scanDirIdList, boolean isRecursive);
+    T findByData(T t);
 }

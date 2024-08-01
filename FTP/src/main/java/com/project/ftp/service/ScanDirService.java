@@ -202,7 +202,7 @@ public class ScanDirService {
             return;
         }
         String currentTime;
-        FilepathDBParameters filepathDBParameters1 = filePathDAO.getByScanResultData(filepathDBParameters);
+        FilepathDBParameters filepathDBParameters1 = filePathDAO.findByData(filepathDBParameters);
         if (filepathDBParameters1 == null) {
             currentTime = StaticService.getDateStrFromPattern(AppConstant.DateTimeFormat6);
             filepathDBParameters.setUpdated(true);
@@ -210,7 +210,7 @@ public class ScanDirService {
             filepathDBParameters.setEntryTime(currentTime);
             filepathDBParameters.setUiEntryTime(currentTime);
             filepathDBParameters.setScannedDate(currentTime);
-            filePathDAO.save(filepathDBParameters);
+            filePathDAO.add(filepathDBParameters);
         } else if (!filepathDBParameters.getSizeInKb().equals(filepathDBParameters1.getSizeInKb())) {
             currentTime = StaticService.getDateStrFromPattern(AppConstant.DateTimeFormat6);
             filepathDBParameters1.setUpdated(true);
@@ -233,14 +233,13 @@ public class ScanDirService {
             filePathDAO.updateById(filepathDBParameters1);
         }
     }
-    private ArrayList<FilepathDBParameters> getDbDataFilterResult(FilePathDAO filePathDAO,
-                                                                  final RequestScanDir requestScanDir) throws AppException {
+    private ArrayList<FilepathDBParameters> getDbDataFilterResult(final RequestScanDir requestScanDir) throws AppException {
 
         ArrayList<String> scanDirIdList = requestScanDir.getScanDirIdList();
         String reqPathName = requestScanDir.getReqPathName();
         ArrayList<String> fileTypeList = requestScanDir.getFinalFiletypeList();
         boolean recursive = requestScanDir.getFinalRecursive();
-        ArrayList<FilepathDBParameters> dbData = filePathDAO.getByFilterParameter(reqPathName, scanDirIdList, fileTypeList, recursive);
+        ArrayList<FilepathDBParameters> dbData = filepathInterface.getByFilterParameter(reqPathName, scanDirIdList, fileTypeList, recursive);
         if (dbData == null || dbData.isEmpty()) {
             return null;
         }
@@ -260,8 +259,8 @@ public class ScanDirService {
         RequestScanDir requestScanDir = new RequestScanDir(reqScanDirId, null, null, reqRecursive, null);
         LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
         ArrayList<FilepathDBParameters> pathInfoScanResults = this.getPathInfoScanResultV2(requestScanDir, loginUserDetails);
-        FilePathDAO filePathDAO = new FilePathDAO(filepathInterface);
-        filePathDAO.updateFromReqScanDir(requestScanDir.getScanDirIdList(), AppConstant.TRUE.equals(reqRecursive));
+        FilePathDAO filePathDAO = new FilePathDAO();
+        filepathInterface.updateFromReqScanDir(filePathDAO, requestScanDir.getScanDirIdList(), requestScanDir.getFinalRecursive());
         if (pathInfoScanResults != null) {
             for(FilepathDBParameters row: pathInfoScanResults) {
                 this.updateFilepath(filePathDAO, row);
@@ -403,8 +402,7 @@ public class ScanDirService {
                                         final String reqCsvMappingId) throws AppException {
         RequestScanDir requestScanDir = new RequestScanDir(reqScanDirId, reqPathName, reqFileType, reqRecursive, reqCsvMappingId);
         this.getScanDirMapping(requestScanDir, true); // For updating scanDirMapping with reqScanDirId
-        FilePathDAO filePathDAO = new FilePathDAO(filepathInterface);
-        ArrayList<FilepathDBParameters> filepathDBParameters = this.getDbDataFilterResult(filePathDAO, requestScanDir);
+        ArrayList<FilepathDBParameters> filepathDBParameters = this.getDbDataFilterResult(requestScanDir);
         ApiResponse apiResponse = new ApiResponse();
         apiResponse.setData(this.generateUiJsonResponse(request, filepathDBParameters, requestScanDir.getFinalCsvMappingId()));
         return apiResponse;
@@ -414,8 +412,7 @@ public class ScanDirService {
                                       final String reqCsvMappingId) throws AppException {
         RequestScanDir requestScanDir = new RequestScanDir(reqScanDirId, reqPathName, reqFileType, reqRecursive, reqCsvMappingId);
         this.getScanDirMapping(requestScanDir, true); // For updating scanDirMapping with reqScanDirId
-        FilePathDAO filePathDAO = new FilePathDAO(filepathInterface);
-        ArrayList<FilepathDBParameters> response = this.getDbDataFilterResult(filePathDAO, requestScanDir);
+        ArrayList<FilepathDBParameters> response = this.getDbDataFilterResult(requestScanDir);
         ArrayList<ArrayList<String>> sheetData = new ArrayList<>();
         ArrayList<String> result = new ArrayList<>();
         if (response != null) {
