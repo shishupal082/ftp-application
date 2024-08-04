@@ -38,9 +38,13 @@ public class MiscService {
             return null;
         }
         HashMap<String, String> result = new HashMap<>();
+        String value;
         for(int i=0; i<colIndex.size(); i++) {
             if (i < rowData.size()) {
-                result.put(colIndex.get(i), rowData.get(i));
+                value = rowData.get(i);
+                if (StaticService.isValidString(value)) {
+                    result.put(colIndex.get(i), value);
+                }
             }
         }
         return result;
