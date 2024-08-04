@@ -1,5 +1,6 @@
 package com.project.ftp.resources;
 
+import com.project.ftp.bridge.obj.BridgeResponseSheetData;
 import com.project.ftp.config.AppConfig;
 import com.project.ftp.config.AppConstant;
 import com.project.ftp.event.EventName;
@@ -24,6 +25,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 @Path("/api")
 @Produces(MediaType.APPLICATION_JSON)
@@ -927,15 +929,38 @@ public class ApiResource {
         LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
         logger.info("getMSExcelData: In, user: {}, requestId: {}", loginUserDetails, requestId);
         ApiResponse response;
+        ArrayList<BridgeResponseSheetData> result;
         try {
             authService.isLogin(request);
-            response = msExcelService.getMSExcelSheetData(request, requestId);
+            result = msExcelService.getMSExcelSheetData(request, requestId);
+            response = new ApiResponse(result);
         } catch (AppException ae) {
             logger.info("Error in getMSExcelData: {}", ae.getErrorCode().getErrorCode());
             eventTracking.trackFailureEvent(request, EventName.MS_EXCEL_DATA, ae.getErrorCode());
             response = new ApiResponse(ae.getErrorCode());
         }
         logger.info("getMSExcelData: Out, {}", response.toStringV2());
+        return response;
+    }
+    @GET
+    @Path("/get_excel_data_json")
+    @UnitOfWork
+    public ApiResponse getMSExcelDataJson(@Context HttpServletRequest request,
+                                      @QueryParam("requestId") String requestId) {
+        LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
+        logger.info("getMSExcelDataJson: In, user: {}, requestId: {}", loginUserDetails, requestId);
+        ApiResponse response;
+        ArrayList<HashMap<String, String>> result;
+        try {
+            authService.isLogin(request);
+            result = msExcelService.getMSExcelSheetDataJson(request, requestId);
+            response = new ApiResponse(result);
+        } catch (AppException ae) {
+            logger.info("Error in getMSExcelDataJson: {}", ae.getErrorCode().getErrorCode());
+            eventTracking.trackFailureEvent(request, EventName.MS_EXCEL_DATA, ae.getErrorCode());
+            response = new ApiResponse(ae.getErrorCode());
+        }
+        logger.info("getMSExcelDataJson: Out, {}", response.toStringV2());
         return response;
     }
     @GET
@@ -1012,9 +1037,11 @@ public class ApiResource {
         logger.info("readScanDir: In, user: {}, scan_dir_id: {}, pathname: {}, filetype: {}, recursive: {}, csv_mapping_id: {}",
                 loginUserDetails, scanDirId, pathName, fileType, recursive, csvMappingId);
         ApiResponse response;
+        ArrayList<ArrayList<String>> result;
         try {
             authService.isLogin(request);
-            response = scanDirService.readScanDirectory(request, scanDirId, pathName, fileType, recursive, csvMappingId);
+            result = scanDirService.readScanDirectory(request, scanDirId, pathName, fileType, recursive, csvMappingId);
+            response = new ApiResponse(result);
         } catch (AppException ae) {
             logger.info("Error in readScanDir: {}", ae.getErrorCode().getErrorCode());
             eventTracking.trackFailureEvent(request, EventName.SCAN_DIRECTORY, ae.getErrorCode());
@@ -1022,7 +1049,35 @@ public class ApiResource {
         }
         logger.info("readScanDir: Out, {}", response.toStringV2());
         return response;
-    }@GET
+    }
+
+    @GET
+    @Path("/read_scan_dir_json")
+    @UnitOfWork
+    public ApiResponse readScanDirJson(@Context HttpServletRequest request,
+                                   @QueryParam("scan_dir_id") String scanDirId,
+                                   @QueryParam("pathname") String pathName,
+                                   @QueryParam("filetype") String fileType,
+                                   @QueryParam("recursive") String recursive,
+                                   @QueryParam("csv_mapping_id") String csvMappingId) {
+        LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
+        logger.info("readScanDirJson: In, user: {}, scan_dir_id: {}, pathname: {}, filetype: {}, recursive: {}, csv_mapping_id: {}",
+                loginUserDetails, scanDirId, pathName, fileType, recursive, csvMappingId);
+        ApiResponse response;
+        ArrayList<HashMap<String, String>> result;
+        try {
+            authService.isLogin(request);
+            result = scanDirService.readScanDirectoryJson(request, scanDirId, pathName, fileType, recursive, csvMappingId);
+            response = new ApiResponse(result);
+        } catch (AppException ae) {
+            logger.info("Error in readScanDirJson: {}", ae.getErrorCode().getErrorCode());
+            eventTracking.trackFailureEvent(request, EventName.SCAN_DIRECTORY, ae.getErrorCode());
+            response = new ApiResponse(ae.getErrorCode());
+        }
+        logger.info("readScanDirJson: Out, {}", response.toStringV2());
+        return response;
+    }
+    @GET
     @Path("/read_scan_dir_csv")
     @UnitOfWork
     @Produces(MediaType.TEXT_HTML)
@@ -1082,15 +1137,43 @@ public class ApiResource {
         logger.info("getScanDir: In, user: {}, scan_dir_id: {}, pathname: {}, filetype: {}, recursive: {}, csv_mapping_id: {}",
                 loginUserDetails, scanDirId, pathName, fileType, recursive, csvMappingId);
         ApiResponse response;
+        ArrayList<ArrayList<String>> result;
         try {
             authService.isLogin(request);
-            response = scanDirService.getScanDirectory(request, scanDirId, pathName, fileType, recursive, csvMappingId);
+            result = scanDirService.getScanDirectory(request, scanDirId, pathName, fileType, recursive, csvMappingId);
+            response = new ApiResponse(result);
         } catch (AppException ae) {
             logger.info("Error in getScanDir: {}", ae.getErrorCode().getErrorCode());
             eventTracking.trackFailureEvent(request, EventName.SCAN_DIRECTORY, ae.getErrorCode());
             response = new ApiResponse(ae.getErrorCode());
         }
         logger.info("getScanDir: Out");
+        return response;
+    }
+    @GET
+    @Path("/get_scan_dir_json")
+    @UnitOfWork
+    public ApiResponse getScanDirJson(@Context HttpServletRequest request,
+                                  @QueryParam("scan_dir_id") String scanDirId,
+                                  @QueryParam("pathname") String pathName,
+                                  @QueryParam("filetype") String fileType,
+                                  @QueryParam("recursive") String recursive,
+                                  @QueryParam("csv_mapping_id") String csvMappingId) {
+        LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
+        logger.info("getScanDirJson: In, user: {}, scan_dir_id: {}, pathname: {}, filetype: {}, recursive: {}, csv_mapping_id: {}",
+                loginUserDetails, scanDirId, pathName, fileType, recursive, csvMappingId);
+        ApiResponse response;
+        ArrayList<HashMap<String, String>> result;
+        try {
+            authService.isLogin(request);
+            result = scanDirService.getScanDirectoryJson(request, scanDirId, pathName, fileType, recursive, csvMappingId);
+            response = new ApiResponse(result);
+        } catch (AppException ae) {
+            logger.info("Error in getScanDirJson: {}", ae.getErrorCode().getErrorCode());
+            eventTracking.trackFailureEvent(request, EventName.SCAN_DIRECTORY, ae.getErrorCode());
+            response = new ApiResponse(ae.getErrorCode());
+        }
+        logger.info("getScanDirJson: Out");
         return response;
     }
     @GET

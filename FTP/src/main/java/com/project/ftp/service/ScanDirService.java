@@ -281,6 +281,18 @@ public class ScanDirService {
         }
         return data;
     }
+    private ArrayList<HashMap<String, String>> applyCsvConfigOutputJson(HttpServletRequest request,
+                                                        ArrayList<ArrayList<String>> data, String csvMappingId) {
+        if (StaticService.isInValidString(csvMappingId)) {
+            return null;
+        }
+        try {
+            return msExcelService.applyCsvConfigOnDataOutputJson(request, data, csvMappingId);
+        } catch (Exception e) {
+            logger.info("Error in applyCsvConfigOutputJson: {}", e.toString());
+        }
+        return null;
+    }
     private ArrayList<ArrayList<String>> generateUiJsonResponse(HttpServletRequest request,
                                                                 ArrayList<FilepathDBParameters> filepathDBParameters,
                                                                 String csvMappingId) {
@@ -288,11 +300,33 @@ public class ScanDirService {
         if (filepathDBParameters != null) {
             result = new ArrayList<>();
             for (FilepathDBParameters dbParameters: filepathDBParameters) {
-                result.add(dbParameters.getJsonData());
+                result.add(dbParameters.getArrayData());
             }
         }
         result = this.applyCsvConfig(request, result, csvMappingId);
         return result;
+    }
+    private ArrayList<HashMap<String, String>> generateUiJsonResponseJson(HttpServletRequest request,
+                                                                ArrayList<FilepathDBParameters> filepathDBParameters,
+                                                                String csvMappingId) {
+        ArrayList<ArrayList<String>> result = null;
+        if (filepathDBParameters != null) {
+            result = new ArrayList<>();
+            for (FilepathDBParameters dbParameters: filepathDBParameters) {
+                result.add(dbParameters.getArrayData());
+            }
+        }
+        if (result == null || result.isEmpty()) {
+            return null;
+        }
+        ArrayList<HashMap<String, String>> mappingOutput = this.applyCsvConfigOutputJson(request, result, csvMappingId);
+        if (mappingOutput == null) {
+            mappingOutput = new ArrayList<>();
+            for (FilepathDBParameters dbParameters: filepathDBParameters) {
+                mappingOutput.add(dbParameters.getJsonData());
+            }
+        }
+        return mappingOutput;
     }
     private ArrayList<ScanDirMapping> getAllScanDirMappings() {
         String scanDirConfigFilePath = appConfig.getFtpConfiguration().getScanDirConfigFilePath();
@@ -368,15 +402,21 @@ public class ScanDirService {
         ArrayList<ScanDirMapping> scanDirMapping = this.getScanDirMapping(requestScanDir, false);
         return new ApiResponse(scanDirMapping);
     }
-    public ApiResponse readScanDirectory(HttpServletRequest request, String reqScanDirId,
+    public ArrayList<ArrayList<String>> readScanDirectory(HttpServletRequest request, String reqScanDirId,
                                          String reqPathName, String reqFileType, final String reqRecursive,
                                          final String reqCsvMappingId) throws AppException {
         RequestScanDir requestScanDir = new RequestScanDir(reqScanDirId, reqPathName, reqFileType, reqRecursive, reqCsvMappingId);
         LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
-        ApiResponse apiResponse = new ApiResponse();
         ArrayList<FilepathDBParameters> filepathDBParameters = this.getPathInfoScanResultV2(requestScanDir, loginUserDetails);
-        apiResponse.setData(this.generateUiJsonResponse(request, filepathDBParameters, requestScanDir.getFinalCsvMappingId()));
-        return apiResponse;
+        return this.generateUiJsonResponse(request, filepathDBParameters, requestScanDir.getFinalCsvMappingId());
+    }
+    public ArrayList<HashMap<String, String>> readScanDirectoryJson(HttpServletRequest request, String reqScanDirId,
+                                                          String reqPathName, String reqFileType, final String reqRecursive,
+                                                          final String reqCsvMappingId) throws AppException {
+        RequestScanDir requestScanDir = new RequestScanDir(reqScanDirId, reqPathName, reqFileType, reqRecursive, reqCsvMappingId);
+        LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
+        ArrayList<FilepathDBParameters> filepathDBParameters = this.getPathInfoScanResultV2(requestScanDir, loginUserDetails);
+        return this.generateUiJsonResponseJson(request, filepathDBParameters, requestScanDir.getFinalCsvMappingId());
     }
     public String readScanDirectoryCsv(HttpServletRequest request, String reqScanDirId,
                                        String reqPathName, String reqFileType, final String reqRecursive,
@@ -397,15 +437,21 @@ public class ScanDirService {
         }
         return strUtils.joinArrayList(result, AppConstant.NEW_LINE_STRING);
     }
-    public ApiResponse getScanDirectory(HttpServletRequest request, String reqScanDirId, String reqPathName,
+    public ArrayList<ArrayList<String>> getScanDirectory(HttpServletRequest request, String reqScanDirId, String reqPathName,
                                         String reqFileType, final String reqRecursive,
                                         final String reqCsvMappingId) throws AppException {
         RequestScanDir requestScanDir = new RequestScanDir(reqScanDirId, reqPathName, reqFileType, reqRecursive, reqCsvMappingId);
         this.getScanDirMapping(requestScanDir, true); // For updating scanDirMapping with reqScanDirId
         ArrayList<FilepathDBParameters> filepathDBParameters = this.getDbDataFilterResult(requestScanDir);
-        ApiResponse apiResponse = new ApiResponse();
-        apiResponse.setData(this.generateUiJsonResponse(request, filepathDBParameters, requestScanDir.getFinalCsvMappingId()));
-        return apiResponse;
+        return this.generateUiJsonResponse(request, filepathDBParameters, requestScanDir.getFinalCsvMappingId());
+    }
+    public ArrayList<HashMap<String, String>> getScanDirectoryJson(HttpServletRequest request, String reqScanDirId, String reqPathName,
+                                        String reqFileType, final String reqRecursive,
+                                        final String reqCsvMappingId) throws AppException {
+        RequestScanDir requestScanDir = new RequestScanDir(reqScanDirId, reqPathName, reqFileType, reqRecursive, reqCsvMappingId);
+        this.getScanDirMapping(requestScanDir, true); // For updating scanDirMapping with reqScanDirId
+        ArrayList<FilepathDBParameters> filepathDBParameters = this.getDbDataFilterResult(requestScanDir);
+        return this.generateUiJsonResponseJson(request, filepathDBParameters, requestScanDir.getFinalCsvMappingId());
     }
     public String getScanDirectoryCsv(HttpServletRequest request, String reqScanDirId, String reqPathName,
                                       String reqFileType, final String reqRecursive,

@@ -1,11 +1,14 @@
 package com.project.ftp.bridge.obj;
 
+import com.project.ftp.bridge.obj.yamlObj.ExcelDataConfig;
+
 import java.util.ArrayList;
 
 public class BridgeResponseSheetData {
     private boolean copyOldData;
     private String destination;
     private String copyDestination;
+    private ExcelDataConfig excelDataConfigById;
     private ArrayList<ArrayList<String>> sheetData;
 
     public BridgeResponseSheetData(boolean copyOldData, String destination,
@@ -39,6 +42,14 @@ public class BridgeResponseSheetData {
         this.copyDestination = copyDestination;
     }
 
+    public ExcelDataConfig getExcelDataConfigById() {
+        return excelDataConfigById;
+    }
+
+    public void setExcelDataConfigById(ExcelDataConfig excelDataConfigById) {
+        this.excelDataConfigById = excelDataConfigById;
+    }
+
     public ArrayList<ArrayList<String>> getSheetData() {
         return sheetData;
     }
@@ -53,6 +64,7 @@ public class BridgeResponseSheetData {
                 "copyOldData=" + copyOldData +
                 ", destination='" + destination + '\'' +
                 ", copyDestination='" + copyDestination + '\'' +
+                ", excelDataConfigById=" + excelDataConfigById +
                 ", sheetData=" + sheetData +
                 '}';
     }

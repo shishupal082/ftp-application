@@ -19,6 +19,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class TestMSExcelService {
     final static Logger logger = LoggerFactory.getLogger(TestMSExcelService.class);
@@ -134,6 +135,16 @@ public class TestMSExcelService {
         requestId = "gs-csv-test-12-direct-invalid";
         apiResponse =  apiResource.getMSExcelData(request, requestId);
         Assert.assertEquals("BAD_REQUEST_ERROR", apiResponse.getFailureCode());
+    }
+    @Test
+    public void testTestMSExcelServiceV08V2() {
+        AppConfig appConfig = this.getAppConfig(false);
+        MSExcelService msExcelService = appConfig.getMsExcelService();
+        String requestId = "csv-test-08";
+        ArrayList<HashMap<String, String>> result;
+        result = msExcelService.getMSExcelSheetDataJson(null, requestId);
+        Assert.assertEquals(14, result.size());
+        Assert.assertEquals("test-00", result.get(0).get("col"));
     }
     @Test
     public void testTestMSExcelServiceV09() {

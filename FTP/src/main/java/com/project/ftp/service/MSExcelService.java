@@ -74,20 +74,26 @@ public class MSExcelService {
         }
     }
     private ArrayList<BridgeResponseSheetData> getActualMSExcelSheetData(HttpServletRequest request,
-                                                                         ArrayList<ExcelDataConfig> excelDataConfigs) throws AppException {
+                                                                         ArrayList<ExcelDataConfig> excelDataConfigs,
+                                                                         boolean addConfigDataById) throws AppException {
         ArrayList<BridgeResponseSheetData> response = null;
         ArrayList<BridgeResponseSheetData> result;
         if (excelDataConfigs != null) {
-            for(ExcelDataConfig excelDataConfig: excelDataConfigs) {
-                if (excelDataConfig != null) {
-                    result = appConfig.getAppToBridge().getExcelData(request, excelDataConfig);
+            for(ExcelDataConfig excelDataConfigById: excelDataConfigs) {
+                if (excelDataConfigById != null) {
+                    result = appConfig.getAppToBridge().getExcelData(request, excelDataConfigById);
                     if (result == null) {
-                        logger.info("Error in reading excelSheetData for id: {}", excelDataConfig.getId());
+                        logger.info("Error in reading excelSheetData for id: {}", excelDataConfigById.getId());
                     } else {
                         if (response == null) {
                             response = new ArrayList<>();
                         }
-                        response.addAll(result);
+                        for(BridgeResponseSheetData bridgeResponseSheetData: result) {
+                            if (addConfigDataById) {
+                                bridgeResponseSheetData.setExcelDataConfigById(excelDataConfigById);
+                            }
+                            response.add(bridgeResponseSheetData);
+                        }
                     }
                 }
             }
@@ -157,12 +163,13 @@ public class MSExcelService {
                 ftpConfiguration.getGoogleOAuthClientConfig());
         ArrayList<ArrayList<String>> response = null;
         ArrayList<ArrayList<String>> result;
+        BridgeResponseSheetData bridgeResponseSheetData;
         if (excelDataConfigs != null) {
-            for(ExcelDataConfig excelDataConfig: excelDataConfigs) {
-                if (excelDataConfig != null) {
-                    result = msExcelBridgeService.applyCsvConfigOnData(sheetData, null, null, excelDataConfig, null);;
+            for(ExcelDataConfig excelDataConfigById: excelDataConfigs) {
+                if (excelDataConfigById != null) {
+                    result = msExcelBridgeService.applyCsvConfigOnData(sheetData, null, null, excelDataConfigById, null);;
                     if (result == null) {
-                        logger.info("Error in applyCsvConfigOnData for id: {}", excelDataConfig.getId());
+                        logger.info("Error in applyCsvConfigOnData for id: {}", excelDataConfigById.getId());
                     } else {
                         if (response == null) {
                             response = new ArrayList<>();
@@ -174,13 +181,54 @@ public class MSExcelService {
         }
         return response;
     }
-    public ApiResponse getMSExcelSheetData(HttpServletRequest request, String requestId) throws AppException {
+    public ArrayList<HashMap<String, String>> applyCsvConfigOnDataOutputJson(HttpServletRequest request,
+                                                                       ArrayList<ArrayList<String>> sheetData,
+                                                                       String requestId) throws AppException {
+        ArrayList<ExcelDataConfig> excelDataConfigs = this.getActualMSExcelSheetDataConfig(request, requestId, false);
+        MSExcelBridgeService msExcelBridgeService = new MSExcelBridgeService(request, eventTracking,
+                ftpConfiguration.getGoogleOAuthClientConfig());
+        MiscService miscService = new MiscService();
+        ArrayList<HashMap<String, String>> response = null;
+        ArrayList<ArrayList<String>> result;
+        if (excelDataConfigs != null) {
+            for(ExcelDataConfig excelDataConfigById: excelDataConfigs) {
+                if (excelDataConfigById != null) {
+                    result = msExcelBridgeService.applyCsvConfigOnData(sheetData, null, null, excelDataConfigById, null);;
+                    if (result == null) {
+                        logger.info("Error in applyCsvConfigOnDataOutputJson for id: {}", excelDataConfigById.getId());
+                    } else {
+                        if (response == null) {
+                            response = new ArrayList<>();
+                        }
+                        response.addAll(miscService.convertArraySheetDataToJsonData(result, excelDataConfigById.getTableMappingIndex()));
+                    }
+                }
+            }
+        }
+        return response;
+    }
+    public ArrayList<BridgeResponseSheetData> getMSExcelSheetData(HttpServletRequest request, String requestId) throws AppException {
         ArrayList<ExcelDataConfig> excelDataConfigs = this.getActualMSExcelSheetDataConfig(request, requestId, true);
-        return new ApiResponse(this.getActualMSExcelSheetData(request, excelDataConfigs));
+        return this.getActualMSExcelSheetData(request, excelDataConfigs, false);
+    }
+    public ArrayList<HashMap<String, String>> getMSExcelSheetDataJson(HttpServletRequest request, String requestId) throws AppException {
+        ArrayList<ExcelDataConfig> excelDataConfigs = this.getActualMSExcelSheetDataConfig(request, requestId, true);
+        ArrayList<BridgeResponseSheetData> bridgeResponseSheetData = this.getActualMSExcelSheetData(request, excelDataConfigs, true);
+        MiscService miscService = new MiscService();
+        ArrayList<HashMap<String, String>> result = new ArrayList<>();
+        ArrayList<String> tableIndex;
+        for (BridgeResponseSheetData bridgeResponseSheetData1: bridgeResponseSheetData) {
+            if (bridgeResponseSheetData1 == null || bridgeResponseSheetData1.getExcelDataConfigById() == null) {
+                continue;
+            }
+            tableIndex = bridgeResponseSheetData1.getExcelDataConfigById().getTableMappingIndex();
+            result.addAll(miscService.convertArraySheetDataToJsonData(bridgeResponseSheetData1.getSheetData(), tableIndex));
+        }
+        return result;
     }
     public String getMSExcelSheetDataCsv(HttpServletRequest request, String requestId) throws AppException {
         ArrayList<ExcelDataConfig> excelDataConfigs = this.getActualMSExcelSheetDataConfig(request, requestId, true);
-        ArrayList<BridgeResponseSheetData> response = this.getActualMSExcelSheetData(request, excelDataConfigs);
+        ArrayList<BridgeResponseSheetData> response = this.getActualMSExcelSheetData(request, excelDataConfigs, false);
         ArrayList<ArrayList<String>> sheetData = new ArrayList<>();
         ArrayList<String> result = new ArrayList<>();
         for (BridgeResponseSheetData bridgeResponseSheetData: response) {
@@ -195,7 +243,7 @@ public class MSExcelService {
     }
     public ApiResponse updateMSExcelSheetData(HttpServletRequest request, String requestId) throws AppException {
         ArrayList<ExcelDataConfig> excelDataConfigs = this.getActualMSExcelSheetDataConfig(request, requestId, true);
-        ArrayList<BridgeResponseSheetData> response = this.getActualMSExcelSheetData(request, excelDataConfigs);
+        ArrayList<BridgeResponseSheetData> response = this.getActualMSExcelSheetData(request, excelDataConfigs, false);
         ArrayList<String> tempSavedFilePath = new ArrayList<>();
         for (BridgeResponseSheetData bridgeResponseSheetData: response) {
             this.saveCsvData(bridgeResponseSheetData, tempSavedFilePath);

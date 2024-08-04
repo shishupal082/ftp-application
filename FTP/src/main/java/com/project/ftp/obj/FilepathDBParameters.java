@@ -1,9 +1,11 @@
 package com.project.ftp.obj;
 
 import com.project.ftp.config.AppConstant;
+import com.project.ftp.config.FilepathCol;
 import com.project.ftp.service.StaticService;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class FilepathDBParameters {
     private boolean isUpdated;
@@ -362,8 +364,32 @@ public class FilepathDBParameters {
     public void setReqCsvMappingId(String reqCsvMappingId) {
         this.reqCsvMappingId = reqCsvMappingId;
     }
-
-    public ArrayList<String> getJsonData() {
+    public HashMap<String, String> getJsonData() {
+        HashMap<String, String> result = new HashMap<>();
+        result.put(FilepathCol.id.getColumnName(), Long.toString(id));
+        result.put(FilepathCol.orgUsername.getColumnName(), orgUsername);
+        result.put(FilepathCol.entryTime.getColumnName(), entryTime);
+        result.put(FilepathCol.loginUsername.getColumnName(), loginUsername);
+        result.put(FilepathCol.colTableName.getColumnName(), tableName);
+        result.put(FilepathCol.tableUniqueId.getColumnName(), tableUniqueId);
+        result.put(FilepathCol.uiEntryTime.getColumnName(), uiEntryTime);
+        result.put(FilepathCol.deviceName.getColumnName(), deviceName);
+        result.put(FilepathCol.scanDirMappingId.getColumnName(), scanDirMappingId);
+        result.put(FilepathCol.type.getColumnName(), type);
+        result.put(FilepathCol.sizeInKb.getColumnName(), Double.toString(sizeInKb));
+        result.put(FilepathCol.size.getColumnName(), size);
+        result.put(FilepathCol.scannedDate.getColumnName(), scannedDate);
+        result.put(FilepathCol.detectedAt.getColumnName(), detectedAt);
+        result.put(FilepathCol.editedAt.getColumnName(), editedAt);
+        result.put(FilepathCol.deletedAt.getColumnName(), deletedAt);
+        result.put(FilepathCol.remark.getColumnName(), remark);
+        result.put(FilepathCol.parentPath.getColumnName(), parentPath);
+        result.put(FilepathCol.colPathname.getColumnName(), pathName);
+        result.put(FilepathCol.colFilename.getColumnName(), fileName);
+        result.put("extension",extension);
+        return result;
+    }
+    public ArrayList<String> getArrayData() {
         ArrayList<String> result = new ArrayList<>();
         result.add(Long.toString(id));
         result.add(orgUsername);

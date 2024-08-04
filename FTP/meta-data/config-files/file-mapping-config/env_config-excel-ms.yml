@@ -164,6 +164,10 @@ excelDataConfig:
         sourceIndex: [ 1,-1 ]
         join: ".."
   csv-test-07:
+    tableMappingIndex:
+      - "row-id"
+      - date
+      - col-3
     mergeColumnConfig:
       - finalIndex: 9
         sourceIndex: [ 1,-1 ]
@@ -175,6 +179,8 @@ excelDataConfig:
   csv-test-08:
     appendCellDataIndex:
       - [ 0, -1 ]
+    tableMappingIndex:
+      - "col"
     cellMapping:
       - defaultCellData: ""
         col_index: 1

@@ -229,6 +229,10 @@
   ],
   [
     "/api/get_excel_data?requestId=gs-excel-id",
+    "Call get GS/CSV/MS_Excel_sheet_Data as Array [GET]"
+  ],
+  [
+    "/api/get_excel_data_json?requestId=gs-excel-id",
     "Call get GS/CSV/MS_Excel_sheet_Data as JSON [GET]"
   ],
   [
@@ -245,11 +249,15 @@
   ],
   [
     "/api/read_scan_dir?scan_dir_id=id1|id2&pathname=file/folder_path|folder_2&filetype=pdf|csv&recursive=true/false&csv_mapping=false/true",
-    "Call read scan dir [GET]"
+    "Call read scan dir as Array [GET]"
+  ],
+  [
+    "/api/read_scan_dir_json?scan_dir_id=id1|id2&pathname=file/folder_path|folder_2&filetype=pdf|csv&recursive=true/false&csv_mapping=false/true",
+    "Call read scan dir as Json [GET]"
   ],
   [
     "/api/read_scan_dir_csv?scan_dir_id=id1|id2&pathname=file/folder_path|folder_2&filetype=pdf|csv&recursive=true/false&csv_mapping=false/true",
-    "Call read scan dir [GET]"
+    "Call read scan dir as CSV [GET]"
   ],
   [
     "/api/update_scan_dir?scan_dir_id=id1&pathname=file/folder_path&recursive=true/false",
@@ -257,11 +265,15 @@
   ],
   [
     "/api/get_scan_dir?scan_dir_id=id1|id2&pathname=file/folder_path|folder_2&filetype=pdf|csv&recursive=true/false&csv_mapping=false/true",
-    "Call get scan dir (From DB) [GET]"
+    "Call get scan dir (From DB) as Array [GET]"
+  ],
+  [
+    "/api/get_scan_dir_json?scan_dir_id=id1|id2&pathname=file/folder_path|folder_2&filetype=pdf|csv&recursive=true/false&csv_mapping=false/true",
+    "Call get scan dir (From DB) as Json [GET]"
   ],
   [
     "/api/get_scan_dir_csv?scan_dir_id=id1|id2&pathname=file/folder_path|folder_2&filetype=pdf|csv&recursive=true/false&csv_mapping=false/true",
-    "Call get scan dir (From DB) [GET]"
+    "Call get scan dir (From DB) as CSV [GET]"
   ],
   [
     "/assets-dir/{default: *}",

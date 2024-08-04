@@ -13,6 +13,7 @@ public class ExcelDataConfig {
     private String dateFormat;
     private String timeFormat;
     private String dateTimeFormat;
+    private ArrayList<String> tableMappingIndex;
     private ArrayList<String> validFor;
     private ArrayList<ExcelFileConfig> excelConfig;
     private ArrayList<ExcelFileConfig> csvConfig;
@@ -76,6 +77,14 @@ public class ExcelDataConfig {
 
     public void setDateTimeFormat(String dateTimeFormat) {
         this.dateTimeFormat = dateTimeFormat;
+    }
+
+    public ArrayList<String> getTableMappingIndex() {
+        return tableMappingIndex;
+    }
+
+    public void setTableMappingIndex(ArrayList<String> tableMappingIndex) {
+        this.tableMappingIndex = tableMappingIndex;
     }
 
     public ArrayList<String> getValidFor() {
@@ -191,6 +200,7 @@ public class ExcelDataConfig {
                 ", dateFormat='" + dateFormat + '\'' +
                 ", timeFormat='" + timeFormat + '\'' +
                 ", dateTimeFormat='" + dateTimeFormat + '\'' +
+                ", tableMappingIndex=" + tableMappingIndex +
                 ", validFor=" + validFor +
                 ", excelConfig=" + excelConfig +
                 ", csvConfig=" + csvConfig +
