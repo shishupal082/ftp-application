@@ -54,7 +54,6 @@ public class MiscService {
         if (sheetData == null) {
             return null;
         }
-        ArrayList<HashMap<String, String>> result = new ArrayList<>();
         int maxColCount = 0;
         for(ArrayList<String> row: sheetData) {
             if (row == null) {
