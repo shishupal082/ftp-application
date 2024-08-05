@@ -367,26 +367,79 @@ public class FilepathDBParameters {
     public HashMap<String, String> getJsonData() {
         HashMap<String, String> result = new HashMap<>();
         result.put(FilepathCol.id.getColumnName(), Long.toString(id));
-        result.put(FilepathCol.orgUsername.getColumnName(), orgUsername);
-        result.put(FilepathCol.entryTime.getColumnName(), entryTime);
-        result.put(FilepathCol.loginUsername.getColumnName(), loginUsername);
-        result.put(FilepathCol.colTableName.getColumnName(), tableName);
-        result.put(FilepathCol.tableUniqueId.getColumnName(), tableUniqueId);
-        result.put(FilepathCol.uiEntryTime.getColumnName(), uiEntryTime);
-        result.put(FilepathCol.deviceName.getColumnName(), deviceName);
-        result.put(FilepathCol.scanDirMappingId.getColumnName(), scanDirMappingId);
-        result.put(FilepathCol.type.getColumnName(), type);
+        if (StaticService.isValidString(orgUsername)) {
+            result.put(FilepathCol.orgUsername.getColumnName(), orgUsername);
+        }
+        if (StaticService.isValidString(entryTime)) {
+            result.put(FilepathCol.entryTime.getColumnName(), entryTime);
+        }
+        if (StaticService.isValidString(loginUsername)) {
+            result.put(FilepathCol.loginUsername.getColumnName(), loginUsername);
+        }
+        if (StaticService.isValidString(tableName)) {
+            result.put(FilepathCol.colTableName.getColumnName(), tableName);
+        }
+        if (StaticService.isValidString(tableUniqueId)) {
+            result.put(FilepathCol.tableUniqueId.getColumnName(), tableUniqueId);
+        }
+        if (StaticService.isValidString(uiEntryTime)) {
+            result.put(FilepathCol.uiEntryTime.getColumnName(), uiEntryTime);
+        }
+        if (StaticService.isValidString(deviceName)) {
+            result.put(FilepathCol.deviceName.getColumnName(), deviceName);
+        }
+        if (StaticService.isValidString(scanDirMappingId)) {
+            result.put(FilepathCol.scanDirMappingId.getColumnName(), scanDirMappingId);
+        }
+        if (StaticService.isValidString(type)) {
+            result.put(FilepathCol.type.getColumnName(), type);
+        }
         result.put(FilepathCol.sizeInKb.getColumnName(), Double.toString(sizeInKb));
-        result.put(FilepathCol.size.getColumnName(), size);
-        result.put(FilepathCol.scannedDate.getColumnName(), scannedDate);
-        result.put(FilepathCol.detectedAt.getColumnName(), detectedAt);
-        result.put(FilepathCol.editedAt.getColumnName(), editedAt);
-        result.put(FilepathCol.deletedAt.getColumnName(), deletedAt);
-        result.put(FilepathCol.remark.getColumnName(), remark);
-        result.put(FilepathCol.parentPath.getColumnName(), parentPath);
-        result.put(FilepathCol.colPathname.getColumnName(), pathName);
-        result.put(FilepathCol.colFilename.getColumnName(), fileName);
-        result.put("extension",extension);
+        if (StaticService.isValidString(size)) {
+            result.put(FilepathCol.size.getColumnName(), size);
+        }
+        if (StaticService.isValidString(scannedDate)) {
+            result.put(FilepathCol.scannedDate.getColumnName(), scannedDate);
+        }
+        if (StaticService.isValidString(detectedAt)) {
+            result.put(FilepathCol.detectedAt.getColumnName(), detectedAt);
+        }
+        if (StaticService.isValidString(editedAt)) {
+            result.put(FilepathCol.editedAt.getColumnName(), editedAt);
+        }
+        if (StaticService.isValidString(deletedAt)) {
+            result.put(FilepathCol.deletedAt.getColumnName(), deletedAt);
+        }
+        if (StaticService.isValidString(remark)) {
+            result.put(FilepathCol.remark.getColumnName(), remark);
+        }
+        if (StaticService.isValidString(parentPath)) {
+            result.put(FilepathCol.parentPath.getColumnName(), parentPath);
+        }
+        if (StaticService.isValidString(pathName)) {
+            result.put(FilepathCol.colPathname.getColumnName(), pathName);
+        }
+        if (StaticService.isValidString(fileName)) {
+            result.put(FilepathCol.colFilename.getColumnName(), fileName);
+        }
+        if (StaticService.isValidString(extension)) {
+            result.put("extension", extension);
+        }
+        if (StaticService.isValidString(reqScanDirId)) {
+            result.put("req_scan_dir_id", reqScanDirId);
+        }
+        if (StaticService.isValidString(reqPathName)) {
+            result.put("req_pathname", reqPathName);
+        }
+        if (StaticService.isValidString(reqFileType)) {
+            result.put("req_filetype", reqFileType);
+        }
+        if (StaticService.isValidString(reqRecursive)) {
+            result.put("req_recursive", reqRecursive);
+        }
+        if (StaticService.isValidString(reqCsvMappingId)) {
+            result.put("req_csv_mapping_id", reqCsvMappingId);
+        }
         return result;
     }
     public ArrayList<String> getArrayData() {

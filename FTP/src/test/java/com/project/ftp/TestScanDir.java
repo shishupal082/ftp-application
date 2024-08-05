@@ -13,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class TestScanDir {
     final static Logger logger = LoggerFactory.getLogger(TestScanDir.class);
@@ -222,6 +223,23 @@ public class TestScanDir {
         Assert.assertEquals("D:/workspace/ftp-application/FTP/meta-data/scan-dir-test-folder/single-file-folder", result.get(0).get(17));//parent path
         Assert.assertEquals("D:/workspace/ftp-application/FTP/meta-data/scan-dir-test-folder/single-file-folder/readme.txt", result.get(0).get(18));//path name
 
+    }
+
+    @Test
+    public void testReadScanDir4() {
+        TestMSExcelService testMSExcelService = new TestMSExcelService();
+        AppConfig appConfig = testMSExcelService.getAppConfig(false);
+        ScanDirService scanDirService = new ScanDirService(appConfig, null);
+        String scanDirId = "all-path";
+        String recursive = "false";
+        ArrayList<ArrayList<String>> result;
+        ArrayList<HashMap<String, String>> resultJson;
+        String reqPathName = "file://10.130.4.15/DSTE-RNC/joint-report/gag-for-gate-lodge-shifting.pdf";
+        reqPathName = "D:/workspace/ftp-application/FTP/meta-data/scan-dir-test-folder/single-file-folder/readme.txt";
+//        reqPathName = "//10.130.4.15/Share%20Folder%20S&T/DSTE-RNC/SpecialTermsandConditionsofcontractELBMB-1822-09-22.pdf";
+        resultJson = scanDirService.readScanDirectoryJson(null, scanDirId, reqPathName, null, recursive, null);
+        Assert.assertEquals(1, resultJson.size());
+        Assert.assertEquals(reqPathName, resultJson.get(0).get("pathname"));
     }
     @Test
     public void testUpdateScanDir() {

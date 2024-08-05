@@ -28,6 +28,7 @@ public class ScanDirService {
     private final MSExcelService msExcelService;
     private final StrUtils strUtils;
     private final YamlFileParser yamlFileParser;
+    private final String readFileFromRequest = "read-file-path-from-request";
     public ScanDirService (final AppConfig appConfig, final FilepathInterface filepathInterface) {
         this.appConfig = appConfig;
         this.fileService = new FileService();
@@ -384,12 +385,16 @@ public class ScanDirService {
             }
             pathIndex = dirMapping.getPathIndex();
             finalPathIndex = new ArrayList<>();
-            for(String configPath: pathIndex) {
-                if (configPath == null) {
-                    continue;
-                }
-                if (pathName.contains(configPath)) {
-                    finalPathIndex.add(configPath);
+            if (pathIndex.contains(this.readFileFromRequest)) {
+                finalPathIndex.add(pathName);
+            } else {
+                for(String configPath: pathIndex) {
+                    if (configPath == null) {
+                        continue;
+                    }
+                    if (pathName.contains(configPath)) {
+                        finalPathIndex.add(configPath);
+                    }
                 }
             }
             dirMapping.setPathIndex(finalPathIndex);

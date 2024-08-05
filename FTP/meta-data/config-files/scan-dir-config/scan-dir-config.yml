@@ -1,4 +1,7 @@
 scanDirConfig:
+  - id: "all-path"
+    pathIndex:
+      - "read-file-path-from-request"
   - id: "test-with-null-path-index"
   - id: "test-1"
     pathIndex:
