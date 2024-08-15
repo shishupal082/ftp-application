@@ -1,8 +1,6 @@
 package com.project.ftp.parser;
 
 import com.project.ftp.config.AppConstant;
-import com.project.ftp.exceptions.AppException;
-import com.project.ftp.exceptions.ErrorCodes;
 import com.project.ftp.obj.PathInfo;
 import com.project.ftp.service.StaticService;
 import org.slf4j.Logger;
@@ -24,58 +22,25 @@ public class TextFileParser {
         this.filepath = filepath;
         this.isNewFile = isNewFile;
     }
-    public ArrayList<ArrayList<String>> getTextData() throws AppException {
+    public ArrayList<ArrayList<String>> readCsvData() {
         ArrayList<ArrayList<String>> result = new ArrayList<>();
-        PathInfo pathInfo = StaticService.getPathInfo(filepath);
-        if (!AppConstant.FILE.equals(pathInfo.getType())) {
-            logger.info("Requested file is not found: {}", filepath);
-            throw new AppException(ErrorCodes.FILE_NOT_FOUND);
+        ArrayList<String> fileData = this.readTextFile();
+        if (fileData == null || fileData.isEmpty()) {
+            return null;
         }
-        try {
-            File file = new File(filepath);
-            BufferedReader in = new BufferedReader(
-                    new InputStreamReader(
-                            new FileInputStream(file), AppConstant.UTF8));
-            String str;
-            String[] tempArr;
-            ArrayList<String> temp;
-            while ((str = in.readLine()) != null) {
-                tempArr = str.split(",");
-                temp = new ArrayList<>(Arrays.asList(tempArr));
-                result.add(temp);
-            }
-            in.close();
-            logger.info("Text file read success: {}", filepath);
-        } catch (Exception e) {
-            logger.info("Error in reading text file: {}", e.getMessage());
-            throw new AppException(ErrorCodes.INVALID_FILE_DATA);
+        String[] tempArr;
+        for (String line: fileData) {
+            tempArr = line.split(",");
+            result.add(new ArrayList<>(Arrays.asList(tempArr)));
         }
         return result;
     }
     public String getTextDataV2() {
-        ArrayList<String> result = new ArrayList<>();
-        PathInfo pathInfo = StaticService.getPathInfo(filepath);
-        if (!AppConstant.FILE.equals(pathInfo.getType())) {
-            logger.info("Requested file is not found: {}", filepath);
-            return "";
+        ArrayList<String> fileData = this.readTextFile();
+        if (fileData == null || fileData.isEmpty()) {
+            return AppConstant.EmptyStr;
         }
-        try {
-            File file = new File(filepath);
-            BufferedReader in = new BufferedReader(
-                    new InputStreamReader(
-                            new FileInputStream(file), AppConstant.UTF8));
-            String str;
-            while ((str = in.readLine()) != null) {
-                result.add(str);
-            }
-            in.close();
-            result.add("");
-            logger.info("Text file read success: {}", filepath);
-        } catch (Exception e) {
-            logger.info("Error in reading text file: {}", e.getMessage());
-            throw new AppException(ErrorCodes.INVALID_FILE_DATA);
-        }
-        return String.join("\n", result);
+        return String.join("\n", fileData);
     }
     public boolean addText(String text, boolean logFilename) {
         if (text == null) {
@@ -104,5 +69,28 @@ public class TextFileParser {
             logger.info("Error in adding text in filename: {}", filepath);
         }
         return textAddStatus;
+    }
+    public ArrayList<String> readTextFile() {
+        ArrayList<String> response = new ArrayList<>();
+        if (filepath == null || filepath.isEmpty()) {
+            logger.info("Invalid requested file path: {}", filepath);
+            return null;
+        }
+        File file = new File(filepath);
+        try {
+            BufferedReader in = new BufferedReader(
+                    new InputStreamReader(
+                            new FileInputStream(file), AppConstant.UTF8));
+            String str;
+            while ((str = in.readLine()) != null) {
+                response.add(str);
+            }
+            in.close();
+        } catch (FileNotFoundException e) {
+            logger.info("FileNotFoundException, fileName: {}, {}", filepath, e.getMessage());
+        } catch (Exception e) {
+            logger.info("Unknown Exception, fileName: {}, {}", filepath, e.getMessage());
+        }
+        return response;
     }
 }

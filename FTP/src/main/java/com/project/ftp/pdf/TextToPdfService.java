@@ -5,6 +5,7 @@ import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.project.ftp.config.AppConstant;
+import com.project.ftp.parser.TextFileParser;
 import com.project.ftp.service.StaticService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,26 +22,8 @@ public class TextToPdfService {
         this.pdfTitle = pdfTitle;
         this.pdfSubject = pdfSubject;
     }
-    private ArrayList<String> readTextFile(String textFileName) {
-        ArrayList<String> response = new ArrayList<>();
-        File file = new File(textFileName);
-        try {
-            BufferedReader in = new BufferedReader(
-                    new InputStreamReader(
-                            new FileInputStream(file), AppConstant.UTF8));
-            String str;
-            while ((str = in.readLine()) != null) {
-                response.add(str);
-            }
-            in.close();
-        } catch (FileNotFoundException e) {
-            logger.info("FileNotFoundException, fileName: {}, {}", textFileName, e.getMessage());
-        } catch (Exception e) {
-            logger.info("Unknown Exception, fileName: {}, {}", textFileName, e.getMessage());
-        }
-        return response;
-    }
-    public void convertTextToPdf(String pdfFileName, ArrayList<String> fileData) {
+
+    private void convertTextToPdf(String pdfFileName, ArrayList<String> fileData) {
         Document document = new Document();
         try {
             PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream(pdfFileName));
@@ -92,7 +75,8 @@ public class TextToPdfService {
             return;
         }
         TextToPdfService textToPdfService = new TextToPdfService(pdfTitle, pdfSubject);
-        ArrayList<String> fileData = textToPdfService.readTextFile(textFilename);
+        TextFileParser textFileParser = new TextFileParser(textFilename);
+        ArrayList<String> fileData = textFileParser.readTextFile();
         fileData.add("");
         fileData.add("AppVersion: " + AppConstant.AppVersion +
                 ", Dated: " + StaticService.getDateStrFromPattern(AppConstant.DateTimeFormat3));

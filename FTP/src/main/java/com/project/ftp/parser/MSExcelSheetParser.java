@@ -1,10 +1,11 @@
-package com.project.ftp.bridge.service;
+package com.project.ftp.parser;
 
 import com.project.ftp.bridge.obj.yamlObj.ExcelDataConfig;
 import com.project.ftp.common.DateUtilities;
 import com.project.ftp.config.AppConstant;
 import com.project.ftp.exceptions.AppException;
 import com.project.ftp.exceptions.ErrorCodes;
+import com.project.ftp.service.MiscService;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -17,10 +18,10 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 
-public class MSExcelServiceUtils {
-    final static Logger logger = LoggerFactory.getLogger(MSExcelServiceUtils.class);
+public class MSExcelSheetParser {
+    final static Logger logger = LoggerFactory.getLogger(MSExcelSheetParser.class);
     private FormulaEvaluator evaluator;
-    public MSExcelServiceUtils() {
+    public MSExcelSheetParser() {
         evaluator = null;
     }
     public ArrayList<ArrayList<String>> readExcelSheetData(String srcFilepath, String sheetName,
@@ -29,7 +30,7 @@ public class MSExcelServiceUtils {
             throw new AppException(ErrorCodes.BAD_REQUEST_ERROR);
         }
         ArrayList<ArrayList<String>> sheetData = new ArrayList<>();
-        ExcelToCsvDataConvertService excelToCsvDataConvertService = new ExcelToCsvDataConvertService();
+        MiscService miscService = new MiscService();
         String cellData;
         FileInputStream file =null;
         boolean isError = false;
@@ -48,7 +49,7 @@ public class MSExcelServiceUtils {
                 while (cellIterator.hasNext()) {
                     Cell cell = cellIterator.next();
                     cellData = this.parseCellData(cell, excelDataConfigById);
-                    excelToCsvDataConvertService.insertData(sheetData, row.getRowNum(), cell.getColumnIndex(), cellData);
+                    miscService.insertData(sheetData, row.getRowNum(), cell.getColumnIndex(), cellData);
                 }
             }
             file.close();

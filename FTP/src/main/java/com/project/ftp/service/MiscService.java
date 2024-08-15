@@ -1,5 +1,6 @@
 package com.project.ftp.service;
 
+import com.project.ftp.config.AppConstant;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -48,6 +49,27 @@ public class MiscService {
             }
         }
         return result;
+    }
+    public void insertData(ArrayList<ArrayList<String>> sheetData, int rowIndex, int colIndex, String cellData) {
+        if (sheetData == null) {
+            return;
+        }
+        if (sheetData.size() <= rowIndex) {
+            for (int i=sheetData.size(); i<=rowIndex; i++) {
+                sheetData.add(new ArrayList<>());
+            }
+        }
+        ArrayList<String> rowData = sheetData.get(rowIndex);
+        if (rowData == null) {
+            return;
+        }
+        if (rowData.size() <= colIndex) {
+            for (int i=rowData.size(); i<colIndex; i++) {
+                rowData.add(AppConstant.EmptyStr);
+            }
+        }
+        rowData.add(cellData);
+        sheetData.set(rowIndex, rowData);
     }
     public ArrayList<HashMap<String, String>> convertArraySheetDataToJsonData(ArrayList<ArrayList<String>> sheetData,
                                                                               ArrayList<String> tableMappingIndex) {

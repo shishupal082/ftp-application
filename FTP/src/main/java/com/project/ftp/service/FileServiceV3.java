@@ -246,7 +246,7 @@ public class FileServiceV3 {
         ArrayList<ArrayList<String>> temp;
         for (String tableFilename: tableFilenames) {
             TextFileParser textFileParser = new TextFileParser(saveDir + tableFilename);
-            temp = textFileParser.getTextData();
+            temp = textFileParser.readCsvData();
             temp2 = this.convertTokensToTableRow(temp, tableFilename);
             if (temp2 != null) {
                 finalResult.addAll(temp2);

@@ -28,6 +28,7 @@ public class MSExcelService {
     private final FileServiceV3 fileServiceV3;
     private final EventTracking eventTracking;
     private final StrUtils strUtils;
+    private final MiscService miscService;
     public MSExcelService(final AppConfig appConfig, final EventTracking eventTracking, final UserService userService) {
         this.appConfig = appConfig;
         this.eventTracking = eventTracking;
@@ -35,6 +36,7 @@ public class MSExcelService {
         this.fileService = new FileService();
         this.fileServiceV3 = new FileServiceV3(appConfig, userService);
         this.strUtils = new StrUtils();
+        this.miscService = new MiscService();
     }
     private void saveCsvData(BridgeResponseSheetData bridgeResponseSheetData, ArrayList<String> tempSavedFilePath) {
         if (bridgeResponseSheetData == null) {
@@ -187,7 +189,6 @@ public class MSExcelService {
         ArrayList<ExcelDataConfig> excelDataConfigs = this.getActualMSExcelSheetDataConfig(request, requestId, false);
         MSExcelBridgeService msExcelBridgeService = new MSExcelBridgeService(request, eventTracking,
                 ftpConfiguration.getGoogleOAuthClientConfig());
-        MiscService miscService = new MiscService();
         ArrayList<HashMap<String, String>> response = null;
         ArrayList<ArrayList<String>> result;
         if (excelDataConfigs != null) {
@@ -214,7 +215,6 @@ public class MSExcelService {
     public ArrayList<HashMap<String, String>> getMSExcelSheetDataJson(HttpServletRequest request, String requestId) throws AppException {
         ArrayList<ExcelDataConfig> excelDataConfigs = this.getActualMSExcelSheetDataConfig(request, requestId, true);
         ArrayList<BridgeResponseSheetData> bridgeResponseSheetData = this.getActualMSExcelSheetData(request, excelDataConfigs, true);
-        MiscService miscService = new MiscService();
         ArrayList<HashMap<String, String>> result = new ArrayList<>();
         ArrayList<String> tableIndex;
         for (BridgeResponseSheetData bridgeResponseSheetData1: bridgeResponseSheetData) {

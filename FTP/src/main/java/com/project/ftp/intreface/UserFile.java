@@ -78,18 +78,12 @@ public class UserFile implements UserInterface {
     }
     @Override
     public Users getAllUsers() {
-        Users users = null;
         String filepath = appConfig.getFtpConfiguration().getConfigDataFilePath()
                 + AppConfigHelper.getUserDataFilename(appConfig);
         TextFileParser textFileParser = new TextFileParser(filepath);
-        ArrayList<ArrayList<String>> fileData;
-        try {
-            fileData = textFileParser.getTextData();
-            users = new Users(fileData);
-            logger.info("Available user count: {}", users.getUserCount());
-        } catch (AppException ae) {
-            logger.info("Error in getting all usersData");
-        }
+        ArrayList<ArrayList<String>> fileData = textFileParser.readCsvData();
+        Users users = new Users(fileData);
+        logger.info("Available user count: {}", users.getUserCount());
         return users;
     }
     @Override

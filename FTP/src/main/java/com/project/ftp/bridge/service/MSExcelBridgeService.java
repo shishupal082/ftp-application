@@ -10,6 +10,7 @@ import com.project.ftp.config.AppConstant;
 import com.project.ftp.event.EventTracking;
 import com.project.ftp.exceptions.AppException;
 import com.project.ftp.exceptions.ErrorCodes;
+import com.project.ftp.parser.MSExcelSheetParser;
 import com.project.ftp.parser.TextFileParser;
 import com.project.ftp.service.StaticService;
 import org.slf4j.Logger;
@@ -34,14 +35,8 @@ public class MSExcelBridgeService {
         this.request = request;
     }
     private ArrayList<ArrayList<String>> readCsvData(String srcFilepath) {
-        ArrayList<ArrayList<String>> csvData = null;
-        try {
-            TextFileParser textFileParser = new TextFileParser((srcFilepath));
-            csvData = textFileParser.getTextData();
-        } catch (Exception e) {
-            logger.info("Error in reading csvData for filePath: {}", srcFilepath);
-        }
-        return csvData;
+        TextFileParser textFileParser = new TextFileParser((srcFilepath));
+        return textFileParser.readCsvData();
     }
     public ArrayList<ArrayList<String>> applyCsvConfigOnData(ArrayList<ArrayList<String>> sheetData,
                                                               String srcFilepath, String sheetName,
@@ -86,8 +81,8 @@ public class MSExcelBridgeService {
         if (sheetName == null || sheetName.isEmpty()) {
             return this.readCsvFilePath(srcFilepath, sheetName, excelDataConfigById, uniqueStrings);
         }
-        MSExcelServiceUtils msExcelServiceUtils = new MSExcelServiceUtils();
-        ArrayList<ArrayList<String>> sheetData = msExcelServiceUtils.readExcelSheetData(srcFilepath,
+        MSExcelSheetParser msExcelSheetParser = new MSExcelSheetParser();
+        ArrayList<ArrayList<String>> sheetData = msExcelSheetParser.readExcelSheetData(srcFilepath,
                 sheetName, excelDataConfigById);
         sheetData = excelToCsvDataConvertService.formatCellData(sheetData);
         sheetData = excelToCsvDataConvertService.applySkipRowEntry(sheetData, excelDataConfigById);

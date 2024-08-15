@@ -259,28 +259,6 @@ public class ExcelToCsvDataConvertService {
         }
         return result;
     }
-    public void insertData(ArrayList<ArrayList<String>> sheetData, int rowIndex, int colIndex, String cellData)
-            throws AppException {
-        if (sheetData == null) {
-            throw new AppException(ErrorCodes.SERVER_ERROR);
-        }
-        if (sheetData.size() <= rowIndex) {
-            for (int i=sheetData.size(); i<=rowIndex; i++) {
-                sheetData.add(new ArrayList<>());
-            }
-        }
-        ArrayList<String> rowData = sheetData.get(rowIndex);
-        if (rowData == null) {
-            throw new AppException(ErrorCodes.SERVER_ERROR);
-        }
-        if (rowData.size() <= colIndex) {
-            for (int i=rowData.size(); i<colIndex; i++) {
-                rowData.add(AppConstant.EmptyStr);
-            }
-        }
-        rowData.add(cellData);
-        sheetData.set(rowIndex, rowData);
-    }
     public void copyCellDataIndex(ArrayList<ArrayList<String>> sheetData, ExcelDataConfig excelDataConfigById) {
         if (excelDataConfigById == null || sheetData == null) {
             return;
