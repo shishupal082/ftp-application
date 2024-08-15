@@ -15,7 +15,7 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class FilepathDb implements FilepathInterface {
+public class FilepathDb extends FilepathInterface {
     private final static Logger logger = LoggerFactory.getLogger(FilepathDb.class);
     private final MysqlConnection mysqlConnection;
     private final String tableName = AppConstant.TABLE_FILE_PATH;
