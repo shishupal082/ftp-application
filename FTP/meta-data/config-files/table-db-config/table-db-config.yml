@@ -1,6 +1,8 @@
 tableDbConfig:
   - tableConfigId: "get-users"
     tableName: "users"
+    orderBy: "id desc"
+    limit: "100"
     columnName:
       - "id"
       - "username"
@@ -9,6 +11,12 @@ tableDbConfig:
       - "deleted"
   - tableConfigId: "get-event_data"
     tableName: "event_data"
+    orderBy: "id desc"
+    limit: "100"
+    likeParameter:
+      - "event"
+    filterParameter:
+      - "event"
     columnName:
       - "id"
       - "username"

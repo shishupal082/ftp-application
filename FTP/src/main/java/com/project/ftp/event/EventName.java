@@ -43,7 +43,7 @@ public enum EventName {
     CALL_TCP("call_tcp"),
     SCAN_DIRECTORY("scan_directory"),
     MS_EXCEL_DATA("ms_excel_data"),
-    TABLE_DATA("table_data"),
+    MYSQL_TABLE_DATA("mysql_table_data"),
     GOOGLE_API("google_api"),
     GET_ROLES_CONFIG("get_roles_config"),
     AES_ENCRYPTION("aes_encryption"),

@@ -1210,19 +1210,33 @@ public class ApiResource {
     @GET
     @Path("/get_mysql_table_data")
     @UnitOfWork
-    public ApiResponse getTableData(@Context HttpServletRequest request,
-                                  @QueryParam("table_config_id") String tableConfigId) {
+    public ApiResponse getMySqlTableData(@Context HttpServletRequest request,
+                                         @QueryParam("table_config_id") String tableConfigId,
+                                         @QueryParam("filter0") String filter0,
+                                         @QueryParam("filter1") String filter1,
+                                         @QueryParam("filter2") String filter2,
+                                         @QueryParam("filter3") String filter3,
+                                         @QueryParam("filter4") String filter4,
+                                         @QueryParam("filter5") String filter5) {
         LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
-        logger.info("getTableData: In, user: {}, table_config_id: {}", loginUserDetails, tableConfigId);
+        ArrayList<String> filterRequest = new ArrayList<>();
+        filterRequest.add(filter0);
+        filterRequest.add(filter1);
+        filterRequest.add(filter2);
+        filterRequest.add(filter3);
+        filterRequest.add(filter4);
+        filterRequest.add(filter5);
+        logger.info("getTableData: In, user: {}, table_config_id: {}, filterRequest: {}",
+                loginUserDetails, tableConfigId, filterRequest);
         ApiResponse response;
         ArrayList<HashMap<String, String>> result;
         try {
             authService.isLogin(request);
-            result = tableService.getTableData(request, tableConfigId);
+            result = tableService.getTableData(request, tableConfigId, filterRequest);
             response = new ApiResponse(result);
         } catch (AppException ae) {
             logger.info("Error in getTableData: {}", ae.getErrorCode().getErrorCode());
-            eventTracking.trackFailureEvent(request, EventName.TABLE_DATA, ae.getErrorCode());
+            eventTracking.trackFailureEvent(request, EventName.MYSQL_TABLE_DATA, ae.getErrorCode());
             response = new ApiResponse(ae.getErrorCode());
         }
         logger.info("getTableData: Out");

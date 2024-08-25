@@ -6,6 +6,7 @@ import com.project.ftp.exceptions.ErrorCodes;
 import com.project.ftp.obj.yamlObj.TableConfiguration;
 import com.project.ftp.obj.yamlObj.TableFileConfiguration;
 import com.project.ftp.parser.YamlFileParser;
+import com.project.ftp.service.StaticService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -69,12 +70,57 @@ public class TableService {
         }
         return resultTableConfiguration;
     }
-    public ArrayList<HashMap<String, String>> getTableData(HttpServletRequest request, String tableConfigId) throws AppException {
+    private String findColumnName(int index, ArrayList<String> filterParameter) {
+        if (filterParameter == null || index < 0) {
+            return null;
+        }
+        if (filterParameter.size() > index) {
+            return filterParameter.get(index);
+        }
+        return null;
+    }
+    private HashMap<String, ArrayList<String>> getRequestFilterParameter(TableConfiguration tableConfiguration,
+                                                                         ArrayList<String> filterRequest) {
+        if (tableConfiguration == null) {
+            return null;
+        }
+        ArrayList<String> filterParameter = tableConfiguration.getFilterParameter();
+        HashMap<String, ArrayList<String>> result = new HashMap<>();
+        String columnName;
+        String filterParam;
+        String[] splitResult;
+        ArrayList<String> filterByColumnName;
+        if (filterRequest != null) {
+            for(int i=0; i<filterRequest.size(); i++) {
+                filterParam = filterRequest.get(i);
+                if (filterParam == null || filterParam.isEmpty()) {
+                    continue;
+                }
+                columnName = this.findColumnName(i, filterParameter);
+                if (StaticService.isInValidString(columnName)) {
+                    continue;
+                }
+                splitResult = filterParam.split("\\|");
+                filterByColumnName = new ArrayList<>();
+                for(String str: splitResult) {
+                    if (StaticService.isValidString(str)) {
+                        filterByColumnName.add(str.trim());
+                    }
+                }
+                result.put(columnName, filterByColumnName);
+            }
+        }
+        return result;
+    }
+    public ArrayList<HashMap<String, String>> getTableData(HttpServletRequest request,
+                                                           String tableConfigId,
+                                                           ArrayList<String> filterRequest) throws AppException {
         TableConfiguration tableConfiguration = this.getTableConfiguration(tableConfigId);
         if (tableConfiguration == null) {
             logger.info("getTableData: tableConfiguration is null for tableConfigId: {}", tableConfigId);
             throw new AppException(ErrorCodes.BAD_REQUEST_ERROR);
         }
-        return tableDb.getAll(tableConfiguration);
+        HashMap<String, ArrayList<String>> requestFilterParameter = this.getRequestFilterParameter(tableConfiguration, filterRequest);
+        return tableDb.getByMultipleParameter(tableConfiguration, requestFilterParameter, true);
     }
 }

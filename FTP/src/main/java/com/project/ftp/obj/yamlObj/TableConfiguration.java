@@ -9,6 +9,10 @@ import java.util.ArrayList;
 public class TableConfiguration {
     private String tableConfigId;
     private String tableName;
+    private String orderBy;
+    private String limit;
+    private ArrayList<String> likeParameter;
+    private ArrayList<String> filterParameter;
     private ArrayList<String> columnName;
 
     public String getTableConfigId() {
@@ -25,6 +29,38 @@ public class TableConfiguration {
 
     public void setTableName(String tableName) {
         this.tableName = tableName;
+    }
+
+    public String getOrderBy() {
+        return orderBy;
+    }
+
+    public void setOrderBy(String orderBy) {
+        this.orderBy = orderBy;
+    }
+
+    public String getLimit() {
+        return limit;
+    }
+
+    public void setLimit(String limit) {
+        this.limit = limit;
+    }
+
+    public ArrayList<String> getLikeParameter() {
+        return likeParameter;
+    }
+
+    public void setLikeParameter(ArrayList<String> likeParameter) {
+        this.likeParameter = likeParameter;
+    }
+
+    public ArrayList<String> getFilterParameter() {
+        return filterParameter;
+    }
+
+    public void setFilterParameter(ArrayList<String> filterParameter) {
+        this.filterParameter = filterParameter;
     }
 
     public ArrayList<String> getColumnName() {
