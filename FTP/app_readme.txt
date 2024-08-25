@@ -1429,6 +1429,12 @@ Added new api
     - /api/get_scan_dir?pathname=file/folder_path&recursive=true
     - /api/get_scan_dir_csv?pathname=file/folder_path&recursive=true
 
+25.08.2024
+-----------------------
+Details under meta-data/table-db/readme.txt
+
+Added new api
+    - /api/get_table_data?table_config_id=string
 
 
 Future releases

@@ -276,6 +276,10 @@
     "Call get scan dir (From DB) as CSV [GET]"
   ],
   [
+    "/api/get_table_data?table_config_id=string",
+    "Call get table data as ApiResponse [GET]"
+  ],
+  [
     "/assets-dir/{default: *}",
     "Load assets data from asses-dir folder [GET]"
   ]

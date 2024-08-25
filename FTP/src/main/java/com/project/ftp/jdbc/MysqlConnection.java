@@ -76,7 +76,7 @@ public class MysqlConnection {
             rs = preparedStatement.executeQuery();
         } catch (Exception e) {
             logger.info("MysqlConnection: error in select query execution: {}", query);
-            e.printStackTrace();
+//            e.printStackTrace();
         }
         return rs;
     }

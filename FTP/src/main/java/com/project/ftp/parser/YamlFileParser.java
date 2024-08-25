@@ -3,6 +3,7 @@ package com.project.ftp.parser;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.project.ftp.FtpConfiguration;
+import com.project.ftp.obj.yamlObj.*;
 import com.project.ftp.bridge.obj.yamlObj.ExcelConfig;
 import com.project.ftp.bridge.obj.yamlObj.ExcelDataConfig;
 import com.project.ftp.bridge.obj.yamlObj.FileMappingConfig;
@@ -13,10 +14,6 @@ import com.project.ftp.exceptions.ErrorCodes;
 import com.project.ftp.helper.AppConfigHelper;
 import com.project.ftp.obj.LoginUserDetails;
 import com.project.ftp.obj.PreRunConfig;
-import com.project.ftp.obj.yamlObj.DatabaseConfig;
-import com.project.ftp.obj.yamlObj.Page404Entry;
-import com.project.ftp.obj.yamlObj.PageConfig404;
-import com.project.ftp.obj.yamlObj.ScanDirConfig;
 import com.project.ftp.service.StaticService;
 import com.project.ftp.service.UserService;
 import org.slf4j.Logger;
@@ -117,6 +114,20 @@ public class YamlFileParser {
             logger.info("getFileMappingConfigFromPath: IOE : for file : {}", staticPath);
         }
         return fileMappingConfig;
+    }
+    public TableFileConfiguration tableDbConfigByConfigPath(String staticPath) {
+        if (staticPath == null || staticPath.isEmpty()) {
+            logger.info("tableDbConfigPath: staticPath for reading tableDbConfigPath is invalid: {}", staticPath);
+            return null;
+        }
+        TableFileConfiguration tableFileConfiguration = null;
+        ObjectMapper objectMapper = new ObjectMapper(new YAMLFactory());
+        try {
+            tableFileConfiguration = objectMapper.readValue(new File(staticPath), TableFileConfiguration.class);
+        } catch (IOException ioe) {
+            logger.info("tableDbConfigPath: IOE : for file : {}", staticPath);
+        }
+        return tableFileConfiguration;
     }
     private HashMap<String, ExcelDataConfig> getExcelDataConfigFromPath(String staticPath) throws AppException {
         if (staticPath == null || staticPath.isEmpty()) {

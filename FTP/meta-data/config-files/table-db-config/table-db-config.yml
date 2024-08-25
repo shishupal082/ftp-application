@@ -1,0 +1,17 @@
+tableDbConfig:
+  - tableConfigId: "get-users"
+    tableName: "users"
+    columnName:
+      - "id"
+      - "username"
+      - "change_password_count"
+      - "timestamp"
+      - "deleted"
+  - tableConfigId: "get-event_data"
+    tableName: "event_data"
+    columnName:
+      - "id"
+      - "username"
+      - "event"
+      - "status"
+      - "deleted"

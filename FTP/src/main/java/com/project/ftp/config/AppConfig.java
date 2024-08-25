@@ -6,6 +6,7 @@ package com.project.ftp.config;
 */
 
 import com.project.ftp.FtpConfiguration;
+import com.project.ftp.bridge.mysqlTable.TableService;
 import com.project.ftp.event.EventTracking;
 import com.project.ftp.exceptions.AppException;
 import com.project.ftp.exceptions.ErrorCodes;
@@ -45,6 +46,7 @@ public class AppConfig {
     private UserService userService;
     private MSExcelService msExcelService;
     private ScanDirService scanDirService;
+    private TableService tableService;
     public AppConfig() {
         this.configDate = StaticService.getDateStrFromPattern(AppConstant.DATE_FORMAT);
     }
@@ -270,6 +272,14 @@ public class AppConfig {
 
     public void setScanDirService(ScanDirService scanDirService) {
         this.scanDirService = scanDirService;
+    }
+
+    public TableService getTableService() {
+        return tableService;
+    }
+
+    public void setTableService(TableService tableService) {
+        this.tableService = tableService;
     }
 
     @Override

@@ -1,5 +1,7 @@
 package com.project.ftp;
 
+import com.project.ftp.bridge.mysqlTable.TableDb;
+import com.project.ftp.bridge.mysqlTable.TableService;
 import com.project.ftp.config.AppConfig;
 import com.project.ftp.config.AppConstant;
 import com.project.ftp.event.EventTracking;
@@ -137,6 +139,9 @@ public class FtpApplication  extends Application<FtpConfiguration> {
             filepathInterface = new FilepathCsv(appConfig);
             LOGGER.info("filepathInterface configured from file");
         }
+        TableDb tableDb = new TableDb(ftpConfiguration.getDataSourceFactory());
+        TableService tableService = new TableService(appConfig.getFtpConfiguration(), tableDb);
+        appConfig.setTableService(tableService);
         UserService userService = new UserService(appConfig, userInterface);
         appConfig.setUserService(userService);
         EventTracking eventTracking = new EventTracking(appConfig, userService, eventInterface);

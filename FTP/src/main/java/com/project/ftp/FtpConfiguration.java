@@ -27,6 +27,7 @@ public class FtpConfiguration extends Configuration {
     private String assetsDir;
     private String fileMappingConfigFilePath;
     private String scanDirConfigFilePath;
+    private ArrayList<String> tableDbConfigFilePath;
     private String filenameFormat;
     private String instance;
     private String appRestartCommand;
@@ -129,6 +130,14 @@ public class FtpConfiguration extends Configuration {
 
     public void setScanDirConfigFilePath(String scanDirConfigFilePath) {
         this.scanDirConfigFilePath = scanDirConfigFilePath;
+    }
+
+    public ArrayList<String> getTableDbConfigFilePath() {
+        return tableDbConfigFilePath;
+    }
+
+    public void setTableDbConfigFilePath(ArrayList<String> tableDbConfigFilePath) {
+        this.tableDbConfigFilePath = tableDbConfigFilePath;
     }
 
     public String getFilenameFormat() {
@@ -439,6 +448,10 @@ public class FtpConfiguration extends Configuration {
         if (scanDirConfigFilePath != null) {
             this.scanDirConfigFilePath = scanDirConfigFilePath;
         }
+        ArrayList<String> tableDbConfigFilePath = tempFtpConfiguration.getTableDbConfigFilePath();
+        if (tableDbConfigFilePath != null) {
+            this.tableDbConfigFilePath = tableDbConfigFilePath;
+        }
         String filenameFormat = tempFtpConfiguration.getFilenameFormat();
         if (filenameFormat != null) {
             this.filenameFormat = filenameFormat;
@@ -580,6 +593,7 @@ public class FtpConfiguration extends Configuration {
                 ", assetsDir='" + assetsDir + '\'' +
                 ", fileMappingConfigFilePath='" + fileMappingConfigFilePath + '\'' +
                 ", scanDirConfigFilePath='" + scanDirConfigFilePath + '\'' +
+                ", tableDbConfigFilePath=" + tableDbConfigFilePath +
                 ", filenameFormat='" + filenameFormat + '\'' +
                 ", instance='" + instance + '\'' +
                 ", appRestartCommand='" + appRestartCommand + '\'' +

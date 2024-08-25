@@ -1,6 +1,7 @@
 package com.project.ftp.resources;
 
 import com.project.ftp.bridge.obj.BridgeResponseSheetData;
+import com.project.ftp.bridge.mysqlTable.TableService;
 import com.project.ftp.config.AppConfig;
 import com.project.ftp.config.AppConstant;
 import com.project.ftp.event.EventName;
@@ -41,6 +42,7 @@ public class ApiResource {
     private final RequestService requestService;
     private final MSExcelService msExcelService;
     private final ScanDirService scanDirService;
+    private final TableService tableService;
     public ApiResource(final AppConfig appConfig) {
         this.appConfig = appConfig;
         this.fileServiceV2 = new FileServiceV2(appConfig, appConfig.getUserService());
@@ -51,6 +53,7 @@ public class ApiResource {
         this.securityService = new SecurityService();
         this.requestService = new RequestService(appConfig, userService, fileServiceV2);
         this.msExcelService = appConfig.getMsExcelService();
+        this.tableService = appConfig.getTableService();
     }
     @GET
     @Produces(MediaType.TEXT_HTML)
@@ -1202,6 +1205,28 @@ public class ApiResource {
         }
         logger.info("getScanDirCsv: Out, {}", response.length());
         return Response.ok(response).build();
+    }
+
+    @GET
+    @Path("/get_mysql_table_data")
+    @UnitOfWork
+    public ApiResponse getTableData(@Context HttpServletRequest request,
+                                  @QueryParam("table_config_id") String tableConfigId) {
+        LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
+        logger.info("getTableData: In, user: {}, table_config_id: {}", loginUserDetails, tableConfigId);
+        ApiResponse response;
+        ArrayList<HashMap<String, String>> result;
+        try {
+            authService.isLogin(request);
+            result = tableService.getTableData(request, tableConfigId);
+            response = new ApiResponse(result);
+        } catch (AppException ae) {
+            logger.info("Error in getTableData: {}", ae.getErrorCode().getErrorCode());
+            eventTracking.trackFailureEvent(request, EventName.TABLE_DATA, ae.getErrorCode());
+            response = new ApiResponse(ae.getErrorCode());
+        }
+        logger.info("getTableData: Out");
+        return response;
     }
     /**
      * Used when accessing from browser
