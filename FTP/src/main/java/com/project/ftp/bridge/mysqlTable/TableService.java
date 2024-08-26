@@ -136,9 +136,13 @@ public class TableService {
         }
         String excelConfigId = tableConfiguration.getExcelConfigId();
         ArrayList<HashMap<String, String>> csvData = msExcelService.getMSExcelSheetDataJson(request, excelConfigId);
+        int index = 1;
+        int size;
         if (csvData != null) {
+            size = csvData.size();
             for(HashMap<String, String> rowData: csvData) {
-                tableDb.addOrUpdateEntry(tableConfiguration, rowData);
+                tableDb.addOrUpdateEntry(tableConfiguration, rowData, index+"/"+size);
+                index++;
             }
         }
     }
