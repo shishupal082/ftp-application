@@ -8,6 +8,7 @@ import com.project.ftp.obj.yamlObj.TableConfiguration;
 import com.project.ftp.obj.yamlObj.TableFileConfiguration;
 import com.project.ftp.parser.YamlFileParser;
 import com.project.ftp.service.MSExcelService;
+import com.project.ftp.service.MiscService;
 import com.project.ftp.service.StaticService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -130,17 +131,19 @@ public class TableService {
     public void updateTableDataFromCsv(HttpServletRequest request,
                                        String tableConfigId) throws AppException {
         TableConfiguration tableConfiguration = this.getTableConfiguration(tableConfigId);
+        MiscService miscService = new MiscService();
         if (tableConfiguration == null) {
             logger.info("addOrUpdateTableData: tableConfiguration is null for tableConfigId: {}", tableConfigId);
             throw new AppException(ErrorCodes.BAD_REQUEST_ERROR);
         }
         String excelConfigId = tableConfiguration.getExcelConfigId();
-        ArrayList<HashMap<String, String>> csvData = msExcelService.getMSExcelSheetDataJson(request, excelConfigId);
+        ArrayList<ArrayList<String>> csvDataArray =msExcelService.getMSExcelSheetDataArray(request, excelConfigId);
+        ArrayList<HashMap<String, String>> csvDataJson = miscService.convertArraySheetDataToJsonData(csvDataArray, tableConfiguration.getColumnName());
         int index = 1;
         int size;
-        if (csvData != null) {
-            size = csvData.size();
-            for(HashMap<String, String> rowData: csvData) {
+        if (csvDataJson != null) {
+            size = csvDataJson.size();
+            for(HashMap<String, String> rowData: csvDataJson) {
                 tableDb.addOrUpdateEntry(tableConfiguration, rowData, index+"/"+size);
                 index++;
             }

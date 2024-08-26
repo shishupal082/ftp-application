@@ -25,7 +25,11 @@ query parameter user input
 filter0=string1|string2
 
 TableConfiguration:
-uniquePattern:
+(3) uniquePattern:
   - "asset_code"
-
 Used for updating entry
+
+(4) columnName:
+    - col1
+    - col2
+Used for update entry and get result
