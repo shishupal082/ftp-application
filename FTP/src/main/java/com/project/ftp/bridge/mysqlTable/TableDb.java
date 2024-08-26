@@ -2,6 +2,7 @@ package com.project.ftp.bridge.mysqlTable;
 
 import com.project.ftp.obj.yamlObj.TableConfiguration;
 import com.project.ftp.jdbc.MysqlConnection;
+import com.project.ftp.service.StaticService;
 import io.dropwizard.db.DataSourceFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -155,5 +156,174 @@ public class TableDb {
     }
     public ArrayList<HashMap<String, String>> getAll(TableConfiguration tableConfiguration) {
         return this.getByMultipleParameter(tableConfiguration, null, true);
+    }
+    public void updateTableEntry(TableConfiguration tableConfiguration, HashMap<String, String> data,
+                                 HashMap<String, ArrayList<String>> requestFilterParameter) {
+        if (tableConfiguration == null || data == null || StaticService.isInValidString(tableConfiguration.getTableName())) {
+            return;
+        }
+        if (tableConfiguration.getColumnName() == null) {
+            return;
+        }
+        ArrayList<String> setDataColumn = tableConfiguration.getColumnName();
+        StringBuilder filterQuery = new StringBuilder();
+        StringBuilder setDataParameter = new StringBuilder();
+        String columnName;
+        ArrayList<String> filterParameter;
+        ArrayList<String> finalQueryParam = new ArrayList<>();
+        int index = 0;
+        int lastIndex = setDataColumn.size()-1;
+        for(String col: setDataColumn) {
+            setDataParameter.append(col).append("=?");
+            if (index != lastIndex) {
+                setDataParameter.append(",");
+            }
+            finalQueryParam.add(data.get(col));
+            index++;
+        }
+        if (requestFilterParameter != null) {
+            for(Map.Entry<String, ArrayList<String>> set: requestFilterParameter.entrySet()) {
+                if (set == null) {
+                    continue;
+                }
+                columnName = set.getKey();
+                filterParameter = set.getValue();
+                if (columnName == null || columnName.isEmpty() || filterParameter == null) {
+                    continue;
+                }
+                filterQuery.append(this.getEqualQuery(finalQueryParam, columnName, filterParameter));
+            }
+        }
+        String query = "UPDATE " + tableConfiguration.getTableName() + " SET " +
+                setDataParameter +
+                " WHERE deleted=0 "+filterQuery + ";";
+        try {
+            mysqlConnection.updateQueryV2(query, finalQueryParam);
+        } catch (Exception e) {
+            logger.info("updateEntry: error in query: {}, {}", query, e.getMessage());
+            e.printStackTrace();
+        }
+    }
+    private void addTableEntry(TableConfiguration tableConfiguration, HashMap<String, String> data) {
+        if (tableConfiguration == null || data == null || StaticService.isInValidString(tableConfiguration.getTableName())) {
+            return;
+        }
+        if (tableConfiguration.getColumnName() == null) {
+            return;
+        }
+        ArrayList<String> setDataColumn = tableConfiguration.getColumnName();
+        StringBuilder setDataParameter = new StringBuilder();
+        StringBuilder setValueParameter = new StringBuilder();
+        ArrayList<String> finalQueryParam = new ArrayList<>();
+        int index = 0;
+        int lastIndex = setDataColumn.size()-1;
+        for(String col: setDataColumn) {
+            setDataParameter.append(col);
+            setValueParameter.append("?");
+            if (index != lastIndex) {
+                setDataParameter.append(",");
+                setValueParameter.append(",");
+            }
+            finalQueryParam.add(data.get(col));
+            index++;
+        }
+        String query = "INSERT INTO " + tableConfiguration.getTableName() + " (" + setDataParameter + ")" +
+                " VALUES(" + setValueParameter + ");";
+        try {
+            mysqlConnection.updateQueryV2(query, finalQueryParam);
+        } catch (Exception e) {
+            logger.info("addTableEntry: error in query: {}, {}", query, e.getMessage());
+        }
+    }
+    public void addEntry(TableConfiguration tableConfiguration, HashMap<String, String> data, Integer entryCount0) {
+        if (tableConfiguration == null || data == null) {
+            return;
+        }
+        int entryCount;
+        if (entryCount0 != null) {
+            entryCount = entryCount0;
+        } else {
+            entryCount = this.getEntryCount(tableConfiguration, data);
+        }
+        if (entryCount > 0) {
+            logger.info("addEntry: Entry already exist for data, add not possible. " +
+                    "tableConfiguration: {},  data: {}", tableConfiguration, data);
+            return;
+        }
+        ArrayList<String> uniquePattern = tableConfiguration.getUniquePattern();
+        if (uniquePattern == null || uniquePattern.isEmpty()) {
+            logger.info("addEntry: Configuration error. uniquePattern is null or empty: {}, data: {}", uniquePattern, data);
+            return;
+        }
+        this.addTableEntry(tableConfiguration, data);
+    }
+    public int getEntryCount(TableConfiguration tableConfiguration, HashMap<String, String> data) {
+        if (tableConfiguration == null || data == null) {
+            return 0;
+        }
+        ArrayList<String> uniquePattern = tableConfiguration.getUniquePattern();
+        if (uniquePattern == null || uniquePattern.isEmpty()) {
+            logger.info("isEntryExist: Configuration error. uniquePattern is null or empty: {}, data: {}", uniquePattern, data);
+            return 0;
+        }
+        HashMap<String, ArrayList<String>> requestFilterParameter = new HashMap<>();
+        ArrayList<String> filterParam;
+        String columnValue;
+        for(String columnName: uniquePattern) {
+            columnValue = data.get(columnName);
+            filterParam = new ArrayList<>();
+            filterParam.add(columnValue);
+            requestFilterParameter.put(columnName, filterParam);
+        }
+        ArrayList<HashMap<String, String>> existingData = this.getByMultipleParameter(tableConfiguration, requestFilterParameter, false);
+        if (existingData == null || existingData.isEmpty()) {
+            logger.info("isEntryExist: Entry not found for uniquePattern: {}, data: {}", uniquePattern, data);
+            return 0;
+        }
+        return existingData.size();
+    }
+    public void updateEntry(TableConfiguration tableConfiguration, HashMap<String, String> data, Integer entryCount0) {
+        if (tableConfiguration == null || data == null) {
+            return;
+        }
+        int entryCount;
+        if (entryCount0 != null) {
+            entryCount = entryCount0;
+        } else {
+            entryCount = this.getEntryCount(tableConfiguration, data);
+        }
+        if (entryCount != 1) {
+            logger.info("updateEntry: Unique entry not exist, update not possible.");
+            return;
+        }
+        ArrayList<String> uniquePattern = tableConfiguration.getUniquePattern();
+        if (uniquePattern == null || uniquePattern.isEmpty()) {
+            return;
+        }
+        HashMap<String, ArrayList<String>> requestFilterParameter = new HashMap<>();
+        ArrayList<String> filterParam;
+        String columnValue;
+        for(String columnName: uniquePattern) {
+            columnValue = data.get(columnName);
+            filterParam = new ArrayList<>();
+            filterParam.add(columnValue);
+            requestFilterParameter.put(columnName, filterParam);
+        }
+        this.updateTableEntry(tableConfiguration, data, requestFilterParameter);
+    }
+    public void addOrUpdateEntry(TableConfiguration tableConfiguration, HashMap<String, String> data) {
+        if (tableConfiguration == null || data == null) {
+            return;
+        }
+        int entryCount = this.getEntryCount(tableConfiguration, data);
+        if (entryCount == 1) {
+            logger.info("addOrUpdateEntry: Entry already exist, updating it.");
+            this.updateEntry(tableConfiguration, data, entryCount);
+        } else if (entryCount < 1) {
+            logger.info("addOrUpdateEntry: Entry not exist, adding it.");
+            this.addEntry(tableConfiguration, data, entryCount);
+        } else {
+            logger.info("addOrUpdateEntry: Multi entry exist, add or update not possible.");
+        }
     }
 }

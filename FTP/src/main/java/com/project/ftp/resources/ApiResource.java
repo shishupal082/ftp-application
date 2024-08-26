@@ -1242,6 +1242,28 @@ public class ApiResource {
         logger.info("getTableData: Out");
         return response;
     }
+    @GET
+    @Path("/update_mysql_table_data_from_csv")
+    @UnitOfWork
+    public ApiResponse updateMySqlTableDataFromCsv(@Context HttpServletRequest request,
+                                         @QueryParam("table_config_id") String tableConfigId) {
+        LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
+        logger.info("updateMySqlTableDataFromCsv: In, user: {}, table_config_id: {}",
+                loginUserDetails, tableConfigId);
+        ApiResponse response;
+        ArrayList<HashMap<String, String>> result;
+        try {
+            authService.isLogin(request);
+            tableService.updateTableDataFromCsv(request, tableConfigId);
+            response = new ApiResponse(AppConstant.SUCCESS);
+        } catch (AppException ae) {
+            logger.info("updateMySqlTableDataFromCsv: error: {}", ae.getErrorCode().getErrorCode());
+            eventTracking.trackFailureEvent(request, EventName.MYSQL_TABLE_DATA, ae.getErrorCode());
+            response = new ApiResponse(ae.getErrorCode());
+        }
+        logger.info("updateMySqlTableDataFromCsv: Out");
+        return response;
+    }
     /**
      * Used when accessing from browser
      */

@@ -23,3 +23,9 @@ query parameter value mapping processing in the program:
 value = string1|string2
 query parameter user input
 filter0=string1|string2
+
+TableConfiguration:
+uniquePattern:
+  - "asset_code"
+
+Used for updating entry

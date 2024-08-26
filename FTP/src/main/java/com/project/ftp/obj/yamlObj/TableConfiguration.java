@@ -11,6 +11,8 @@ public class TableConfiguration {
     private String tableName;
     private String orderBy;
     private String limit;
+    private String excelConfigId;
+    private ArrayList<String> uniquePattern;
     private ArrayList<String> likeParameter;
     private ArrayList<String> filterParameter;
     private ArrayList<String> columnName;
@@ -45,6 +47,22 @@ public class TableConfiguration {
 
     public void setLimit(String limit) {
         this.limit = limit;
+    }
+
+    public String getExcelConfigId() {
+        return excelConfigId;
+    }
+
+    public void setExcelConfigId(String excelConfigId) {
+        this.excelConfigId = excelConfigId;
+    }
+
+    public ArrayList<String> getUniquePattern() {
+        return uniquePattern;
+    }
+
+    public void setUniquePattern(ArrayList<String> uniquePattern) {
+        this.uniquePattern = uniquePattern;
     }
 
     public ArrayList<String> getLikeParameter() {

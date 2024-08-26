@@ -140,8 +140,6 @@ public class FtpApplication  extends Application<FtpConfiguration> {
             LOGGER.info("filepathInterface configured from file");
         }
         TableDb tableDb = new TableDb(ftpConfiguration.getDataSourceFactory());
-        TableService tableService = new TableService(appConfig.getFtpConfiguration(), tableDb);
-        appConfig.setTableService(tableService);
         UserService userService = new UserService(appConfig, userInterface);
         appConfig.setUserService(userService);
         EventTracking eventTracking = new EventTracking(appConfig, userService, eventInterface);
@@ -152,6 +150,8 @@ public class FtpApplication  extends Application<FtpConfiguration> {
         ScanDirService scanDirService = new ScanDirService(appConfig, filepathInterface);
         appConfig.setScanDirService(scanDirService);
         appConfig.setAppToBridge(new AppToBridge(ftpConfiguration, eventTracking));
+        TableService tableService = new TableService(appConfig.getFtpConfiguration(), appConfig.getMsExcelService(), tableDb);
+        appConfig.setTableService(tableService);
         return appConfig;
     }
     @Override

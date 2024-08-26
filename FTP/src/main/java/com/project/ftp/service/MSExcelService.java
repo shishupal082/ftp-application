@@ -241,6 +241,18 @@ public class MSExcelService {
         }
         return strUtils.joinArrayList(result, AppConstant.NEW_LINE_STRING);
     }
+    public ArrayList<ArrayList<String>> getMSExcelSheetDataArray(HttpServletRequest request, String requestId) throws AppException {
+        ArrayList<ExcelDataConfig> excelDataConfigs = this.getActualMSExcelSheetDataConfig(request, requestId, true);
+        ArrayList<BridgeResponseSheetData> response = this.getActualMSExcelSheetData(request, excelDataConfigs, false);
+        ArrayList<ArrayList<String>> sheetData = new ArrayList<>();
+        ArrayList<String> result = new ArrayList<>();
+        for (BridgeResponseSheetData bridgeResponseSheetData: response) {
+            if (bridgeResponseSheetData != null && bridgeResponseSheetData.getSheetData() != null) {
+                sheetData.addAll(bridgeResponseSheetData.getSheetData());
+            }
+        }
+        return sheetData;
+    }
     public ApiResponse updateMSExcelSheetData(HttpServletRequest request, String requestId) throws AppException {
         ArrayList<ExcelDataConfig> excelDataConfigs = this.getActualMSExcelSheetDataConfig(request, requestId, true);
         ArrayList<BridgeResponseSheetData> response = this.getActualMSExcelSheetData(request, excelDataConfigs, false);

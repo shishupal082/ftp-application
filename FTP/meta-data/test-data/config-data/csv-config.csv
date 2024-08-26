@@ -15,3 +15,6 @@ gs-csv-test-13,spreadsheet-id,sheet-name,destination-filename.csv
 
 csv-gs-csv-test-12,15jgDLG1b3wKtPxJE-ItzBeFUOZFIPFU5EqS6U2C4PmY,gs-csv-data,D:/workspace/ftp-application/FTP/meta-data/test-data/test-data/05-test-12-gs-csv-data-2.csv
 csv-gs-csv-test-12,15jgDLG1b3wKtPxJE-ItzBeFUOZFIPFU5EqS6U2C4PmY,gs-csv-data,D:/workspace/ftp-application/FTP/meta-data/test-data/test-data/05-test-12-gs-csv-data-3.csv
+
+csv-smms-assets-ser,D:/workspace/ftp-application/FTP/meta-data/smms-data/mis-assets-list-report.csv
+

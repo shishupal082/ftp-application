@@ -276,7 +276,11 @@
     "Call get scan dir (From DB) as CSV [GET]"
   ],
   [
-    "/api/get_table_data?table_config_id=string",
+    "/api/get_mysql_table_data?table_config_id=string&filter0=f0&filter1=f1&filter2=f2&filter3=f3&filter4=f4&filter5=f5",
+    "Call get table data as ApiResponse [GET]"
+  ],
+  [
+    "/api/update_mysql_table_data_from_csv?table_config_id=string",
     "Call get table data as ApiResponse [GET]"
   ],
   [

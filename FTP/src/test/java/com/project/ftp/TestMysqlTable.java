@@ -18,7 +18,7 @@ public class TestMysqlTable {
     public void testMyTableTableService() {
         TestMSExcelService testMSExcelService = new TestMSExcelService();
         AppConfig appConfig = testMSExcelService.getAppConfig(true);
-        TableService tableService = new TableService(null, null);
+        TableService tableService = new TableService(null, null, null);
         ArrayList<HashMap<String, String>> result;
         try {
             tableService.getTableData(null, null, null);
@@ -89,5 +89,16 @@ public class TestMysqlTable {
         filterRequest.add("2nd filter parameter"); // 2nd filter will be ignored as in the config only one filter available
         result = tableService.getTableData(null, "get-event_data", filterRequest);
         Assert.assertEquals(100, result.size());
+    }
+
+    @Test
+    public void testUpdateMySqlTableDb() {
+        TestMSExcelService testMSExcelService = new TestMSExcelService();
+        AppConfig appConfig = testMSExcelService.getAppConfig(true);
+        TableService tableService = appConfig.getTableService();
+        tableService.updateTableDataFromCsv(null, "csv-mysql-update-smms_assets_list");
+        try {
+        } catch (AppException appException) {
+        }
     }
 }

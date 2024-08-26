@@ -107,7 +107,7 @@ public class MysqlConnection {
             preparedStatement.executeUpdate();
             status = true;
         } catch (Exception e) {
-            logger.info("MysqlConnection: error in updateQueryV2 execution: {}", query);
+            logger.info("MysqlConnection: error in updateQueryV2 execution: {}, parameter: {}", query, parameters);
             e.printStackTrace();
         }
         return status;

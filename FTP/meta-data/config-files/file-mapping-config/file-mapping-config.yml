@@ -39,6 +39,7 @@ csvConfig:
       - csv-test-id-not-found-in-csv-config
       - csv-test-10
       - csv-test-11
+      - csv-smms-assets-ser
     requiredColIndex: [0,1,2,3]
     fileConfig: [ "D:/workspace/ftp-application/FTP/meta-data/test-data/config-data/csv-config.csv", "CSV reading data config path" ]
   - fileDataSource: "msExcel"

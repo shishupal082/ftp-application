@@ -1434,8 +1434,8 @@ Added new api
 Details under meta-data/table-db/readme.txt
 
 Added new api
-    - /api/get_table_data?table_config_id=string
-
+    - /api/get_table_data?table_config_id=string&filter0=f0&filter1=f1&filter2=f2&filter3=f3&filter4=f4&filter5=f5
+    - /api/update_mysql_table_data_from_csv?table_config_id=string
 
 Future releases
 -------------------
