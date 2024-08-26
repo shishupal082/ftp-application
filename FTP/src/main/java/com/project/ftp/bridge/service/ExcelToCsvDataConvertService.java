@@ -3,8 +3,6 @@ package com.project.ftp.bridge.service;
 import com.project.ftp.bridge.obj.yamlObj.*;
 import com.project.ftp.common.DateUtilities;
 import com.project.ftp.config.AppConstant;
-import com.project.ftp.exceptions.AppException;
-import com.project.ftp.exceptions.ErrorCodes;
 import com.project.ftp.obj.PathInfo;
 import com.project.ftp.service.FileService;
 import com.project.ftp.service.StaticService;

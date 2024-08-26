@@ -1,7 +1,7 @@
 package com.project.ftp.bridge.mysqlTable;
 
-import com.project.ftp.obj.yamlObj.TableConfiguration;
 import com.project.ftp.jdbc.MysqlConnection;
+import com.project.ftp.obj.yamlObj.TableConfiguration;
 import com.project.ftp.service.StaticService;
 import io.dropwizard.db.DataSourceFactory;
 import org.slf4j.Logger;
@@ -277,7 +277,6 @@ public class TableDb {
         }
         ArrayList<HashMap<String, String>> existingData = this.getByMultipleParameter(tableConfiguration, requestFilterParameter, false);
         if (existingData == null || existingData.isEmpty()) {
-            logger.info("isEntryExist: Entry not found for uniquePattern: {}, data: {}", uniquePattern, data);
             return 0;
         }
         return existingData.size();
@@ -310,20 +309,5 @@ public class TableDb {
             requestFilterParameter.put(columnName, filterParam);
         }
         this.updateTableEntry(tableConfiguration, data, requestFilterParameter);
-    }
-    public void addOrUpdateEntry(TableConfiguration tableConfiguration, HashMap<String, String> data, String preLog) {
-        if (tableConfiguration == null || data == null) {
-            return;
-        }
-        int entryCount = this.getEntryCount(tableConfiguration, data);
-        if (entryCount == 1) {
-            logger.info("{}: addOrUpdateEntry: Entry already exist, updating it.", preLog);
-            this.updateEntry(tableConfiguration, data, entryCount);
-        } else if (entryCount < 1) {
-            logger.info("{}: addOrUpdateEntry: Entry not exist, adding it.", preLog);
-            this.addEntry(tableConfiguration, data, entryCount);
-        } else {
-            logger.info("{}: addOrUpdateEntry: Multi entry exist, add or update not possible.", preLog);
-        }
     }
 }

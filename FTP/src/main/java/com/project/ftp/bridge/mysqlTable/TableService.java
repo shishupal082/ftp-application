@@ -1,7 +1,6 @@
 package com.project.ftp.bridge.mysqlTable;
 
 import com.project.ftp.FtpConfiguration;
-import com.project.ftp.config.AppConfig;
 import com.project.ftp.exceptions.AppException;
 import com.project.ftp.exceptions.ErrorCodes;
 import com.project.ftp.obj.yamlObj.TableConfiguration;
@@ -140,13 +139,32 @@ public class TableService {
         ArrayList<ArrayList<String>> csvDataArray =msExcelService.getMSExcelSheetDataArray(request, excelConfigId);
         ArrayList<HashMap<String, String>> csvDataJson = miscService.convertArraySheetDataToJsonData(csvDataArray, tableConfiguration.getColumnName());
         int index = 1;
-        int size;
+        int size = 0;
+        int entryCount;
+        int updateEntryCount = 0;
+        int addEntryCount = 0;
+        int skipEntryCount = 0;
         if (csvDataJson != null) {
             size = csvDataJson.size();
             for(HashMap<String, String> rowData: csvDataJson) {
-                tableDb.addOrUpdateEntry(tableConfiguration, rowData, index+"/"+size);
+                entryCount = tableDb.getEntryCount(tableConfiguration, rowData);
+                if (entryCount == 1) {
+                    tableDb.updateEntry(tableConfiguration, rowData, entryCount);
+                    logger.info("{}/{}: update completed.", index, size);
+                    updateEntryCount++;
+                } else if (entryCount == 0) {
+                    tableDb.addEntry(tableConfiguration, rowData, entryCount);
+                    logger.info("{}/{}: addition completed.", index, size);
+                    addEntryCount++;
+                } else {
+                    logger.info("{}/{}: updateTableDataFromCsv: Multi entry exist, add " +
+                            "or update not possible. data: {}", index, size, rowData);
+                    skipEntryCount++;
+                }
                 index++;
             }
+            logger.info("Final update summary, {}/{}/{}/{}: Addition, Update, Skip, Total",
+                    addEntryCount, updateEntryCount, skipEntryCount, size);
         }
     }
 }

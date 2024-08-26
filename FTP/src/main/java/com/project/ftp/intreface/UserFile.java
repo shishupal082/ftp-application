@@ -2,7 +2,6 @@ package com.project.ftp.intreface;
 
 import com.project.ftp.config.AppConfig;
 import com.project.ftp.config.AppConstant;
-import com.project.ftp.exceptions.AppException;
 import com.project.ftp.helper.AppConfigHelper;
 import com.project.ftp.mysql.MysqlUser;
 import com.project.ftp.obj.Users;
