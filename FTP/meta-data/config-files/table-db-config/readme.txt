@@ -19,12 +19,13 @@ TableConfiguration:
   - "event"
 query parameter name mapping from (2):
 filter0 = event
-query parameter value mapping processing in the program:
-value = string1|string2
+
 query parameter user input
 filter0=string1|string2
 
-TableConfiguration:
+query parameter value mapping processing in the program:
+event = string1|string2
+
 (3) uniquePattern:
   - "asset_code"
 Used for updating entry
@@ -33,3 +34,6 @@ Used for updating entry
     - col1
     - col2
 Used for update entry and get result
+
+(5) orderBy: "id desc"
+(6) limit: "100"
