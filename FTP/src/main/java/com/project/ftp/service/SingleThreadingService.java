@@ -18,7 +18,7 @@ public class SingleThreadingService {
     public SingleThreadingService(final FtpConfiguration ftpConfiguration) {
         this.ftpConfiguration = ftpConfiguration;
     }
-    public boolean isSingleThreading(HttpServletRequest request) {
+    private boolean isSingleThreading(HttpServletRequest request) {
         Boolean singleThreadingEnable = ftpConfiguration.getSingleThreadingEnable();
         if (singleThreadingEnable == null) {
             return false;

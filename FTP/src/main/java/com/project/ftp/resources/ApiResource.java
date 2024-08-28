@@ -60,7 +60,6 @@ public class ApiResource {
     @GET
     @Produces(MediaType.TEXT_HTML)
     public Object defaultMethodApi(@Context HttpServletRequest request) throws AppException {
-        this.singleThreadingService.checkSingleThreadStatus(request, "api");
         return requestService.handleDefaultUrl(request);
     }
     @GET
@@ -71,6 +70,7 @@ public class ApiResource {
         ApiResponse response = fileServiceV2.getStaticData();
         // Not putting response in log as it may be very large
         logger.info("getJsonData : Out");
+        this.singleThreadingService.clearSingleThread(request, "api");
         return response;
     }
     @GET
@@ -93,6 +93,7 @@ public class ApiResource {
             eventTracking.trackFailureEvent(request, EventName.GET_USERS, ae.getErrorCode());
         }
         logger.info("getAllUsers : Out");
+        this.singleThreadingService.clearSingleThread(request, "api");
         return response;
     }
     @GET
@@ -114,6 +115,7 @@ public class ApiResource {
             eventTracking.trackFailureEvent(request, EventName.GET_RELATED_USERS_DATA, ae.getErrorCode());
         }
         logger.info("getRelatedUsersData : Out");
+        this.singleThreadingService.clearSingleThread(request, "api");
         return response;
     }
     @GET
@@ -134,6 +136,7 @@ public class ApiResource {
             eventTracking.trackFailureEvent(request, EventName.GET_RELATED_USERS_DATA_V2, ae.getErrorCode());
         }
         logger.info("getRelatedUsersDataV2 : Out");
+        this.singleThreadingService.clearSingleThread(request, "api");
         return response;
     }
 
@@ -148,6 +151,7 @@ public class ApiResource {
         eventTracking.trackUIEvent(request, requestEventTracking);
         ApiResponse response = new ApiResponse();
         logger.info("trackEvent : Out");
+        this.singleThreadingService.clearSingleThread(request, "api");
         return response;
     }
 
@@ -172,6 +176,7 @@ public class ApiResource {
             eventTracking.trackDeleteFileFailure(request, deleteFile, ae.getErrorCode(), uiUsername);
         }
         logger.info("deleteFile out");
+        this.singleThreadingService.clearSingleThread(request, "api");
         return apiResponse;
     }
 
@@ -194,6 +199,7 @@ public class ApiResource {
         }
         // Not putting response in log as it may be very large
         logger.info("getAllV3Data : Out");
+        this.singleThreadingService.clearSingleThread(request, "api");
         return response;
     }
     @GET
@@ -218,6 +224,7 @@ public class ApiResource {
         }
         // Not putting response in log as it may be very large
         logger.info("getAllV4Data : Out");
+        this.singleThreadingService.clearSingleThread(request, "api");
         return response;
     }
     @GET
@@ -244,6 +251,7 @@ public class ApiResource {
             apiResponse = new ApiResponse(ae.getErrorCode());
         }
         logger.info("getPathInfo : Out, {}", apiResponse);
+        this.singleThreadingService.clearSingleThread(request, "api");
         return apiResponse;
     }
 
@@ -268,6 +276,7 @@ public class ApiResource {
         }
         // Not putting response in log as it may be very large
         logger.info("getAllV5Data : Out");
+        this.singleThreadingService.clearSingleThread(request, "api");
         return response;
     }
     @GET
@@ -292,6 +301,7 @@ public class ApiResource {
         }
         // Not putting response in log as it may be very large
         logger.info("getTableData : Out");
+        this.singleThreadingService.clearSingleThread(request, "api");
         return response;
     }
     @GET
@@ -316,6 +326,7 @@ public class ApiResource {
         }
         // Not putting response in log as it may be very large
         logger.info("getTableDataV2 : Out");
+        this.singleThreadingService.clearSingleThread(request, "api");
         return response;
     }
     @GET
@@ -336,6 +347,7 @@ public class ApiResource {
         }
         // Not putting response in log as it may be very large
         logger.info("getAllV3DataV2 : Out");
+        this.singleThreadingService.clearSingleThread(request, "api");
         return response;
     }
     @GET
@@ -356,6 +368,7 @@ public class ApiResource {
             eventTracking.trackFailureEvent(request, EventName.GET_APP_CONFIG, ae.getErrorCode());
         }
         logger.info("getAppConfig : Out: {}", response);
+        this.singleThreadingService.clearSingleThread(request, "api");
         return response;
     }
     @GET
@@ -376,6 +389,7 @@ public class ApiResource {
             eventTracking.trackFailureEvent(request, EventName.GET_SESSION_DATA, ae.getErrorCode());
         }
         logger.info("getSessionConfig : Out: {}", response);
+        this.singleThreadingService.clearSingleThread(request, "api");
         return response;
     }
     @POST
@@ -401,6 +415,7 @@ public class ApiResource {
             eventTracking.addFailureUploadFile(request, ae.getErrorCode(), fileDetail, uiUsername);
         }
         logger.info("uploadFile : Out {}", response);
+        this.singleThreadingService.clearSingleThread(request, "api");
         return response;
     }
 
@@ -426,6 +441,7 @@ public class ApiResource {
             eventTracking.trackFailureEventV2(request, EventName.ADD_TEXT, ae.getErrorCode(), comment);
         }
         logger.info("addText : Out {}", response);
+        this.singleThreadingService.clearSingleThread(request, "api");
         return response;
     }
     @POST
@@ -450,6 +466,7 @@ public class ApiResource {
             eventTracking.trackFailureEventV2(request, EventName.ADD_TEXT_V2, ae.getErrorCode(), comment);
         }
         logger.info("addTextV2 : Out {}", response);
+        this.singleThreadingService.clearSingleThread(request, "api");
         return response;
     }
     @POST
@@ -474,6 +491,7 @@ public class ApiResource {
             eventTracking.trackFailureEventV2(request, EventName.DELETE_FILE, ae.getErrorCode(), comment);
         }
         logger.info("deleteText: Out {}", response);
+        this.singleThreadingService.clearSingleThread(request, "api");
         return response;
     }
     @GET
@@ -490,7 +508,7 @@ public class ApiResource {
             pathInfo = fileServiceV2.getUserCsvData(loginUserDetails);
         } catch (AppException ae) {
             eventTracking.trackFailureEvent(request, EventName.GET_UPLOADED_CSV_DATA, ae.getErrorCode());
-            logger.info("Error in generating response file: {}", ae.getErrorCode().getErrorCode());
+            logger.info("getUploadedCSVData: Error in generating response file: {}", ae.getErrorCode().getErrorCode());
         }
         if (pathInfo != null && AppConstant.FILE.equals(pathInfo.getType())) {
             File file = new File(pathInfo.getPath());
@@ -501,10 +519,11 @@ public class ApiResource {
                 logger.info("getUploadedCSVData: out");
                 return r.build();
             } catch (Exception e) {
-                logger.info("Error in loading file: {}", pathInfo);
+                logger.info("getUploadedCSVData: Error in loading file: {}", pathInfo);
             }
         }
         logger.info("getUploadedCSVData: out, Error in generating response data");
+        this.singleThreadingService.clearSingleThread(request, "api");
         return Response.ok(AppConstant.EmptyParagraph).build();
     }
     @GET
@@ -537,12 +556,14 @@ public class ApiResource {
                 Response.ResponseBuilder r = Response.ok(inputStream);
                 r.header(HttpHeaders.CONTENT_TYPE, pathInfo.getMediaType());
                 logger.info("getUploadedDataByFilenamePattern: out");
+                this.singleThreadingService.clearSingleThread(request, "api");
                 return r.build();
             } catch (Exception e) {
                 logger.info("Error in loading file: {}", pathInfo);
             }
         }
         logger.info("getUploadedDataByFilenamePattern: out, Error in generating response data");
+        this.singleThreadingService.clearSingleThread(request, "api");
         return Response.ok(AppConstant.EmptyParagraph).build();
     }
     @POST
@@ -563,6 +584,7 @@ public class ApiResource {
             logger.info("Error in login, user already login: {}", userService.getLoginUserDetails(request));
             response = new ApiResponse(ErrorCodes.USER_ALREADY_LOGIN);
             response.setData(username);
+            this.singleThreadingService.clearSingleThread(request, "api");
             return response;
         }
         try {
@@ -575,6 +597,7 @@ public class ApiResource {
             response = new ApiResponse(ae.getErrorCode());
         }
         logger.info("loginUser : Out: {}", response);
+        this.singleThreadingService.clearSingleThread(request, "api");
         return response;
     }
     @POST
@@ -602,6 +625,7 @@ public class ApiResource {
             response = new ApiResponse(ae.getErrorCode());
         }
         logger.info("loginOtherUser: Out: {}", response);
+        this.singleThreadingService.clearSingleThread(request, "api");
         return response;
     }
     @POST
@@ -620,6 +644,7 @@ public class ApiResource {
             logger.info("Error in loginSocial, user already login: {}", userService.getLoginUserDetails(request));
             response = new ApiResponse(ErrorCodes.USER_ALREADY_LOGIN);
             response.setData(loginUserDetails.getUsername());
+            this.singleThreadingService.clearSingleThread(request, "api");
             return response;
         }
         try {
@@ -636,6 +661,7 @@ public class ApiResource {
             response = new ApiResponse(ae.getErrorCode());
         }
         logger.info("loginSocial: Out: {}", response);
+        this.singleThreadingService.clearSingleThread(request, "api");
         return response;
     }
     @POST
@@ -657,6 +683,7 @@ public class ApiResource {
                     userService.getLoginUserDetails(request));
             response = new ApiResponse(ErrorCodes.USER_ALREADY_LOGIN);
             response.setData(username);
+            this.singleThreadingService.clearSingleThread(request, "api");
             return response;
         }
         try {
@@ -669,6 +696,7 @@ public class ApiResource {
             response = new ApiResponse(ae.getErrorCode());
         }
         logger.info("registerUser : Out: {}", response);
+        this.singleThreadingService.clearSingleThread(request, "api");
         return response;
     }
     /*
@@ -691,6 +719,7 @@ public class ApiResource {
             eventTracking.trackFailureEvent(request, EventName.GET_LOGIN_USER_DETAILS, ae.getErrorCode());
         }
         logger.info("getLoginUserDetails : Out, response: {}", response);
+        this.singleThreadingService.clearSingleThread(request, "api");
         return response;
     }
     @POST
@@ -714,6 +743,7 @@ public class ApiResource {
             response = new ApiResponse(ae.getErrorCode());
         }
         logger.info("changePassword : Out: {}", response);
+        this.singleThreadingService.clearSingleThread(request, "api");
         return response;
     }
     @POST
@@ -728,6 +758,7 @@ public class ApiResource {
             eventTracking.trackForgotPasswordFailure(request, requestForgotPassword, ErrorCodes.USER_ALREADY_LOGIN);
             logger.info("Error in forgotPassword, user already login: {}",
                     userService.getLoginUserDetails(request));
+            this.singleThreadingService.clearSingleThread(request, "api");
             return new ApiResponse(ErrorCodes.USER_ALREADY_LOGIN);
         }
         try {
@@ -740,6 +771,7 @@ public class ApiResource {
             response = new ApiResponse(ae.getErrorCode());
         }
         logger.info("forgotPassword : Out");
+        this.singleThreadingService.clearSingleThread(request, "api");
         return response;
     }
     @POST
@@ -760,6 +792,7 @@ public class ApiResource {
                     userService.getLoginUserDetails(request));
             response = new ApiResponse(ErrorCodes.USER_ALREADY_LOGIN);
             response.setData(username);
+            this.singleThreadingService.clearSingleThread(request, "api");
             return response;
         }
         try {
@@ -772,6 +805,7 @@ public class ApiResource {
             response = new ApiResponse(ae.getErrorCode());
         }
         logger.info("createPassword : Out: {}", response);
+        this.singleThreadingService.clearSingleThread(request, "api");
         return response;
     }
     @POST
@@ -793,6 +827,7 @@ public class ApiResource {
             eventTracking.trackFailureEventV1(loginUserDetails.getUsername(), EventName.RESET_CHANGE_PASSWORD_COUNT, ae.getErrorCode());
         }
         logger.info("resetCount Out: {}", response);
+        this.singleThreadingService.clearSingleThread(request, "api");
         return response;
     }
     @GET
@@ -814,6 +849,7 @@ public class ApiResource {
             response = new ApiResponse(ae.getErrorCode());
         }
         logger.info("updateConfig : Out");
+        this.singleThreadingService.clearSingleThread(request, "api");
         return response;
     }
     @POST
@@ -835,6 +871,7 @@ public class ApiResource {
             response = new ApiResponse(ae.getErrorCode());
         }
         logger.info("aesEncrypt : Out");
+        this.singleThreadingService.clearSingleThread(request, "api");
         return response;
     }
     @POST
@@ -856,6 +893,7 @@ public class ApiResource {
             response = new ApiResponse(ae.getErrorCode());
         }
         logger.info("aesDecrypt : Out");
+        this.singleThreadingService.clearSingleThread(request, "api");
         return response;
     }
     @POST
@@ -877,6 +915,7 @@ public class ApiResource {
             response = new ApiResponse(ae.getErrorCode());
         }
         logger.info("md5Encrypt : Out");
+        this.singleThreadingService.clearSingleThread(request, "api");
         return response;
     }
     @POST
@@ -901,6 +940,7 @@ public class ApiResource {
             response = new ApiResponse(ae.getErrorCode());
         }
         logger.info("verifyPermission : Out, {}", response);
+        this.singleThreadingService.clearSingleThread(request, "api");
         return response;
     }
 
@@ -921,6 +961,7 @@ public class ApiResource {
             response = new ApiResponse(ae.getErrorCode());
         }
         logger.info("getRolesConfig : Out, {}", response);
+        this.singleThreadingService.clearSingleThread(request, "api");
         return response;
     }
     @POST
@@ -941,6 +982,7 @@ public class ApiResource {
             response = new ApiResponse(ae.getErrorCode());
         }
         logger.info("callTcp: Out, {}", response.toStringV2());
+        this.singleThreadingService.clearSingleThread(request, "api");
         return response;
     }
     @GET
@@ -963,6 +1005,7 @@ public class ApiResource {
             response = new ApiResponse(ae.getErrorCode());
         }
         logger.info("getMSExcelDataConfig: Out, {}", response.toString());
+        this.singleThreadingService.clearSingleThread(request, "api");
         return response;
     }
     @GET
@@ -985,6 +1028,7 @@ public class ApiResource {
             response = new ApiResponse(ae.getErrorCode());
         }
         logger.info("getMSExcelData: Out, {}", response.toStringV2());
+        this.singleThreadingService.clearSingleThread(request, "api");
         return response;
     }
     @GET
@@ -1007,6 +1051,7 @@ public class ApiResource {
             response = new ApiResponse(ae.getErrorCode());
         }
         logger.info("getMSExcelDataJson: Out, {}", response.toStringV2());
+        this.singleThreadingService.clearSingleThread(request, "api");
         return response;
     }
     @GET
@@ -1030,6 +1075,7 @@ public class ApiResource {
             response = AppConstant.EmptyStr;
         }
         logger.info("getMSExcelDataCsv: Out, {}", response.length());
+        this.singleThreadingService.clearSingleThread(request, "api");
         return Response.ok(response).build();
     }
     @GET
@@ -1050,6 +1096,7 @@ public class ApiResource {
             response = new ApiResponse(ae.getErrorCode());
         }
         logger.info("updateMSExcelData: Out, {}", response.toStringV2());
+        this.singleThreadingService.clearSingleThread(request, "api");
         return response;
     }
     @GET
@@ -1071,6 +1118,7 @@ public class ApiResource {
             response = new ApiResponse(ae.getErrorCode());
         }
         logger.info("getScanDirConfig: Out, {}", response.toStringV2());
+        this.singleThreadingService.clearSingleThread(request, "api");
         return response;
     }
     @GET
@@ -1098,6 +1146,7 @@ public class ApiResource {
             response = new ApiResponse(ae.getErrorCode());
         }
         logger.info("readScanDir: Out, {}", response.toStringV2());
+        this.singleThreadingService.clearSingleThread(request, "api");
         return response;
     }
 
@@ -1126,6 +1175,7 @@ public class ApiResource {
             response = new ApiResponse(ae.getErrorCode());
         }
         logger.info("readScanDirJson: Out, {}", response.toStringV2());
+        this.singleThreadingService.clearSingleThread(request, "api");
         return response;
     }
     @GET
@@ -1154,6 +1204,7 @@ public class ApiResource {
             response = AppConstant.EmptyStr;
         }
         logger.info("readScanDirCsv: Out, {}", response.length());
+        this.singleThreadingService.clearSingleThread(request, "api");
         return Response.ok(response).build();
     }
     @GET
@@ -1175,6 +1226,7 @@ public class ApiResource {
             response = new ApiResponse(ae.getErrorCode());
         }
         logger.info("updateScanDir: Out, {}", response.toStringV2());
+        this.singleThreadingService.clearSingleThread(request, "api");
         return response;
     }
     @GET
@@ -1202,6 +1254,7 @@ public class ApiResource {
             response = new ApiResponse(ae.getErrorCode());
         }
         logger.info("getScanDir: Out");
+        this.singleThreadingService.clearSingleThread(request, "api");
         return response;
     }
     @GET
@@ -1229,6 +1282,7 @@ public class ApiResource {
             response = new ApiResponse(ae.getErrorCode());
         }
         logger.info("getScanDirJson: Out");
+        this.singleThreadingService.clearSingleThread(request, "api");
         return response;
     }
     @GET
@@ -1257,6 +1311,7 @@ public class ApiResource {
             response = AppConstant.EmptyStr;
         }
         logger.info("getScanDirCsv: Out, {}", response.length());
+        this.singleThreadingService.clearSingleThread(request, "api");
         return Response.ok(response).build();
     }
 
@@ -1294,6 +1349,7 @@ public class ApiResource {
             response = new ApiResponse(ae.getErrorCode());
         }
         logger.info("getTableData: Out");
+        this.singleThreadingService.clearSingleThread(request, "api");
         return response;
     }
     @GET
@@ -1317,6 +1373,7 @@ public class ApiResource {
             response = new ApiResponse(ae.getErrorCode());
         }
         logger.info("updateMySqlTableDataFromCsv: Out");
+        this.singleThreadingService.clearSingleThread(request, "api");
         return response;
     }
     @GET
