@@ -30,10 +30,20 @@ event = string1|string2
   - "asset_code"
 Used for updating entry
 
-(4) columnName:
+(4) orderBy: "id desc"
+(5) limit: "100"
+
+(6) columnName:
     - col1
     - col2
-Used for update entry and get result
+Used for get result
 
-(5) orderBy: "id desc"
-(6) limit: "100"
+(7) selectColumnName:
+    - col1
+    - col2
+Used for get result
+
+(8) updateColumnName:
+    - col1
+    - col2
+Used for update entry

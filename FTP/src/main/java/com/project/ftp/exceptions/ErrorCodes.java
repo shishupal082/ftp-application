@@ -102,6 +102,7 @@ public enum ErrorCodes {
     CONFIG_ERROR_INVALID_STORAGE_TYPE("Invalid storage type", "Invalid storage type", 403),
     UNSUPPORTED_FILE_TYPE("UNSUPPORTED_FILE_TYPE", "Unsupported file type", 403),
     UPLOAD_FILE_FILENAME_REQUIRED("UPLOAD_FILE_FILENAME_REQUIRED", "Upload file required", 403),
+    SINGLE_THREAD_BUSY("SINGLE_THREAD_BUSY", "Single thread busy please wait.", 403),
     CONFIG_ERROR("CONFIG_ERROR", "Configuration error", 500),
     FILE_SIZE_EXCEEDED("FILE_SIZE_EXCEEDED", "File size exceeded", 500),
     SERVER_ERROR("SERVER_ERROR", "Server error", 500),

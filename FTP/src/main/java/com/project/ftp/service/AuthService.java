@@ -18,7 +18,7 @@ public class AuthService {
     public void isLogin(final HttpServletRequest request) throws AppException {
         LoginUserDetails userDetails = userService.getLoginUserDetails(request);
         if (!userDetails.getLogin()) {
-            logger.info("Login required");
+            logger.info("isLogin: Login required");
             throw new AppException(ErrorCodes.UNAUTHORIZED_USER);
         }
     }
@@ -26,10 +26,10 @@ public class AuthService {
         LoginUserDetails userDetails = userService.getLoginUserDetails(request);
         return userDetails.getLogin();
     }
-    public boolean isAuthorised(final HttpServletRequest request, String roleAccess) throws AppException {
+    public void isAuthorised(final HttpServletRequest request, String roleAccess) throws AppException {
         LoginUserDetails userDetails = userService.getLoginUserDetails(request);
         if (!userDetails.getLogin()) {
-            logger.info("Login required");
+            logger.info("isAuthorised: Login required");
             throw new AppException(ErrorCodes.UNAUTHORIZED_USER);
         }
         boolean isAuthorised = userService.isAuthorised(userDetails, roleAccess);
@@ -39,7 +39,6 @@ public class AuthService {
             errorCodes.setErrorString("UnAuthorized Role Access: " + roleAccess);
             throw new AppException(errorCodes);
         }
-        return true;
     }
     public void isLoginOtherUserEnable(HttpServletRequest request) throws AppException {
         LoginUserDetails userDetails = userService.getLoginUserDetails(request);

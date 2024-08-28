@@ -16,6 +16,8 @@ public class TableConfiguration {
     private ArrayList<String> likeParameter;
     private ArrayList<String> filterParameter;
     private ArrayList<String> columnName;
+    private ArrayList<String> updateColumnName;
+    private ArrayList<String> selectColumnName;
 
     public String getTableConfigId() {
         return tableConfigId;
@@ -87,5 +89,21 @@ public class TableConfiguration {
 
     public void setColumnName(ArrayList<String> columnName) {
         this.columnName = columnName;
+    }
+
+    public ArrayList<String> getUpdateColumnName() {
+        return updateColumnName;
+    }
+
+    public void setUpdateColumnName(ArrayList<String> updateColumnName) {
+        this.updateColumnName = updateColumnName;
+    }
+
+    public ArrayList<String> getSelectColumnName() {
+        return selectColumnName;
+    }
+
+    public void setSelectColumnName(ArrayList<String> selectColumnName) {
+        this.selectColumnName = selectColumnName;
     }
 }

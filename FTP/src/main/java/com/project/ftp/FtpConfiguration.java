@@ -45,6 +45,7 @@ public class FtpConfiguration extends Configuration {
     private Boolean forgotPasswordEnable;
     private Boolean guestEnable;
     private Boolean androidCheckEnable;
+    private Boolean singleThreadingEnable;
     private boolean mysqlEnable;
     private int maxFileSize;
     private int rateLimitThreshold;// used for register and create_password
@@ -242,6 +243,14 @@ public class FtpConfiguration extends Configuration {
 
     public void setAndroidCheckEnable(Boolean androidCheckEnable) {
         this.androidCheckEnable = androidCheckEnable;
+    }
+
+    public Boolean getSingleThreadingEnable() {
+        return singleThreadingEnable;
+    }
+
+    public void setSingleThreadingEnable(Boolean singleThreadingEnable) {
+        this.singleThreadingEnable = singleThreadingEnable;
     }
 
     public boolean isMysqlEnable() {
@@ -504,6 +513,10 @@ public class FtpConfiguration extends Configuration {
         if (androidCheckEnable != null) {
             this.androidCheckEnable = androidCheckEnable;
         }
+        Boolean singleThreadingEnable = tempFtpConfiguration.getSingleThreadingEnable();
+        if (singleThreadingEnable != null) {
+            this.singleThreadingEnable = singleThreadingEnable;
+        }
         int maxFileSize = tempFtpConfiguration.getMaxFileSize();
         if (maxFileSize > 0) {
             this.maxFileSize = maxFileSize;
@@ -513,31 +526,31 @@ public class FtpConfiguration extends Configuration {
             this.rateLimitThreshold = rateLimitThreshold;
         }
         ArrayList<String> allowedOrigin = tempFtpConfiguration.getAllowedOrigin();
-        if (allowedOrigin != null && allowedOrigin.size() > 0) {
+        if (allowedOrigin != null && !allowedOrigin.isEmpty()) {
             this.allowedOrigin = allowedOrigin;
         }
         ArrayList<String> supportedFileType = tempFtpConfiguration.getSupportedFileType();
-        if (supportedFileType != null && supportedFileType.size() > 0) {
+        if (supportedFileType != null && !supportedFileType.isEmpty()) {
             this.supportedFileType = supportedFileType;
         }
         ArrayList<String> enableMysqlTableName = tempFtpConfiguration.getEnableMysqlTableName();
-        if (enableMysqlTableName != null && enableMysqlTableName.size() > 0) {
+        if (enableMysqlTableName != null && !enableMysqlTableName.isEmpty()) {
             this.enableMysqlTableName = enableMysqlTableName;
         }
         ArrayList<String> fileNotFoundMapping = tempFtpConfiguration.getFileNotFoundMapping();
-        if (fileNotFoundMapping != null && fileNotFoundMapping.size() > 0) {
+        if (fileNotFoundMapping != null && !fileNotFoundMapping.isEmpty()) {
             this.fileNotFoundMapping = fileNotFoundMapping;
         }
         ArrayList<String> rolesFileName = tempFtpConfiguration.getRolesFileName();
-        if (rolesFileName != null && rolesFileName.size() > 0) {
+        if (rolesFileName != null && !rolesFileName.isEmpty()) {
             this.rolesFileName = rolesFileName;
         }
         ArrayList<String> allowedTableFilename = tempFtpConfiguration.getAllowedTableFilename();
-        if (allowedTableFilename != null && allowedTableFilename.size() > 0) {
+        if (allowedTableFilename != null && !allowedTableFilename.isEmpty()) {
             this.allowedTableFilename = allowedTableFilename;
         }
         ArrayList<String> enabledAuthPages = tempFtpConfiguration.getEnabledAuthPages();
-        if (enabledAuthPages != null && enabledAuthPages.size() > 0) {
+        if (enabledAuthPages != null && !enabledAuthPages.isEmpty()) {
             this.enabledAuthPages = enabledAuthPages;
         }
         HashMap<String, String> loginRedirectMapping = tempFtpConfiguration.getLoginRedirectMapping();
@@ -607,6 +620,7 @@ public class FtpConfiguration extends Configuration {
                 ", forgotPasswordEnable=" + forgotPasswordEnable +
                 ", guestEnable=" + guestEnable +
                 ", androidCheckEnable=" + androidCheckEnable +
+                ", singleThreadingEnable=" + singleThreadingEnable +
                 ", mysqlEnable=" + mysqlEnable +
                 ", maxFileSize=" + maxFileSize +
                 ", rateLimitThreshold=" + rateLimitThreshold +

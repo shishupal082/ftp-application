@@ -13,6 +13,7 @@ eventConfig:
 forgotPasswordMessage: "Forgot password request submitted, Please create password."
 loadRoleStatusOnPageLoad: "FromRoleConfig" #"isAdminUser" #FromRoleConfig
 forgotPasswordEnable: true
+
 rolesFileName:
   - roles/roles.yml
   - roles/roles_2.yml

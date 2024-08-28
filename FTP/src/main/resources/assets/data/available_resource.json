@@ -284,6 +284,10 @@
     "Call get table data as ApiResponse [GET]"
   ],
   [
+    "/api/get_single_thread_status",
+    "Call get single thread status [GET]"
+  ],
+  [
     "/assets-dir/{default: *}",
     "Load assets data from asses-dir folder [GET]"
   ]

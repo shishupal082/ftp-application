@@ -1,0 +1,3 @@
+FtpConfiguration:
+
+singleThreadingEnable: Boolean

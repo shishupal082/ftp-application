@@ -43,6 +43,7 @@ public class ApiResource {
     private final MSExcelService msExcelService;
     private final ScanDirService scanDirService;
     private final TableService tableService;
+    private final SingleThreadingService singleThreadingService;
     public ApiResource(final AppConfig appConfig) {
         this.appConfig = appConfig;
         this.fileServiceV2 = new FileServiceV2(appConfig, appConfig.getUserService());
@@ -54,15 +55,18 @@ public class ApiResource {
         this.requestService = new RequestService(appConfig, userService, fileServiceV2);
         this.msExcelService = appConfig.getMsExcelService();
         this.tableService = appConfig.getTableService();
+        this.singleThreadingService = appConfig.getSingleThreadingService();
     }
     @GET
     @Produces(MediaType.TEXT_HTML)
-    public Object defaultMethodApi(@Context HttpServletRequest request) {
+    public Object defaultMethodApi(@Context HttpServletRequest request) throws AppException {
+        this.singleThreadingService.checkSingleThreadStatus(request, "api");
         return requestService.handleDefaultUrl(request);
     }
     @GET
     @Path("/get_static_data")
-    public ApiResponse getJsonData(@Context HttpServletRequest request) {
+    public ApiResponse getJsonData(@Context HttpServletRequest request) throws AppException {
+        this.singleThreadingService.checkSingleThreadStatus(request, "api");
         logger.info("getJsonData : In, user: {}", userService.getUserDataForLogging(request));
         ApiResponse response = fileServiceV2.getStaticData();
         // Not putting response in log as it may be very large
@@ -72,7 +76,8 @@ public class ApiResource {
     @GET
     @Path("/get_users")
     @UnitOfWork
-    public ApiResponse getAllUsers(@Context HttpServletRequest request) {
+    public ApiResponse getAllUsers(@Context HttpServletRequest request) throws AppException {
+        this.singleThreadingService.checkSingleThreadStatus(request, "api");
         LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
         logger.info("getAllUsers : In, {}", loginUserDetails);
         ApiResponse response;
@@ -93,7 +98,8 @@ public class ApiResource {
     @GET
     @Path("/get_related_users_data")
     @UnitOfWork
-    public ApiResponse getRelatedUsersData(@Context HttpServletRequest request) {
+    public ApiResponse getRelatedUsersData(@Context HttpServletRequest request) throws AppException {
+        this.singleThreadingService.checkSingleThreadStatus(request, "api");
         LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
         logger.info("getRelatedUsersData : In, {}", loginUserDetails);
         ApiResponse response;
@@ -113,7 +119,8 @@ public class ApiResource {
     @GET
     @Path("/get_related_users_data_v2")
     @UnitOfWork
-    public ApiResponse getRelatedUsersDataV2(@Context HttpServletRequest request) {
+    public ApiResponse getRelatedUsersDataV2(@Context HttpServletRequest request) throws AppException {
+        this.singleThreadingService.checkSingleThreadStatus(request, "api");
         LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
         logger.info("getRelatedUsersDataV2 : In, {}", loginUserDetails);
         ApiResponse response;
@@ -134,7 +141,8 @@ public class ApiResource {
     @Path("/track_event")
     @UnitOfWork
     public ApiResponse trackEvent(@Context HttpServletRequest request,
-                                  RequestEventTracking requestEventTracking) {
+                                  RequestEventTracking requestEventTracking) throws AppException {
+        this.singleThreadingService.checkSingleThreadStatus(request, "api");
         logger.info("trackEvent : In, user: {}, eventTracking: {}",
                 userService.getUserDataForLogging(request), requestEventTracking);
         eventTracking.trackUIEvent(request, requestEventTracking);
@@ -148,7 +156,8 @@ public class ApiResource {
     @UnitOfWork
     public ApiResponse deleteFile(@Context HttpServletRequest request,
                                   RequestDeleteFile deleteFile,
-                                  @QueryParam("u") String uiUsername) {
+                                  @QueryParam("u") String uiUsername) throws AppException {
+        this.singleThreadingService.checkSingleThreadStatus(request, "api");
         logger.info("deleteFile In: {}, user: {}", deleteFile, userService.getUserDataForLogging(request));
         ApiResponse apiResponse;
         try {
@@ -169,7 +178,8 @@ public class ApiResource {
     @GET
     @Path("/get_files_info")
     @UnitOfWork
-    public ApiResponse getAllV3Data(@Context HttpServletRequest request) {
+    public ApiResponse getAllV3Data(@Context HttpServletRequest request) throws AppException {
+        this.singleThreadingService.checkSingleThreadStatus(request, "api");
         logger.info("getAllV3Data : In, user: {}", userService.getUserDataForLogging(request));
         ApiResponse response;
         try {
@@ -178,7 +188,7 @@ public class ApiResource {
             response = fileServiceV2.scanUserDirectory(loginUserDetails);
 //            eventTracking.trackSuccessEvent(request, EventName.GET_FILES_INFO);
         } catch (AppException ae) {
-            logger.info("Error in scanning user directory: {}", ae.getErrorCode().getErrorString());
+            logger.info("Error in scanning user directory v3: {}", ae.getErrorCode().getErrorString());
             response = new ApiResponse(ae.getErrorCode());
             eventTracking.trackFailureEvent(request, EventName.GET_FILES_INFO, ae.getErrorCode());
         }
@@ -191,7 +201,8 @@ public class ApiResource {
     @UnitOfWork
     public ApiResponse getAllV4Data(@Context HttpServletRequest request,
                                     @QueryParam("filename") String filename,
-                                    @QueryParam("username") String username) {
+                                    @QueryParam("username") String username) throws AppException {
+        this.singleThreadingService.checkSingleThreadStatus(request, "api");
         logger.info("getAllV4Data : In, user: {}, filenamePattern+usernamePattern: {}",
                 userService.getUserDataForLogging(request), filename+username);
         ApiResponse response;
@@ -201,7 +212,7 @@ public class ApiResource {
             response = fileServiceV2.scanUserDirectoryByPattern(loginUserDetails, filename, username);
 //            eventTracking.trackSuccessEvent(request, EventName.GET_FILES_INFO);
         } catch (AppException ae) {
-            logger.info("Error in scanning user directory: {}", ae.getErrorCode().getErrorString());
+            logger.info("Error in scanning user directory v4: {}", ae.getErrorCode().getErrorString());
             response = new ApiResponse(ae.getErrorCode());
             eventTracking.trackFailureEvent(request, EventName.GET_FILES_INFO_BY_FILENAME_PATTERN, ae.getErrorCode());
         }
@@ -215,7 +226,8 @@ public class ApiResource {
     public ApiResponse getPathInfo(@Context HttpServletRequest request,
                                    @QueryParam("path") String path,
                                    @QueryParam("container") String container,
-                                   @QueryParam("u") String uiUsername) {
+                                   @QueryParam("u") String uiUsername) throws AppException {
+        this.singleThreadingService.checkSingleThreadStatus(request, "api");
         logger.info("getPathInfo: In, path: {}, container: {}, u: {}", path, container, uiUsername);
         logger.info("user: {}", userService.getUserDataForLogging(request));
         PathInfo pathInfo;
@@ -239,7 +251,8 @@ public class ApiResource {
     @Path("/get_database_files_info")
     @UnitOfWork
     public ApiResponse getAllV5Data(@Context HttpServletRequest request,
-                                    @QueryParam("filenames") String filenames) {
+                                    @QueryParam("filenames") String filenames) throws AppException {
+        this.singleThreadingService.checkSingleThreadStatus(request, "api");
         logger.info("getAllV5Data : In, user: {}, filenames: {}",
                 userService.getUserDataForLogging(request), filenames);
         ApiResponse response;
@@ -262,7 +275,8 @@ public class ApiResource {
     @UnitOfWork
     public ApiResponse getTableData(@Context HttpServletRequest request,
                                     @QueryParam("filenames") String filenames,
-                                    @QueryParam("table_names") String tableNames) {
+                                    @QueryParam("table_names") String tableNames) throws AppException {
+        this.singleThreadingService.checkSingleThreadStatus(request, "api");
         logger.info("getTableData : In, user: {}, filenames+table_names: {}",
                 userService.getUserDataForLogging(request), filenames + tableNames);
         ApiResponse response;
@@ -285,7 +299,8 @@ public class ApiResource {
     @UnitOfWork
     public ApiResponse getTableDataV2(@Context HttpServletRequest request,
                                     @QueryParam("filenames") String filenames,
-                                    @QueryParam("table_names") String tableNames) {
+                                    @QueryParam("table_names") String tableNames) throws AppException {
+        this.singleThreadingService.checkSingleThreadStatus(request, "api");
         logger.info("getTableDataV2 : In, user: {}, filenames+table_names: {}",
                 userService.getUserDataForLogging(request), filenames + tableNames);
         ApiResponse response;
@@ -306,7 +321,8 @@ public class ApiResource {
     @GET
     @Path("/get_current_user_files_info")
     @UnitOfWork
-    public ApiResponse getAllV3DataV2(@Context HttpServletRequest request) {
+    public ApiResponse getAllV3DataV2(@Context HttpServletRequest request) throws AppException {
+        this.singleThreadingService.checkSingleThreadStatus(request, "api");
         logger.info("getAllV3DataV2 : In, user: {}", userService.getUserDataForLogging(request));
         ApiResponse response;
         try {
@@ -325,7 +341,8 @@ public class ApiResource {
     @GET
     @Path("/get_app_config")
     @UnitOfWork
-    public ApiResponse getAppConfig(@Context HttpServletRequest request) {
+    public ApiResponse getAppConfig(@Context HttpServletRequest request) throws AppException {
+        this.singleThreadingService.checkSingleThreadStatus(request, "api");
         logger.info("getAppConfig : In, user: {}", userService.getUserDataForLogging(request));
         ApiResponse response;
         try {
@@ -345,6 +362,7 @@ public class ApiResource {
     @Path("/get_session_config")
     @UnitOfWork
     public ApiResponse getSessionConfig(@Context HttpServletRequest request) throws AppException {
+        this.singleThreadingService.checkSingleThreadStatus(request, "api");
         logger.info("getSessionConfig : In, user: {}", userService.getUserDataForLogging(request));
         ApiResponse response;
         try {
@@ -367,7 +385,8 @@ public class ApiResource {
     public ApiResponse uploadFile(@Context HttpServletRequest request,
                                   @FormDataParam("file") InputStream uploadedInputStream,
                                @FormDataParam("file") FormDataContentDisposition fileDetail,
-                               @QueryParam("u") String uiUsername) {
+                               @QueryParam("u") String uiUsername) throws AppException {
+        this.singleThreadingService.checkSingleThreadStatus(request, "api");
         logger.info("uploadFile: In, upload fileDetails: {}, user: {}",
                 fileDetail, userService.getUserDataForLogging(request));
         ApiResponse response;
@@ -388,7 +407,8 @@ public class ApiResource {
     @POST
     @Path("/add_text")
     @UnitOfWork
-    public ApiResponse addText(@Context HttpServletRequest request, RequestAddText addText) {
+    public ApiResponse addText(@Context HttpServletRequest request, RequestAddText addText) throws AppException {
+        this.singleThreadingService.checkSingleThreadStatus(request, "api");
         logger.info("addText: In, data: {}, user: {}", addText, userService.getUserDataForLogging(request));
         String comment = null;
         if (addText != null) {
@@ -411,7 +431,8 @@ public class ApiResource {
     @POST
     @Path("/add_text_v2")
     @UnitOfWork
-    public ApiResponse addTextV2(@Context HttpServletRequest request, RequestAddText addText) {
+    public ApiResponse addTextV2(@Context HttpServletRequest request, RequestAddText addText) throws AppException {
+        this.singleThreadingService.checkSingleThreadStatus(request, "api");
         logger.info("addTextV2: In, data: {}, user: {}", addText, userService.getUserDataForLogging(request));
         String comment = null;
         if (addText != null) {
@@ -434,7 +455,8 @@ public class ApiResource {
     @POST
     @Path("/delete_text")
     @UnitOfWork
-    public ApiResponse deleteText(@Context HttpServletRequest request, RequestDeleteText deleteText) {
+    public ApiResponse deleteText(@Context HttpServletRequest request, RequestDeleteText deleteText) throws AppException {
+        this.singleThreadingService.checkSingleThreadStatus(request, "api");
         logger.info("deleteText: In, data: {}, user: {}", deleteText, userService.getUserDataForLogging(request));
         String comment = null;
         if (deleteText != null) {
@@ -458,7 +480,8 @@ public class ApiResource {
     @Path("/get_uploaded_csv_data")
     @UnitOfWork
     @Produces(MediaType.TEXT_HTML)
-    public Response getUploadedCSVData(@Context HttpServletRequest request) {
+    public Response getUploadedCSVData(@Context HttpServletRequest request) throws AppException {
+        this.singleThreadingService.checkSingleThreadStatus(request, "api");
         logger.info("getUploadedCSVData: in, user: {}", userService.getUserDataForLogging(request));
         PathInfo pathInfo = null;
         try {
@@ -491,7 +514,8 @@ public class ApiResource {
     public Response getUploadedDataByFilenamePattern(@Context HttpServletRequest request,
                                                      @QueryParam("filename") String filename,
                                                      @QueryParam("username") String username,
-                                                     @QueryParam("temp_file_name") String tempFileName) {
+                                                     @QueryParam("temp_file_name") String tempFileName) throws AppException {
+        this.singleThreadingService.checkSingleThreadStatus(request, "api");
         logger.info("getUploadedDataByFilenamePattern: in, user: {}, filename+username: {}",
                 userService.getUserDataForLogging(request), filename+username+tempFileName);
         if (tempFileName == null) {
@@ -524,29 +548,30 @@ public class ApiResource {
     @POST
     @Path("/login_user")
     @UnitOfWork
-    public ApiResponse loginUser(@Context HttpServletRequest httpServletRequest,
-                                 RequestUserLogin userLogin) {
+    public ApiResponse loginUser(@Context HttpServletRequest request,
+                                 RequestUserLogin userLogin) throws AppException {
+        this.singleThreadingService.checkSingleThreadStatus(request, "api");
         logger.info("loginUser : In, {}, user: {}",
-                userLogin, userService.getUserDataForLogging(httpServletRequest));
+                userLogin, userService.getUserDataForLogging(request));
         String username = null;
         if (userLogin != null) {
             username = userLogin.getUsername();
         }
         ApiResponse response;
-        if (authService.isLoginV2(httpServletRequest)) {
-            eventTracking.trackLoginFailure(httpServletRequest, userLogin, ErrorCodes.USER_ALREADY_LOGIN);
-            logger.info("Error in login, user already login: {}", userService.getLoginUserDetails(httpServletRequest));
+        if (authService.isLoginV2(request)) {
+            eventTracking.trackLoginFailure(request, userLogin, ErrorCodes.USER_ALREADY_LOGIN);
+            logger.info("Error in login, user already login: {}", userService.getLoginUserDetails(request));
             response = new ApiResponse(ErrorCodes.USER_ALREADY_LOGIN);
             response.setData(username);
             return response;
         }
         try {
-            LoginUserDetails loginUserDetails = userService.loginUser(httpServletRequest, userLogin);
+            LoginUserDetails loginUserDetails = userService.loginUser(request, userLogin);
             response = new ApiResponse(loginUserDetails);
-            eventTracking.addSuccessLogin(httpServletRequest, userLogin);
+            eventTracking.addSuccessLogin(request, userLogin);
         } catch (AppException ae) {
             logger.info("Error in login user: {}", ae.getErrorCode().getErrorCode());
-            eventTracking.trackLoginFailure(httpServletRequest, userLogin, ae.getErrorCode());
+            eventTracking.trackLoginFailure(request, userLogin, ae.getErrorCode());
             response = new ApiResponse(ae.getErrorCode());
         }
         logger.info("loginUser : Out: {}", response);
@@ -556,7 +581,8 @@ public class ApiResource {
     @Path("/login_other_user")
     @UnitOfWork
     public ApiResponse loginOtherUser(@Context HttpServletRequest request,
-                                 RequestUserLogin userLogin) {
+                                 RequestUserLogin userLogin) throws AppException {
+        this.singleThreadingService.checkSingleThreadStatus(request, "api");
         logger.info("loginOtherUser: In, {}, user: {}",
                 userLogin, userService.getUserDataForLogging(request));
         ApiResponse response;
@@ -582,7 +608,8 @@ public class ApiResource {
     @Path("/login_social")
     @UnitOfWork
     public ApiResponse loginSocial(@Context HttpServletRequest request,
-                                      RequestLoginSocial loginSocial) {
+                                      RequestLoginSocial loginSocial) throws AppException {
+        this.singleThreadingService.checkSingleThreadStatus(request, "api");
         logger.info("loginSocial: In, {}, user: {}",
                 loginSocial, userService.getUserDataForLogging(request));
         ApiResponse response;
@@ -614,30 +641,31 @@ public class ApiResource {
     @POST
     @Path("/register_user")
     @UnitOfWork
-    public ApiResponse registerUser(@Context HttpServletRequest httpServletRequest,
-                                 RequestUserRegister userRegister) {
+    public ApiResponse registerUser(@Context HttpServletRequest request,
+                                 RequestUserRegister userRegister) throws AppException {
+        this.singleThreadingService.checkSingleThreadStatus(request, "api");
         logger.info("registerUser : In, userRegister: {}, user: {}",
-                userRegister, userService.getUserDataForLogging(httpServletRequest));
+                userRegister, userService.getUserDataForLogging(request));
         String username = null;
         if (userRegister != null) {
             username = userRegister.getUsername();
         }
         ApiResponse response;
-        if (authService.isLoginV2(httpServletRequest)) {
-            eventTracking.trackRegisterFailure(httpServletRequest, userRegister, ErrorCodes.USER_ALREADY_LOGIN);
+        if (authService.isLoginV2(request)) {
+            eventTracking.trackRegisterFailure(request, userRegister, ErrorCodes.USER_ALREADY_LOGIN);
             logger.info("Error in register, user already login: {}",
-                    userService.getLoginUserDetails(httpServletRequest));
+                    userService.getLoginUserDetails(request));
             response = new ApiResponse(ErrorCodes.USER_ALREADY_LOGIN);
             response.setData(username);
             return response;
         }
         try {
-            LoginUserDetails loginUserDetails = userService.userRegister(httpServletRequest, userRegister);
+            LoginUserDetails loginUserDetails = userService.userRegister(request, userRegister);
             response = new ApiResponse(loginUserDetails);
-            eventTracking.addSuccessRegister(httpServletRequest, userRegister);
+            eventTracking.addSuccessRegister(request, userRegister);
         } catch (AppException ae) {
             logger.info("Error in register user: {}", ae.getErrorCode().getErrorCode());
-            eventTracking.trackRegisterFailure(httpServletRequest, userRegister, ae.getErrorCode());
+            eventTracking.trackRegisterFailure(request, userRegister, ae.getErrorCode());
             response = new ApiResponse(ae.getErrorCode());
         }
         logger.info("registerUser : Out: {}", response);
@@ -649,7 +677,8 @@ public class ApiResource {
     @GET
     @Path("/get_login_user_details")
     @UnitOfWork
-    public ApiResponse getLoginUserDetails(@Context HttpServletRequest request) {
+    public ApiResponse getLoginUserDetails(@Context HttpServletRequest request) throws AppException {
+        this.singleThreadingService.checkSingleThreadStatus(request, "api");
         logger.info("getLoginUserDetails : In");
         ApiResponse response;
         try {
@@ -667,20 +696,21 @@ public class ApiResource {
     @POST
     @Path("/change_password")
     @UnitOfWork
-    public ApiResponse changePassword(@Context HttpServletRequest httpServletRequest,
-                                 RequestChangePassword request,
-                                 @QueryParam("u") String uiUsername) {
+    public ApiResponse changePassword(@Context HttpServletRequest request,
+                                 RequestChangePassword requestChangePassword,
+                                 @QueryParam("u") String uiUsername) throws AppException {
+        this.singleThreadingService.checkSingleThreadStatus(request, "api");
         logger.info("changePassword : In, user: {}",
-                userService.getUserDataForLogging(httpServletRequest));
+                userService.getUserDataForLogging(request));
         ApiResponse response;
         try {
-            authService.isLogin(httpServletRequest);
-            LoginUserDetails loginUserDetails = userService.changePassword(httpServletRequest, request);
+            authService.isLogin(request);
+            LoginUserDetails loginUserDetails = userService.changePassword(request, requestChangePassword);
             response = new ApiResponse(loginUserDetails);
-            eventTracking.trackChangePasswordSuccess(httpServletRequest, uiUsername);
+            eventTracking.trackChangePasswordSuccess(request, uiUsername);
         } catch (AppException ae) {
             logger.info("Error in change password: {}", ae.getErrorCode().getErrorCode());
-            eventTracking.trackChangePasswordFailure(httpServletRequest, ae.getErrorCode(), uiUsername);
+            eventTracking.trackChangePasswordFailure(request, ae.getErrorCode(), uiUsername);
             response = new ApiResponse(ae.getErrorCode());
         }
         logger.info("changePassword : Out: {}", response);
@@ -690,7 +720,8 @@ public class ApiResource {
     @Path("/forgot_password")
     @UnitOfWork
     public ApiResponse forgotPassword(@Context HttpServletRequest request,
-                                      RequestForgotPassword requestForgotPassword) {
+                                      RequestForgotPassword requestForgotPassword) throws AppException {
+        this.singleThreadingService.checkSingleThreadStatus(request, "api");
         logger.info("forgotPassword : In, {}", requestForgotPassword);
         ApiResponse response;
         if (authService.isLoginV2(request)) {
@@ -715,7 +746,8 @@ public class ApiResource {
     @Path("/create_password")
     @UnitOfWork
     public ApiResponse createPassword(@Context HttpServletRequest request,
-                                      RequestCreatePassword requestCreatePassword) {
+                                      RequestCreatePassword requestCreatePassword) throws AppException {
+        this.singleThreadingService.checkSingleThreadStatus(request, "api");
         logger.info("createPassword : In, {}", requestCreatePassword);
         String username = null;
         if (requestCreatePassword != null) {
@@ -735,7 +767,7 @@ public class ApiResource {
             response = new ApiResponse(loginUserDetails);
             eventTracking.trackCreatePasswordSuccess(request, requestCreatePassword);
         } catch (AppException ae) {
-            logger.info("Error in change password: {}", ae.getErrorCode().getErrorCode());
+            logger.info("Error in create password: {}", ae.getErrorCode().getErrorCode());
             eventTracking.trackCreatePasswordFailure(request, requestCreatePassword, ae.getErrorCode());
             response = new ApiResponse(ae.getErrorCode());
         }
@@ -746,7 +778,8 @@ public class ApiResource {
     @Path("/reset_count")
     @UnitOfWork
     public ApiResponse resetCount(@Context HttpServletRequest request,
-                                  RequestResetCount requestResetCount) {
+                                  RequestResetCount requestResetCount) throws AppException {
+        this.singleThreadingService.checkSingleThreadStatus(request, "api");
         LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
         logger.info("resetCount In: {}", loginUserDetails);
         ApiResponse response;
@@ -765,7 +798,8 @@ public class ApiResource {
     @GET
     @Path("/update_config")
     @UnitOfWork
-    public ApiResponse updateConfigParameter(@Context HttpServletRequest request) {
+    public ApiResponse updateConfigParameter(@Context HttpServletRequest request) throws AppException {
+        this.singleThreadingService.checkSingleThreadStatus(request, "api");
         logger.info("updateConfig : In, user: {}",
                 userService.getUserDataForLogging(request));
         ApiResponse response;
@@ -786,7 +820,8 @@ public class ApiResource {
     @Path("/aes_encrypt")
     @UnitOfWork
     public ApiResponse aesEncrypt(@Context HttpServletRequest request,
-                                  RequestSecurity requestSecurity) {
+                                  RequestSecurity requestSecurity) throws AppException {
+        this.singleThreadingService.checkSingleThreadStatus(request, "api");
         logger.info("aesEncrypt : In, user: {}",
                 userService.getUserDataForLogging(request));
         ApiResponse response;
@@ -806,7 +841,8 @@ public class ApiResource {
     @Path("/aes_decrypt")
     @UnitOfWork
     public ApiResponse aesDecrypt(@Context HttpServletRequest request,
-                                  RequestSecurity requestSecurity) {
+                                  RequestSecurity requestSecurity) throws AppException {
+        this.singleThreadingService.checkSingleThreadStatus(request, "api");
         logger.info("aesDecrypt : In, user: {}",
                 userService.getUserDataForLogging(request));
         ApiResponse response;
@@ -826,7 +862,8 @@ public class ApiResource {
     @Path("/md5_encrypt")
     @UnitOfWork
     public ApiResponse md5Encrypt(@Context HttpServletRequest request,
-                                  RequestSecurity requestSecurity) {
+                                  RequestSecurity requestSecurity) throws AppException {
+        this.singleThreadingService.checkSingleThreadStatus(request, "api");
         logger.info("md5Encrypt : In, user: {}",
                 userService.getUserDataForLogging(request));
         ApiResponse response;
@@ -846,7 +883,8 @@ public class ApiResource {
     @Path("/verify_permission")
     @UnitOfWork
     public ApiResponse verifyPermission(@Context HttpServletRequest request,
-                                        RequestVerifyPermission verifyPermission) {
+                                        RequestVerifyPermission verifyPermission) throws AppException {
+        this.singleThreadingService.checkSingleThreadStatus(request, "api");
         LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
         logger.info("verifyPermission : In, user: {}, request: {}", loginUserDetails, verifyPermission);
         String comment = null;
@@ -869,7 +907,8 @@ public class ApiResource {
     @GET
     @Path("/get_roles_config")
     @UnitOfWork
-    public ApiResponse getRolesConfig(@Context HttpServletRequest request) {
+    public ApiResponse getRolesConfig(@Context HttpServletRequest request) throws AppException {
+        this.singleThreadingService.checkSingleThreadStatus(request, "api");
         logger.info("getRolesConfig : In, user: {}", userService.getUserDataForLogging(request));
         ApiResponse response;
         try {
@@ -888,7 +927,8 @@ public class ApiResource {
     @Path("/call_tcp")
     @UnitOfWork
     public ApiResponse callTcp(@Context HttpServletRequest request,
-                                        RequestTcp requestTcp) {
+                                        RequestTcp requestTcp) throws AppException {
+        this.singleThreadingService.checkSingleThreadStatus(request, "api");
         LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
         logger.info("callTcp: In, user: {}, request: {}", loginUserDetails, requestTcp);
         ApiResponse response;
@@ -908,7 +948,8 @@ public class ApiResource {
     @UnitOfWork
     public ApiResponse getMSExcelDataConfig(@Context HttpServletRequest request,
                                             @QueryParam("requestId") String requestId,
-                                            @QueryParam("update_gs_config") String updateGsConfig) {
+                                            @QueryParam("update_gs_config") String updateGsConfig) throws AppException {
+        this.singleThreadingService.checkSingleThreadStatus(request, "api");
         LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
         logger.info("getMSExcelDataConfig: In, user: {}, requestId: {}, update_gs_config: {}",
                 loginUserDetails, requestId, updateGsConfig);
@@ -928,7 +969,8 @@ public class ApiResource {
     @Path("/get_excel_data")
     @UnitOfWork
     public ApiResponse getMSExcelData(@Context HttpServletRequest request,
-                                      @QueryParam("requestId") String requestId) {
+                                      @QueryParam("requestId") String requestId) throws AppException {
+        this.singleThreadingService.checkSingleThreadStatus(request, "api");
         LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
         logger.info("getMSExcelData: In, user: {}, requestId: {}", loginUserDetails, requestId);
         ApiResponse response;
@@ -949,7 +991,8 @@ public class ApiResource {
     @Path("/get_excel_data_json")
     @UnitOfWork
     public ApiResponse getMSExcelDataJson(@Context HttpServletRequest request,
-                                      @QueryParam("requestId") String requestId) {
+                                      @QueryParam("requestId") String requestId) throws AppException {
+        this.singleThreadingService.checkSingleThreadStatus(request, "api");
         LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
         logger.info("getMSExcelDataJson: In, user: {}, requestId: {}", loginUserDetails, requestId);
         ApiResponse response;
@@ -971,7 +1014,8 @@ public class ApiResource {
     @UnitOfWork
     @Produces(MediaType.TEXT_HTML)
     public Response getMSExcelDataCsv(@Context HttpServletRequest request,
-                                      @QueryParam("requestId") String requestId) {
+                                      @QueryParam("requestId") String requestId) throws AppException {
+        this.singleThreadingService.checkSingleThreadStatus(request, "api");
         LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
         logger.info("getMSExcelDataCsv: In, user: {}, requestId: {}", loginUserDetails, requestId);
         String response = null;
@@ -992,7 +1036,8 @@ public class ApiResource {
     @Path("/update_excel_data")
     @UnitOfWork
     public ApiResponse updateMSExcelData(@Context HttpServletRequest request,
-                                         @QueryParam("requestId") String requestId) {
+                                         @QueryParam("requestId") String requestId) throws AppException {
+        this.singleThreadingService.checkSingleThreadStatus(request, "api");
         LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
         logger.info("updateMSExcelData: In, user: {}, requestId: {}", loginUserDetails, requestId);
         ApiResponse response;
@@ -1012,7 +1057,8 @@ public class ApiResource {
     @UnitOfWork
     public ApiResponse getScanDirConfig(@Context HttpServletRequest request,
                                         @QueryParam("scan_dir_id") String scanDirId,
-                                        @QueryParam("pathname") String pathName) {
+                                        @QueryParam("pathname") String pathName) throws AppException {
+        this.singleThreadingService.checkSingleThreadStatus(request, "api");
         LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
         logger.info("getScanDirConfig: In, user: {}, scanDirId: {}, pathname: {}", loginUserDetails, scanDirId, pathName);
         ApiResponse response;
@@ -1035,7 +1081,8 @@ public class ApiResource {
                                    @QueryParam("pathname") String pathName,
                                    @QueryParam("filetype") String fileType,
                                    @QueryParam("recursive") String recursive,
-                                   @QueryParam("csv_mapping_id") String csvMappingId) {
+                                   @QueryParam("csv_mapping_id") String csvMappingId) throws AppException {
+        this.singleThreadingService.checkSingleThreadStatus(request, "api");
         LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
         logger.info("readScanDir: In, user: {}, scan_dir_id: {}, pathname: {}, filetype: {}, recursive: {}, csv_mapping_id: {}",
                 loginUserDetails, scanDirId, pathName, fileType, recursive, csvMappingId);
@@ -1062,7 +1109,8 @@ public class ApiResource {
                                    @QueryParam("pathname") String pathName,
                                    @QueryParam("filetype") String fileType,
                                    @QueryParam("recursive") String recursive,
-                                   @QueryParam("csv_mapping_id") String csvMappingId) {
+                                   @QueryParam("csv_mapping_id") String csvMappingId) throws AppException {
+        this.singleThreadingService.checkSingleThreadStatus(request, "api");
         LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
         logger.info("readScanDirJson: In, user: {}, scan_dir_id: {}, pathname: {}, filetype: {}, recursive: {}, csv_mapping_id: {}",
                 loginUserDetails, scanDirId, pathName, fileType, recursive, csvMappingId);
@@ -1089,7 +1137,8 @@ public class ApiResource {
                                    @QueryParam("pathname") String pathName,
                                    @QueryParam("filetype") String fileType,
                                    @QueryParam("recursive") String recursive,
-                                   @QueryParam("csv_mapping_id") String csvMappingId) {
+                                   @QueryParam("csv_mapping_id") String csvMappingId) throws AppException {
+        this.singleThreadingService.checkSingleThreadStatus(request, "api");
         LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
         logger.info("readScanDirCsv: In, user: {}, scan_dir_id: {}, pathname: {}, filetype: {}, recursive: {}, csv_mapping_id: {}",
                 loginUserDetails, scanDirId, pathName, fileType, recursive, csvMappingId);
@@ -1112,7 +1161,8 @@ public class ApiResource {
     @UnitOfWork
     public ApiResponse updateScanDir(@Context HttpServletRequest request,
                                      @QueryParam("scan_dir_id") String scanDirId,
-                                     @QueryParam("recursive") String recursive) {
+                                     @QueryParam("recursive") String recursive) throws AppException {
+        this.singleThreadingService.checkSingleThreadStatus(request, "api");
         LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
         logger.info("updateScanDir: In, user: {}, scanDirId: {}, recursive: {}", loginUserDetails, scanDirId, recursive);
         ApiResponse response;
@@ -1135,7 +1185,8 @@ public class ApiResource {
                                   @QueryParam("pathname") String pathName,
                                   @QueryParam("filetype") String fileType,
                                   @QueryParam("recursive") String recursive,
-                                  @QueryParam("csv_mapping_id") String csvMappingId) {
+                                  @QueryParam("csv_mapping_id") String csvMappingId) throws AppException {
+        this.singleThreadingService.checkSingleThreadStatus(request, "api");
         LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
         logger.info("getScanDir: In, user: {}, scan_dir_id: {}, pathname: {}, filetype: {}, recursive: {}, csv_mapping_id: {}",
                 loginUserDetails, scanDirId, pathName, fileType, recursive, csvMappingId);
@@ -1161,7 +1212,8 @@ public class ApiResource {
                                   @QueryParam("pathname") String pathName,
                                   @QueryParam("filetype") String fileType,
                                   @QueryParam("recursive") String recursive,
-                                  @QueryParam("csv_mapping_id") String csvMappingId) {
+                                  @QueryParam("csv_mapping_id") String csvMappingId) throws AppException {
+        this.singleThreadingService.checkSingleThreadStatus(request, "api");
         LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
         logger.info("getScanDirJson: In, user: {}, scan_dir_id: {}, pathname: {}, filetype: {}, recursive: {}, csv_mapping_id: {}",
                 loginUserDetails, scanDirId, pathName, fileType, recursive, csvMappingId);
@@ -1188,7 +1240,8 @@ public class ApiResource {
                                   @QueryParam("pathname") String pathName,
                                   @QueryParam("filetype") String fileType,
                                   @QueryParam("recursive") String recursive,
-                                  @QueryParam("csv_mapping_id") String csvMappingId) {
+                                  @QueryParam("csv_mapping_id") String csvMappingId) throws AppException {
+        this.singleThreadingService.checkSingleThreadStatus(request, "api");
         LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
         logger.info("getScanDirCsv: In, user: {}, scan_dir_id: {}, pathname: {}, filetype: {}, recursive: {}, csv_mapping_id: {}",
                 loginUserDetails, scanDirId, pathName, fileType, recursive, csvMappingId);
@@ -1217,7 +1270,8 @@ public class ApiResource {
                                          @QueryParam("filter2") String filter2,
                                          @QueryParam("filter3") String filter3,
                                          @QueryParam("filter4") String filter4,
-                                         @QueryParam("filter5") String filter5) {
+                                         @QueryParam("filter5") String filter5) throws AppException {
+        this.singleThreadingService.checkSingleThreadStatus(request, "api");
         LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
         ArrayList<String> filterRequest = new ArrayList<>();
         filterRequest.add(filter0);
@@ -1246,7 +1300,8 @@ public class ApiResource {
     @Path("/update_mysql_table_data_from_csv")
     @UnitOfWork
     public ApiResponse updateMySqlTableDataFromCsv(@Context HttpServletRequest request,
-                                         @QueryParam("table_config_id") String tableConfigId) {
+                                         @QueryParam("table_config_id") String tableConfigId) throws AppException {
+        this.singleThreadingService.checkSingleThreadStatus(request, "api");
         LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
         logger.info("updateMySqlTableDataFromCsv: In, user: {}, table_config_id: {}",
                 loginUserDetails, tableConfigId);
@@ -1262,6 +1317,14 @@ public class ApiResource {
             response = new ApiResponse(ae.getErrorCode());
         }
         logger.info("updateMySqlTableDataFromCsv: Out");
+        return response;
+    }
+    @GET
+    @Path("/get_single_thread_status")
+    @UnitOfWork
+    public ApiResponse getSingleThreadStatus(@Context HttpServletRequest request) throws AppException {
+        ApiResponse response = new ApiResponse(this.singleThreadingService.getSingleThreadStatus(request));
+        logger.info("getSingleThreadStatus: Out, {}", response);
         return response;
     }
     /**

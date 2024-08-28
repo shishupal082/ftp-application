@@ -35,7 +35,7 @@ public class RequestService {
         this.userService = userService;
         this.fileServiceV2 = fileServiceV2;
     }
-    private String getPathUrl(final HttpServletRequest request) {
+    public static String getPathUrl(final HttpServletRequest request) {
         String path = request.getPathInfo();
         String[] pathArr = path.split("\\?");
         if (pathArr.length > 0) {
@@ -58,7 +58,7 @@ public class RequestService {
         return path;
     }
     public Object getAssets(HttpServletRequest request) {
-        String requestedPath = this.getPathUrl(request);
+        String requestedPath = RequestService.getPathUrl(request);
         logger.info("Loading getAssets: {}, user: {}",
                 requestedPath, userService.getUserDataForLogging(request));
         PathInfo pathInfo = fileServiceV2.getFileResponseV2(requestedPath);
@@ -83,7 +83,7 @@ public class RequestService {
         return new CommonView("page_not_found_404.ftl", appConfig, AppConstant.AppVersion);
     }
     public Object handleDefaultUrl(HttpServletRequest request) {
-        String requestedPath = this.getPathUrl(request);
+        String requestedPath = RequestService.getPathUrl(request);
         logger.info("Loading defaultMethod: {}, user: {}",
                 requestedPath, userService.getUserDataForLogging(request));
         LoginUserDetails userDetails = userService.getLoginUserDetails(request);

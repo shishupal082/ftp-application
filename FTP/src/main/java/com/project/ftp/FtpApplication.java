@@ -139,6 +139,8 @@ public class FtpApplication  extends Application<FtpConfiguration> {
             filepathInterface = new FilepathCsv(appConfig);
             LOGGER.info("filepathInterface configured from file");
         }
+        SingleThreadingService singleThreadingService = new SingleThreadingService(appConfig.getFtpConfiguration());
+        appConfig.setSingleThreadingService(singleThreadingService);
         TableDb tableDb = new TableDb(ftpConfiguration.getDataSourceFactory());
         UserService userService = new UserService(appConfig, userInterface);
         appConfig.setUserService(userService);
@@ -156,7 +158,7 @@ public class FtpApplication  extends Application<FtpConfiguration> {
     }
     @Override
     public void run(FtpConfiguration ftpConfiguration, Environment environment) {
-        LOGGER.info("commandLineArguments: " + arguments.toString());
+        LOGGER.info("commandLineArguments: {}", arguments.toString());
         AppConfig appConfig = this.getAppConfig(ftpConfiguration, arguments, AppConstant.SOURCE_RUNTIME);
         EventTracking eventTracking = appConfig.getEventTracking();
         environment.servlets().setSessionHandler(new SessionHandler());

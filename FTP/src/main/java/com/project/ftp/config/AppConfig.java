@@ -47,6 +47,7 @@ public class AppConfig {
     private MSExcelService msExcelService;
     private ScanDirService scanDirService;
     private TableService tableService;
+    private SingleThreadingService singleThreadingService;
     public AppConfig() {
         this.configDate = StaticService.getDateStrFromPattern(AppConstant.DATE_FORMAT);
     }
@@ -280,6 +281,14 @@ public class AppConfig {
 
     public void setTableService(TableService tableService) {
         this.tableService = tableService;
+    }
+
+    public SingleThreadingService getSingleThreadingService() {
+        return singleThreadingService;
+    }
+
+    public void setSingleThreadingService(SingleThreadingService singleThreadingService) {
+        this.singleThreadingService = singleThreadingService;
     }
 
     @Override

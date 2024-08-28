@@ -3,6 +3,12 @@ tableDbConfig:
     tableName: "users"
     orderBy: "id desc"
     limit: "100"
+    selectColumnName:
+      - "id"
+      - "username"
+      - "change_password_count"
+      - "DATE(timestamp) as timestamp"
+      - "deleted"
     columnName:
       - "id"
       - "username"
@@ -28,7 +34,7 @@ tableDbConfig:
     excelConfigId: "csv-smms-assets-ser"
     uniquePattern:
       - "asset_code"
-    columnName:
+    updateColumnName:
       - "file_date"
       - "sub_section"
       - "section_officer"

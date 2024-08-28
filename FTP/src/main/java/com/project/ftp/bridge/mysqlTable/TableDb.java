@@ -65,14 +65,23 @@ public class TableDb {
         ArrayList<HashMap<String, String>> result = new ArrayList<>();
         HashMap<String, String> rowData;
         String value;
-        if (rs == null || tableConfiguration == null || tableConfiguration.getColumnName() == null) {
+        if (rs == null || tableConfiguration == null) {
             return null;
         }
-        ArrayList<String> colAttributes = tableConfiguration.getColumnName();
+        ArrayList<String> columnNames = tableConfiguration.getColumnName();
+        if (columnNames == null) {
+            columnNames = tableConfiguration.getUniquePattern();
+            if (columnNames == null) {
+                columnNames = tableConfiguration.getUpdateColumnName();
+                if (columnNames == null) {
+                    return null;
+                }
+            }
+        }
         try {
             while (rs.next()) {
                 rowData = new HashMap<>();
-                for (String columnName: colAttributes) {
+                for (String columnName: columnNames) {
                     if (columnName == null || columnName.isEmpty()) {
                         continue;
                     }
@@ -124,12 +133,19 @@ public class TableDb {
                 }
             }
         }
+        String selectColumnNames = "";
+        ArrayList<String> requiredSelectColumn = tableConfiguration.getSelectColumnName();
+        if (requiredSelectColumn == null || requiredSelectColumn.isEmpty()) {
+            selectColumnNames = "*";
+        } else {
+            selectColumnNames = String.join(",", requiredSelectColumn);
+        }
         String limitQuery = "";
         String orderByQuery = "";
         int limit;
         String limitParam = tableConfiguration.getLimit();
         String orderByParam = tableConfiguration.getOrderBy();
-        String query = "select * from " + tableName + " where deleted=0" + filterQuery;
+        String query = "select " + selectColumnNames + " from " + tableName + " where deleted=0" + filterQuery;
         if (limitParam != null && !limitParam.isEmpty()) {
             try {
                 limit = Integer.parseInt(limitParam);
@@ -162,18 +178,18 @@ public class TableDb {
         if (tableConfiguration == null || data == null || StaticService.isInValidString(tableConfiguration.getTableName())) {
             return;
         }
-        if (tableConfiguration.getColumnName() == null) {
+        ArrayList<String> updateColumnName = tableConfiguration.getUpdateColumnName();
+        if (updateColumnName == null) {
             return;
         }
-        ArrayList<String> setDataColumn = tableConfiguration.getColumnName();
         StringBuilder filterQuery = new StringBuilder();
         StringBuilder setDataParameter = new StringBuilder();
         String columnName;
         ArrayList<String> filterParameter;
         ArrayList<String> finalQueryParam = new ArrayList<>();
         int index = 0;
-        int lastIndex = setDataColumn.size()-1;
-        for(String col: setDataColumn) {
+        int lastIndex = updateColumnName.size()-1;
+        for(String col: updateColumnName) {
             setDataParameter.append(col).append("=?");
             if (index != lastIndex) {
                 setDataParameter.append(",");
@@ -208,16 +224,16 @@ public class TableDb {
         if (tableConfiguration == null || data == null || StaticService.isInValidString(tableConfiguration.getTableName())) {
             return;
         }
-        if (tableConfiguration.getColumnName() == null) {
+        ArrayList<String> updateColumnName = tableConfiguration.getUpdateColumnName();
+        if (updateColumnName == null) {
             return;
         }
-        ArrayList<String> setDataColumn = tableConfiguration.getColumnName();
         StringBuilder setDataParameter = new StringBuilder();
         StringBuilder setValueParameter = new StringBuilder();
         ArrayList<String> finalQueryParam = new ArrayList<>();
         int index = 0;
-        int lastIndex = setDataColumn.size()-1;
-        for(String col: setDataColumn) {
+        int lastIndex = updateColumnName.size()-1;
+        for(String col: updateColumnName) {
             setDataParameter.append(col);
             setValueParameter.append("?");
             if (index != lastIndex) {

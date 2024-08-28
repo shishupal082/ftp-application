@@ -137,7 +137,7 @@ public class TableService {
         }
         String excelConfigId = tableConfiguration.getExcelConfigId();
         ArrayList<ArrayList<String>> csvDataArray =msExcelService.getMSExcelSheetDataArray(request, excelConfigId);
-        ArrayList<HashMap<String, String>> csvDataJson = miscService.convertArraySheetDataToJsonData(csvDataArray, tableConfiguration.getColumnName());
+        ArrayList<HashMap<String, String>> csvDataJson = miscService.convertArraySheetDataToJsonData(csvDataArray, tableConfiguration.getUpdateColumnName());
         int index = 1;
         int size = 0;
         int entryCount;
