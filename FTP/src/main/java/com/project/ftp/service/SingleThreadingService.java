@@ -13,7 +13,7 @@ import java.util.HashMap;
 
 public class SingleThreadingService {
     private final static Logger logger = LoggerFactory.getLogger(SingleThreadingService.class);
-    private final ArrayList<SingleThread> singleThreadStatus = new ArrayList<>();
+    private ArrayList<SingleThread> singleThreadStatus = new ArrayList<>();
     private final FtpConfiguration ftpConfiguration;
     public SingleThreadingService(final FtpConfiguration ftpConfiguration) {
         this.ftpConfiguration = ftpConfiguration;
@@ -46,13 +46,14 @@ public class SingleThreadingService {
             return;
         }
         if (!singleThreadStatus.isEmpty()) {
-            for(SingleThread singleThread: singleThreadStatus) {
-                if (singleThread != null) {
-                    if (name.equals(singleThread.getName())) {
-                        singleThreadStatus.remove(singleThread);
-                    }
-                }
-            }
+//            ArrayList<SingleThread> finalSingleThreadStatus = new ArrayList<>();
+//            for(SingleThread singleThread: singleThreadStatus) {
+//                if (singleThread != null && singleThread.getName() == null) {
+//                    finalSingleThreadStatus.add(singleThread);
+//                }
+//            }
+//            singleThreadStatus = finalSingleThreadStatus;
+            singleThreadStatus = new ArrayList<>();
         }
     }
     public HashMap<String, String> getSingleThreadStatus(HttpServletRequest request) {
