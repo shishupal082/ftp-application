@@ -144,22 +144,33 @@ public class TableService {
         int updateEntryCount = 0;
         int addEntryCount = 0;
         int skipEntryCount = 0;
+        Boolean updateIfFound = tableConfiguration.getUpdateIfFound();
+        if (updateIfFound == null) {
+            updateIfFound = true;
+        }
         if (csvDataJson != null) {
             size = csvDataJson.size();
             for(HashMap<String, String> rowData: csvDataJson) {
                 entryCount = tableDb.getEntryCount(tableConfiguration, rowData);
                 if (entryCount == 1) {
-                    tableDb.updateEntry(tableConfiguration, rowData, entryCount);
-                    logger.info("{}/{}: update completed.", index, size);
-                    updateEntryCount++;
+                    if (updateIfFound) {
+                        tableDb.updateEntry(tableConfiguration, rowData, entryCount);
+                        updateEntryCount++;
+                        logger.info("{}/{}: update completed. summary: {},{},{}: Addition, Update, Skip",
+                                index, size, addEntryCount, updateEntryCount, skipEntryCount);
+                    } else {
+                        skipEntryCount++;
+                    }
                 } else if (entryCount == 0) {
                     tableDb.addEntry(tableConfiguration, rowData, entryCount);
-                    logger.info("{}/{}: addition completed.", index, size);
                     addEntryCount++;
+                    logger.info("{}/{}: addition completed. summary: {},{},{}: Addition, Update, Skip",
+                            index, size, addEntryCount, updateEntryCount, skipEntryCount);
                 } else {
-                    logger.info("{}/{}: updateTableDataFromCsv: Multi entry exist, add " +
-                            "or update not possible. data: {}", index, size, rowData);
                     skipEntryCount++;
+                    logger.info("{}/{}: updateTableDataFromCsv: Multi entry exist, add " +
+                            "or update not possible. data: {}, summary: {},{},{}: Addition, Update, Skip",
+                            index, size, rowData, addEntryCount, updateEntryCount, skipEntryCount);
                 }
                 index++;
             }

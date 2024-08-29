@@ -47,3 +47,9 @@ Used for get result
     - col1
     - col2
 Used for update entry
+
+(09) includeDeleted: Boolean (Default false)
+If includeDeleted = false
+then deleted=0 query will be added in where clause for update search as well as select query
+
+(10) updateIfFound: Boolean (Default true)

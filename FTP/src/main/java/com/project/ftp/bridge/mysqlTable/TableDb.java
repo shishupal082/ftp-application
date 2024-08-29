@@ -18,14 +18,17 @@ public class TableDb {
     public TableDb(DataSourceFactory dataSourceFactory) {
         this.mysqlConnection = new MysqlConnection(dataSourceFactory);
     }
-    private String getEqualQuery(ArrayList<String> finalQueryParam, String colName, ArrayList<String> filterValues) {
+    private String getEqualQuery(String deletedQuery, ArrayList<String> finalQueryParam, String colName, ArrayList<String> filterValues) {
         if (filterValues == null || filterValues.isEmpty()) {
             return null;
         }
         if (finalQueryParam == null) {
             finalQueryParam = new ArrayList<>();
         }
-        String filterQuery = " and (";
+        String filterQuery = "(";
+        if (deletedQuery != null && !deletedQuery.isEmpty()) {
+            filterQuery = " and " + filterQuery;
+        }
         int i=0;
         for (String str : filterValues) {
             if (i==0) {
@@ -39,7 +42,7 @@ public class TableDb {
         filterQuery = filterQuery.concat(")");
         return filterQuery;
     }
-    private String getLikeQuery(ArrayList<String> finalQueryParam, String colName, ArrayList<String> filterValues) {
+    private String getLikeQuery(String deletedQuery, ArrayList<String> finalQueryParam, String colName, ArrayList<String> filterValues) {
         if (filterValues == null || filterValues.isEmpty()) {
             return null;
         }
@@ -47,7 +50,10 @@ public class TableDb {
             finalQueryParam = new ArrayList<>();
         }
         //For reading .pdf or .csv file
-        String filterQuery = " and (";
+        String filterQuery = "(";
+        if (deletedQuery != null && !deletedQuery.isEmpty()) {
+            filterQuery = " and " + filterQuery;
+        }
         int i=0;
         for (String str : filterValues) {
             if (i==0) {
@@ -96,6 +102,17 @@ public class TableDb {
         }
         return result;
     }
+    private String getDeletedQuery(TableConfiguration tableConfiguration) {
+        String deletedQuery = "deleted=0";
+        Boolean includeDeleted = tableConfiguration.getIncludeDeleted();
+        if (includeDeleted == null) {
+            includeDeleted = false;
+        }
+        if (includeDeleted) {
+            deletedQuery = "";
+        }
+        return deletedQuery;
+    }
     public ArrayList<HashMap<String, String>> getByMultipleParameter(TableConfiguration tableConfiguration,
                                                                      HashMap<String, ArrayList<String>> requestFilterParameter,
                                                                      boolean logQuery) {
@@ -108,6 +125,7 @@ public class TableDb {
             logger.info("getByMultipleParameter: invalid tableName: null");
             return null;
         }
+        String deletedQuery = this.getDeletedQuery(tableConfiguration);
         ArrayList<String> finalQueryParam = new ArrayList<>();
         StringBuilder filterQuery = new StringBuilder();
         ArrayList<String> likeParameters = tableConfiguration.getLikeParameter();
@@ -127,9 +145,9 @@ public class TableDb {
                     continue;
                 }
                 if (likeParameters.contains(columnName)) {
-                    filterQuery.append(this.getLikeQuery(finalQueryParam, columnName, filterParameter));
+                    filterQuery.append(this.getLikeQuery(deletedQuery, finalQueryParam, columnName, filterParameter));
                 } else {
-                    filterQuery.append(this.getEqualQuery(finalQueryParam, columnName, filterParameter));
+                    filterQuery.append(this.getEqualQuery(deletedQuery, finalQueryParam, columnName, filterParameter));
                 }
             }
         }
@@ -145,7 +163,11 @@ public class TableDb {
         int limit;
         String limitParam = tableConfiguration.getLimit();
         String orderByParam = tableConfiguration.getOrderBy();
-        String query = "select " + selectColumnNames + " from " + tableName + " where deleted=0" + filterQuery;
+        String whereClause = "";
+        if (!deletedQuery.isEmpty() || !filterQuery.toString().isEmpty()) {
+            whereClause = " where " + deletedQuery + filterQuery;
+        }
+        String query = "select " + selectColumnNames + " from " + tableName + whereClause;
         if (limitParam != null && !limitParam.isEmpty()) {
             try {
                 limit = Integer.parseInt(limitParam);
@@ -182,6 +204,7 @@ public class TableDb {
         if (updateColumnName == null) {
             return;
         }
+        String deletedQuery = this.getDeletedQuery(tableConfiguration);
         StringBuilder filterQuery = new StringBuilder();
         StringBuilder setDataParameter = new StringBuilder();
         String columnName;
@@ -207,12 +230,12 @@ public class TableDb {
                 if (columnName == null || columnName.isEmpty() || filterParameter == null) {
                     continue;
                 }
-                filterQuery.append(this.getEqualQuery(finalQueryParam, columnName, filterParameter));
+                filterQuery.append(this.getEqualQuery(deletedQuery, finalQueryParam, columnName, filterParameter));
             }
         }
         String query = "UPDATE " + tableConfiguration.getTableName() + " SET " +
                 setDataParameter +
-                " WHERE deleted=0 "+filterQuery + ";";
+                " WHERE " + deletedQuery + filterQuery + ";";
         try {
             mysqlConnection.updateQueryV2(query, finalQueryParam);
         } catch (Exception e) {
@@ -248,7 +271,7 @@ public class TableDb {
         try {
             mysqlConnection.updateQueryV2(query, finalQueryParam);
         } catch (Exception e) {
-            logger.info("addTableEntry: error in query: {}, {}", query, e.getMessage());
+            logger.info("addTableEntry: error in query: {}, {}, {}", query, finalQueryParam, e.getMessage());
         }
     }
     public void addEntry(TableConfiguration tableConfiguration, HashMap<String, String> data, Integer entryCount0) {

@@ -12,6 +12,8 @@ public class TableConfiguration {
     private String orderBy;
     private String limit;
     private String excelConfigId;
+    private Boolean includeDeleted;
+    private Boolean updateIfFound;
     private ArrayList<String> uniquePattern;
     private ArrayList<String> likeParameter;
     private ArrayList<String> filterParameter;
@@ -57,6 +59,22 @@ public class TableConfiguration {
 
     public void setExcelConfigId(String excelConfigId) {
         this.excelConfigId = excelConfigId;
+    }
+
+    public Boolean getIncludeDeleted() {
+        return includeDeleted;
+    }
+
+    public void setIncludeDeleted(Boolean includeDeleted) {
+        this.includeDeleted = includeDeleted;
+    }
+
+    public Boolean getUpdateIfFound() {
+        return updateIfFound;
+    }
+
+    public void setUpdateIfFound(Boolean updateIfFound) {
+        this.updateIfFound = updateIfFound;
     }
 
     public ArrayList<String> getUniquePattern() {
