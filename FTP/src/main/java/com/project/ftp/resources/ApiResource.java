@@ -1325,7 +1325,8 @@ public class ApiResource {
                                          @QueryParam("filter2") String filter2,
                                          @QueryParam("filter3") String filter3,
                                          @QueryParam("filter4") String filter4,
-                                         @QueryParam("filter5") String filter5) throws AppException {
+                                         @QueryParam("filter5") String filter5,
+                                         @QueryParam("default-mapping-id") String defaultMappingId) throws AppException {
         this.singleThreadingService.checkSingleThreadStatus(request, "api");
         LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
         ArrayList<String> filterRequest = new ArrayList<>();
@@ -1335,13 +1336,13 @@ public class ApiResource {
         filterRequest.add(filter3);
         filterRequest.add(filter4);
         filterRequest.add(filter5);
-        logger.info("getTableData: In, user: {}, table_config_id: {}, filterRequest: {}",
-                loginUserDetails, tableConfigId, filterRequest);
+        logger.info("getTableData: In, user: {}, table_config_id: {}, filterRequest: {}, defaultMappingId: {}",
+                loginUserDetails, tableConfigId, filterRequest, defaultMappingId);
         ApiResponse response;
         ArrayList<HashMap<String, String>> result;
         try {
             authService.isLogin(request);
-            result = tableService.getTableData(request, tableConfigId, filterRequest);
+            result = tableService.getTableData(request, tableConfigId, filterRequest, defaultMappingId);
             response = new ApiResponse(result);
         } catch (AppException ae) {
             logger.info("Error in getTableData: {}", ae.getErrorCode().getErrorCode());

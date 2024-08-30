@@ -296,7 +296,7 @@ public class ExcelToCsvDataConvertService {
                                      ArrayList<CellMapping> cellMappings,
                                      ArrayList<ArrayList<Integer>> appendCellDataIndex) {
         if (appendCellDataIndex == null) {
-            if (cellMappings != null && rowDataFinal != null && rowDataFinal.size() > 0) {
+            if (cellMappings != null && rowDataFinal != null && !rowDataFinal.isEmpty()) {
                 return rowDataFinal;
             } else {
                 return rowData;
@@ -380,8 +380,10 @@ public class ExcelToCsvDataConvertService {
             cellData = rowData.get(colIndex);
         } else if (colIndex != null && colIndex == -2) {
             cellData = sheetName;
-        }else if (colIndex != null && colIndex == -3) {
+        } else if (colIndex != null && colIndex == -3) {
             cellData = this.getFileName(srcFilepath, defaultCellData);
+        } else if (colIndex != null && colIndex == -4) {
+            cellData = srcFilepath;
         }
         if (cellData == null) {
             cellData = "";
@@ -593,7 +595,7 @@ public class ExcelToCsvDataConvertService {
                 if (index >= 0) {
                     sourceIndex.add(index);
                 } else if (index == -1) {
-                    if (sourceIndex.size() > 0) {
+                    if (!sourceIndex.isEmpty()) {
                         tempIndex = sourceIndex.get(sourceIndex.size()-1);
                         for (int j=tempIndex+1; j < maxColCount; j++) {
                             sourceIndex.add(j);

@@ -15,6 +15,7 @@ import com.project.ftp.bridge.roles.service.RolesService;
 import com.project.ftp.bridge.service.MSExcelBridgeService;
 import com.project.ftp.bridge.service.SocialLoginService;
 import com.project.ftp.bridge.tcp.TcpClient;
+import com.project.ftp.config.AppConfig;
 import com.project.ftp.config.AppConstant;
 import com.project.ftp.event.EventTracking;
 import com.project.ftp.exceptions.AppException;
@@ -30,6 +31,7 @@ import java.util.HashMap;
 
 public class AppToBridge implements AppToBridgeInterface {
     private final static Logger logger = LoggerFactory.getLogger(AppToBridge.class);
+    private final AppConfig appConfig;
     private final BridgeResource bridgeResource;
     private final RolesResource rolesResource;
     private final SocialLoginService socialLoginService;
@@ -37,7 +39,8 @@ public class AppToBridge implements AppToBridgeInterface {
     private final CommunicationConfig communicationConfig;
     private final FtpConfiguration ftpConfiguration;
     private final EventTracking eventTracking;
-    public AppToBridge(FtpConfiguration ftpConfiguration, EventTracking eventTracking) {
+    public AppToBridge(AppConfig appConfig, FtpConfiguration ftpConfiguration, EventTracking eventTracking) {
+        this.appConfig = appConfig;
         this.ftpConfiguration = ftpConfiguration;
         this.eventTracking = eventTracking;
         this.emailConfig = ftpConfiguration.getEmailConfig();
@@ -135,7 +138,7 @@ public class AppToBridge implements AppToBridgeInterface {
         ArrayList<FileConfigMapping> fileConfigMappingsExcel = fileMappingConfig.getExcelConfig();
         ArrayList<FileConfigMapping> fileConfigMappingsCsv = fileMappingConfig.getCsvConfig();
 
-        MSExcelBridgeService msExcelBridgeService = new MSExcelBridgeService(request, eventTracking, null);
+        MSExcelBridgeService msExcelBridgeService = new MSExcelBridgeService(request, eventTracking, null, null);
         //ExcelDataConfig excelDataConfigById =  excelConfig.get(requestId)
         ExcelDataConfig excelDataConfigById = msExcelBridgeService.getExcelDataConfigByIdV1(requestId,
                 excelConfigHashMap);
@@ -170,13 +173,13 @@ public class AppToBridge implements AppToBridgeInterface {
         return excelDataConfigById;
     }
     @Override
-    public ArrayList<BridgeResponseSheetData> getExcelData(HttpServletRequest request,ExcelDataConfig excelDataConfigById) throws AppException {
+    public ArrayList<BridgeResponseSheetData> getExcelData(HttpServletRequest request, ExcelDataConfig excelDataConfigById) throws AppException {
         if (excelDataConfigById == null) {
             logger.info("excelDataConfig error: excelDataConfig is null.");
             throw new AppException(ErrorCodes.CONFIG_ERROR);
         }
         MSExcelBridgeService msExcelBridgeService = new MSExcelBridgeService(request, eventTracking,
-                ftpConfiguration.getGoogleOAuthClientConfig());
+                ftpConfiguration.getGoogleOAuthClientConfig(), appConfig.getTableService());
         ArrayList<BridgeResponseSheetData> result = msExcelBridgeService.readExcelSheetData(excelDataConfigById);
         if (result != null) {
             logger.info("excelSheetDataRead completed for excelDataConfigById.id: {}", excelDataConfigById.getId());

@@ -3,6 +3,7 @@ package com.project.ftp.obj.yamlObj;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 
@@ -14,6 +15,7 @@ public class TableConfiguration {
     private String excelConfigId;
     private Boolean includeDeleted;
     private Boolean updateIfFound;
+    private HashMap<String, ArrayList<String>> defaultFilterMapping;
     private ArrayList<String> uniquePattern;
     private ArrayList<String> likeParameter;
     private ArrayList<String> filterParameter;
@@ -75,6 +77,14 @@ public class TableConfiguration {
 
     public void setUpdateIfFound(Boolean updateIfFound) {
         this.updateIfFound = updateIfFound;
+    }
+
+    public HashMap<String, ArrayList<String>> getDefaultFilterMapping() {
+        return defaultFilterMapping;
+    }
+
+    public void setDefaultFilterMapping(HashMap<String, ArrayList<String>> defaultFilterMapping) {
+        this.defaultFilterMapping = defaultFilterMapping;
     }
 
     public ArrayList<String> getUniquePattern() {

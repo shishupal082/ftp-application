@@ -1,10 +1,12 @@
 package com.project.ftp.bridge.service;
 
 import com.project.ftp.bridge.config.GoogleOAuthClientConfig;
+import com.project.ftp.bridge.mysqlTable.TableService;
 import com.project.ftp.bridge.obj.BridgeResponseSheetData;
 import com.project.ftp.bridge.obj.yamlObj.ExcelDataConfig;
 import com.project.ftp.bridge.obj.yamlObj.ExcelFileConfig;
 import com.project.ftp.bridge.obj.yamlObj.FileConfigMapping;
+import com.project.ftp.bridge.obj.yamlObj.MysqlCsvDataConfig;
 import com.project.ftp.common.StrUtils;
 import com.project.ftp.config.AppConstant;
 import com.project.ftp.event.EventTracking;
@@ -27,11 +29,14 @@ public class MSExcelBridgeService {
     private final GoogleOAuthClientConfig googleOAuthClientConfig;
     private final HttpServletRequest request;
     private final EventTracking eventTracking;
+    private final TableService tableService;
     public MSExcelBridgeService(HttpServletRequest request, EventTracking eventTracking,
-                                GoogleOAuthClientConfig googleOAuthClientConfig){
+                                GoogleOAuthClientConfig googleOAuthClientConfig,
+                                TableService tableService){
         this.googleOAuthClientConfig = googleOAuthClientConfig;
         this.eventTracking = eventTracking;
         this.excelToCsvDataConvertService = new ExcelToCsvDataConvertService();
+        this.tableService = tableService;
         this.request = request;
     }
     private ArrayList<ArrayList<String>> readCsvData(String srcFilepath) {
@@ -107,6 +112,37 @@ public class MSExcelBridgeService {
         sheetData = excelToCsvDataConvertService.applySkipRowCriteria(sheetData, excelDataConfigById);
         excelToCsvDataConvertService.copyCellDataIndex(sheetData, excelDataConfigById);
         sheetData = excelToCsvDataConvertService.applyCellMapping(sheetData, excelDataConfigById, spreadSheetId, sheetName);
+        excelToCsvDataConvertService.applyReplaceCellString(sheetData, excelDataConfigById);
+        sheetData = excelToCsvDataConvertService.applyColumnMapping(sheetData, excelDataConfigById);
+        sheetData = excelToCsvDataConvertService.applyRemoveColumnConfig(sheetData, excelDataConfigById);
+        sheetData = excelToCsvDataConvertService.applyUniqueEntry(sheetData, excelDataConfigById, uniqueStrings);
+        return sheetData;
+    }
+    private ArrayList<ArrayList<String>> readMysqlData(String mysqlTableConfigId, String sheetName,
+                                                             ExcelDataConfig excelDataConfigById,
+                                                             ArrayList<String> uniqueStrings) throws AppException{
+        if (tableService == null) {
+            logger.info("readMysqlData: tableService is not defined: {}, {}", mysqlTableConfigId, excelDataConfigById);
+            throw new AppException(ErrorCodes.CONFIG_ERROR);
+        }
+        if (excelDataConfigById == null) {
+            logger.info("readMysqlData: excelDataConfigById is null for mysqlTableConfigId: {}", mysqlTableConfigId);
+            throw new AppException(ErrorCodes.CONFIG_ERROR);
+        }
+        MysqlCsvDataConfig mysqlCsvDataConfig = excelDataConfigById.getMysqlCsvDataConfig();
+        ArrayList<String> filterValues = null;
+        String defaultFilterMappingId = null;
+        if (mysqlCsvDataConfig != null) {
+            filterValues = mysqlCsvDataConfig.getFilterValues();
+            defaultFilterMappingId = mysqlCsvDataConfig.getDefaultFilterMappingId();
+        }
+        ArrayList<ArrayList<String>> sheetData = tableService.getTableDataArray(request, mysqlTableConfigId, filterValues, defaultFilterMappingId);
+        sheetData = excelToCsvDataConvertService.formatCellData(sheetData);
+        sheetData = excelToCsvDataConvertService.applySkipRowEntry(sheetData, excelDataConfigById);
+        sheetData = excelToCsvDataConvertService.skipEmptyRows(sheetData, excelDataConfigById);
+        sheetData = excelToCsvDataConvertService.applySkipRowCriteria(sheetData, excelDataConfigById);
+        excelToCsvDataConvertService.copyCellDataIndex(sheetData, excelDataConfigById);
+        sheetData = excelToCsvDataConvertService.applyCellMapping(sheetData, excelDataConfigById, mysqlTableConfigId, sheetName);
         excelToCsvDataConvertService.applyReplaceCellString(sheetData, excelDataConfigById);
         sheetData = excelToCsvDataConvertService.applyColumnMapping(sheetData, excelDataConfigById);
         sheetData = excelToCsvDataConvertService.applyRemoveColumnConfig(sheetData, excelDataConfigById);
@@ -254,8 +290,11 @@ public class MSExcelBridgeService {
         excelDataConfigById.setCsvConfig(null);
         excelDataConfigById.setExcelConfig(null);
         excelDataConfigById.setGsConfig(null);
+        excelDataConfigById.setMysqlConfig(null);
         if (AppConstant.CSV.equals(fileConfigMapping.getFileDataSource())) {
             excelDataConfigById.setCsvConfig(excelFileConfigs);
+        } else if (AppConstant.MYSQL.equals(fileConfigMapping.getFileDataSource())) {
+            excelDataConfigById.setMysqlConfig(excelFileConfigs);
         } else if (AppConstant.MS_EXCEL.equals(fileConfigMapping.getFileDataSource())) {
             excelDataConfigById.setExcelConfig(excelFileConfigs);
         } else {
@@ -382,12 +421,14 @@ public class MSExcelBridgeService {
         ArrayList<ExcelFileConfig> excelFileConfig = excelDataConfigById.getExcelConfig();
         ArrayList<ExcelFileConfig> csvFileConfig = excelDataConfigById.getCsvConfig();
         ArrayList<ExcelFileConfig> gsFileConfig = excelDataConfigById.getGsConfig();
-        ArrayList<String> uniqueStrings = new ArrayList<>();
+        ArrayList<ExcelFileConfig> mysqlConfig = excelDataConfigById.getMysqlConfig();
+        ArrayList<String> uniqueStrings;
         String srcFilepath, sheetName, destination, copyDestination;
         boolean copyOldData;
         ArrayList<ArrayList<String>> sheetData;
         ArrayList<BridgeResponseSheetData> bridgeResponseSheetsData = new ArrayList<>();
         if (excelFileConfig != null && !excelFileConfig.isEmpty()) {
+            uniqueStrings = new ArrayList<>();
             for (ExcelFileConfig fileConfig : excelFileConfig) {
                 copyOldData = excelDataConfigById.isCopyOldData();
                 srcFilepath = fileConfig.getSource();
@@ -400,6 +441,7 @@ public class MSExcelBridgeService {
             }
         }
         if (csvFileConfig != null && !csvFileConfig.isEmpty()) {
+            uniqueStrings = new ArrayList<>();
             for (ExcelFileConfig fileConfig : csvFileConfig) {
                 copyOldData = excelDataConfigById.isCopyOldData();
                 srcFilepath = fileConfig.getSource();
@@ -412,6 +454,7 @@ public class MSExcelBridgeService {
             }
         }
         if (gsFileConfig != null && !gsFileConfig.isEmpty()) {
+            uniqueStrings = new ArrayList<>();
             for (ExcelFileConfig fileConfig : gsFileConfig) {
                 copyOldData = excelDataConfigById.isCopyOldData();
                 srcFilepath = fileConfig.getSource();
@@ -423,10 +466,25 @@ public class MSExcelBridgeService {
                         destination, copyDestination, sheetData));
             }
         }
+        if (mysqlConfig != null && !mysqlConfig.isEmpty()) {
+            uniqueStrings = new ArrayList<>();
+            for (ExcelFileConfig fileConfig : mysqlConfig) {
+                copyOldData = excelDataConfigById.isCopyOldData();
+                srcFilepath = fileConfig.getSource(); // mysqlTableConfigId
+                sheetName = fileConfig.getSheetName(); // may be used as external parameter if required in output
+                destination = fileConfig.getDestination();
+                copyDestination = fileConfig.getCopyDestination();
+                sheetData = this.readMysqlData(srcFilepath, sheetName, excelDataConfigById, uniqueStrings);
+                bridgeResponseSheetsData.add(new BridgeResponseSheetData(copyOldData,
+                        destination, copyDestination, sheetData));
+            }
+        }
         if ((excelFileConfig == null || excelFileConfig.isEmpty()) &&
                 (csvFileConfig == null || csvFileConfig.isEmpty()) &&
-                (gsFileConfig == null || gsFileConfig.isEmpty())) {
-            logger.info("Invalid excelFileConfig, csvFileConfig and gsFileConfig: {}", excelDataConfigById);
+                (gsFileConfig == null || gsFileConfig.isEmpty()) &&
+                (mysqlConfig == null || mysqlConfig.isEmpty())
+        ) {
+            logger.info("Invalid excelFileConfig, csvFileConfig, gsFileConfig and mysqlConfig: {}", excelDataConfigById);
             throw new AppException(ErrorCodes.CONFIG_ERROR);
         }
         return bridgeResponseSheetsData;

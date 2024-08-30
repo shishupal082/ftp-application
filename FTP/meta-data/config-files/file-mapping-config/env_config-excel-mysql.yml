@@ -1,0 +1,37 @@
+excelDataConfig:
+  mysql-csv-smms-assets-list:
+    appendCellDataIndex:
+      - [0,-1]
+    mysqlCsvDataConfig:
+      filterValues: ["", "Test Ranchi"]
+    cellMapping:
+      - defaultCellData: "first-column"
+        col_index: -1
+      - defaultCellData: "mysqlConfigId i.e. srcFilePath"
+        col_index: -4
+      - defaultCellData: "sheetName"
+        col_index: -2
+  mysql-csv-smms-assets-list-2:
+    appendCellDataIndex:
+      - [0,-1]
+    mysqlCsvDataConfig:
+      defaultFilterMappingId: "rnc_division"
+    cellMapping:
+      - defaultCellData: "first-column"
+        col_index: -1
+      - defaultCellData: "mysqlConfigId i.e. srcFilePath"
+        col_index: -4
+      - defaultCellData: "sheetName"
+        col_index: -2
+  mysql-csv-smms-assets-list-3:
+    appendCellDataIndex:
+      - [0,-1]
+    mysqlCsvDataConfig:
+      defaultFilterMappingId: "asset_unique"
+    cellMapping:
+      - defaultCellData: "first-column"
+        col_index: -1
+      - defaultCellData: "mysqlConfigId i.e. srcFilePath"
+        col_index: -4
+      - defaultCellData: "sheetName"
+        col_index: -2

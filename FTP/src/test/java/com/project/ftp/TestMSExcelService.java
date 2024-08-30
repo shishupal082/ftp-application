@@ -1,5 +1,6 @@
 package com.project.ftp;
 
+import com.project.ftp.bridge.obj.BridgeResponseSheetData;
 import com.project.ftp.bridge.obj.yamlObj.ExcelDataConfig;
 import com.project.ftp.config.AppConfig;
 import com.project.ftp.config.AppConstant;
@@ -47,6 +48,10 @@ public class TestMSExcelService {
     }
     public ApiResource getApiResource() {
         AppConfig appConfig = this.getAppConfig(false);
+        return new ApiResource(appConfig);
+    }
+    public ApiResource getApiResourceMysql() {
+        AppConfig appConfig = this.getAppConfig(true);
         return new ApiResource(appConfig);
     }
     private MSExcelService getMSExcelService() {
@@ -223,5 +228,35 @@ public class TestMSExcelService {
         Assert.assertEquals("csv-test-09", excelDataConfigs.get(1).getId());
         Assert.assertEquals(1, excelDataConfigs.get(0).getCsvConfig().size());
         Assert.assertEquals("csv", excelDataConfigs.get(0).getCsvConfig().get(0).getFileConfigMapping().getFileDataSource());
+    }
+    @Test
+    public void testMSExcelServiceV14Config() {
+        HttpServletRequest request = this.getHttpServletRequest();
+        String requestId;
+        MSExcelService msExcelService = this.getMSExcelService();
+
+        requestId = "mysql-csv-smms-assets-list";
+        ArrayList<ExcelDataConfig> excelDataConfigs =  msExcelService.getActualMSExcelSheetDataConfig(request, requestId, false);
+        Assert.assertEquals(requestId, excelDataConfigs.get(0).getId());
+        Assert.assertEquals("get-mysql-smms-assets-list", excelDataConfigs.get(0).getMysqlConfig().get(0).getSource());
+        Assert.assertEquals("empty-mysql-sheet-name", excelDataConfigs.get(0).getMysqlConfig().get(0).getSheetName());
+        Assert.assertEquals(2, excelDataConfigs.get(0).getMysqlCsvDataConfig().getFilterValues().size());
+    }
+    @Test
+    public void testMSExcelServiceV14() {
+        HttpServletRequest request = this.getHttpServletRequest();
+        String requestId;
+        ApiResponse apiResponse;
+        ApiResource apiResource = this.getApiResourceMysql();
+        requestId = "mysql-csv-smms-assets-list";
+
+        apiResponse =  apiResource.getMSExcelData(request, requestId);
+        ArrayList<BridgeResponseSheetData> data = (ArrayList<BridgeResponseSheetData>) apiResponse.getData();
+        Assert.assertEquals("SUCCESS", apiResponse.getStatus());
+        Assert.assertEquals(2, data.get(0).getSheetData().size());
+        Assert.assertEquals(24, data.get(0).getSheetData().get(0).size());
+
+        apiResponse =  apiResource.updateMSExcelData(request, requestId);
+        Assert.assertEquals("SUCCESS", apiResponse.getStatus());
     }
 }

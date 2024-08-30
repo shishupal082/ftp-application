@@ -119,7 +119,7 @@ public class TestScanDir {
         Assert.assertEquals(pathInfoScanResults.size(), 18);
         recursive = "true";
         pathInfoScanResults = scanDirService.readScanDirectory(null, scanDirId, null, null, recursive, null);
-        Assert.assertEquals(pathInfoScanResults.size(), 40);
+        Assert.assertEquals(pathInfoScanResults.size(), 41);
         scanDirId = "workspace-ftp-empty-folder";
         recursive = "true";
         pathInfoScanResults = scanDirService.readScanDirectory(null, scanDirId, null, null, recursive, null);
@@ -317,10 +317,10 @@ public class TestScanDir {
 
         path = "D:/workspace/ftp-application/FTP/meta-data/config-files/file-mapping-config/";
         result = scanDirService.getScanDirectory(null, scanDirId, path, null, AppConstant.TRUE, null);
-        Assert.assertEquals(5, result.size());
+        Assert.assertEquals(6, result.size());
 
         result = scanDirService.getScanDirectory(null, scanDirId, path, "yml", AppConstant.TRUE, null);
-        Assert.assertEquals(3, result.size());
+        Assert.assertEquals(4, result.size());
         Assert.assertEquals(26, result.get(0).size());
 
         result = scanDirService.getScanDirectory(null, scanDirId, path, "txt", AppConstant.TRUE, null);
@@ -328,7 +328,7 @@ public class TestScanDir {
         Assert.assertEquals(26, result.get(0).size());
 
         result = scanDirService.getScanDirectory(null, scanDirId, path, "yml", AppConstant.TRUE, "api-scan-dir");
-        Assert.assertEquals(3, result.size());
+        Assert.assertEquals(4, result.size());
         Assert.assertEquals(11, result.get(0).size());
 
         result = scanDirService.getScanDirectory(null, scanDirId, path, "txt", AppConstant.TRUE, "api-scan-dir");

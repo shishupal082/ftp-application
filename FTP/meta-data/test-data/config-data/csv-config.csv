@@ -17,4 +17,6 @@ csv-gs-csv-test-12,15jgDLG1b3wKtPxJE-ItzBeFUOZFIPFU5EqS6U2C4PmY,gs-csv-data,D:/w
 csv-gs-csv-test-12,15jgDLG1b3wKtPxJE-ItzBeFUOZFIPFU5EqS6U2C4PmY,gs-csv-data,D:/workspace/ftp-application/FTP/meta-data/test-data/test-data/05-test-12-gs-csv-data-3.csv
 
 csv-smms-assets-ser,D:/workspace/ftp-application/FTP/meta-data/smms-data/mis-assets-list-report.csv
-
+mysql-csv-smms-assets-list,get-mysql-smms-assets-list,empty-mysql-sheet-name,D:/workspace/ftp-application/FTP/meta-data/smms-data/mysql-mis-smms-assets-list-report.csv
+mysql-csv-smms-assets-list-2,get-mysql-smms-assets-list
+mysql-csv-smms-assets-list-3,get-mysql-smms-assets-list

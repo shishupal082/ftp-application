@@ -60,7 +60,7 @@ defaultCellData = Current date time in the given dateRegex format
 cellData = defaultCellData
 
 mappingData1:
-  - col_index: Integer (Row index, -3 to ...)
+  - col_index: Integer (Row index, -4 to ...)
     value: String
     range: [String1, String2]
     regex: String
@@ -77,6 +77,11 @@ if col_index (in cellMapping or mappingData) == -2
 if col_index (in cellMapping or mappingData) == -3
     - then it will treated as: filenameMapping
     - cellData = filenameWithoutExt and cellData2 = filenameWithoutExt
+
+if col_index (in cellMapping or mappingData) == -4
+    - then it will treated as: srcFilePath (csv and excel) or googleSheetId or mysqlConfigId
+    - -4 and -3 are related
+
 
 case-I
 

@@ -18,6 +18,8 @@ public class ExcelDataConfig {
     private ArrayList<ExcelFileConfig> excelConfig;
     private ArrayList<ExcelFileConfig> csvConfig;
     private ArrayList<ExcelFileConfig> gsConfig;
+    private ArrayList<ExcelFileConfig> mysqlConfig;
+    private MysqlCsvDataConfig mysqlCsvDataConfig;
     private ArrayList<CellMapping> cellMapping;
     private ArrayList<ReplaceCellDataMapping> replaceCellString;
     private ArrayList<SkipRowCriteria> skipRowCriteria;
@@ -119,6 +121,22 @@ public class ExcelDataConfig {
         this.gsConfig = gsConfig;
     }
 
+    public ArrayList<ExcelFileConfig> getMysqlConfig() {
+        return mysqlConfig;
+    }
+
+    public void setMysqlConfig(ArrayList<ExcelFileConfig> mysqlConfig) {
+        this.mysqlConfig = mysqlConfig;
+    }
+
+    public MysqlCsvDataConfig getMysqlCsvDataConfig() {
+        return mysqlCsvDataConfig;
+    }
+
+    public void setMysqlCsvDataConfig(MysqlCsvDataConfig mysqlCsvDataConfig) {
+        this.mysqlCsvDataConfig = mysqlCsvDataConfig;
+    }
+
     public ArrayList<CellMapping> getCellMapping() {
         return cellMapping;
     }
@@ -205,6 +223,8 @@ public class ExcelDataConfig {
                 ", excelConfig=" + excelConfig +
                 ", csvConfig=" + csvConfig +
                 ", gsConfig=" + gsConfig +
+                ", mysqlConfig=" + mysqlConfig +
+                ", mysqlCsvDataConfig=" + mysqlCsvDataConfig +
                 ", cellMapping=" + cellMapping +
                 ", replaceCellString=" + replaceCellString +
                 ", skipRowCriteria=" + skipRowCriteria +

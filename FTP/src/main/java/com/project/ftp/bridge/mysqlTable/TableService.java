@@ -83,8 +83,8 @@ public class TableService {
         }
         return null;
     }
-    private HashMap<String, ArrayList<String>> getRequestFilterParameter(TableConfiguration tableConfiguration,
-                                                                         ArrayList<String> filterRequest) {
+    private HashMap<String, ArrayList<String>> getRequestFilterParameterV2 (TableConfiguration tableConfiguration,
+                                                                            ArrayList<String> filterRequest) {
         if (tableConfiguration == null) {
             return null;
         }
@@ -116,16 +116,85 @@ public class TableService {
         }
         return result;
     }
+    private HashMap<String, ArrayList<String>> getRequestFilterParameter(TableConfiguration tableConfiguration,
+                                                                         ArrayList<String> filterRequest,
+                                                                         String defaultFilterMappingId) {
+        if (tableConfiguration == null) {
+            return null;
+        }
+        ArrayList<String> filterParameter = tableConfiguration.getFilterParameter();
+        HashMap<String, ArrayList<String>> defaultFilterMapping = tableConfiguration.getDefaultFilterMapping();
+        ArrayList<String> defaultFilter = null;
+        if (defaultFilterMapping != null) {
+            defaultFilter = defaultFilterMapping.get(defaultFilterMappingId);
+        }
+        HashMap<String, ArrayList<String>> requestData = this.getRequestFilterParameterV2(tableConfiguration, filterRequest);
+        HashMap<String, ArrayList<String>> defaultData = this.getRequestFilterParameterV2(tableConfiguration, defaultFilter);
+        HashMap<String, ArrayList<String>> result = new HashMap<>();
+        ArrayList<String> temp;
+        if (filterParameter != null && (requestData != null || defaultData != null)) {
+            if (requestData == null) {
+                requestData = new HashMap<>();
+            }
+            if (defaultData == null) {
+                defaultData = new HashMap<>();
+            }
+            for (String filterKey: filterParameter) {
+                if (filterKey == null || filterKey.isEmpty()) {
+                    continue;
+                }
+                temp = requestData.get(filterKey);
+                if (temp != null && !temp.isEmpty()) {
+                    result.put(filterKey, temp);
+                    continue;
+                }
+                temp = defaultData.get(filterKey);
+                if (temp != null && !temp.isEmpty()) {
+                    result.put(filterKey, temp);
+                }
+            }
+        }
+        return result;
+    }
     public ArrayList<HashMap<String, String>> getTableData(HttpServletRequest request,
                                                            String tableConfigId,
-                                                           ArrayList<String> filterRequest) throws AppException {
+                                                           ArrayList<String> filterRequest,
+                                                           String defaultFilterMappingId) throws AppException {
         TableConfiguration tableConfiguration = this.getTableConfiguration(tableConfigId);
         if (tableConfiguration == null) {
             logger.info("getTableData: tableConfiguration is null for tableConfigId: {}", tableConfigId);
             throw new AppException(ErrorCodes.BAD_REQUEST_ERROR);
         }
-        HashMap<String, ArrayList<String>> requestFilterParameter = this.getRequestFilterParameter(tableConfiguration, filterRequest);
+        HashMap<String, ArrayList<String>> requestFilterParameter = this.getRequestFilterParameter(tableConfiguration, filterRequest, defaultFilterMappingId);
         return tableDb.getByMultipleParameter(tableConfiguration, requestFilterParameter, true);
+    }
+    public ArrayList<ArrayList<String>> getTableDataArray(HttpServletRequest request,
+                                                           String tableConfigId,
+                                                           ArrayList<String> filterRequest,
+                                                          String defaultFilterMappingId) throws AppException {
+        TableConfiguration tableConfiguration = this.getTableConfiguration(tableConfigId);
+        if (tableConfiguration == null) {
+            logger.info("getTableDataArray: tableConfiguration is null for tableConfigId: {}", tableConfigId);
+            throw new AppException(ErrorCodes.BAD_REQUEST_ERROR);
+        }
+        HashMap<String, ArrayList<String>> requestFilterParameter = this.getRequestFilterParameter(tableConfiguration, filterRequest, defaultFilterMappingId);
+        ArrayList<HashMap<String, String>> tableData = tableDb.getByMultipleParameter(tableConfiguration, requestFilterParameter, true);
+        ArrayList<String> columnNames = tableConfiguration.getColumnName();
+        ArrayList<ArrayList<String>> result = new ArrayList<>();
+        ArrayList<String> arrayRowData;
+        if (tableData != null) {
+            for (HashMap<String, String> rowData: tableData) {
+                if (rowData == null && rowData.isEmpty()) {
+                    continue;
+                }
+                arrayRowData = new ArrayList<>();
+                for(String name: columnNames) {
+                    arrayRowData.add(rowData.get(name));
+                }
+                result.add(arrayRowData);
+            }
+        }
+        return result;
     }
     public void updateTableDataFromCsv(HttpServletRequest request,
                                        String tableConfigId) throws AppException {

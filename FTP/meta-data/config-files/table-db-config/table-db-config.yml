@@ -29,6 +29,38 @@ tableDbConfig:
       - "event"
       - "status"
       - "deleted"
+  - tableConfigId: "get-mysql-smms-assets-list"
+    tableName: "smms_assets"
+    defaultFilterMapping:
+      "rnc_division": ["", "Test Ranchi"]
+      "asset_unique": ["", "", "Test-DCTMURI00002"]
+    filterParameter:
+      - "zone"
+      - "division"
+      - "asset_code"
+    columnName:
+      - "file_date"
+      - "sub_section"
+      - "section_officer"
+      - "s_no"
+      - "asset_type"
+      - "asset_code"
+      - "gear_name"
+      - "rfid"
+      - "make"
+      - "model"
+      - "serial_no"
+      - "latitude"
+      - "longitude"
+      - "installation_date"
+      - "waranty_expiry_date"
+      - "location"
+      - "location_type"
+      - "section"
+      - "division"
+      - "zone"
+      - "status"
+
   - tableConfigId: "csv-mysql-update-smms_assets_list"
     tableName: "smms_assets"
     excelConfigId: "csv-smms-assets-ser"

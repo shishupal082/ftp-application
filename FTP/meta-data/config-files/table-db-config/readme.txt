@@ -53,3 +53,11 @@ If includeDeleted = false
 then deleted=0 query will be added in where clause for update search as well as select query
 
 (10) updateIfFound: Boolean (Default true)
+(11)
+defaultFilterMapping:
+    "rnc_division": ["", "Test Ranchi"]
+    "asset_unique": ["", "", "Test-DCTMURI00002"]
+If filter0 to filter5 and defaultFilterMappingId both is present then
+First filter0 to filter5 calculated
+If any of them is null then corresponding filter will be updated from defaultFilterMapping
+

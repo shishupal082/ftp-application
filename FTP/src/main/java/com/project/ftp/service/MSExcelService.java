@@ -129,7 +129,7 @@ public class MSExcelService {
         ArrayList<ExcelDataConfig> response = null;
         ExcelDataConfig result;
         MSExcelBridgeService msExcelBridgeService = new MSExcelBridgeService(request, eventTracking,
-                ftpConfiguration.getGoogleOAuthClientConfig());
+                ftpConfiguration.getGoogleOAuthClientConfig(), null);
         if (combineRequestIds != null && combineRequestIds.containsKey(requestId)) {
             combinedIds = combineRequestIds.get(requestId);
             if (combinedIds != null) {
@@ -162,7 +162,7 @@ public class MSExcelService {
     public ArrayList<ArrayList<String>> applyCsvConfigOnData(HttpServletRequest request, ArrayList<ArrayList<String>> sheetData, String requestId) throws AppException {
         ArrayList<ExcelDataConfig> excelDataConfigs = this.getActualMSExcelSheetDataConfig(request, requestId, false);
         MSExcelBridgeService msExcelBridgeService = new MSExcelBridgeService(request, eventTracking,
-                ftpConfiguration.getGoogleOAuthClientConfig());
+                ftpConfiguration.getGoogleOAuthClientConfig(), null);
         ArrayList<ArrayList<String>> response = null;
         ArrayList<ArrayList<String>> result;
         BridgeResponseSheetData bridgeResponseSheetData;
@@ -188,7 +188,7 @@ public class MSExcelService {
                                                                        String requestId) throws AppException {
         ArrayList<ExcelDataConfig> excelDataConfigs = this.getActualMSExcelSheetDataConfig(request, requestId, false);
         MSExcelBridgeService msExcelBridgeService = new MSExcelBridgeService(request, eventTracking,
-                ftpConfiguration.getGoogleOAuthClientConfig());
+                ftpConfiguration.getGoogleOAuthClientConfig(), null);
         ArrayList<HashMap<String, String>> response = null;
         ArrayList<ArrayList<String>> result;
         if (excelDataConfigs != null) {

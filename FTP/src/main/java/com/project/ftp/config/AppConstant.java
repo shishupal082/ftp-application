@@ -101,6 +101,7 @@ public class AppConstant {
     public static final String GOOGLE = "google";
     public static final String MS_EXCEL = "msExcel";
     public static final String CSV = "csv";
+    public static final String MYSQL = "mysql";
 
     public static final int CMD_LINE_ARG_MIN_SIZE = 3;
 
