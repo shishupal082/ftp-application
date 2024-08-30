@@ -38,6 +38,7 @@ tableDbConfig:
       - "zone"
       - "division"
       - "asset_code"
+    allowEmptyFilter: false
     columnName:
       - "file_date"
       - "sub_section"

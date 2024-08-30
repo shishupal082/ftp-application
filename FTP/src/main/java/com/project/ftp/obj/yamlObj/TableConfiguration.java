@@ -15,6 +15,7 @@ public class TableConfiguration {
     private String excelConfigId;
     private Boolean includeDeleted;
     private Boolean updateIfFound;
+    private Boolean allowEmptyFilter;
     private HashMap<String, ArrayList<String>> defaultFilterMapping;
     private ArrayList<String> uniquePattern;
     private ArrayList<String> likeParameter;
@@ -79,6 +80,19 @@ public class TableConfiguration {
         this.updateIfFound = updateIfFound;
     }
 
+    public Boolean getAllowEmptyFilter() {
+        return allowEmptyFilter;
+    }
+
+    public void setAllowEmptyFilter(Boolean allowEmptyFilter) {
+        this.allowEmptyFilter = allowEmptyFilter;
+    }
+    public boolean isAllowEmptyFilter() {
+        if (allowEmptyFilter != null) {
+            return allowEmptyFilter;
+        }
+        return true;
+    }
     public HashMap<String, ArrayList<String>> getDefaultFilterMapping() {
         return defaultFilterMapping;
     }

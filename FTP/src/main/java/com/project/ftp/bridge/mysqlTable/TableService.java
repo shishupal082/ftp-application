@@ -154,6 +154,13 @@ public class TableService {
                 }
             }
         }
+        if (result.isEmpty()) {
+            if (!tableConfiguration.isAllowEmptyFilter()) {
+                logger.info("getRequestFilterParameter: emptyFilter not allowed: {}, {}, {}",
+                        tableConfiguration, filterRequest, defaultFilterMappingId);
+                throw new AppException(ErrorCodes.CONFIG_ERROR);
+            }
+        }
         return result;
     }
     public ArrayList<HashMap<String, String>> getTableData(HttpServletRequest request,

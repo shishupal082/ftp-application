@@ -60,4 +60,5 @@ defaultFilterMapping:
 If filter0 to filter5 and defaultFilterMappingId both is present then
 First filter0 to filter5 calculated
 If any of them is null then corresponding filter will be updated from defaultFilterMapping
+(12) allowEmptyFilter: Boolean (Default true)
 
