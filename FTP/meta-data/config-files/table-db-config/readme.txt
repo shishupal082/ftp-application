@@ -70,6 +70,8 @@ If any of them is null then corresponding filter will be updated from defaultFil
 (13) allowEmptyFilter: Boolean (Default true)
 used for get db data
 
+(14) maintainHistory: boolean (Default false)
+
 update
 -------------------------------------
 updateIfFound: Boolean (default true)
@@ -105,3 +107,17 @@ Summary: 0/0/5092/5092: Addition, Update, Skip, Total
 
 Duration: 09:22 seconds
 Per entry check: 110 ms
+
+(4)
+Update start time: 2024-08-31 18:48:52.196
+Summary time: 2024-08-31 18:58:35.608
+Summary: 42/0/5198/5240: Addition, Update, Skip, Total
+
+Duration: 09:43 seconds
+
+(5)
+Update start time: 2024-08-31 19:21:26.821
+Summary time: 2024-08-31 19:31:11.003
+Summary: 0/0/5240/5240: Addition, Update, Skip, Total
+
+Duration: 09:45 seconds

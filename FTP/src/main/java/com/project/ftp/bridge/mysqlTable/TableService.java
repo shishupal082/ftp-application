@@ -225,11 +225,11 @@ public class TableService {
             return;
         }
         ArrayList<String> compareBeforeUpdateColumn = tableConfiguration.getCompareBeforeUpdateColumn();
-        ArrayList<HashMap<String, String>> changeHistory = new ArrayList<>();
+        ArrayList<ArrayList<String>> changeHistory = new ArrayList<>();
         if (compareBeforeUpdateColumn == null) {
             return;
         }
-        HashMap<String, String> changeData;
+        ArrayList<String> changeData;
         String oldData, newData;
         for (String columnName: compareBeforeUpdateColumn) {
             if (columnName == null || columnName.isEmpty()) {
@@ -240,10 +240,10 @@ public class TableService {
             if (Objects.equals(oldData, newData)) {
                 continue;
             }
-            changeData = new HashMap<>();
-            changeData.put("key", columnName);
-            changeData.put("oldData", oldData);
-            changeData.put("newData", newData);
+            changeData = new ArrayList<>();
+            changeData.add(columnName);
+            changeData.add(oldData);
+            changeData.add(newData);
             changeHistory.add(changeData);
         }
         logger.info("Change History: {}", changeHistory);
