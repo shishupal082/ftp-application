@@ -22,6 +22,7 @@ public class TableConfiguration {
     private ArrayList<String> filterParameter;
     private ArrayList<String> columnName;
     private ArrayList<String> updateColumnName;
+    private ArrayList<String> compareBeforeUpdateColumn;
     private ArrayList<String> selectColumnName;
 
     public String getTableConfigId() {
@@ -87,12 +88,6 @@ public class TableConfiguration {
     public void setAllowEmptyFilter(Boolean allowEmptyFilter) {
         this.allowEmptyFilter = allowEmptyFilter;
     }
-    public boolean isAllowEmptyFilter() {
-        if (allowEmptyFilter != null) {
-            return allowEmptyFilter;
-        }
-        return true;
-    }
     public HashMap<String, ArrayList<String>> getDefaultFilterMapping() {
         return defaultFilterMapping;
     }
@@ -139,6 +134,14 @@ public class TableConfiguration {
 
     public void setUpdateColumnName(ArrayList<String> updateColumnName) {
         this.updateColumnName = updateColumnName;
+    }
+
+    public ArrayList<String> getCompareBeforeUpdateColumn() {
+        return compareBeforeUpdateColumn;
+    }
+
+    public void setCompareBeforeUpdateColumn(ArrayList<String> compareBeforeUpdateColumn) {
+        this.compareBeforeUpdateColumn = compareBeforeUpdateColumn;
     }
 
     public ArrayList<String> getSelectColumnName() {

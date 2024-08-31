@@ -107,8 +107,5 @@ public class TestMysqlTable {
         AppConfig appConfig = testMSExcelService.getAppConfig(true);
         TableService tableService = appConfig.getTableService();
         tableService.updateTableDataFromCsv(null, "csv-mysql-update-smms_assets_list");
-        try {
-        } catch (AppException appException) {
-        }
     }
 }

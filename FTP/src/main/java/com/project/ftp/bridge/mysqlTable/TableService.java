@@ -15,6 +15,7 @@ import org.slf4j.LoggerFactory;
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Objects;
 
 public class TableService {
     final static Logger logger = LoggerFactory.getLogger(TableService.class);
@@ -25,6 +26,20 @@ public class TableService {
         this.ftpConfiguration = ftpConfiguration;
         this.msExcelService = msExcelService;
         this.tableDb = tableDb;
+    }
+    private boolean isAllowEmptyFilter(TableConfiguration tableConfiguration) {
+        Boolean allowEmptyFilter = tableConfiguration.getAllowEmptyFilter();
+        if (allowEmptyFilter != null) {
+            return allowEmptyFilter;
+        }
+        return true;
+    }
+    private boolean isUpdateIfFoundEnabled(TableConfiguration tableConfiguration) {
+        Boolean updateIfFound = tableConfiguration.getUpdateIfFound();
+        if (updateIfFound != null) {
+            return updateIfFound;
+        }
+        return true;
     }
     private TableConfiguration getTableConfiguration(String tableConfigId) throws AppException {
         if (ftpConfiguration == null) {
@@ -155,7 +170,7 @@ public class TableService {
             }
         }
         if (result.isEmpty()) {
-            if (!tableConfiguration.isAllowEmptyFilter()) {
+            if (!this.isAllowEmptyFilter(tableConfiguration)) {
                 logger.info("getRequestFilterParameter: emptyFilter not allowed: {}, {}, {}",
                         tableConfiguration, filterRequest, defaultFilterMappingId);
                 throw new AppException(ErrorCodes.CONFIG_ERROR);
@@ -191,7 +206,7 @@ public class TableService {
         ArrayList<String> arrayRowData;
         if (tableData != null) {
             for (HashMap<String, String> rowData: tableData) {
-                if (rowData == null && rowData.isEmpty()) {
+                if (rowData == null || rowData.isEmpty()) {
                     continue;
                 }
                 arrayRowData = new ArrayList<>();
@@ -202,6 +217,41 @@ public class TableService {
             }
         }
         return result;
+    }
+    private TableUpdateEnum getNextAction(TableConfiguration tableConfiguration, HashMap<String, String> currentRowData,
+                                 boolean updateIfFound) {
+        if (currentRowData == null) {
+            return null;
+        }
+        ArrayList<HashMap<String, String>> searchedData = tableDb.searchData(tableConfiguration, currentRowData);
+        if (searchedData == null || searchedData.isEmpty()) {
+            return TableUpdateEnum.ADD;
+        }
+        if (searchedData.size() > 1) {
+            return TableUpdateEnum.SKIP;
+        }
+        if (!updateIfFound) {
+            return TableUpdateEnum.SKIP_WITHOUT_LOG;
+        }
+        // if found unique row entry with current row data filter
+        ArrayList<String> compareBeforeUpdateColumn = tableConfiguration.getCompareBeforeUpdateColumn();
+        if (compareBeforeUpdateColumn == null) {
+            return TableUpdateEnum.UPDATE;
+        }
+        HashMap<String, String> dbRowData = searchedData.get(0);
+        if (dbRowData == null) {
+            return TableUpdateEnum.UPDATE;
+        }
+        for (String columnName: compareBeforeUpdateColumn) {
+            if (columnName == null || columnName.isEmpty()) {
+                continue;
+            }
+            if (Objects.equals(dbRowData.get(columnName), currentRowData.get(columnName))) {
+                continue;
+            }
+            return TableUpdateEnum.UPDATE;
+        }
+        return TableUpdateEnum.SKIP_IGNORE;
     }
     public void updateTableDataFromCsv(HttpServletRequest request,
                                        String tableConfigId) throws AppException {
@@ -220,33 +270,46 @@ public class TableService {
         int updateEntryCount = 0;
         int addEntryCount = 0;
         int skipEntryCount = 0;
-        Boolean updateIfFound = tableConfiguration.getUpdateIfFound();
-        if (updateIfFound == null) {
-            updateIfFound = true;
-        }
+        TableUpdateEnum nextAction;
+        boolean updateIfFound = this.isUpdateIfFoundEnabled(tableConfiguration);
         if (csvDataJson != null) {
             size = csvDataJson.size();
             for(HashMap<String, String> rowData: csvDataJson) {
-                entryCount = tableDb.getEntryCount(tableConfiguration, rowData);
-                if (entryCount == 1) {
-                    if (updateIfFound) {
+                nextAction = this.getNextAction(tableConfiguration, rowData, updateIfFound);
+                switch (nextAction) {
+                    case UPDATE:
+                        entryCount = 1;
                         tableDb.updateEntry(tableConfiguration, rowData, entryCount);
                         updateEntryCount++;
                         logger.info("{}/{}: update completed. summary: {},{},{}: Addition, Update, Skip",
                                 index, size, addEntryCount, updateEntryCount, skipEntryCount);
-                    } else {
+                        break;
+                    case ADD:
+                        entryCount = 0;
+                        tableDb.addEntry(tableConfiguration, rowData, entryCount);
+                        addEntryCount++;
+                        logger.info("{}/{}: addition completed. summary: {},{},{}: Addition, Update, Skip",
+                                index, size, addEntryCount, updateEntryCount, skipEntryCount);
+                        break;
+                    case SKIP:
                         skipEntryCount++;
-                    }
-                } else if (entryCount == 0) {
-                    tableDb.addEntry(tableConfiguration, rowData, entryCount);
-                    addEntryCount++;
-                    logger.info("{}/{}: addition completed. summary: {},{},{}: Addition, Update, Skip",
-                            index, size, addEntryCount, updateEntryCount, skipEntryCount);
-                } else {
-                    skipEntryCount++;
-                    logger.info("{}/{}: updateTableDataFromCsv: Multi entry exist, add " +
-                            "or update not possible. data: {}, summary: {},{},{}: Addition, Update, Skip",
-                            index, size, rowData, addEntryCount, updateEntryCount, skipEntryCount);
+                        logger.info("{}/{}: updateTableDataFromCsv: Multi entry exist, add " +
+                                        "or update not possible. data: {}, summary: {},{},{}: Addition, Update, Skip",
+                                index, size, rowData, addEntryCount, updateEntryCount, skipEntryCount);
+                        break;
+                    case SKIP_WITHOUT_LOG:
+                        skipEntryCount++;
+                        break;
+                    case SKIP_IGNORE:
+                        skipEntryCount++;
+                        logger.info("{}/{}: updateTableDataFromCsv: existing data same as current data, " +
+                                        "update not required. summary: {},{},{}: Addition, Update, Skip",
+                                index, size, addEntryCount, updateEntryCount, skipEntryCount);
+                        break;
+                    default:
+                        skipEntryCount++;
+                        logger.info("{}/{}, {}: invalid next action. data: {}", index, size, nextAction, rowData);
+                        break;
                 }
                 index++;
             }

@@ -296,14 +296,14 @@ public class TableDb {
         }
         this.addTableEntry(tableConfiguration, data);
     }
-    public int getEntryCount(TableConfiguration tableConfiguration, HashMap<String, String> data) {
+    public ArrayList<HashMap<String, String>> searchData(TableConfiguration tableConfiguration, HashMap<String, String> data) {
         if (tableConfiguration == null || data == null) {
-            return 0;
+            return null;
         }
         ArrayList<String> uniquePattern = tableConfiguration.getUniquePattern();
         if (uniquePattern == null || uniquePattern.isEmpty()) {
-            logger.info("isEntryExist: Configuration error. uniquePattern is null or empty: {}, data: {}", uniquePattern, data);
-            return 0;
+            logger.info("searchData: Configuration error. uniquePattern is null or empty: {}, data: {}", uniquePattern, data);
+            return null;
         }
         HashMap<String, ArrayList<String>> requestFilterParameter = new HashMap<>();
         ArrayList<String> filterParam;
@@ -314,7 +314,10 @@ public class TableDb {
             filterParam.add(columnValue);
             requestFilterParameter.put(columnName, filterParam);
         }
-        ArrayList<HashMap<String, String>> existingData = this.getByMultipleParameter(tableConfiguration, requestFilterParameter, false);
+        return this.getByMultipleParameter(tableConfiguration, requestFilterParameter, false);
+    }
+    public int getEntryCount(TableConfiguration tableConfiguration, HashMap<String, String> data) {
+        ArrayList<HashMap<String, String>> existingData = this.searchData(tableConfiguration, data);
         if (existingData == null || existingData.isEmpty()) {
             return 0;
         }
