@@ -243,7 +243,7 @@ public class TableDb {
             e.printStackTrace();
         }
     }
-    private void addTableEntry(TableConfiguration tableConfiguration, HashMap<String, String> data) {
+    public void addTableEntry(TableConfiguration tableConfiguration, HashMap<String, String> data) {
         if (tableConfiguration == null || data == null || StaticService.isInValidString(tableConfiguration.getTableName())) {
             return;
         }

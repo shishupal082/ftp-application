@@ -26,6 +26,7 @@ public class TableConfiguration {
     private ArrayList<String> compareBeforeUpdateColumn;
     private ArrayList<String> selectColumnName;
 
+    public TableConfiguration() {}
     public String getTableConfigId() {
         return tableConfigId;
     }

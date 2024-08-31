@@ -218,6 +218,25 @@ public class TableService {
         }
         return result;
     }
+    private void saveHistory(String tableName, String uniqueColumn, String uniqueParameter,
+                             String columnName, String oldValue, String newValue) {
+        if (tableName == null || tableName.isEmpty()) {
+            return;
+        }
+        HashMap<String, String> rowData = new HashMap<>();
+        HistoryBookTable historyBookTable = new HistoryBookTable();
+        ArrayList<String> updateColumn = historyBookTable.getUpdateColumnName();
+        TableConfiguration tableConfiguration = new TableConfiguration();
+        tableConfiguration.setTableName(historyBookTable.getTableName());
+        tableConfiguration.setUpdateColumnName(updateColumn);
+        rowData.put(updateColumn.get(0), tableName);
+        rowData.put(updateColumn.get(1), uniqueColumn);
+        rowData.put(updateColumn.get(2), uniqueParameter);
+        rowData.put(updateColumn.get(3), columnName);
+        rowData.put(updateColumn.get(4), oldValue);
+        rowData.put(updateColumn.get(5), newValue);
+        tableDb.addTableEntry(tableConfiguration, rowData);
+    }
     private void maintainHistory(TableConfiguration tableConfiguration,
                                  HashMap<String, String> dbRowData,
                                  HashMap<String, String> currentRowData) {
@@ -246,6 +265,44 @@ public class TableService {
             changeData.add(newData);
             changeHistory.add(changeData);
         }
+        ArrayList<String> uniquePattern = tableConfiguration.getUniquePattern();
+        String uniqueColumn = "";
+        String uniqueParameter = "";
+        String columnName = "";
+        String oldValue = "";
+        String newValue = "";
+        int i=0;
+        if (uniquePattern != null) {
+            uniqueColumn = String.join(",", uniquePattern);
+            for(String name: uniquePattern) {
+                if (name == null || name.isEmpty()) {
+                    continue;
+                }
+                if (i==0) {
+                    uniqueParameter = dbRowData.get(name);
+                } else {
+                    uniqueParameter = "," + dbRowData.get(name);
+                }
+                i++;
+            }
+            i = 0;
+            for(ArrayList<String> changeData2: changeHistory) {
+                if (changeData2 == null || changeData2.size() != 3) {
+                    continue;
+                }
+                if (i==0) {
+                    columnName = changeData2.get(0);
+                    oldValue = changeData2.get(1);
+                    newValue = changeData2.get(2);
+                } else {
+                    columnName = "," + changeData2.get(0);
+                    oldValue = "," + changeData2.get(1);
+                    newValue = "," + changeData2.get(2);
+                }
+                i++;
+            }
+        }
+        this.saveHistory(tableConfiguration.getTableName(), uniqueColumn, uniqueParameter, columnName, oldValue, newValue);
         logger.info("Change History: {}", changeHistory);
     }
     private TableUpdateEnum getNextAction(TableConfiguration tableConfiguration, HashMap<String, String> currentRowData,
