@@ -16,6 +16,7 @@ public class TableConfiguration {
     private Boolean includeDeleted;
     private Boolean updateIfFound;
     private Boolean allowEmptyFilter;
+    private boolean maintainHistory;
     private HashMap<String, ArrayList<String>> defaultFilterMapping;
     private ArrayList<String> uniquePattern;
     private ArrayList<String> likeParameter;
@@ -88,6 +89,15 @@ public class TableConfiguration {
     public void setAllowEmptyFilter(Boolean allowEmptyFilter) {
         this.allowEmptyFilter = allowEmptyFilter;
     }
+
+    public boolean isMaintainHistory() {
+        return maintainHistory;
+    }
+
+    public void setMaintainHistory(boolean maintainHistory) {
+        this.maintainHistory = maintainHistory;
+    }
+
     public HashMap<String, ArrayList<String>> getDefaultFilterMapping() {
         return defaultFilterMapping;
     }

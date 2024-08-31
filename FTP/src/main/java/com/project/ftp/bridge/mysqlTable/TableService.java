@@ -218,8 +218,38 @@ public class TableService {
         }
         return result;
     }
+    private void maintainHistory(TableConfiguration tableConfiguration,
+                                 HashMap<String, String> dbRowData,
+                                 HashMap<String, String> currentRowData) {
+        if (tableConfiguration == null || dbRowData == null || currentRowData == null) {
+            return;
+        }
+        ArrayList<String> compareBeforeUpdateColumn = tableConfiguration.getCompareBeforeUpdateColumn();
+        ArrayList<HashMap<String, String>> changeHistory = new ArrayList<>();
+        if (compareBeforeUpdateColumn == null) {
+            return;
+        }
+        HashMap<String, String> changeData;
+        String oldData, newData;
+        for (String columnName: compareBeforeUpdateColumn) {
+            if (columnName == null || columnName.isEmpty()) {
+                continue;
+            }
+            oldData = dbRowData.get(columnName);
+            newData = currentRowData.get(columnName);
+            if (Objects.equals(oldData, newData)) {
+                continue;
+            }
+            changeData = new HashMap<>();
+            changeData.put("key", columnName);
+            changeData.put("oldData", oldData);
+            changeData.put("newData", newData);
+            changeHistory.add(changeData);
+        }
+        logger.info("Change History: {}", changeHistory);
+    }
     private TableUpdateEnum getNextAction(TableConfiguration tableConfiguration, HashMap<String, String> currentRowData,
-                                 boolean updateIfFound) {
+                                 boolean updateIfFound, boolean maintainHistory) {
         if (currentRowData == null) {
             return null;
         }
@@ -249,6 +279,9 @@ public class TableService {
             if (Objects.equals(dbRowData.get(columnName), currentRowData.get(columnName))) {
                 continue;
             }
+            if (maintainHistory) {
+                this.maintainHistory(tableConfiguration, dbRowData, currentRowData);
+            }
             return TableUpdateEnum.UPDATE;
         }
         return TableUpdateEnum.SKIP_IGNORE;
@@ -272,10 +305,11 @@ public class TableService {
         int skipEntryCount = 0;
         TableUpdateEnum nextAction;
         boolean updateIfFound = this.isUpdateIfFoundEnabled(tableConfiguration);
+        boolean maintainHistory = tableConfiguration.isMaintainHistory();
         if (csvDataJson != null) {
             size = csvDataJson.size();
             for(HashMap<String, String> rowData: csvDataJson) {
-                nextAction = this.getNextAction(tableConfiguration, rowData, updateIfFound);
+                nextAction = this.getNextAction(tableConfiguration, rowData, updateIfFound, maintainHistory);
                 switch (nextAction) {
                     case UPDATE:
                         entryCount = 1;
