@@ -259,6 +259,12 @@ public class TableService {
             if (Objects.equals(oldData, newData)) {
                 continue;
             }
+            if (oldData == null) {
+                oldData = "";
+            }
+            if (newData == null) {
+                newData = "";
+            }
             changeData = new ArrayList<>();
             changeData.add(columnName);
             changeData.add(oldData);
@@ -271,6 +277,7 @@ public class TableService {
         StringBuilder columnName = new StringBuilder();
         StringBuilder oldValue = new StringBuilder();
         StringBuilder newValue = new StringBuilder();
+        String uniquePatternData;
         int i=0;
         if (uniquePattern != null) {
             uniqueColumn = String.join(",", uniquePattern);
@@ -278,10 +285,14 @@ public class TableService {
                 if (name == null || name.isEmpty()) {
                     continue;
                 }
+                uniquePatternData = dbRowData.get(name);
+                if (uniquePatternData == null) {
+                    uniquePatternData = "";
+                }
                 if (i==0) {
-                    uniqueParameter = new StringBuilder(dbRowData.get(name));
+                    uniqueParameter = new StringBuilder(uniquePatternData);
                 } else {
-                    uniqueParameter.append(",").append(dbRowData.get(name));
+                    uniqueParameter.append(",").append(uniquePatternData);
                 }
                 i++;
             }
@@ -391,40 +402,46 @@ public class TableService {
             size = csvDataJson.size();
             for(HashMap<String, String> rowData: csvDataJson) {
                 nextAction = this.getNextAction(tableConfiguration, rowData, updateIfFound, maintainHistory);
-                switch (nextAction) {
-                    case UPDATE:
-                        entryCount = 1;
-                        tableDb.updateEntry(tableConfiguration, rowData, entryCount);
-                        updateEntryCount++;
-                        logger.info("{}/{}: update completed. summary: {},{},{}: Addition, Update, Skip",
-                                index, size, addEntryCount, updateEntryCount, skipEntryCount);
-                        break;
-                    case ADD:
-                        entryCount = 0;
-                        tableDb.addEntry(tableConfiguration, rowData, entryCount);
-                        addEntryCount++;
-                        logger.info("{}/{}: addition completed. summary: {},{},{}: Addition, Update, Skip",
-                                index, size, addEntryCount, updateEntryCount, skipEntryCount);
-                        break;
-                    case SKIP:
-                        skipEntryCount++;
-                        logger.info("{}/{}: updateTableDataFromCsv: Multi entry exist, add " +
-                                        "or update not possible. data: {}, summary: {},{},{}: Addition, Update, Skip",
-                                index, size, rowData, addEntryCount, updateEntryCount, skipEntryCount);
-                        break;
-                    case SKIP_WITHOUT_LOG:
-                        skipEntryCount++;
-                        break;
-                    case SKIP_IGNORE:
-                        skipEntryCount++;
-                        logger.info("{}/{}: updateTableDataFromCsv: existing data same as current data, " +
-                                        "update not required. summary: {},{},{}: Addition, Update, Skip",
-                                index, size, addEntryCount, updateEntryCount, skipEntryCount);
-                        break;
-                    case NULL:
-                        skipEntryCount++;
-                        logger.info("{}/{}, {}: invalid next action. data: {}", index, size, nextAction, rowData);
-                        break;
+                if (nextAction != null) {
+                    switch (nextAction) {
+                        case UPDATE:
+                            entryCount = 1;
+                            tableDb.updateEntry(tableConfiguration, rowData, entryCount);
+                            updateEntryCount++;
+                            logger.info("{}/{}: update completed. summary: {},{},{}: Addition, Update, Skip",
+                                    index, size, addEntryCount, updateEntryCount, skipEntryCount);
+                            break;
+                        case ADD:
+                            entryCount = 0;
+                            tableDb.addEntry(tableConfiguration, rowData, entryCount);
+                            addEntryCount++;
+                            logger.info("{}/{}: addition completed. summary: {},{},{}: Addition, Update, Skip",
+                                    index, size, addEntryCount, updateEntryCount, skipEntryCount);
+                            break;
+                        case SKIP:
+                            skipEntryCount++;
+                            logger.info("{}/{}: updateTableDataFromCsv: Multi entry exist, add " +
+                                            "or update not possible. data: {}, summary: {},{},{}: Addition, Update, Skip",
+                                    index, size, rowData, addEntryCount, updateEntryCount, skipEntryCount);
+                            break;
+                        case SKIP_WITHOUT_LOG:
+                            skipEntryCount++;
+                            break;
+                        case SKIP_IGNORE:
+                            skipEntryCount++;
+                            logger.info("{}/{}: updateTableDataFromCsv: existing data same as current data, " +
+                                            "update not required. summary: {},{},{}: Addition, Update, Skip",
+                                    index, size, addEntryCount, updateEntryCount, skipEntryCount);
+                            break;
+                        case NULL:
+                            skipEntryCount++;
+                            logger.info("{}/{}, {}: invalid next action. data: {}", index, size, nextAction, rowData);
+                            break;
+                    }
+                } else {
+                    skipEntryCount++;
+                    logger.info("{}/{}, {}: unhandled next action. data: {}", index, size, nextAction, rowData);
+                    break;
                 }
                 index++;
             }
