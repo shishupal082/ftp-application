@@ -28,6 +28,8 @@ It will convert:
     - excelSheetData to csv data
     - googleSheetData to csv data
     - csvData to csv data
+    - mysqlData to csv data
+
     as per configuration added in meta-data/app_env_config_4.yml
 
 Sequence of operation

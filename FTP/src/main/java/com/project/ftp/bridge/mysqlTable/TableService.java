@@ -267,10 +267,10 @@ public class TableService {
         }
         ArrayList<String> uniquePattern = tableConfiguration.getUniquePattern();
         String uniqueColumn = "";
-        String uniqueParameter = "";
-        String columnName = "";
-        String oldValue = "";
-        String newValue = "";
+        StringBuilder uniqueParameter = new StringBuilder();
+        StringBuilder columnName = new StringBuilder();
+        StringBuilder oldValue = new StringBuilder();
+        StringBuilder newValue = new StringBuilder();
         int i=0;
         if (uniquePattern != null) {
             uniqueColumn = String.join(",", uniquePattern);
@@ -279,9 +279,9 @@ public class TableService {
                     continue;
                 }
                 if (i==0) {
-                    uniqueParameter = dbRowData.get(name);
+                    uniqueParameter = new StringBuilder(dbRowData.get(name));
                 } else {
-                    uniqueParameter = "," + dbRowData.get(name);
+                    uniqueParameter.append(",").append(dbRowData.get(name));
                 }
                 i++;
             }
@@ -291,18 +291,19 @@ public class TableService {
                     continue;
                 }
                 if (i==0) {
-                    columnName = changeData2.get(0);
-                    oldValue = changeData2.get(1);
-                    newValue = changeData2.get(2);
+                    columnName = new StringBuilder(changeData2.get(0));
+                    oldValue = new StringBuilder(changeData2.get(1));
+                    newValue = new StringBuilder(changeData2.get(2));
+                    i++;
                 } else {
-                    columnName = "," + changeData2.get(0);
-                    oldValue = "," + changeData2.get(1);
-                    newValue = "," + changeData2.get(2);
+                    columnName.append(",").append(changeData2.get(0));
+                    oldValue.append(",").append(changeData2.get(1));
+                    newValue.append(",").append(changeData2.get(2));
                 }
-                i++;
             }
         }
-        this.saveHistory(tableConfiguration.getTableName(), uniqueColumn, uniqueParameter, columnName, oldValue, newValue);
+        this.saveHistory(tableConfiguration.getTableName(), uniqueColumn, uniqueParameter.toString(),
+                columnName.toString(), oldValue.toString(), newValue.toString());
         logger.info("Change History: {}", changeHistory);
     }
     private TableUpdateEnum getNextAction(TableConfiguration tableConfiguration, HashMap<String, String> currentRowData,
