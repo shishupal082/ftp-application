@@ -306,10 +306,33 @@ public class TableService {
                 columnName.toString(), oldValue.toString(), newValue.toString());
         logger.info("Change History: {}", changeHistory);
     }
+    private boolean isValidCurrentRowData(TableConfiguration tableConfiguration, HashMap<String, String> currentRowData) {
+        if (tableConfiguration == null || currentRowData == null) {
+            return false;
+        }
+        ArrayList<String> uniquePattern = tableConfiguration.getUniquePattern();
+        if (uniquePattern == null || uniquePattern.isEmpty()) {
+            return false;
+        }
+        String value;
+        for(String columnName: uniquePattern) {
+            if (columnName == null || columnName.isEmpty()) {
+                return false;
+            }
+            value = currentRowData.get(columnName);
+            if (value == null || value.isEmpty()) {
+                return false;
+            }
+        }
+        return true;
+    }
     private TableUpdateEnum getNextAction(TableConfiguration tableConfiguration, HashMap<String, String> currentRowData,
                                  boolean updateIfFound, boolean maintainHistory) {
         if (currentRowData == null) {
-            return null;
+            return TableUpdateEnum.NULL;
+        }
+        if (!this.isValidCurrentRowData(tableConfiguration, currentRowData)) {
+            return TableUpdateEnum.NULL;
         }
         ArrayList<HashMap<String, String>> searchedData = tableDb.searchData(tableConfiguration, currentRowData);
         if (searchedData == null || searchedData.isEmpty()) {
@@ -398,7 +421,7 @@ public class TableService {
                                         "update not required. summary: {},{},{}: Addition, Update, Skip",
                                 index, size, addEntryCount, updateEntryCount, skipEntryCount);
                         break;
-                    default:
+                    case NULL:
                         skipEntryCount++;
                         logger.info("{}/{}, {}: invalid next action. data: {}", index, size, nextAction, rowData);
                         break;

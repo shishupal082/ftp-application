@@ -5,7 +5,8 @@ public enum TableUpdateEnum {
     ADD("add"),
     SKIP("skip"),
     SKIP_WITHOUT_LOG("skipWithoutLog"),
-    SKIP_IGNORE("skipIgnore");
+    SKIP_IGNORE("skipIgnore"),
+    NULL(null);
     private String name;
     TableUpdateEnum (String name) {
         this.name = name;
