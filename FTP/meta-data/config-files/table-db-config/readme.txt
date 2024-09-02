@@ -70,7 +70,10 @@ If any of them is null then corresponding filter will be updated from defaultFil
 (13) allowEmptyFilter: Boolean (Default true)
 used for get db data
 
-(14) maintainHistory: boolean (Default false)
+(14) maintainHistory:
+    required: boolean (Default false)
+    excludeColumnName: ArrayList<String>
+excludeColumnName shall be subset of compareBeforeUpdateColumn
 
 update
 -------------------------------------

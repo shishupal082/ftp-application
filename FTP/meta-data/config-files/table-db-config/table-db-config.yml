@@ -65,7 +65,6 @@ tableDbConfig:
   - tableConfigId: "csv-mysql-update-smms_assets_list"
     tableName: "smms_assets"
     excelConfigId: "csv-smms-assets-ser"
-    maintainHistory: true
     columnName:
       - "file_date"
       - "sub_section"
@@ -88,6 +87,10 @@ tableDbConfig:
       - "division"
       - "zone"
       - "status"
+    maintainHistory:
+      required: true
+      excludeColumnName:
+        - "file_date"
     compareBeforeUpdateColumn:
       - "file_date"
       - "sub_section"

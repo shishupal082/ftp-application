@@ -3,6 +3,7 @@ package com.project.ftp.bridge.mysqlTable;
 import com.project.ftp.FtpConfiguration;
 import com.project.ftp.exceptions.AppException;
 import com.project.ftp.exceptions.ErrorCodes;
+import com.project.ftp.obj.yamlObj.MaintainHistory;
 import com.project.ftp.obj.yamlObj.TableConfiguration;
 import com.project.ftp.obj.yamlObj.TableFileConfiguration;
 import com.project.ftp.parser.YamlFileParser;
@@ -239,7 +240,8 @@ public class TableService {
     }
     private void maintainHistory(TableConfiguration tableConfiguration,
                                  HashMap<String, String> dbRowData,
-                                 HashMap<String, String> currentRowData) {
+                                 HashMap<String, String> currentRowData,
+                                 ArrayList<String> maintainHistoryExcludedColumn) {
         if (tableConfiguration == null || dbRowData == null || currentRowData == null) {
             return;
         }
@@ -247,6 +249,9 @@ public class TableService {
         ArrayList<ArrayList<String>> changeHistory = new ArrayList<>();
         if (compareBeforeUpdateColumn == null) {
             return;
+        }
+        if (maintainHistoryExcludedColumn == null) {
+            maintainHistoryExcludedColumn = new ArrayList<>();
         }
         ArrayList<String> changeData;
         String oldData, newData;
@@ -313,8 +318,12 @@ public class TableService {
                 }
             }
         }
+        String finalColumnName = columnName.toString();
+        if (maintainHistoryExcludedColumn.contains(finalColumnName)) {
+            return;
+        }
         this.saveHistory(tableConfiguration.getTableName(), uniqueColumn, uniqueParameter.toString(),
-                columnName.toString(), oldValue.toString(), newValue.toString());
+                finalColumnName, oldValue.toString(), newValue.toString());
         logger.info("Change History: {}", changeHistory);
     }
     private boolean isValidCurrentRowData(TableConfiguration tableConfiguration, HashMap<String, String> currentRowData) {
@@ -338,7 +347,7 @@ public class TableService {
         return true;
     }
     private TableUpdateEnum getNextAction(TableConfiguration tableConfiguration, HashMap<String, String> currentRowData,
-                                 boolean updateIfFound, boolean maintainHistory) {
+                                 boolean updateIfFound, boolean maintainHistory, ArrayList<String> maintainHistoryExcludedColumn) {
         if (currentRowData == null) {
             return TableUpdateEnum.NULL;
         }
@@ -372,7 +381,7 @@ public class TableService {
                 continue;
             }
             if (maintainHistory) {
-                this.maintainHistory(tableConfiguration, dbRowData, currentRowData);
+                this.maintainHistory(tableConfiguration, dbRowData, currentRowData, maintainHistoryExcludedColumn);
             }
             return TableUpdateEnum.UPDATE;
         }
@@ -397,11 +406,18 @@ public class TableService {
         int skipEntryCount = 0;
         TableUpdateEnum nextAction;
         boolean updateIfFound = this.isUpdateIfFoundEnabled(tableConfiguration);
-        boolean maintainHistory = tableConfiguration.isMaintainHistory();
+        MaintainHistory maintainHistory = tableConfiguration.isMaintainHistory();
+        boolean maintainHistoryRequired = false;
+        ArrayList<String> maintainHistoryExcludedColumn = null;
+        if (maintainHistory != null) {
+            maintainHistoryRequired = maintainHistory.isRequired();
+            maintainHistoryExcludedColumn = maintainHistory.getExcludeColumnName();
+        }
         if (csvDataJson != null) {
             size = csvDataJson.size();
             for(HashMap<String, String> rowData: csvDataJson) {
-                nextAction = this.getNextAction(tableConfiguration, rowData, updateIfFound, maintainHistory);
+                nextAction = this.getNextAction(tableConfiguration, rowData, updateIfFound,
+                        maintainHistoryRequired, maintainHistoryExcludedColumn);
                 if (nextAction != null) {
                     switch (nextAction) {
                         case UPDATE:
