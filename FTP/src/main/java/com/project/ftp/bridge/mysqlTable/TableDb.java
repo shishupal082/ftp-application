@@ -240,7 +240,6 @@ public class TableDb {
             mysqlConnection.updateQueryV2(query, finalQueryParam);
         } catch (Exception e) {
             logger.info("updateEntry: error in query: {}, {}", query, e.getMessage());
-            e.printStackTrace();
         }
     }
     public void addTableEntry(TableConfiguration tableConfiguration, HashMap<String, String> data) {

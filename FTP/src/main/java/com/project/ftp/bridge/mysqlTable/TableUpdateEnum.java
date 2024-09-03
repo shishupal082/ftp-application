@@ -5,6 +5,7 @@ public enum TableUpdateEnum {
     ADD("add"),
     SKIP("skip"),
     SKIP_WITHOUT_LOG("skipWithoutLog"),
+    INVALID_UNIQUE_PARAMETER("invalidUniqueParameter"),
     SKIP_IGNORE("skipIgnore"),
     NULL(null);
     private String name;

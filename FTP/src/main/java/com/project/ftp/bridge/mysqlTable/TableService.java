@@ -326,33 +326,24 @@ public class TableService {
                 finalColumnName, oldValue.toString(), newValue.toString());
         logger.info("Change History: {}", changeHistory);
     }
-    private boolean isValidCurrentRowData(TableConfiguration tableConfiguration, HashMap<String, String> currentRowData) {
-        if (tableConfiguration == null || currentRowData == null) {
-            return false;
-        }
-        ArrayList<String> uniquePattern = tableConfiguration.getUniquePattern();
-        if (uniquePattern == null || uniquePattern.isEmpty()) {
-            return false;
-        }
-        String value;
-        for(String columnName: uniquePattern) {
-            if (columnName == null || columnName.isEmpty()) {
-                return false;
-            }
-            value = currentRowData.get(columnName);
-            if (value == null || value.isEmpty()) {
-                return false;
-            }
-        }
-        return true;
-    }
     private TableUpdateEnum getNextAction(TableConfiguration tableConfiguration, HashMap<String, String> currentRowData,
                                  boolean updateIfFound, boolean maintainHistory, ArrayList<String> maintainHistoryExcludedColumn) {
         if (currentRowData == null) {
             return TableUpdateEnum.NULL;
         }
-        if (!this.isValidCurrentRowData(tableConfiguration, currentRowData)) {
-            return TableUpdateEnum.NULL;
+        ArrayList<String> uniquePattern = tableConfiguration.getUniquePattern();
+        if (uniquePattern == null || uniquePattern.isEmpty()) {
+            return TableUpdateEnum.SKIP_WITHOUT_LOG;
+        }
+        String value;
+        for(String columnName: uniquePattern) {
+            if (columnName == null || columnName.isEmpty()) {
+                return TableUpdateEnum.SKIP_WITHOUT_LOG;
+            }
+            value = currentRowData.get(columnName);
+            if (value == null || value.isEmpty()) {
+                return TableUpdateEnum.INVALID_UNIQUE_PARAMETER;
+            }
         }
         ArrayList<HashMap<String, String>> searchedData = tableDb.searchData(tableConfiguration, currentRowData);
         if (searchedData == null || searchedData.isEmpty()) {
@@ -424,20 +415,20 @@ public class TableService {
                             entryCount = 1;
                             tableDb.updateEntry(tableConfiguration, rowData, entryCount);
                             updateEntryCount++;
-                            logger.info("{}/{}: update completed. summary: {},{},{}: Addition, Update, Skip",
+                            logger.info("{}/{}: update completed. summary: {},{},{}: Addition, Update+, Skip",
                                     index, size, addEntryCount, updateEntryCount, skipEntryCount);
                             break;
                         case ADD:
                             entryCount = 0;
                             tableDb.addEntry(tableConfiguration, rowData, entryCount);
                             addEntryCount++;
-                            logger.info("{}/{}: addition completed. summary: {},{},{}: Addition, Update, Skip",
+                            logger.info("{}/{}: addition completed. summary: {},{},{}: Addition+, Update, Skip",
                                     index, size, addEntryCount, updateEntryCount, skipEntryCount);
                             break;
                         case SKIP:
                             skipEntryCount++;
                             logger.info("{}/{}: updateTableDataFromCsv: Multi entry exist, add " +
-                                            "or update not possible. data: {}, summary: {},{},{}: Addition, Update, Skip",
+                                            "or update not possible. data: {}, summary: {},{},{}: Addition, Update, Skip+",
                                     index, size, rowData, addEntryCount, updateEntryCount, skipEntryCount);
                             break;
                         case SKIP_WITHOUT_LOG:
@@ -446,8 +437,14 @@ public class TableService {
                         case SKIP_IGNORE:
                             skipEntryCount++;
                             logger.info("{}/{}: updateTableDataFromCsv: existing data same as current data, " +
-                                            "update not required. summary: {},{},{}: Addition, Update, Skip",
+                                            "update not required. summary: {},{},{}: Addition, Update, Skip+",
                                     index, size, addEntryCount, updateEntryCount, skipEntryCount);
+                            break;
+                        case INVALID_UNIQUE_PARAMETER:
+                            skipEntryCount++;
+                            logger.info("{}/{}: updateTableDataFromCsv: invalid unique parameter in " +
+                                            "data: {}. summary: {},{},{}: Addition, Update, Skip+",
+                                    index, size, rowData, addEntryCount, updateEntryCount, skipEntryCount);
                             break;
                         case NULL:
                             skipEntryCount++;
