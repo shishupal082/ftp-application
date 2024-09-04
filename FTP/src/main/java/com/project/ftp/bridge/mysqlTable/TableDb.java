@@ -1,5 +1,6 @@
 package com.project.ftp.bridge.mysqlTable;
 
+import com.project.ftp.jdbc.JdbcQueryStatus;
 import com.project.ftp.jdbc.MysqlConnection;
 import com.project.ftp.obj.yamlObj.TableConfiguration;
 import com.project.ftp.service.StaticService;
@@ -195,14 +196,14 @@ public class TableDb {
     public ArrayList<HashMap<String, String>> getAll(TableConfiguration tableConfiguration) {
         return this.getByMultipleParameter(tableConfiguration, null, true);
     }
-    public void updateTableEntry(TableConfiguration tableConfiguration, HashMap<String, String> data,
+    public JdbcQueryStatus updateTableEntry(TableConfiguration tableConfiguration, HashMap<String, String> data,
                                  HashMap<String, ArrayList<String>> requestFilterParameter) {
         if (tableConfiguration == null || data == null || StaticService.isInValidString(tableConfiguration.getTableName())) {
-            return;
+            return null;
         }
         ArrayList<String> updateColumnName = tableConfiguration.getUpdateColumnName();
         if (updateColumnName == null) {
-            return;
+            return null;
         }
         String deletedQuery = this.getDeletedQuery(tableConfiguration);
         StringBuilder filterQuery = new StringBuilder();
@@ -237,18 +238,19 @@ public class TableDb {
                 setDataParameter +
                 " WHERE " + deletedQuery + filterQuery + ";";
         try {
-            mysqlConnection.updateQueryV2(query, finalQueryParam);
+            return mysqlConnection.updateQueryV2(query, finalQueryParam);
         } catch (Exception e) {
             logger.info("updateEntry: error in query: {}, {}", query, e.getMessage());
         }
+        return null;
     }
-    public void addTableEntry(TableConfiguration tableConfiguration, HashMap<String, String> data) {
+    public JdbcQueryStatus addTableEntry(TableConfiguration tableConfiguration, HashMap<String, String> data) {
         if (tableConfiguration == null || data == null || StaticService.isInValidString(tableConfiguration.getTableName())) {
-            return;
+            return null;
         }
         ArrayList<String> updateColumnName = tableConfiguration.getUpdateColumnName();
         if (updateColumnName == null) {
-            return;
+            return null;
         }
         StringBuilder setDataParameter = new StringBuilder();
         StringBuilder setValueParameter = new StringBuilder();
@@ -268,14 +270,15 @@ public class TableDb {
         String query = "INSERT INTO " + tableConfiguration.getTableName() + " (" + setDataParameter + ")" +
                 " VALUES(" + setValueParameter + ");";
         try {
-            mysqlConnection.updateQueryV2(query, finalQueryParam);
+            return mysqlConnection.updateQueryV2(query, finalQueryParam);
         } catch (Exception e) {
             logger.info("addTableEntry: error in query: {}, {}, {}", query, finalQueryParam, e.getMessage());
         }
+        return null;
     }
-    public void addEntry(TableConfiguration tableConfiguration, HashMap<String, String> data, Integer entryCount0) {
+    public JdbcQueryStatus addEntry(TableConfiguration tableConfiguration, HashMap<String, String> data, Integer entryCount0) {
         if (tableConfiguration == null || data == null) {
-            return;
+            return null;
         }
         int entryCount;
         if (entryCount0 != null) {
@@ -286,14 +289,14 @@ public class TableDb {
         if (entryCount > 0) {
             logger.info("addEntry: Entry already exist for data, add not possible. " +
                     "tableConfiguration: {},  data: {}", tableConfiguration, data);
-            return;
+            return null;
         }
         ArrayList<String> uniquePattern = tableConfiguration.getUniquePattern();
         if (uniquePattern == null || uniquePattern.isEmpty()) {
             logger.info("addEntry: Configuration error. uniquePattern is null or empty: {}, data: {}", uniquePattern, data);
-            return;
+            return null;
         }
-        this.addTableEntry(tableConfiguration, data);
+        return this.addTableEntry(tableConfiguration, data);
     }
     public ArrayList<HashMap<String, String>> searchData(TableConfiguration tableConfiguration, HashMap<String, String> data) {
         if (tableConfiguration == null || data == null) {
@@ -322,9 +325,9 @@ public class TableDb {
         }
         return existingData.size();
     }
-    public void updateEntry(TableConfiguration tableConfiguration, HashMap<String, String> data, Integer entryCount0) {
+    public JdbcQueryStatus updateEntry(TableConfiguration tableConfiguration, HashMap<String, String> data, Integer entryCount0) {
         if (tableConfiguration == null || data == null) {
-            return;
+            return null;
         }
         int entryCount;
         if (entryCount0 != null) {
@@ -334,11 +337,11 @@ public class TableDb {
         }
         if (entryCount != 1) {
             logger.info("updateEntry: Unique entry not exist, update not possible.");
-            return;
+            return null;
         }
         ArrayList<String> uniquePattern = tableConfiguration.getUniquePattern();
         if (uniquePattern == null || uniquePattern.isEmpty()) {
-            return;
+            return null;
         }
         HashMap<String, ArrayList<String>> requestFilterParameter = new HashMap<>();
         ArrayList<String> filterParam;
@@ -349,6 +352,6 @@ public class TableDb {
             filterParam.add(columnValue);
             requestFilterParameter.put(columnName, filterParam);
         }
-        this.updateTableEntry(tableConfiguration, data, requestFilterParameter);
+        return this.updateTableEntry(tableConfiguration, data, requestFilterParameter);
     }
 }

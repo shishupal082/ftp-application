@@ -1,5 +1,6 @@
 package com.project.ftp.jdbc;
 
+import com.project.ftp.config.AppConstant;
 import io.dropwizard.db.DataSourceFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,7 +45,7 @@ public class MysqlConnection {
             con.close();
             logger.info("MysqlConnection: MySQL connection closed");
         } catch (Exception e) {
-            logger.info("MysqlConnection: Error in closing connection");
+            logger.info("MysqlConnection: Error in closing connection: {}", e.toString());
             e.printStackTrace();
         }
     }
@@ -57,7 +58,7 @@ public class MysqlConnection {
             con = DriverManager.getConnection(url, username, password);
             logger.info("MysqlConnection: Connection success");
         } catch (Exception e) {
-            logger.info("MysqlConnection: Connection fail");
+            logger.info("MysqlConnection: Connection fail: {}", e.toString());
             e.printStackTrace();
         }
     }
@@ -88,28 +89,31 @@ public class MysqlConnection {
             stmt.executeUpdate(query);
             status = true;
         } catch (Exception e) {
-            logger.info("MysqlConnection: error in update query execution: {}", query);
-            e.printStackTrace();
+            logger.info("MysqlConnection: error in update query execution: {}, {}", query, e.toString());
         }
         this.close();
         return status;
     }
-    public boolean updateQueryV2(String query, ArrayList<String> parameters) {
-        boolean status = false;
+    public JdbcQueryStatus updateQueryV2(String query, ArrayList<String> parameters) {
         if (!this.isConnected()) {
             this.connect();
         }
+        JdbcQueryStatus jdbcQueryStatus;
         try {
             PreparedStatement preparedStatement = con.prepareStatement(query);
             for(int i=0; i<parameters.size(); i++) {
                 preparedStatement.setString(i+1, parameters.get(i));
             }
             preparedStatement.executeUpdate();
-            status = true;
+            jdbcQueryStatus = new JdbcQueryStatus(AppConstant.SUCCESS);
         } catch (Exception e) {
             logger.info("MysqlConnection: error in updateQueryV2 execution: {}, parameter: {}, {}",
                     query, parameters, e.toString());
+            jdbcQueryStatus = new JdbcQueryStatus(AppConstant.FAILURE);
+            jdbcQueryStatus.setQuery(query);
+            jdbcQueryStatus.setParameter(parameters);
+            jdbcQueryStatus.setReason(e.toString());
         }
-        return status;
+        return jdbcQueryStatus;
     }
 }

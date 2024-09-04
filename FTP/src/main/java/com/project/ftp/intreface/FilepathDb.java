@@ -3,6 +3,7 @@ package com.project.ftp.intreface;
 import com.project.ftp.config.AppConstant;
 import com.project.ftp.config.FilepathCol;
 import com.project.ftp.dao.FilePathDAO;
+import com.project.ftp.jdbc.JdbcQueryStatus;
 import com.project.ftp.jdbc.MysqlConnection;
 import com.project.ftp.obj.FilepathDBParameters;
 import com.project.ftp.obj.PathInfo;
@@ -221,7 +222,7 @@ public class FilepathDb extends FilepathInterface {
         parameters.add(dbParameters.getFileNameV2());
         return parameters;
     }
-    private boolean addEntry(FilepathDBParameters dbParameters) {
+    private JdbcQueryStatus addEntry(FilepathDBParameters dbParameters) {
         String query = "INSERT INTO " + tableName + " (org_username,entry_time,login_username," +
                 "table_name,table_unique_id,ui_entry_time," +
                 "device_name,scan_dir_mapping_id,type,size_in_kb,size," +
@@ -233,11 +234,11 @@ public class FilepathDb extends FilepathInterface {
         } catch (Exception e) {
             logger.info("addEntry: error in query: {}, {}", query, e.getMessage());
         }
-        return false;
+        return null;
     }
-    private boolean updateEntry(FilepathDBParameters dbParameters) {
+    private JdbcQueryStatus updateEntry(FilepathDBParameters dbParameters) {
         if (dbParameters == null || dbParameters.getId() < 1) {
-            return false;
+            return null;
         }
         String query = "UPDATE " + tableName + " SET " +
                 "org_username=?,entry_time=?,login_username=?," +
@@ -252,7 +253,7 @@ public class FilepathDb extends FilepathInterface {
             logger.info("updateEntry: error in query: {}, {}", query, e.getMessage());
             e.printStackTrace();
         }
-        return false;
+        return null;
     }
     @Override
     public HashMap<String, Integer> updateIntoDb(FilePathDAO filePathDAO) {
@@ -263,19 +264,19 @@ public class FilepathDb extends FilepathInterface {
         int updatedEntrySuccess = 0;
         int updatedEntryFailure = 0;
         int skippedUpdate = 0;
-        boolean status;
+        JdbcQueryStatus jdbcQueryStatus;
         for(FilepathDBParameters dbParameters: filepathDBParameters) {
             if (dbParameters != null && dbParameters.isUpdated()) {
                 if (dbParameters.getId() > 0) {
-                    status = this.updateEntry(dbParameters);
-                    if (status) {
+                    jdbcQueryStatus = this.updateEntry(dbParameters);
+                    if (jdbcQueryStatus != null && AppConstant.SUCCESS.equals(jdbcQueryStatus.getStatus())) {
                         updatedEntrySuccess++;
                     } else {
                         updatedEntryFailure++;
                     }
                 } else {
-                    status = this.addEntry(dbParameters);
-                    if (status) {
+                    jdbcQueryStatus = this.addEntry(dbParameters);
+                    if (jdbcQueryStatus != null && AppConstant.SUCCESS.equals(jdbcQueryStatus.getStatus())) {
                         addedEntrySuccess++;
                     } else {
                         addedEntryFailure++;
