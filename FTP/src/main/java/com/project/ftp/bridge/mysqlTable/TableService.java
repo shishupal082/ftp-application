@@ -421,7 +421,7 @@ public class TableService {
         int skipEntryCount = 0;
         TableUpdateEnum nextAction;
         boolean updateIfFound = this.isUpdateIfFoundEnabled(tableConfiguration);
-        MaintainHistory maintainHistory = tableConfiguration.isMaintainHistory();
+        MaintainHistory maintainHistory = tableConfiguration.getMaintainHistory();
         boolean maintainHistoryRequired = false;
         ArrayList<String> maintainHistoryExcludedColumn = null;
         if (maintainHistory != null) {

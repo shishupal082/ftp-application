@@ -54,12 +54,15 @@ Used for update entry
     - col2
 Used for finding next action in update
 
-(10) includeDeleted: Boolean (Default false)
+(10) groupBy: ArrayList<String>
+Used for big data summary
+
+(11) includeDeleted: Boolean (Default false)
 If includeDeleted = false
 then deleted=0 query will be added in where clause for update search as well as select query
 
-(11) updateIfFound: Boolean (Default true)
-(12)
+(12) updateIfFound: Boolean (Default true)
+(13)
 defaultFilterMapping: HashMap<String, ArrayList<String>>
     "rnc_division": ["", "Test Ranchi"]
     "asset_unique": ["", "", "Test-DCTMURI00002"]
@@ -67,10 +70,10 @@ If filter0 to filter5 and defaultFilterMappingId both is present then
 First filter0 to filter5 calculated
 If any of them is null then corresponding filter will be updated from defaultFilterMapping
 
-(13) allowEmptyFilter: Boolean (Default true)
+(14) allowEmptyFilter: Boolean (Default true)
 used for get db data
 
-(14) maintainHistory:
+(15) maintainHistory:
     required: boolean (Default false)
     excludeColumnName: ArrayList<String>
 excludeColumnName shall be subset of compareBeforeUpdateColumn

@@ -18,6 +18,7 @@ public class TableConfiguration {
     private Boolean allowEmptyFilter;
     private MaintainHistory maintainHistory;
     private HashMap<String, ArrayList<String>> defaultFilterMapping;
+    private ArrayList<String> groupBy;
     private ArrayList<String> uniquePattern;
     private ArrayList<String> likeParameter;
     private ArrayList<String> filterParameter;
@@ -91,7 +92,7 @@ public class TableConfiguration {
         this.allowEmptyFilter = allowEmptyFilter;
     }
 
-    public MaintainHistory isMaintainHistory() {
+    public MaintainHistory getMaintainHistory() {
         return maintainHistory;
     }
 
@@ -105,6 +106,14 @@ public class TableConfiguration {
 
     public void setDefaultFilterMapping(HashMap<String, ArrayList<String>> defaultFilterMapping) {
         this.defaultFilterMapping = defaultFilterMapping;
+    }
+
+    public ArrayList<String> getGroupBy() {
+        return groupBy;
+    }
+
+    public void setGroupBy(ArrayList<String> groupBy) {
+        this.groupBy = groupBy;
     }
 
     public ArrayList<String> getUniquePattern() {

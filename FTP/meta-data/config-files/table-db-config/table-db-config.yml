@@ -29,6 +29,28 @@ tableDbConfig:
       - "event"
       - "status"
       - "deleted"
+  - tableConfigId: "get_smms_assets_list_count"
+    tableName: "smms_assets"
+    groupBy:
+      - "zone"
+      - "division"
+      - "section_officer"
+      - "section"
+      - "sub_section"
+    selectColumnName:
+      - "zone"
+      - "division"
+      - "section_officer"
+      - "section"
+      - "sub_section"
+      - "COUNT(*) as count"
+    columnName:
+      - "zone"
+      - "division"
+      - "section_officer"
+      - "section"
+      - "sub_section"
+      - "count"
   - tableConfigId: "get-mysql-smms-assets-list"
     tableName: "smms_assets"
     defaultFilterMapping:

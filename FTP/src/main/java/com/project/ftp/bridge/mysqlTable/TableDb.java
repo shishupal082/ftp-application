@@ -161,9 +161,11 @@ public class TableDb {
         }
         String limitQuery = "";
         String orderByQuery = "";
+        String groupByQuery = "";
         int limit;
         String limitParam = tableConfiguration.getLimit();
         String orderByParam = tableConfiguration.getOrderBy();
+        ArrayList<String> groupByParam = tableConfiguration.getGroupBy();
         String whereClause = "";
         if (!deletedQuery.isEmpty() || !filterQuery.toString().isEmpty()) {
             whereClause = " where " + deletedQuery + filterQuery;
@@ -177,8 +179,14 @@ public class TableDb {
                 }
             } catch (Exception ignore) {}
         }
+        if (groupByParam != null && !groupByParam.isEmpty()) {
+            groupByQuery = "group by " + String.join(",",groupByParam);
+        }
         if (orderByParam != null && !orderByParam.isEmpty()) {
             orderByQuery = "order by " + orderByParam;
+        }
+        if (!groupByQuery.isEmpty()) {
+            query = query + " " + groupByQuery;
         }
         if (!orderByQuery.isEmpty()) {
             query = query + " " + orderByQuery;
