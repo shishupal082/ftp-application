@@ -232,12 +232,18 @@ public class TableService {
         TableConfiguration tableConfiguration = new TableConfiguration();
         tableConfiguration.setTableName(historyBookTable.getTableName());
         tableConfiguration.setUpdateColumnName(updateColumn);
-        rowData.put(updateColumn.get(0), tableName);
-        rowData.put(updateColumn.get(1), uniqueColumn);
-        rowData.put(updateColumn.get(2), uniqueParameter);
-        rowData.put(updateColumn.get(3), columnName);
-        rowData.put(updateColumn.get(4), oldValue);
-        rowData.put(updateColumn.get(5), newValue);
+        rowData.put(updateColumn.get(0), StaticService.truncateString(tableName,
+                historyBookTable.getMaxLength(historyBookTable.getColTableName())));
+        rowData.put(updateColumn.get(1), StaticService.truncateString(uniqueColumn,
+                historyBookTable.getMaxLength(historyBookTable.getColUniqueColumn())));
+        rowData.put(updateColumn.get(2), StaticService.truncateString(uniqueParameter,
+                historyBookTable.getMaxLength(historyBookTable.getColUniqueParameter())));
+        rowData.put(updateColumn.get(3), StaticService.truncateString(columnName,
+                historyBookTable.getMaxLength(historyBookTable.getColColumnName())));
+        rowData.put(updateColumn.get(4), StaticService.truncateString(oldValue,
+                historyBookTable.getMaxLength(historyBookTable.getColOldValue())));
+        rowData.put(updateColumn.get(5), StaticService.truncateString(newValue,
+                historyBookTable.getMaxLength(historyBookTable.getColNewValue())));
         tableDb.addTableEntry(tableConfiguration, rowData);
     }
     private void maintainHistory(TableConfiguration tableConfiguration,

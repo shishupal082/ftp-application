@@ -25,7 +25,7 @@ public class SysUtils {
             pw.close();
             deleteFileContentStatus = true;
         } catch (Exception e) {
-            LOGGER.info("Error in deleting file content: filePath= '{}', {}", filePath, e);
+            LOGGER.info("Error in deleting file content: filePath= {}, {}", filePath, e.toString());
         }
         return deleteFileContentStatus;
     }
