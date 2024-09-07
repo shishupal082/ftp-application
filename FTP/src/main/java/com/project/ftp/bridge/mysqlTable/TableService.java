@@ -465,7 +465,7 @@ public class TableService {
                             jdbcQueryStatus = tableDb.addEntry(tableConfiguration, rowData, entryCount);
                             if (jdbcQueryStatus != null && AppConstant.SUCCESS.equals(jdbcQueryStatus.getStatus())) {
                                 addEntryCount++;
-                                logger.info("{}/{}: addition completed. summary: {},{},{},{},{}: Addition+, Update, Skip " +
+                                logger.info("{}/{}: addition completed. summary: {},{},{},{},{}: Add+, Update, Skip " +
                                                 "AddError, UpdateError",
                                         index, size, addEntryCount, updateEntryCount, skipEntryCount,
                                         addEntryErrorCount, updateEntryErrorCount);
@@ -481,7 +481,7 @@ public class TableService {
                         case SKIP:
                             skipEntryCount++;
                             logger.info("{}/{}: updateTableDataFromCsv: Multi entry exist, add " +
-                                            "or update not possible. data: {}, summary: {},{},{},{},{}: Addition, " +
+                                            "or update not possible. data: {}, summary: {},{},{},{},{}: Add, " +
                                             "Update, Skip+, AddError, UpdateError",
                                     index, size, rowData, addEntryCount, updateEntryCount, skipEntryCount,
                                     addEntryErrorCount, updateEntryErrorCount);
@@ -492,7 +492,7 @@ public class TableService {
                         case SKIP_IGNORE:
                             skipEntryCount++;
                             logger.info("{}/{}: updateTableDataFromCsv: existing data same as current data, " +
-                                            "update not required. summary: {},{},{},{},{}: Addition, Update, " +
+                                            "update not required. summary: {},{},{},{},{}: Add, Update, " +
                                             "Skip+, AddError, UpdateError",
                                     index, size, addEntryCount, updateEntryCount, skipEntryCount,
                                     addEntryErrorCount, updateEntryErrorCount);
@@ -500,7 +500,7 @@ public class TableService {
                         case INVALID_UNIQUE_PARAMETER:
                             skipEntryCount++;
                             logger.info("{}/{}: updateTableDataFromCsv: invalid unique parameter in " +
-                                            "data: {}. summary: {},{},{},{},{}: Addition, Update, Skip+, " +
+                                            "data: {}. summary: {},{},{},{},{}: Add, Update, Skip+, " +
                                             "AddError, UpdateError",
                                     index, size, rowData, addEntryCount, updateEntryCount, skipEntryCount,
                                     addEntryErrorCount, updateEntryErrorCount);
@@ -517,7 +517,7 @@ public class TableService {
                 }
                 index++;
             }
-            logger.info("Final update summary, {}/{}/{}/{}/{}/{}: Addition, Update, Skip, AddError, UpdateError, Total",
+            logger.info("Final update summary, {}/{}/{}/{}/{}/{}: Add, Update, Skip, AddError, UpdateError, Total",
                     addEntryCount, updateEntryCount, skipEntryCount, addEntryErrorCount, updateEntryErrorCount, size);
         }
     }

@@ -1,0 +1,58 @@
+tableDbConfig:
+  - tableConfigId: "get-users"
+    tableName: "users"
+    orderBy: "id desc"
+    limit: "100"
+    likeParameter:
+      - "username"
+    filterParameter:
+      - "username"
+    columnName:
+      - "id"
+      - "username"
+      - "change_password_count"
+      - "timestamp"
+      - "deleted"
+  - tableConfigId: "get-event_data"
+    tableName: "event_data"
+    columnName:
+      - "id"
+      - "username"
+      - "event"
+      - "status"
+      - "deleted"
+  - tableConfigId: "get-history-book"
+    tableName: "history_book"
+    orderBy: "added_time desc"
+    limit: 500
+    defaultFilterMapping:
+      "smms_assets": ["smms_assets", "", ""]
+      "staff_details": ["staff_rnc", "", ""]
+      "bill-details": ["bill_details", "", ""]
+      "req-status": ["requisition_status", "", ""]
+    likeParameter:
+      - "added_time"
+    filterParameter:
+      - "table_name"
+      - "column_name"
+      - "added_time"
+    selectColumnName:
+      - "table_name"
+      - "unique_column"
+      - "unique_parameter"
+      - "column_name"
+      - "old_value"
+      - "new_value"
+      - "DATE(added_time) as added_date"
+      - "TIME(added_time) as added_time"
+      - "updated_time"
+    columnName:
+      - "table_name"
+      - "unique_column"
+      - "unique_parameter"
+      - "column_name"
+      - "old_value"
+      - "new_value"
+      - "added_date"
+      - "added_time"
+      - "updated_time"
