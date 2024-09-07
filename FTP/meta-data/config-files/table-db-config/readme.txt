@@ -127,3 +127,28 @@ Summary time: 2024-08-31 19:31:11.003
 Summary: 0/0/5240/5240: Addition, Update, Skip, Total
 
 Duration: 09:45 seconds
+
+History table
+-----------------------
+tableName: history_book
+updateColumnName: ArrayList<String>
+- table_name
+- unique_column
+- unique_parameter
+- column_name
+- old_value
+- new_value
+
+other column name
+- id
+- added_time
+- updated_time
+- deleted
+
+maxLengthMapping:
+maxLength.put(colTableName, 255);
+maxLength.put(colUniqueColumn, 255);
+maxLength.put(colUniqueParameter, 255);
+maxLength.put(colColumnName, 255);
+maxLength.put(colOldValue, 4195);
+maxLength.put(colNewValue, 4195);

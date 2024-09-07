@@ -13,7 +13,7 @@ public class MiscService {
         }
         if (configTableIndex == null) {
             configTableIndex = new ArrayList<>();
-            configTableIndex.add("col-1");
+            configTableIndex.add("col_1");
         }
         ArrayList<String> finalTableIndex = new ArrayList<>();
         String colIndex;
@@ -21,16 +21,16 @@ public class MiscService {
             if (configTableIndex.size() > i) {
                 colIndex = configTableIndex.get(i);
             } else {
-                colIndex = "col-" + (i+1);
+                colIndex = "col_" + (i+1);
             }
             if (!finalTableIndex.contains(colIndex)) {
                 finalTableIndex.add(colIndex);
-            } else if (!finalTableIndex.contains(colIndex + "-1")) {
-                finalTableIndex.add(colIndex+"-1");
-            } else if (!finalTableIndex.contains(colIndex + "-2")) {
-                finalTableIndex.add(colIndex+"-2");
+            } else if (!finalTableIndex.contains(colIndex + "_1")) {
+                finalTableIndex.add(colIndex+"_1");
+            } else if (!finalTableIndex.contains(colIndex + "_2")) {
+                finalTableIndex.add(colIndex+"_2");
             } else {
-                finalTableIndex.add(colIndex+"-"+StaticService.createUUIDNumber());
+                finalTableIndex.add(colIndex+"_"+StaticService.createUUIDNumber());
             }
         }
         return finalTableIndex;
