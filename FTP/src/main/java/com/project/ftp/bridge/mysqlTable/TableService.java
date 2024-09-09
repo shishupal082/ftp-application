@@ -24,11 +24,20 @@ public class TableService {
     final static Logger logger = LoggerFactory.getLogger(TableService.class);
     private final FtpConfiguration ftpConfiguration;
     private final MSExcelService msExcelService;
-    private final TableDb tableDb;
-    public TableService(final FtpConfiguration ftpConfiguration, final MSExcelService msExcelService, final TableDb tableDb) {
+    private final TableDb tableMysqlDb;
+    private final TableDb tableOracleDb;
+    public TableService(final FtpConfiguration ftpConfiguration, final MSExcelService msExcelService,
+                        final TableDb tableMysqlDb, final TableDb tableOracleDb) {
         this.ftpConfiguration = ftpConfiguration;
         this.msExcelService = msExcelService;
-        this.tableDb = tableDb;
+        this.tableMysqlDb = tableMysqlDb;
+        this.tableOracleDb = tableOracleDb;
+    }
+    private TableDb getTableDb(TableConfiguration tableConfiguration) {
+        if ("oracle".equals(tableConfiguration.getDbType())) {
+            return tableOracleDb;
+        }
+        return tableMysqlDb;
     }
     private boolean isAllowEmptyFilter(TableConfiguration tableConfiguration) {
         Boolean allowEmptyFilter = tableConfiguration.getAllowEmptyFilter();
@@ -191,7 +200,7 @@ public class TableService {
             throw new AppException(ErrorCodes.BAD_REQUEST_ERROR);
         }
         HashMap<String, ArrayList<String>> requestFilterParameter = this.getRequestFilterParameter(tableConfiguration, filterRequest, defaultFilterMappingId);
-        return tableDb.getByMultipleParameter(tableConfiguration, requestFilterParameter, true);
+        return this.getTableDb(tableConfiguration).getByMultipleParameter(tableConfiguration, requestFilterParameter, true);
     }
     public ArrayList<ArrayList<String>> getTableDataArray(HttpServletRequest request,
                                                            String tableConfigId,
@@ -202,6 +211,7 @@ public class TableService {
             logger.info("getTableDataArray: tableConfiguration is null for tableConfigId: {}", tableConfigId);
             throw new AppException(ErrorCodes.BAD_REQUEST_ERROR);
         }
+        TableDb tableDb = this.getTableDb(tableConfiguration);
         HashMap<String, ArrayList<String>> requestFilterParameter = this.getRequestFilterParameter(tableConfiguration, filterRequest, defaultFilterMappingId);
         ArrayList<HashMap<String, String>> tableData = tableDb.getByMultipleParameter(tableConfiguration, requestFilterParameter, true);
         ArrayList<String> columnNames = tableConfiguration.getColumnName();
@@ -244,7 +254,7 @@ public class TableService {
                 historyBookTable.getMaxLength(historyBookTable.getColOldValue())));
         rowData.put(updateColumn.get(5), StaticService.truncateString(newValue,
                 historyBookTable.getMaxLength(historyBookTable.getColNewValue())));
-        tableDb.addTableEntry(tableConfiguration, rowData);
+        this.getTableDb(tableConfiguration).addTableEntry(tableConfiguration, rowData);
     }
     private void maintainHistory(TableConfiguration tableConfiguration,
                                  HashMap<String, String> dbRowData,
@@ -353,7 +363,7 @@ public class TableService {
                 return TableUpdateEnum.INVALID_UNIQUE_PARAMETER;
             }
         }
-        ArrayList<HashMap<String, String>> searchedData = tableDb.searchData(tableConfiguration, currentRowData);
+        ArrayList<HashMap<String, String>> searchedData = this.getTableDb(tableConfiguration).searchData(tableConfiguration, currentRowData);
         if (searchedData == null || searchedData.isEmpty()) {
             return TableUpdateEnum.ADD;
         }
@@ -414,6 +424,7 @@ public class TableService {
             logger.info("addOrUpdateTableData: tableConfiguration is null for tableConfigId: {}", tableConfigId);
             throw new AppException(ErrorCodes.BAD_REQUEST_ERROR);
         }
+        TableDb tableDb = this.getTableDb(tableConfiguration);
         String excelConfigId = tableConfiguration.getExcelConfigId();
         ArrayList<ArrayList<String>> csvDataArray =msExcelService.getMSExcelSheetDataArray(request, excelConfigId);
         ArrayList<HashMap<String, String>> csvDataJson = miscService.convertArraySheetDataToJsonData(csvDataArray, tableConfiguration.getUpdateColumnName());

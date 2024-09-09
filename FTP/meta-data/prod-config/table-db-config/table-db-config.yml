@@ -44,8 +44,7 @@ tableDbConfig:
       - "old_value"
       - "new_value"
       - "DATE(added_time) as added_date"
-      - "TIME(added_time) as added_time"
-      - "updated_time"
+      - "TIME(added_time) as added_hour"
     columnName:
       - "table_name"
       - "unique_column"
@@ -54,5 +53,4 @@ tableDbConfig:
       - "old_value"
       - "new_value"
       - "added_date"
-      - "added_time"
-      - "updated_time"
+      - "added_hour"

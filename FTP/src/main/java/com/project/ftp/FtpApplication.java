@@ -1,6 +1,8 @@
 package com.project.ftp;
 
 import com.project.ftp.bridge.mysqlTable.TableDb;
+import com.project.ftp.bridge.mysqlTable.TableMysqlDb;
+import com.project.ftp.bridge.mysqlTable.TableOracleDb;
 import com.project.ftp.bridge.mysqlTable.TableService;
 import com.project.ftp.config.AppConfig;
 import com.project.ftp.config.AppConstant;
@@ -141,7 +143,9 @@ public class FtpApplication  extends Application<FtpConfiguration> {
         }
         SingleThreadingService singleThreadingService = new SingleThreadingService(appConfig.getFtpConfiguration());
         appConfig.setSingleThreadingService(singleThreadingService);
-        TableDb tableDb = new TableDb(ftpConfiguration.getDataSourceFactory());
+
+        TableDb tableMysqlDb = new TableMysqlDb(ftpConfiguration.getDataSourceFactory(), ftpConfiguration.getOracleDatabaseConfig());
+        TableDb tableOracleDb = new TableOracleDb(ftpConfiguration.getDataSourceFactory(), ftpConfiguration.getOracleDatabaseConfig());
         UserService userService = new UserService(appConfig, userInterface);
         appConfig.setUserService(userService);
         EventTracking eventTracking = new EventTracking(appConfig, userService, eventInterface);
@@ -152,7 +156,7 @@ public class FtpApplication  extends Application<FtpConfiguration> {
         ScanDirService scanDirService = new ScanDirService(appConfig, filepathInterface);
         appConfig.setScanDirService(scanDirService);
         appConfig.setAppToBridge(new AppToBridge(appConfig, ftpConfiguration, eventTracking));
-        TableService tableService = new TableService(appConfig.getFtpConfiguration(), appConfig.getMsExcelService(), tableDb);
+        TableService tableService = new TableService(appConfig.getFtpConfiguration(), appConfig.getMsExcelService(), tableMysqlDb, tableOracleDb);
         appConfig.setTableService(tableService);
         return appConfig;
     }

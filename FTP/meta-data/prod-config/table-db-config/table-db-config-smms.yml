@@ -9,6 +9,7 @@ tableDbConfig:
       - "division"
       - "file_date"
     groupBy:
+      - "file_date"
       - "zone"
       - "division"
       - "sub_section"
@@ -16,6 +17,7 @@ tableDbConfig:
       - "section"
       - "location"
     selectColumnName:
+      - "file_date"
       - "zone"
       - "division"
       - "sub_section"
@@ -24,6 +26,7 @@ tableDbConfig:
       - "location"
       - "COUNT(*) as count"
     columnName:
+      - "file_date"
       - "zone"
       - "division"
       - "sub_section"

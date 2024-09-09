@@ -8,6 +8,7 @@ import java.util.HashMap;
 @JsonIgnoreProperties(ignoreUnknown = true)
 
 public class TableConfiguration {
+    private String dbType;
     private String tableConfigId;
     private String tableName;
     private String orderBy;
@@ -28,6 +29,15 @@ public class TableConfiguration {
     private ArrayList<String> selectColumnName;
 
     public TableConfiguration() {}
+
+    public String getDbType() {
+        return dbType;
+    }
+
+    public void setDbType(String dbType) {
+        this.dbType = dbType;
+    }
+
     public String getTableConfigId() {
         return tableConfigId;
     }

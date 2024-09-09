@@ -10,6 +10,7 @@ import com.project.ftp.bridge.config.SocialLoginConfig;
 import com.project.ftp.bridge.obj.yamlObj.CommunicationConfig;
 import com.project.ftp.obj.yamlObj.EventConfig;
 import com.project.ftp.obj.yamlObj.FtlConfig;
+import com.project.ftp.obj.yamlObj.OracleDatabaseConfig;
 import io.dropwizard.Configuration;
 import io.dropwizard.db.DataSourceFactory;
 
@@ -68,6 +69,7 @@ public class FtpConfiguration extends Configuration {
     private GoogleOAuthClientConfig googleOAuthClientConfig;
     @JsonProperty("database")
     private DataSourceFactory dataSourceFactory = new DataSourceFactory();
+    private OracleDatabaseConfig oracleDatabaseConfig;
 
     public String getIndexPageReRoute() {
         return indexPageReRoute;
@@ -421,6 +423,14 @@ public class FtpConfiguration extends Configuration {
         this.dataSourceFactory = dataSourceFactory;
     }
 
+    public OracleDatabaseConfig getOracleDatabaseConfig() {
+        return oracleDatabaseConfig;
+    }
+
+    public void setOracleDatabaseConfig(OracleDatabaseConfig oracleDatabaseConfig) {
+        this.oracleDatabaseConfig = oracleDatabaseConfig;
+    }
+
     public void updateFtpConfig(final FtpConfiguration tempFtpConfiguration) {
         if (tempFtpConfiguration == null) {
             return;
@@ -593,6 +603,10 @@ public class FtpConfiguration extends Configuration {
         if (googleOAuthClientConfig != null) {
             this.googleOAuthClientConfig = googleOAuthClientConfig;
         }
+        OracleDatabaseConfig oracleDatabaseConfig = tempFtpConfiguration.getOracleDatabaseConfig();
+        if (oracleDatabaseConfig != null) {
+            this.oracleDatabaseConfig = oracleDatabaseConfig;
+        }
     }
 
     @Override
@@ -641,6 +655,7 @@ public class FtpConfiguration extends Configuration {
                 ", communicationConfig=" + communicationConfig +
                 ", socialLoginConfig=" + socialLoginConfig +
                 ", googleOAuthClientConfig=" + googleOAuthClientConfig +
+                ", oracleDatabaseConfig=" + "*****" +
                 ", dataSourceFactory=" + "*****" +
                 '}';
     }
