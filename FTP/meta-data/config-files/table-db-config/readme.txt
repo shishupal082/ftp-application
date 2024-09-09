@@ -78,6 +78,9 @@ used for get db data
     excludeColumnName: ArrayList<String>
 excludeColumnName shall be subset of compareBeforeUpdateColumn
 
+(16) dbType: String
+- oracle // For oracle database
+
 update
 -------------------------------------
 updateIfFound: Boolean (default true)

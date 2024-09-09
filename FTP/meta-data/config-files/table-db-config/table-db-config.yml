@@ -31,7 +31,7 @@ tableDbConfig:
       - "deleted"
   - tableConfigId: "get_smms_assets_list_count"
     tableName: "smms_assets"
-    dbType: "oracle"
+    dbType: "na_oracle"
     groupBy:
       - "zone"
       - "division"
@@ -54,7 +54,7 @@ tableDbConfig:
       - "count"
   - tableConfigId: "get-mysql-smms-assets-list"
     tableName: "smms_assets"
-    dbType: "oracle"
+    dbType: "na_oracle"
     defaultFilterMapping:
       "rnc_division": ["", "Test Ranchi"]
       "asset_unique": ["", "", "Test-DCTMURI00002"]
@@ -89,7 +89,7 @@ tableDbConfig:
   - tableConfigId: "csv-mysql-update-smms_assets_list"
     tableName: "smms_assets"
     excelConfigId: "csv-smms-assets-ser"
-    dbType: "oracle"
+    dbType: "na_oracle"
     columnName:
       - "file_date"
       - "sub_section"
