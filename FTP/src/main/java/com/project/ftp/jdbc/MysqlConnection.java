@@ -1,7 +1,6 @@
 package com.project.ftp.jdbc;
 
 import com.project.ftp.config.AppConstant;
-import io.dropwizard.db.DataSourceFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,11 +14,11 @@ public class MysqlConnection {
     private final String username;
     private final String password;
     private Connection con;
-    public MysqlConnection(DataSourceFactory dataSourceFactory) {
-        driver = dataSourceFactory.getDriverClass();
-        url = dataSourceFactory.getUrl();
-        username = dataSourceFactory.getUser();
-        password = dataSourceFactory.getPassword();
+    public MysqlConnection(String driver, String url, String username, String password) {
+        this.driver = driver;
+        this.url = url;
+        this.username = username;
+        this.password = password;
     }
     private boolean isConnected() {
         try {
@@ -43,10 +42,10 @@ public class MysqlConnection {
         }
         try {
             con.close();
-            logger.info("MysqlConnection: MySQL connection closed");
+//            logger.info("MysqlConnection: MySQL connection closed");
         } catch (Exception e) {
             logger.info("MysqlConnection: Error in closing connection: {}", e.toString());
-            e.printStackTrace();
+//            e.printStackTrace();
         }
     }
     public void connect() {
@@ -56,10 +55,11 @@ public class MysqlConnection {
         try {
             Class.forName(driver);
             con = DriverManager.getConnection(url, username, password);
-            logger.info("MysqlConnection: Connection success");
+//            logger.info("MysqlConnection: Connection success");
         } catch (Exception e) {
             logger.info("MysqlConnection: Connection fail: {}", e.toString());
-            e.printStackTrace();
+            con = null;
+//            e.printStackTrace();
         }
     }
     public ResultSet query(String query, ArrayList<String> parameters) {
@@ -76,7 +76,7 @@ public class MysqlConnection {
             }
             rs = preparedStatement.executeQuery();
         } catch (Exception e) {
-            logger.info("MysqlConnection: error in select query execution: {}", query);
+            logger.info("MysqlConnection: error in select query execution: {}, {}", query, e.toString());
 //            e.printStackTrace();
         }
         return rs;

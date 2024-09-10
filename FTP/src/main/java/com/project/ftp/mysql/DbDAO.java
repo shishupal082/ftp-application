@@ -21,7 +21,8 @@ public class DbDAO extends AbstractDAO<MysqlUser> {
     public DbDAO(final SessionFactory sessionFactory, final DataSourceFactory dataSourceFactory) {
         super(sessionFactory);
         this.sessionFactory = sessionFactory;
-        this.mysqlConnection = new MysqlConnection(dataSourceFactory);
+        this.mysqlConnection = new MysqlConnection(dataSourceFactory.getDriverClass(), dataSourceFactory.getUrl(),
+                dataSourceFactory.getUser(), dataSourceFactory.getPassword());
         FindAllUser = "MysqlUser.findAll";
         FindByUsername = "MysqlUser.findByUsername";
         FindByEmail = "MysqlUser.findByEmail";

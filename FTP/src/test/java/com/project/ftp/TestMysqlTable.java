@@ -18,7 +18,7 @@ public class TestMysqlTable {
     public void testMyTableTableService() {
         TestMSExcelService testMSExcelService = new TestMSExcelService();
         AppConfig appConfig = testMSExcelService.getAppConfig(true);
-        TableService tableService = new TableService(null, null, null, null);
+        TableService tableService = new TableService(null, null, null);
         ArrayList<HashMap<String, String>> result;
         try {
             tableService.getTableData(null, null, null, null);

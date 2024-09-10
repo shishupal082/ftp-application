@@ -19,4 +19,5 @@ public interface TableDb {
     ArrayList<HashMap<String, String>> searchData(TableConfiguration tableConfiguration, HashMap<String, String> data);
     int getEntryCount(TableConfiguration tableConfiguration, HashMap<String, String> data);
     JdbcQueryStatus updateEntry(TableConfiguration tableConfiguration, HashMap<String, String> data, Integer entryCount0);
+    void closeIfOracle(TableConfiguration tableConfiguration);
 }

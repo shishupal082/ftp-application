@@ -18,7 +18,7 @@ public class TestOracleTable {
     public void testMyTableTableService() {
         TestMSExcelService testMSExcelService = new TestMSExcelService();
         AppConfig appConfig = testMSExcelService.getAppConfig(true);
-        TableService tableService = new TableService(null, null, null, null);
+        TableService tableService = new TableService(null, null, null);
         ArrayList<HashMap<String, String>> result;
 
         try {
@@ -48,7 +48,7 @@ public class TestOracleTable {
         AppConfig appConfig = testMSExcelService.getAppConfig(true);
         TableService tableService = appConfig.getTableService();
         ArrayList<HashMap<String, String>> result;
-        result = tableService.getTableData(null, "get-mysql-smms-assets-list", null, null);
+        result = tableService.getTableData(null, "get-mysql-smms-assets-list_oracle", null, null);
         Assert.assertNotNull(result);
     }
     @Test
@@ -56,6 +56,6 @@ public class TestOracleTable {
         TestMSExcelService testMSExcelService = new TestMSExcelService();
         AppConfig appConfig = testMSExcelService.getAppConfig(true);
         TableService tableService = appConfig.getTableService();
-        tableService.updateTableDataFromCsv(null, "csv-mysql-update-smms_assets_list");
+        tableService.updateTableDataFromCsv(null, "csv-mysql-update-smms_assets_list_oracle");
     }
 }

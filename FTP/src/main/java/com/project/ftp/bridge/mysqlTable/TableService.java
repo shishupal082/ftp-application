@@ -25,19 +25,11 @@ public class TableService {
     private final FtpConfiguration ftpConfiguration;
     private final MSExcelService msExcelService;
     private final TableDb tableMysqlDb;
-    private final TableDb tableOracleDb;
     public TableService(final FtpConfiguration ftpConfiguration, final MSExcelService msExcelService,
-                        final TableDb tableMysqlDb, final TableDb tableOracleDb) {
+                        final TableDb tableMysqlDb) {
         this.ftpConfiguration = ftpConfiguration;
         this.msExcelService = msExcelService;
         this.tableMysqlDb = tableMysqlDb;
-        this.tableOracleDb = tableOracleDb;
-    }
-    private TableDb getTableDb(TableConfiguration tableConfiguration) {
-        if ("oracle".equals(tableConfiguration.getDbType())) {
-            return tableOracleDb;
-        }
-        return tableMysqlDb;
     }
     private boolean isAllowEmptyFilter(TableConfiguration tableConfiguration) {
         Boolean allowEmptyFilter = tableConfiguration.getAllowEmptyFilter();
@@ -200,7 +192,7 @@ public class TableService {
             throw new AppException(ErrorCodes.BAD_REQUEST_ERROR);
         }
         HashMap<String, ArrayList<String>> requestFilterParameter = this.getRequestFilterParameter(tableConfiguration, filterRequest, defaultFilterMappingId);
-        return this.getTableDb(tableConfiguration).getByMultipleParameter(tableConfiguration, requestFilterParameter, true);
+        return tableMysqlDb.getByMultipleParameter(tableConfiguration, requestFilterParameter, true);
     }
     public ArrayList<ArrayList<String>> getTableDataArray(HttpServletRequest request,
                                                            String tableConfigId,
@@ -211,9 +203,8 @@ public class TableService {
             logger.info("getTableDataArray: tableConfiguration is null for tableConfigId: {}", tableConfigId);
             throw new AppException(ErrorCodes.BAD_REQUEST_ERROR);
         }
-        TableDb tableDb = this.getTableDb(tableConfiguration);
         HashMap<String, ArrayList<String>> requestFilterParameter = this.getRequestFilterParameter(tableConfiguration, filterRequest, defaultFilterMappingId);
-        ArrayList<HashMap<String, String>> tableData = tableDb.getByMultipleParameter(tableConfiguration, requestFilterParameter, true);
+        ArrayList<HashMap<String, String>> tableData = tableMysqlDb.getByMultipleParameter(tableConfiguration, requestFilterParameter, true);
         ArrayList<String> columnNames = tableConfiguration.getColumnName();
         ArrayList<ArrayList<String>> result = new ArrayList<>();
         ArrayList<String> arrayRowData;
@@ -254,7 +245,7 @@ public class TableService {
                 historyBookTable.getMaxLength(historyBookTable.getColOldValue())));
         rowData.put(updateColumn.get(5), StaticService.truncateString(newValue,
                 historyBookTable.getMaxLength(historyBookTable.getColNewValue())));
-        this.getTableDb(tableConfiguration).addTableEntry(tableConfiguration, rowData);
+        tableMysqlDb.addTableEntry(tableConfiguration, rowData);
     }
     private void maintainHistory(TableConfiguration tableConfiguration,
                                  HashMap<String, String> dbRowData,
@@ -363,8 +354,11 @@ public class TableService {
                 return TableUpdateEnum.INVALID_UNIQUE_PARAMETER;
             }
         }
-        ArrayList<HashMap<String, String>> searchedData = this.getTableDb(tableConfiguration).searchData(tableConfiguration, currentRowData);
-        if (searchedData == null || searchedData.isEmpty()) {
+        ArrayList<HashMap<String, String>> searchedData = tableMysqlDb.searchData(tableConfiguration, currentRowData);
+        if (searchedData == null) {
+            return TableUpdateEnum.SEARCH_ERROR;
+        }
+        if (searchedData.isEmpty()) {
             return TableUpdateEnum.ADD;
         }
         if (searchedData.size() > 1) {
@@ -424,7 +418,6 @@ public class TableService {
             logger.info("addOrUpdateTableData: tableConfiguration is null for tableConfigId: {}", tableConfigId);
             throw new AppException(ErrorCodes.BAD_REQUEST_ERROR);
         }
-        TableDb tableDb = this.getTableDb(tableConfiguration);
         String excelConfigId = tableConfiguration.getExcelConfigId();
         ArrayList<ArrayList<String>> csvDataArray =msExcelService.getMSExcelSheetDataArray(request, excelConfigId);
         ArrayList<HashMap<String, String>> csvDataJson = miscService.convertArraySheetDataToJsonData(csvDataArray, tableConfiguration.getUpdateColumnName());
@@ -436,6 +429,7 @@ public class TableService {
         int updateEntryErrorCount = 0;
         int addEntryErrorCount = 0;
         int skipEntryCount = 0;
+        int searchErrorCount = 0;
         TableUpdateEnum nextAction;
         boolean updateIfFound = this.isUpdateIfFoundEnabled(tableConfiguration);
         MaintainHistory maintainHistory = tableConfiguration.getMaintainHistory();
@@ -449,51 +443,60 @@ public class TableService {
         if (csvDataJson != null) {
             size = csvDataJson.size();
             for(HashMap<String, String> rowData: csvDataJson) {
+                tableMysqlDb.closeIfOracle(tableConfiguration);
                 nextAction = this.getNextAction(tableConfiguration, rowData, updateIfFound,
                         maintainHistoryRequired, maintainHistoryExcludedColumn);
                 if (nextAction != null) {
                     switch (nextAction) {
                         case UPDATE:
                             entryCount = 1;
-                            jdbcQueryStatus = tableDb.updateEntry(tableConfiguration, rowData, entryCount);
+                            jdbcQueryStatus = tableMysqlDb.updateEntry(tableConfiguration, rowData, entryCount);
                             if (jdbcQueryStatus != null && AppConstant.SUCCESS.equals(jdbcQueryStatus.getStatus())) {
                                 updateEntryCount++;
-                                logger.info("{}/{}: update completed. summary: {},{},{},{},{}: Add, Update+, Skip, " +
-                                                "AddError, UpdateError",
+                                logger.info("{}/{}: update completed. summary: {},{},{},{},{},{}: Add, Update+, Skip, " +
+                                                "AddError, UpdateError, SearchError",
                                         index, size, addEntryCount, updateEntryCount, skipEntryCount,
-                                        addEntryErrorCount, updateEntryErrorCount);
+                                        addEntryErrorCount, updateEntryErrorCount, searchErrorCount);
                             } else {
                                 updateEntryErrorCount++;
-                                logger.info("{}/{}: update completed. summary: {},{},{},{},{}: Add, Update, Skip, " +
-                                                "AddError, UpdateError+",
+                                logger.info("{}/{}: update completed. summary: {},{},{},{},{},{}: Add, Update, Skip, " +
+                                                "AddError, UpdateError+, SearchError",
                                         index, size, addEntryCount, updateEntryCount, skipEntryCount,
-                                        addEntryErrorCount, updateEntryErrorCount);
+                                        addEntryErrorCount, updateEntryErrorCount, searchErrorCount);
                                 this.trackMysqlError(tableConfiguration, jdbcQueryStatus);
                             }
                             break;
                         case ADD:
                             entryCount = 0;
-                            jdbcQueryStatus = tableDb.addEntry(tableConfiguration, rowData, entryCount);
+                            jdbcQueryStatus = tableMysqlDb.addEntry(tableConfiguration, rowData, entryCount);
                             if (jdbcQueryStatus != null && AppConstant.SUCCESS.equals(jdbcQueryStatus.getStatus())) {
                                 addEntryCount++;
-                                logger.info("{}/{}: addition completed. summary: {},{},{},{},{}: Add+, Update, Skip " +
-                                                "AddError, UpdateError",
+                                logger.info("{}/{}: addition completed. summary: {},{},{},{},{},{}: Add+, Update, Skip " +
+                                                "AddError, UpdateError, SearchError",
                                         index, size, addEntryCount, updateEntryCount, skipEntryCount,
-                                        addEntryErrorCount, updateEntryErrorCount);
+                                        addEntryErrorCount, updateEntryErrorCount, searchErrorCount);
                             } else {
                                 addEntryErrorCount++;
-                                logger.info("{}/{}: update completed. summary: {},{},{},{},{}: Add, Update, Skip, " +
-                                                "AddError+, UpdateError",
+                                logger.info("{}/{}: update completed. summary: {},{},{},{},{},{}: Add, Update, Skip, " +
+                                                "AddError+, UpdateError, SearchError",
                                         index, size, addEntryCount, updateEntryCount, skipEntryCount,
-                                        addEntryErrorCount, updateEntryErrorCount);
+                                        addEntryErrorCount, updateEntryErrorCount, searchErrorCount);
                                 this.trackMysqlError(tableConfiguration, jdbcQueryStatus);
                             }
+                            break;
+                        case SEARCH_ERROR:
+                            searchErrorCount++;
+                            logger.info("{}/{}: updateTableDataFromCsv: Multi entry exist, add " +
+                                            "or update not possible. data: {}, summary: {},{},{},{},{},{}: Add, " +
+                                            "Update, Skip, AddError, UpdateError, SearchError+",
+                                    index, size, rowData, addEntryCount, updateEntryCount, skipEntryCount,
+                                    addEntryErrorCount, updateEntryErrorCount, searchErrorCount);
                             break;
                         case SKIP:
                             skipEntryCount++;
                             logger.info("{}/{}: updateTableDataFromCsv: Multi entry exist, add " +
                                             "or update not possible. data: {}, summary: {},{},{},{},{}: Add, " +
-                                            "Update, Skip+, AddError, UpdateError",
+                                            "Update, Skip+, AddError, UpdateError, SearchError",
                                     index, size, rowData, addEntryCount, updateEntryCount, skipEntryCount,
                                     addEntryErrorCount, updateEntryErrorCount);
                             break;
@@ -504,7 +507,7 @@ public class TableService {
                             skipEntryCount++;
                             logger.info("{}/{}: updateTableDataFromCsv: existing data same as current data, " +
                                             "update not required. summary: {},{},{},{},{}: Add, Update, " +
-                                            "Skip+, AddError, UpdateError",
+                                            "Skip+, AddError, UpdateError, SearchError",
                                     index, size, addEntryCount, updateEntryCount, skipEntryCount,
                                     addEntryErrorCount, updateEntryErrorCount);
                             break;
@@ -512,7 +515,7 @@ public class TableService {
                             skipEntryCount++;
                             logger.info("{}/{}: updateTableDataFromCsv: invalid unique parameter in " +
                                             "data: {}. summary: {},{},{},{},{}: Add, Update, Skip+, " +
-                                            "AddError, UpdateError",
+                                            "AddError, UpdateError, SearchError",
                                     index, size, rowData, addEntryCount, updateEntryCount, skipEntryCount,
                                     addEntryErrorCount, updateEntryErrorCount);
                             break;
@@ -528,8 +531,9 @@ public class TableService {
                 }
                 index++;
             }
-            logger.info("Final update summary, {}/{}/{}/{}/{}/{}: Add, Update, Skip, AddError, UpdateError, Total",
-                    addEntryCount, updateEntryCount, skipEntryCount, addEntryErrorCount, updateEntryErrorCount, size);
+            logger.info("Final update summary, {}/{}/{}/{}/{}/{}/{}: Add, Update, Skip, AddError, UpdateError, SearchError, Total",
+                    addEntryCount, updateEntryCount, skipEntryCount, addEntryErrorCount,
+                    updateEntryErrorCount, searchErrorCount, size);
         }
     }
 }

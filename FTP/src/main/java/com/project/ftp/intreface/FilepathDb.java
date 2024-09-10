@@ -21,7 +21,8 @@ public class FilepathDb extends FilepathInterface {
     private final MysqlConnection mysqlConnection;
     private final String tableName = AppConstant.TABLE_FILE_PATH;
     public FilepathDb(DataSourceFactory dataSourceFactory) {
-        this.mysqlConnection = new MysqlConnection(dataSourceFactory);
+        this.mysqlConnection = new MysqlConnection(dataSourceFactory.getDriverClass(), dataSourceFactory.getUrl(),
+                dataSourceFactory.getUser(), dataSourceFactory.getPassword());
     }
     private ArrayList<FilepathDBParameters> generateFilepathDBParameters(ResultSet rs) {
         ArrayList<FilepathDBParameters> result = new ArrayList<>();
