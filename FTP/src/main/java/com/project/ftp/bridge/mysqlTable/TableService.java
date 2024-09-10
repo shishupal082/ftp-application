@@ -415,7 +415,7 @@ public class TableService {
         TableConfiguration tableConfiguration = this.getTableConfiguration(tableConfigId);
         MiscService miscService = new MiscService();
         if (tableConfiguration == null) {
-            logger.info("addOrUpdateTableData: tableConfiguration is null for tableConfigId: {}", tableConfigId);
+            logger.info("updateTableDataFromCsv: tableConfiguration is null for tableConfigId: {}", tableConfigId);
             throw new AppException(ErrorCodes.BAD_REQUEST_ERROR);
         }
         String excelConfigId = tableConfiguration.getExcelConfigId();
@@ -486,8 +486,8 @@ public class TableService {
                             break;
                         case SEARCH_ERROR:
                             searchErrorCount++;
-                            logger.info("{}/{}: updateTableDataFromCsv: Multi entry exist, add " +
-                                            "or update not possible. data: {}, summary: {},{},{},{},{},{}: Add, " +
+                            logger.info("{}/{}: updateTableDataFromCsv: search error " +
+                                            "data: {}, summary: {},{},{},{},{},{}: Add, " +
                                             "Update, Skip, AddError, UpdateError, SearchError+",
                                     index, size, rowData, addEntryCount, updateEntryCount, skipEntryCount,
                                     addEntryErrorCount, updateEntryErrorCount, searchErrorCount);
