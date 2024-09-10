@@ -459,7 +459,7 @@ public class TableService {
                                         addEntryErrorCount, updateEntryErrorCount, searchErrorCount);
                             } else {
                                 updateEntryErrorCount++;
-                                logger.info("{}/{}: update completed. summary: {},{},{},{},{},{}: Add, Update, Skip, " +
+                                logger.info("{}/{}: update error. summary: {},{},{},{},{},{}: Add, Update, Skip, " +
                                                 "AddError, UpdateError+, SearchError",
                                         index, size, addEntryCount, updateEntryCount, skipEntryCount,
                                         addEntryErrorCount, updateEntryErrorCount, searchErrorCount);
@@ -471,13 +471,13 @@ public class TableService {
                             jdbcQueryStatus = tableMysqlDb.addEntry(tableConfiguration, rowData, entryCount);
                             if (jdbcQueryStatus != null && AppConstant.SUCCESS.equals(jdbcQueryStatus.getStatus())) {
                                 addEntryCount++;
-                                logger.info("{}/{}: addition completed. summary: {},{},{},{},{},{}: Add+, Update, Skip " +
+                                logger.info("{}/{}: Add completed. summary: {},{},{},{},{},{}: Add+, Update, Skip " +
                                                 "AddError, UpdateError, SearchError",
                                         index, size, addEntryCount, updateEntryCount, skipEntryCount,
                                         addEntryErrorCount, updateEntryErrorCount, searchErrorCount);
                             } else {
                                 addEntryErrorCount++;
-                                logger.info("{}/{}: update completed. summary: {},{},{},{},{},{}: Add, Update, Skip, " +
+                                logger.info("{}/{}: Add error. summary: {},{},{},{},{},{}: Add, Update, Skip, " +
                                                 "AddError+, UpdateError, SearchError",
                                         index, size, addEntryCount, updateEntryCount, skipEntryCount,
                                         addEntryErrorCount, updateEntryErrorCount, searchErrorCount);
