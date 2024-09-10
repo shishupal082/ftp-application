@@ -42,6 +42,7 @@ public class MysqlConnection {
         }
         try {
             con.close();
+            con = null;
 //            logger.info("MysqlConnection: MySQL connection closed");
         } catch (Exception e) {
             logger.info("MysqlConnection: Error in closing connection: {}", e.toString());

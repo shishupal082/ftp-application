@@ -495,10 +495,10 @@ public class TableService {
                         case SKIP:
                             skipEntryCount++;
                             logger.info("{}/{}: updateTableDataFromCsv: Multi entry exist, add " +
-                                            "or update not possible. data: {}, summary: {},{},{},{},{}: Add, " +
+                                            "or update not possible. data: {}, summary: {},{},{},{},{},{}: Add, " +
                                             "Update, Skip+, AddError, UpdateError, SearchError",
                                     index, size, rowData, addEntryCount, updateEntryCount, skipEntryCount,
-                                    addEntryErrorCount, updateEntryErrorCount);
+                                    addEntryErrorCount, updateEntryErrorCount, searchErrorCount);
                             break;
                         case SKIP_WITHOUT_LOG:
                             skipEntryCount++;
@@ -506,18 +506,18 @@ public class TableService {
                         case SKIP_IGNORE:
                             skipEntryCount++;
                             logger.info("{}/{}: updateTableDataFromCsv: existing data same as current data, " +
-                                            "update not required. summary: {},{},{},{},{}: Add, Update, " +
+                                            "update not required. summary: {},{},{},{},{},{}: Add, Update, " +
                                             "Skip+, AddError, UpdateError, SearchError",
                                     index, size, addEntryCount, updateEntryCount, skipEntryCount,
-                                    addEntryErrorCount, updateEntryErrorCount);
+                                    addEntryErrorCount, updateEntryErrorCount, searchErrorCount);
                             break;
                         case INVALID_UNIQUE_PARAMETER:
                             skipEntryCount++;
                             logger.info("{}/{}: updateTableDataFromCsv: invalid unique parameter in " +
-                                            "data: {}. summary: {},{},{},{},{}: Add, Update, Skip+, " +
+                                            "data: {}. summary: {},{},{},{},{},{}: Add, Update, Skip+, " +
                                             "AddError, UpdateError, SearchError",
                                     index, size, rowData, addEntryCount, updateEntryCount, skipEntryCount,
-                                    addEntryErrorCount, updateEntryErrorCount);
+                                    addEntryErrorCount, updateEntryErrorCount, searchErrorCount);
                             break;
                         case NULL:
                             skipEntryCount++;
