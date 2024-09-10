@@ -248,6 +248,7 @@ public class TableService {
         tableMysqlDb.addTableEntry(tableConfiguration, rowData);
     }
     private void maintainHistory(TableConfiguration tableConfiguration,
+                                 boolean maintainHistory,
                                  HashMap<String, String> dbRowData,
                                  HashMap<String, String> currentRowData,
                                  ArrayList<String> maintainHistoryExcludedColumn) {
@@ -331,8 +332,10 @@ public class TableService {
         if (maintainHistoryExcludedColumn.contains(finalColumnName)) {
             return;
         }
-        this.saveHistory(tableConfiguration.getTableName(), uniqueColumn, uniqueParameter.toString(),
-                finalColumnName, oldValue.toString(), newValue.toString());
+        if (maintainHistory) {
+            this.saveHistory(tableConfiguration.getTableName(), uniqueColumn, uniqueParameter.toString(),
+                    finalColumnName, oldValue.toString(), newValue.toString());
+        }
         logger.info("Change History: {}", changeHistory);
     }
     private TableUpdateEnum getNextAction(TableConfiguration tableConfiguration, HashMap<String, String> currentRowData,
@@ -383,9 +386,7 @@ public class TableService {
             if (Objects.equals(dbRowData.get(columnName), currentRowData.get(columnName))) {
                 continue;
             }
-            if (maintainHistory) {
-                this.maintainHistory(tableConfiguration, dbRowData, currentRowData, maintainHistoryExcludedColumn);
-            }
+            this.maintainHistory(tableConfiguration, maintainHistory, dbRowData, currentRowData, maintainHistoryExcludedColumn);
             return TableUpdateEnum.UPDATE;
         }
         return TableUpdateEnum.SKIP_IGNORE;
