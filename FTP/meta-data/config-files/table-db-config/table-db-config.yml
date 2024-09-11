@@ -242,7 +242,7 @@ tableDbConfig:
       - "zone"
       - "status"
     maintainHistory:
-      required: false
+      required: true
       excludeColumnName:
         - "file_date"
     compareBeforeUpdateColumn:

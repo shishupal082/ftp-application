@@ -27,8 +27,8 @@ public class HistoryBookTable {
         maxLength.put(colUniqueColumn, 255);
         maxLength.put(colUniqueParameter, 255);
         maxLength.put(colColumnName, 255);
-        maxLength.put(colOldValue, 4195);
-        maxLength.put(colNewValue, 4195);
+        maxLength.put(colOldValue, 4000);
+        maxLength.put(colNewValue, 4000);
         return maxLength.get(columnName);
     }
     public String getTableName() {

@@ -222,7 +222,7 @@ public class TableService {
         }
         return result;
     }
-    private void saveHistory(String tableName, String uniqueColumn, String uniqueParameter,
+    private void saveHistory(String dbType, String tableName, String uniqueColumn, String uniqueParameter,
                              String columnName, String oldValue, String newValue) {
         if (tableName == null || tableName.isEmpty()) {
             return;
@@ -231,6 +231,7 @@ public class TableService {
         HistoryBookTable historyBookTable = new HistoryBookTable();
         ArrayList<String> updateColumn = historyBookTable.getUpdateColumnName();
         TableConfiguration tableConfiguration = new TableConfiguration();
+        tableConfiguration.setDbType(dbType);
         tableConfiguration.setTableName(historyBookTable.getTableName());
         tableConfiguration.setUpdateColumnName(updateColumn);
         rowData.put(updateColumn.get(0), StaticService.truncateString(tableName,
@@ -333,7 +334,7 @@ public class TableService {
             return;
         }
         if (maintainHistory) {
-            this.saveHistory(tableConfiguration.getTableName(), uniqueColumn, uniqueParameter.toString(),
+            this.saveHistory(tableConfiguration.getDbType(), tableConfiguration.getTableName(), uniqueColumn, uniqueParameter.toString(),
                     finalColumnName, oldValue.toString(), newValue.toString());
         }
         logger.info("Change History: {}", changeHistory);
@@ -409,7 +410,7 @@ public class TableService {
         } else {
             newValue = "";
         }
-        this.saveHistory(tableName, uniqueColumn, uniqueParameter, columnName,  oldValue,  newValue);
+        this.saveHistory(tableConfiguration.getDbType(), tableName, uniqueColumn, uniqueParameter, columnName,  oldValue,  newValue);
     }
     public void updateTableDataFromCsv(HttpServletRequest request,
                                        String tableConfigId) throws AppException {
