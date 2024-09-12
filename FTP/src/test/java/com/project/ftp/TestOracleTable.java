@@ -48,8 +48,10 @@ public class TestOracleTable {
         AppConfig appConfig = testMSExcelService.getAppConfig(true);
         TableService tableService = appConfig.getTableService();
         ArrayList<HashMap<String, String>> result;
-        result = tableService.getTableData(null, "get-mysql-smms-assets-list_oracle", null, null);
+//        result = tableService.getTableData(null, "get-mysql-smms-assets-list_oracle", null, null);
 //        Assert.assertNotNull(result);
+        result = tableService.getTableData(null, "get_smms_assets_list_view_oracle", null, "all");
+        Assert.assertNotNull(result);
     }
     @Test
     public void testUpdateMySqlTableDb() {

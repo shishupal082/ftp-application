@@ -291,3 +291,27 @@ tableDbConfig:
       - "division"
       - "zone"
       - "status"
+  - tableConfigId: "get_smms_assets_list_view_oracle"
+    tableName: "smms_assets"
+    dbType: "oracle"
+    includeDeleted: false
+    joinParam: "INNER JOIN SMMS_ASSET_COUNT ON SMMS_ASSETS.LOCATION=SMMS_ASSET_COUNT.LOCATION and SMMS_ASSETS.ASSET_TYPE=SMMS_ASSET_COUNT.ASSET_TYPE"
+    defaultFilterMapping:
+      "all": ["0", "0"]
+    filterParameter:
+      - "smms_assets.deleted"
+      - "smms_asset_count.deleted"
+    groupBy:
+      - "SMMS_ASSETS.LOCATION"
+      - "SMMS_ASSETS.asset_type"
+      - "SMMS_ASSET_COUNT.division_asset_count"
+    selectColumnName:
+      - "SMMS_ASSETS.LOCATION as location"
+      - "SMMS_ASSETS.ASSET_TYPE  as asset_type"
+      - "SMMS_ASSET_COUNT.division_asset_count as division_asset_count"
+      - "COUNT(*) AS COUNT"
+    columnName:
+      - "location"
+      - "asset_type"
+      - "division_asset_count"
+      - "count"

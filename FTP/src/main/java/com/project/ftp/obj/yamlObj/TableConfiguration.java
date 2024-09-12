@@ -18,6 +18,7 @@ public class TableConfiguration {
     private Boolean updateIfFound;
     private Boolean allowEmptyFilter;
     private MaintainHistory maintainHistory;
+    private String joinParam;
     private HashMap<String, ArrayList<String>> defaultFilterMapping;
     private ArrayList<String> groupBy;
     private ArrayList<String> uniquePattern;
@@ -108,6 +109,14 @@ public class TableConfiguration {
 
     public void setMaintainHistory(MaintainHistory maintainHistory) {
         this.maintainHistory = maintainHistory;
+    }
+
+    public String getJoinParam() {
+        return joinParam;
+    }
+
+    public void setJoinParam(String joinParam) {
+        this.joinParam = joinParam;
     }
 
     public HashMap<String, ArrayList<String>> getDefaultFilterMapping() {

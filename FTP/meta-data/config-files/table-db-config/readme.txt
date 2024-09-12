@@ -81,6 +81,9 @@ excludeColumnName shall be subset of compareBeforeUpdateColumn
 (16) dbType: String
 - oracle // For oracle database
 
+(17) joinParam: String
+It will be used for reading table data by combining two table
+
 update
 -------------------------------------
 updateIfFound: Boolean (default true)

@@ -199,18 +199,20 @@ public class TableMysqlDb implements TableDb {
         } else {
             selectColumnNames = String.join(",", requiredSelectColumn);
         }
+        String joinQuery = "";
+        String groupByQuery = "";
         String limitQuery = "";
         String orderByQuery = "";
-        String groupByQuery = "";
-        int limit;
+        int limit = 0;
+        String joinParam = tableConfiguration.getJoinParam();
+        ArrayList<String> groupByParam = tableConfiguration.getGroupBy();
         String limitParam = tableConfiguration.getLimit();
         String orderByParam = tableConfiguration.getOrderBy();
-        ArrayList<String> groupByParam = tableConfiguration.getGroupBy();
+
         String whereClause = "";
         if (!filterQuery.toString().isEmpty()) {
             whereClause = " where (" + filterQuery + ")";
         }
-        String query = "select " + selectColumnNames + " from " + tableName + whereClause;
         if (limitParam != null && !limitParam.isEmpty()) {
             try {
                 limit = Integer.parseInt(limitParam);
@@ -224,6 +226,16 @@ public class TableMysqlDb implements TableDb {
         }
         if (orderByParam != null && !orderByParam.isEmpty()) {
             orderByQuery = "order by " + orderByParam;
+        }
+        if (joinParam != null && !joinParam.isEmpty()) {
+            joinQuery = joinParam;
+        }
+        String query = "select " + selectColumnNames + " from " + tableName;
+        if (!joinQuery.isEmpty()) {
+            query = query + " " + joinQuery;
+        }
+        if (!whereClause.isEmpty()) {
+            query = query + " " + whereClause;
         }
         if (!groupByQuery.isEmpty()) {
             query = query + " " + groupByQuery;
