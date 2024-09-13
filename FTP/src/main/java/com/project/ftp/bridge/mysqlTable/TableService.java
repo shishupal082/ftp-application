@@ -1,16 +1,19 @@
 package com.project.ftp.bridge.mysqlTable;
 
 import com.project.ftp.FtpConfiguration;
+import com.project.ftp.common.DateUtilities;
 import com.project.ftp.config.AppConstant;
 import com.project.ftp.exceptions.AppException;
 import com.project.ftp.exceptions.ErrorCodes;
 import com.project.ftp.jdbc.JdbcQueryStatus;
+import com.project.ftp.obj.SingleThreadStatus;
 import com.project.ftp.obj.yamlObj.MaintainHistory;
 import com.project.ftp.obj.yamlObj.TableConfiguration;
 import com.project.ftp.obj.yamlObj.TableFileConfiguration;
 import com.project.ftp.parser.YamlFileParser;
 import com.project.ftp.service.MSExcelService;
 import com.project.ftp.service.MiscService;
+import com.project.ftp.service.SingleThreadingService;
 import com.project.ftp.service.StaticService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,11 +28,15 @@ public class TableService {
     private final FtpConfiguration ftpConfiguration;
     private final MSExcelService msExcelService;
     private final TableDb tableMysqlDb;
-    public TableService(final FtpConfiguration ftpConfiguration, final MSExcelService msExcelService,
+    private final SingleThreadingService singleThreadingService;
+    public TableService(final FtpConfiguration ftpConfiguration,
+                        final SingleThreadingService singleThreadingService,
+                        final MSExcelService msExcelService,
                         final TableDb tableMysqlDb) {
         this.ftpConfiguration = ftpConfiguration;
         this.msExcelService = msExcelService;
         this.tableMysqlDb = tableMysqlDb;
+        this.singleThreadingService = singleThreadingService;
     }
     private boolean isAllowEmptyFilter(TableConfiguration tableConfiguration) {
         Boolean allowEmptyFilter = tableConfiguration.getAllowEmptyFilter();
@@ -414,6 +421,9 @@ public class TableService {
     }
     public void updateTableDataFromCsv(HttpServletRequest request,
                                        String tableConfigId) throws AppException {
+        if (this.singleThreadingService != null) {
+            this.singleThreadingService.setSingleThreadStatus(null);
+        }
         TableConfiguration tableConfiguration = this.getTableConfiguration(tableConfigId);
         MiscService miscService = new MiscService();
         if (tableConfiguration == null) {
@@ -421,7 +431,7 @@ public class TableService {
             throw new AppException(ErrorCodes.BAD_REQUEST_ERROR);
         }
         String excelConfigId = tableConfiguration.getExcelConfigId();
-        ArrayList<ArrayList<String>> csvDataArray =msExcelService.getMSExcelSheetDataArray(request, excelConfigId);
+        ArrayList<ArrayList<String>> csvDataArray = msExcelService.getMSExcelSheetDataArray(request, excelConfigId);
         ArrayList<HashMap<String, String>> csvDataJson = miscService.convertArraySheetDataToJsonData(csvDataArray, tableConfiguration.getUpdateColumnName());
         int index = 1;
         int size = 0;
@@ -441,10 +451,22 @@ public class TableService {
             maintainHistoryRequired = maintainHistory.isRequired();
             maintainHistoryExcludedColumn = maintainHistory.getExcludeColumnName();
         }
+        DateUtilities dateUtilities = new DateUtilities();
         JdbcQueryStatus jdbcQueryStatus;
+        String startedTime = dateUtilities.getDateStrFromPattern(AppConstant.DateTimeFormat6, "");
+        String singleThreadItem = "updateTableDataFromCsv";
+        String singeThreadStatus;
         if (csvDataJson != null) {
             size = csvDataJson.size();
             for(HashMap<String, String> rowData: csvDataJson) {
+                singeThreadStatus = "Index=" + index + "/Size=" + size + "/Add=" + addEntryCount +
+                        "/Update=" + updateEntryCount + "/Skip=" + skipEntryCount +
+                        "/AddError=" + addEntryErrorCount + "/UpdateError=" + updateEntryErrorCount +
+                        "/SearchError" + searchErrorCount;
+                if (this.singleThreadingService != null) {
+                    this.singleThreadingService.setSingleThreadStatus(new SingleThreadStatus(startedTime,
+                            singleThreadItem, singeThreadStatus));
+                }
                 tableMysqlDb.closeIfOracle(tableConfiguration);
                 nextAction = this.getNextAction(tableConfiguration, rowData, updateIfFound,
                         maintainHistoryRequired, maintainHistoryExcludedColumn);

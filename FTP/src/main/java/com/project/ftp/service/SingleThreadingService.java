@@ -4,6 +4,7 @@ import com.project.ftp.FtpConfiguration;
 import com.project.ftp.exceptions.AppException;
 import com.project.ftp.exceptions.ErrorCodes;
 import com.project.ftp.obj.SingleThread;
+import com.project.ftp.obj.SingleThreadStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,11 +14,21 @@ import java.util.HashMap;
 
 public class SingleThreadingService {
     private final static Logger logger = LoggerFactory.getLogger(SingleThreadingService.class);
-    private ArrayList<SingleThread> singleThreadStatus = new ArrayList<>();
+    private ArrayList<SingleThread> singleThreadItem = new ArrayList<>();
     private final FtpConfiguration ftpConfiguration;
+    private SingleThreadStatus singleThreadStatus;
     public SingleThreadingService(final FtpConfiguration ftpConfiguration) {
         this.ftpConfiguration = ftpConfiguration;
     }
+
+    public SingleThreadStatus getSingleThreadStatus() {
+        return singleThreadStatus;
+    }
+
+    public void setSingleThreadStatus(SingleThreadStatus singleThreadStatus) {
+        this.singleThreadStatus = singleThreadStatus;
+    }
+
     private boolean isSingleThreading(HttpServletRequest request) {
         Boolean singleThreadingEnable = ftpConfiguration.getSingleThreadingEnable();
         if (singleThreadingEnable == null) {
@@ -33,19 +44,19 @@ public class SingleThreadingService {
             logger.info("Invalid name checking singleThreadStatus: {}", name);
             throw new AppException(ErrorCodes.BAD_REQUEST_ERROR);
         }
-        if (!singleThreadStatus.isEmpty()) {
-            logger.info("Thread already running: {}, {}", name, singleThreadStatus);
+        if (!singleThreadItem.isEmpty()) {
+            logger.info("Thread already running: {}, {}, {}", name, singleThreadItem, singleThreadStatus);
             throw new AppException(ErrorCodes.SINGLE_THREAD_BUSY);
         }
         SingleThread singleThread = new SingleThread(name);
         singleThread.setUrl(RequestService.getPathUrl(request));
-        singleThreadStatus.add(singleThread);
+        singleThreadItem.add(singleThread);
     }
     public void clearSingleThread(HttpServletRequest request, String name) {
         if (!this.isSingleThreading(request) || StaticService.isInValidString(name)) {
             return;
         }
-        if (!singleThreadStatus.isEmpty()) {
+        if (!singleThreadItem.isEmpty()) {
 //            ArrayList<SingleThread> finalSingleThreadStatus = new ArrayList<>();
 //            for(SingleThread singleThread: singleThreadStatus) {
 //                if (singleThread != null && singleThread.getName() == null) {
@@ -53,13 +64,18 @@ public class SingleThreadingService {
 //                }
 //            }
 //            singleThreadStatus = finalSingleThreadStatus;
-            singleThreadStatus = new ArrayList<>();
+            singleThreadItem = new ArrayList<>();
         }
     }
     public HashMap<String, String> getSingleThreadStatus(HttpServletRequest request) {
         HashMap<String, String> result = new HashMap<>();
         result.put("isEnabled", Boolean.toString(this.isSingleThreading(request)));
-        result.put("status", singleThreadStatus.toString());
+        result.put("item", singleThreadItem.toString());
+        if (singleThreadStatus == null) {
+            result.put("status", null);
+        } else {
+            result.put("status", singleThreadStatus.toString());
+        }
         return result;
     }
 }

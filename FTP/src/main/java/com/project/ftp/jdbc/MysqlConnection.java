@@ -77,7 +77,7 @@ public class MysqlConnection {
             }
             rs = preparedStatement.executeQuery();
         } catch (Exception e) {
-            logger.info("MysqlConnection: error in select query execution: {}, {}", query, e.toString());
+            logger.info("MysqlConnection: error in select query execution: {}, {}, {}", query, parameters, e.toString());
 //            e.printStackTrace();
         }
         return rs;

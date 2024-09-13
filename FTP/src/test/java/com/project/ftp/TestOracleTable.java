@@ -18,7 +18,7 @@ public class TestOracleTable {
     public void testMyTableTableService() {
         TestMSExcelService testMSExcelService = new TestMSExcelService();
         AppConfig appConfig = testMSExcelService.getAppConfig(true);
-        TableService tableService = new TableService(null, null, null);
+        TableService tableService = new TableService(null, null, null, null);
         ArrayList<HashMap<String, String>> result;
 
         try {
@@ -43,7 +43,7 @@ public class TestOracleTable {
         }
     }
     @Test
-    public void testMyTableDbv2() {
+    public void testGetOracleTableData() {
         TestMSExcelService testMSExcelService = new TestMSExcelService();
         AppConfig appConfig = testMSExcelService.getAppConfig(true);
         TableService tableService = appConfig.getTableService();

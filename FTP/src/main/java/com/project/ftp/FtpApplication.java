@@ -158,7 +158,8 @@ public class FtpApplication  extends Application<FtpConfiguration> {
         ScanDirService scanDirService = new ScanDirService(appConfig, filepathInterface);
         appConfig.setScanDirService(scanDirService);
         appConfig.setAppToBridge(new AppToBridge(appConfig, ftpConfiguration, eventTracking));
-        TableService tableService = new TableService(appConfig.getFtpConfiguration(), appConfig.getMsExcelService(), tableMysqlDb);
+        TableService tableService = new TableService(appConfig.getFtpConfiguration(), appConfig.getSingleThreadingService(),
+                appConfig.getMsExcelService(), tableMysqlDb);
         appConfig.setTableService(tableService);
         return appConfig;
     }
