@@ -84,6 +84,8 @@ excludeColumnName shall be subset of compareBeforeUpdateColumn
 (17) joinParam: String
 It will be used for reading table data by combining two table
 
+(18) defaultDeletedValue: String (default = 0)
+
 update
 -------------------------------------
 updateIfFound: Boolean (default true)

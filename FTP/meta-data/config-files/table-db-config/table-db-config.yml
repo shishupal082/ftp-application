@@ -297,7 +297,7 @@ tableDbConfig:
     includeDeleted: false
     joinParam: "INNER JOIN SMMS_ASSET_COUNT ON SMMS_ASSETS.LOCATION=SMMS_ASSET_COUNT.LOCATION and SMMS_ASSETS.ASSET_TYPE=SMMS_ASSET_COUNT.ASSET_TYPE"
     defaultFilterMapping:
-      "all": ["0", "0"]
+      "all": ["NO", "NO"]
     filterParameter:
       - "smms_assets.deleted"
       - "smms_asset_count.deleted"

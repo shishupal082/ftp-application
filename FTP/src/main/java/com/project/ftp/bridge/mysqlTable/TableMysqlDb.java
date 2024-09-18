@@ -137,6 +137,13 @@ public class TableMysqlDb implements TableDb {
         }
         return onlyValid;
     }
+    private String getDefaultDeletedValue(TableConfiguration tableConfiguration) {
+        String defaultDeletedValue = tableConfiguration.getDefaultDeletedValue();
+        if (defaultDeletedValue != null) {
+            return defaultDeletedValue;
+        }
+        return "0";
+    }
     public ArrayList<HashMap<String, String>> getByMultipleParameter(TableConfiguration tableConfiguration,
                                                                      HashMap<String, ArrayList<String>> requestFilterParameter,
                                                                      boolean logQuery) {
@@ -156,7 +163,7 @@ public class TableMysqlDb implements TableDb {
                 requestFilterParameter = new HashMap<>();
             }
             ArrayList<String> temp = new ArrayList<>();
-            temp.add("0");
+            temp.add(this.getDefaultDeletedValue(tableConfiguration));
             requestFilterParameter.put("deleted", temp);
         }
         StringBuilder filterQuery = new StringBuilder();
@@ -275,7 +282,7 @@ public class TableMysqlDb implements TableDb {
                 requestFilterParameter = new HashMap<>();
             }
             ArrayList<String> temp = new ArrayList<>();
-            temp.add("0");
+            temp.add(this.getDefaultDeletedValue(tableConfiguration));
             requestFilterParameter.put("deleted", temp);
         }
         int index = 0;

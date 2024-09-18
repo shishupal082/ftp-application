@@ -14,6 +14,7 @@ public class TableConfiguration {
     private String orderBy;
     private String limit;
     private String excelConfigId;
+    private String defaultDeletedValue;
     private Boolean includeDeleted;
     private Boolean updateIfFound;
     private Boolean allowEmptyFilter;
@@ -77,6 +78,14 @@ public class TableConfiguration {
 
     public void setExcelConfigId(String excelConfigId) {
         this.excelConfigId = excelConfigId;
+    }
+
+    public String getDefaultDeletedValue() {
+        return defaultDeletedValue;
+    }
+
+    public void setDefaultDeletedValue(String defaultDeletedValue) {
+        this.defaultDeletedValue = defaultDeletedValue;
     }
 
     public Boolean getIncludeDeleted() {
