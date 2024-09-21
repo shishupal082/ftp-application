@@ -459,14 +459,6 @@ public class TableService {
         if (csvDataJson != null) {
             size = csvDataJson.size();
             for(HashMap<String, String> rowData: csvDataJson) {
-                singeThreadStatus = "Index=" + index + "/Size=" + size + "/Add=" + addEntryCount +
-                        "/Update=" + updateEntryCount + "/Skip=" + skipEntryCount +
-                        "/AddError=" + addEntryErrorCount + "/UpdateError=" + updateEntryErrorCount +
-                        "/SearchError" + searchErrorCount;
-                if (this.singleThreadingService != null) {
-                    this.singleThreadingService.setSingleThreadStatus(new SingleThreadStatus(startedTime,
-                            singleThreadItem, singeThreadStatus));
-                }
                 tableMysqlDb.closeIfOracle(tableConfiguration);
                 nextAction = this.getNextAction(tableConfiguration, rowData, updateIfFound,
                         maintainHistoryRequired, maintainHistoryExcludedColumn);
@@ -552,6 +544,14 @@ public class TableService {
                     skipEntryCount++;
                     logger.info("{}/{}, {}: unhandled next action. data: {}", index, size, nextAction, rowData);
                     break;
+                }
+                singeThreadStatus = "Index=" + index + "/Size=" + size + "/Add=" + addEntryCount +
+                        "/Update=" + updateEntryCount + "/Skip=" + skipEntryCount +
+                        "/AddError=" + addEntryErrorCount + "/UpdateError=" + updateEntryErrorCount +
+                        "/SearchError" + searchErrorCount;
+                if (this.singleThreadingService != null) {
+                    this.singleThreadingService.setSingleThreadStatus(new SingleThreadStatus(startedTime,
+                            singleThreadItem, singeThreadStatus));
                 }
                 index++;
             }
