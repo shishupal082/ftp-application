@@ -208,9 +208,8 @@ public class TableMysqlDb implements TableDb {
         }
         String joinQuery = "";
         String groupByQuery = "";
-        String limitQuery = "";
         String orderByQuery = "";
-        int limit = 0;
+        String limitQuery = "";
         String joinParam = tableConfiguration.getJoinParam();
         ArrayList<String> groupByParam = tableConfiguration.getGroupBy();
         String limitParam = tableConfiguration.getLimit();
@@ -220,14 +219,6 @@ public class TableMysqlDb implements TableDb {
         if (!filterQuery.toString().isEmpty()) {
             whereClause = " where (" + filterQuery + ")";
         }
-        if (limitParam != null && !limitParam.isEmpty()) {
-            try {
-                limit = Integer.parseInt(limitParam);
-                if (limit > 0) {
-                    limitQuery = "limit " + limit;
-                }
-            } catch (Exception ignore) {}
-        }
         if (groupByParam != null && !groupByParam.isEmpty()) {
             groupByQuery = "group by " + String.join(",",groupByParam);
         }
@@ -236,6 +227,9 @@ public class TableMysqlDb implements TableDb {
         }
         if (joinParam != null && !joinParam.isEmpty()) {
             joinQuery = joinParam;
+        }
+        if (limitParam != null && !limitParam.isEmpty()) {
+            limitQuery = limitParam;
         }
         String query = "select " + selectColumnNames + " from " + tableName;
         if (!joinQuery.isEmpty()) {

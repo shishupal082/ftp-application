@@ -2,7 +2,7 @@ tableDbConfig:
   - tableConfigId: "get-users"
     tableName: "users"
     orderBy: "id desc"
-    limit: "100"
+    limit: "limit 100"
     selectColumnName:
       - "id"
       - "username"
@@ -18,7 +18,7 @@ tableDbConfig:
   - tableConfigId: "get-event_data"
     tableName: "event_data"
     orderBy: "id desc"
-    limit: "100"
+    limit: "limit 100"
     likeParameter:
       - "event"
     filterParameter:
@@ -54,6 +54,7 @@ tableDbConfig:
   - tableConfigId: "get_smms_assets_list_count_oracle"
     tableName: "smms_assets"
     dbType: "oracle"
+    limit: "FETCH FIRST 500 rows only"
     groupBy:
       - "zone"
       - "division"
