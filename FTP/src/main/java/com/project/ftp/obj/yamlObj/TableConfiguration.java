@@ -9,6 +9,7 @@ import java.util.HashMap;
 
 public class TableConfiguration {
     private String dbType;
+    private String dbIdentifier;
     private String tableConfigId;
     private String tableName;
     private String orderBy;
@@ -38,6 +39,14 @@ public class TableConfiguration {
 
     public void setDbType(String dbType) {
         this.dbType = dbType;
+    }
+
+    public String getDbIdentifier() {
+        return dbIdentifier;
+    }
+
+    public void setDbIdentifier(String dbIdentifier) {
+        this.dbIdentifier = dbIdentifier;
     }
 
     public String getTableConfigId() {
@@ -198,5 +207,33 @@ public class TableConfiguration {
 
     public void setSelectColumnName(ArrayList<String> selectColumnName) {
         this.selectColumnName = selectColumnName;
+    }
+
+    @Override
+    public String toString() {
+        return "TableConfiguration{" +
+                "dbType='" + dbType + '\'' +
+                ", dbIdentifier='" + dbIdentifier + '\'' +
+                ", tableConfigId='" + tableConfigId + '\'' +
+                ", tableName='" + tableName + '\'' +
+                ", orderBy='" + orderBy + '\'' +
+                ", limit='" + limit + '\'' +
+                ", excelConfigId='" + excelConfigId + '\'' +
+                ", defaultDeletedValue='" + defaultDeletedValue + '\'' +
+                ", includeDeleted=" + includeDeleted +
+                ", updateIfFound=" + updateIfFound +
+                ", allowEmptyFilter=" + allowEmptyFilter +
+                ", maintainHistory=" + maintainHistory +
+                ", joinParam='" + joinParam + '\'' +
+                ", defaultFilterMapping=" + defaultFilterMapping +
+                ", groupBy=" + groupBy +
+                ", uniquePattern=" + uniquePattern +
+                ", likeParameter=" + likeParameter +
+                ", filterParameter=" + filterParameter +
+                ", columnName=" + columnName +
+                ", updateColumnName=" + updateColumnName +
+                ", compareBeforeUpdateColumn=" + compareBeforeUpdateColumn +
+                ", selectColumnName=" + selectColumnName +
+                '}';
     }
 }

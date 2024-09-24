@@ -34,6 +34,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 
 
 public class FtpApplication  extends Application<FtpConfiguration> {
@@ -143,11 +144,8 @@ public class FtpApplication  extends Application<FtpConfiguration> {
         }
         SingleThreadingService singleThreadingService = new SingleThreadingService(appConfig.getFtpConfiguration());
         appConfig.setSingleThreadingService(singleThreadingService);
-        OracleDatabaseConfig oracleDatabaseConfig = ftpConfiguration.getOracleDatabaseConfig();
-        if (oracleDatabaseConfig == null) {
-            oracleDatabaseConfig = new OracleDatabaseConfig();
-        }
-        TableDb tableMysqlDb = new TableMysqlDb(ftpConfiguration.getDataSourceFactory(), oracleDatabaseConfig);
+        TableDb tableMysqlDb = new TableMysqlDb(ftpConfiguration.getDataSourceFactory(),
+                ftpConfiguration.getOracleDatabaseConfigs());
         UserService userService = new UserService(appConfig, userInterface);
         appConfig.setUserService(userService);
         EventTracking eventTracking = new EventTracking(appConfig, userService, eventInterface);

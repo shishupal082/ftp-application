@@ -54,6 +54,7 @@ tableDbConfig:
   - tableConfigId: "get_smms_assets_list_count_oracle"
     tableName: "smms_assets"
     dbType: "oracle"
+    dbIdentifier: "oracle"
     limit: "FETCH FIRST 500 rows only"
     groupBy:
       - "zone"

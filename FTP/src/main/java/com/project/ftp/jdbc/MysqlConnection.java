@@ -1,6 +1,7 @@
 package com.project.ftp.jdbc;
 
 import com.project.ftp.config.AppConstant;
+import com.project.ftp.obj.yamlObj.OracleDatabaseConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,6 +20,19 @@ public class MysqlConnection {
         this.url = url;
         this.username = username;
         this.password = password;
+    }
+    public MysqlConnection(OracleDatabaseConfig oracleDatabaseConfig) {
+        if (oracleDatabaseConfig != null) {
+            this.driver = oracleDatabaseConfig.getDriver();
+            this.url = oracleDatabaseConfig.getUrl();
+            this.username = oracleDatabaseConfig.getUsername();
+            this.password = oracleDatabaseConfig.getPassword();
+        } else {
+            this.driver = null;
+            this.url = null;
+            this.username = null;
+            this.password = null;
+        }
     }
     private boolean isConnected() {
         try {
@@ -51,6 +65,12 @@ public class MysqlConnection {
     }
     public void connect() {
         if (this.isConnected()) {
+            return;
+        }
+        if (driver == null || driver.isEmpty() || url == null || url.isEmpty()) {
+            return;
+        }
+        if (username == null || username.isEmpty() || password == null || password.isEmpty()) {
             return;
         }
         try {

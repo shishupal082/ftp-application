@@ -86,6 +86,8 @@ It will be used for reading table data by combining two table
 
 (18) defaultDeletedValue: String (default = 0)
 
+(19) dbIdentifier: String (Used for finding oracle databaseConfig
+
 update
 -------------------------------------
 updateIfFound: Boolean (default true)

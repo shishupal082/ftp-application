@@ -69,7 +69,7 @@ public class FtpConfiguration extends Configuration {
     private GoogleOAuthClientConfig googleOAuthClientConfig;
     @JsonProperty("database")
     private DataSourceFactory dataSourceFactory = new DataSourceFactory();
-    private OracleDatabaseConfig oracleDatabaseConfig;
+    private HashMap<String, OracleDatabaseConfig> oracleDatabaseConfigs;
 
     public String getIndexPageReRoute() {
         return indexPageReRoute;
@@ -423,12 +423,12 @@ public class FtpConfiguration extends Configuration {
         this.dataSourceFactory = dataSourceFactory;
     }
 
-    public OracleDatabaseConfig getOracleDatabaseConfig() {
-        return oracleDatabaseConfig;
+    public HashMap<String, OracleDatabaseConfig> getOracleDatabaseConfigs() {
+        return oracleDatabaseConfigs;
     }
 
-    public void setOracleDatabaseConfig(OracleDatabaseConfig oracleDatabaseConfig) {
-        this.oracleDatabaseConfig = oracleDatabaseConfig;
+    public void setOracleDatabaseConfigs(HashMap<String, OracleDatabaseConfig> oracleDatabaseConfigs) {
+        this.oracleDatabaseConfigs = oracleDatabaseConfigs;
     }
 
     public void updateFtpConfig(final FtpConfiguration tempFtpConfiguration) {
@@ -603,9 +603,9 @@ public class FtpConfiguration extends Configuration {
         if (googleOAuthClientConfig != null) {
             this.googleOAuthClientConfig = googleOAuthClientConfig;
         }
-        OracleDatabaseConfig oracleDatabaseConfig = tempFtpConfiguration.getOracleDatabaseConfig();
-        if (oracleDatabaseConfig != null) {
-            this.oracleDatabaseConfig = oracleDatabaseConfig;
+        HashMap<String, OracleDatabaseConfig> tempOracleDatabaseConfigs = tempFtpConfiguration.getOracleDatabaseConfigs();
+        if (tempOracleDatabaseConfigs != null) {
+            this.oracleDatabaseConfigs = tempOracleDatabaseConfigs;
         }
     }
 
@@ -655,7 +655,7 @@ public class FtpConfiguration extends Configuration {
                 ", communicationConfig=" + communicationConfig +
                 ", socialLoginConfig=" + socialLoginConfig +
                 ", googleOAuthClientConfig=" + googleOAuthClientConfig +
-                ", oracleDatabaseConfig=" + "*****" +
+                ", oracleDatabaseConfigs=" + "*****" +
                 ", dataSourceFactory=" + "*****" +
                 '}';
     }

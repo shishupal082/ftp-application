@@ -17,28 +17,59 @@ import java.util.Map;
 public class TableMysqlDb implements TableDb {
     private final static Logger logger = LoggerFactory.getLogger(TableMysqlDb.class);
     private final MysqlConnection mysqlConnection;
-    private final MysqlConnection oracleConnection;
-    private final OracleDatabaseConfig oracleDatabaseConfig;
+    private final HashMap<String, OracleDatabaseConfig> oracleDatabaseConfigs;
+    private final HashMap<String, MysqlConnection> oracleConnections;
     private int closeCount = 0;
-    public TableMysqlDb(DataSourceFactory dataSourceFactory, OracleDatabaseConfig oracleDatabaseConfig) {
+    public TableMysqlDb(DataSourceFactory dataSourceFactory, HashMap<String, OracleDatabaseConfig> oracleDatabaseConfigs) {
         this.mysqlConnection = new MysqlConnection(dataSourceFactory.getDriverClass(), dataSourceFactory.getUrl(),
                 dataSourceFactory.getUser(), dataSourceFactory.getPassword());
-        this.oracleConnection = new MysqlConnection(oracleDatabaseConfig.getDriver(), oracleDatabaseConfig.getUrl(),
-                oracleDatabaseConfig.getUsername(), oracleDatabaseConfig.getPassword());
-        this.oracleDatabaseConfig = oracleDatabaseConfig;
+        if (oracleDatabaseConfigs == null) {
+            oracleDatabaseConfigs = new HashMap<>();
+        }
+        this.oracleDatabaseConfigs = oracleDatabaseConfigs;
+        this.oracleConnections = new HashMap<>();
+    }
+    private String getOracleDbIdentifier(TableConfiguration tableConfiguration) {
+        String oracleDbIdentifier = tableConfiguration.getDbIdentifier();
+        if (oracleDbIdentifier == null || oracleDbIdentifier.isEmpty()) {
+            oracleDbIdentifier = "oracle";
+        }
+        return oracleDbIdentifier;
     }
     private MysqlConnection getDBConnection(TableConfiguration tableConfiguration) {
+        String oracleDbIdentifier;
+        MysqlConnection oracleCon = null;
+        OracleDatabaseConfig oracleDatabaseConfig;
         if ("oracle".equals(tableConfiguration.getDbType())) {
-            return oracleConnection;
+            oracleDbIdentifier = this.getOracleDbIdentifier(tableConfiguration);
+            oracleCon = this.oracleConnections.get(oracleDbIdentifier);
+            if (oracleCon == null) {
+                oracleDatabaseConfig = this.oracleDatabaseConfigs.get(oracleDbIdentifier);
+                if (oracleDatabaseConfig == null) {
+                    logger.info("getDBConnection: oracleDatabaseConfig is null for dbIdentifier: {}, {}",
+                            oracleDbIdentifier, this.oracleDatabaseConfigs);
+                }
+                logger.info("getDBConnection: new connection created: {},{}", oracleDatabaseConfig, tableConfiguration);
+                oracleCon = new MysqlConnection(oracleDatabaseConfig);
+                this.oracleConnections.put(oracleDbIdentifier, oracleCon);
+            }
+            return oracleCon;
         }
         return mysqlConnection;
     }
     public void closeIfOracle(TableConfiguration tableConfiguration) {
+        String oracleDbIdentifier;
+        int connectionResetCount = 30;
         if ("oracle".equals(tableConfiguration.getDbType())) {
+            oracleDbIdentifier = this.getOracleDbIdentifier(tableConfiguration);
+            OracleDatabaseConfig oracleDatabaseConfig = this.oracleDatabaseConfigs.get(oracleDbIdentifier);
+            if (oracleDatabaseConfig != null) {
+                connectionResetCount = oracleDatabaseConfig.getConnectionResetCount();
+            }
             closeCount++;
-            closeCount = closeCount % oracleDatabaseConfig.getConnectionResetCount();
+            closeCount = closeCount % connectionResetCount;
             if (closeCount == 0) {
-                oracleConnection.close();
+                this.getDBConnection(tableConfiguration).close();
             }
         }
     }
@@ -256,7 +287,8 @@ public class TableMysqlDb implements TableDb {
     }
     public ArrayList<HashMap<String, String>> getAll(TableConfiguration tableConfiguration) {
         return this.getByMultipleParameter(tableConfiguration, null, true);
-    }public JdbcQueryStatus updateTableEntry(TableConfiguration tableConfiguration, HashMap<String, String> data,
+    }
+    public JdbcQueryStatus updateTableEntry(TableConfiguration tableConfiguration, HashMap<String, String> data,
                                              HashMap<String, ArrayList<String>> requestFilterParameter) {
         if (tableConfiguration == null || data == null || StaticService.isInValidString(tableConfiguration.getTableName())) {
             return null;
