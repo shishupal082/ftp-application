@@ -404,7 +404,7 @@ public class ExcelToCsvDataConvertService {
         String dateRegex = cellMappingData.getDateRegex();
         String oldDateText;
         String cellData2 = this.getFormatedCellData(sheetName, srcFilepath, rowData, cellData, colIndex2, null);
-        if (colIndex2 != null && colIndex2 != -1 && colIndex2 >= -3) {
+        if (colIndex2 != null && colIndex2 != -1 && colIndex2 >= -4) {
             if (range != null && range.contains(cellData2)) {
                 cellData = value;
                 if (subStringConfig != null) {
