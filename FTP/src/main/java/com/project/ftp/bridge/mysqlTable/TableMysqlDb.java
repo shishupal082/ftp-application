@@ -187,6 +187,7 @@ public class TableMysqlDb implements TableDb {
             logger.info("getByMultipleParameter: invalid tableName: null");
             return null;
         }
+        ArrayList<String> fixedFilterParameter = tableConfiguration.getFixedFilterParameter();
         ArrayList<String> finalQueryParam = new ArrayList<>();
         boolean isOnlyValid = this.isOnlyValid(tableConfiguration);
         if (isOnlyValid) {
@@ -228,6 +229,18 @@ public class TableMysqlDb implements TableDb {
                     filterQuery.append(tempFilterQuery);
                     isAndRequired = true;
                 }
+            }
+        }
+        if (fixedFilterParameter != null) {
+            for (String str: fixedFilterParameter) {
+                if (str == null || str.isEmpty()) {
+                    continue;
+                }
+                if (isAndRequired) {
+                    filterQuery.append(" and ");
+                }
+                filterQuery.append(str);
+                isAndRequired = true;
             }
         }
         String selectColumnNames = "";

@@ -13,9 +13,9 @@ D: Delete row in a table
 - Read all table data implementation completed
 
 TableConfiguration:
-(1) likeParameter:
-  - "event"
-(2) filterParameter:
+
+(1) Where clause parameter:
+(1.1) filterParameter:
   - "event"
 query parameter name mapping from (2):
 filter0 = event
@@ -26,12 +26,24 @@ filter0=string1|string2
 query parameter value mapping processing in the program:
 event = string1|string2
 
-(3) uniquePattern:
+(1.2) likeParameter:
+  - "event"
+
+(1.3) fixedParameter:
+  - "name IN (SELECT name FROM your_table GROUP BY name HAVING COUNT(*) > 1)"
+
+
+(2) uniquePattern:
   - "asset_code"
-Used for updating entry
+Used for update entry where clause
+
+(3) groupBy: ArrayList<String>
+
+Used for big data summary
+
 
 (4) orderBy: "id desc"
-(5) limit: "100"
+(5) limit: "limit 100"
 
 (6) columnName: ArrayList<String>
     - col1
@@ -43,25 +55,27 @@ It is used when update with compareBeforeUpdateColumn
     - col1
     - col2
 Used for get result
+Distinct key word can also be used if required
 
-(8) updateColumnName: ArrayList<String>
+(8) updateIfFound: Boolean (Default true)
+
+(9) updateColumnName: ArrayList<String>
     - col1
     - col2
 Used for update entry
 
-(9) compareBeforeUpdateColumn: ArrayList<String>
+(10) compareBeforeUpdateColumn: ArrayList<String>
     - col1
     - col2
 Used for finding next action in update
 
-(10) groupBy: ArrayList<String>
-Used for big data summary
-
 (11) includeDeleted: Boolean (Default false)
+
 If includeDeleted = false
 then deleted=0 query will be added in where clause for update search as well as select query
 
-(12) updateIfFound: Boolean (Default true)
+(12) defaultDeletedValue: String (default = 0)
+
 (13)
 defaultFilterMapping: HashMap<String, ArrayList<String>>
     "rnc_division": ["", "Test Ranchi"]
@@ -82,11 +96,10 @@ excludeColumnName shall be subset of compareBeforeUpdateColumn
 - oracle // For oracle database
 
 (17) joinParam: String
+- LEFT JOIN SMMS_ASSET_COUNT ON SMMS_ASSETS.LOCATION=SMMS_ASSET_COUNT.LOCATION and SMMS_ASSETS.ASSET_TYPE=SMMS_ASSET_COUNT.ASSET_TYPE and SMMS_ASSETS.DELETED=SMMS_ASSET_COUNT.DELETED
 It will be used for reading table data by combining two table
 
-(18) defaultDeletedValue: String (default = 0)
-
-(19) dbIdentifier: String (Used for finding oracle databaseConfig
+(18) dbIdentifier: String (Used for finding oracle databaseConfig
 
 update
 -------------------------------------

@@ -52,7 +52,12 @@ public class TestOracleTable {
 //        Assert.assertNotNull(result);
         result = tableService.getTableData(null, "get_smms_assets_list_view_oracle", null, "all");
         Assert.assertNotNull(result);
+
+        result = tableService.getTableData(null, "get_smms_assets_list_duplicate", null, "all");
+        Assert.assertNotNull(result);
+
     }
+
     @Test
     public void testUpdateMySqlTableDb() {
         TestMSExcelService testMSExcelService = new TestMSExcelService();

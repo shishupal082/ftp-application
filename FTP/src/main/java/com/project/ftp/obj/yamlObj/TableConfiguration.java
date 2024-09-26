@@ -26,6 +26,7 @@ public class TableConfiguration {
     private ArrayList<String> uniquePattern;
     private ArrayList<String> likeParameter;
     private ArrayList<String> filterParameter;
+    private ArrayList<String> fixedFilterParameter;
     private ArrayList<String> columnName;
     private ArrayList<String> updateColumnName;
     private ArrayList<String> compareBeforeUpdateColumn;
@@ -177,6 +178,14 @@ public class TableConfiguration {
         this.filterParameter = filterParameter;
     }
 
+    public ArrayList<String> getFixedFilterParameter() {
+        return fixedFilterParameter;
+    }
+
+    public void setFixedFilterParameter(ArrayList<String> fixedFilterParameter) {
+        this.fixedFilterParameter = fixedFilterParameter;
+    }
+
     public ArrayList<String> getColumnName() {
         return columnName;
     }
@@ -230,6 +239,7 @@ public class TableConfiguration {
                 ", uniquePattern=" + uniquePattern +
                 ", likeParameter=" + likeParameter +
                 ", filterParameter=" + filterParameter +
+                ", fixedFilterParameter=" + fixedFilterParameter +
                 ", columnName=" + columnName +
                 ", updateColumnName=" + updateColumnName +
                 ", compareBeforeUpdateColumn=" + compareBeforeUpdateColumn +
