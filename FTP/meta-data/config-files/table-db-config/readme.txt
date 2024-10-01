@@ -101,6 +101,45 @@ It will be used for reading table data by combining two table
 
 (18) dbIdentifier: String (Used for finding oracle databaseConfig
 
+(19) Apply extra condition on each row of successful data reading from table
+
+Sequence of operation
+*********************
+
+skipRowCriteria
+cellMapping
+
+cellMapping
+-------------
+It will add additional column with key as newColumnName: "string"
+
+if col_index in cellMapping == -1
+    defaultCellData
+
+if col_index (in cellMapping or mappingData) == -2
+    requestTableConfigId
+
+if col_index (in cellMapping or mappingData) == -3
+    requestDefaultFilterMappingId
+
+if col_index (in cellMapping or mappingData) == -4
+    tableConfigId
+
+if col_index (in cellMapping or mappingData) == -5
+    tableName
+
+if col_index (in cellMapping or mappingData) == -6
+    dbType
+
+if col_index (in cellMapping or mappingData) == -7
+    dbIdentifier
+
+if col_index (in cellMapping or mappingData) == -8
+    excelConfigId
+
+Internal functionality will be same as file-mapping-config
+
+
 update
 -------------------------------------
 updateIfFound: Boolean (default true)

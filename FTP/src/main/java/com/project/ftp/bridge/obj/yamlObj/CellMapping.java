@@ -7,11 +7,20 @@ import java.util.ArrayList;
 @JsonIgnoreProperties(ignoreUnknown = true)
 
 public class CellMapping {
+    private String newColumnName;
     private String defaultCellData;
     private String dateRegex;
     private Integer col_index;
     private Boolean rewrite;
     private ArrayList<CellMappingData> mappingData;
+
+    public String getNewColumnName() {
+        return newColumnName;
+    }
+
+    public void setNewColumnName(String newColumnName) {
+        this.newColumnName = newColumnName;
+    }
 
     public String getDefaultCellData() {
         return defaultCellData;
@@ -56,7 +65,8 @@ public class CellMapping {
     @Override
     public String toString() {
         return "CellMapping{" +
-                "defaultCellData='" + defaultCellData + '\'' +
+                "newColumnName='" + newColumnName + '\'' +
+                ", defaultCellData='" + defaultCellData + '\'' +
                 ", dateRegex='" + dateRegex + '\'' +
                 ", col_index=" + col_index +
                 ", rewrite=" + rewrite +

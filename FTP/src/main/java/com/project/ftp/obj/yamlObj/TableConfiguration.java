@@ -1,6 +1,8 @@
 package com.project.ftp.obj.yamlObj;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.project.ftp.bridge.obj.yamlObj.CellMapping;
+import com.project.ftp.bridge.obj.yamlObj.SkipRowCriteria;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -31,6 +33,8 @@ public class TableConfiguration {
     private ArrayList<String> updateColumnName;
     private ArrayList<String> compareBeforeUpdateColumn;
     private ArrayList<String> selectColumnName;
+    private ArrayList<SkipRowCriteria> skipRowCriteria;
+    private ArrayList<CellMapping> cellMapping;
 
     public TableConfiguration() {}
 
@@ -218,6 +222,22 @@ public class TableConfiguration {
         this.selectColumnName = selectColumnName;
     }
 
+    public ArrayList<SkipRowCriteria> getSkipRowCriteria() {
+        return skipRowCriteria;
+    }
+
+    public void setSkipRowCriteria(ArrayList<SkipRowCriteria> skipRowCriteria) {
+        this.skipRowCriteria = skipRowCriteria;
+    }
+
+    public ArrayList<CellMapping> getCellMapping() {
+        return cellMapping;
+    }
+
+    public void setCellMapping(ArrayList<CellMapping> cellMapping) {
+        this.cellMapping = cellMapping;
+    }
+
     @Override
     public String toString() {
         return "TableConfiguration{" +
@@ -244,6 +264,8 @@ public class TableConfiguration {
                 ", updateColumnName=" + updateColumnName +
                 ", compareBeforeUpdateColumn=" + compareBeforeUpdateColumn +
                 ", selectColumnName=" + selectColumnName +
+                ", skipRowCriteria=" + skipRowCriteria +
+                ", cellMapping=" + cellMapping +
                 '}';
     }
 }

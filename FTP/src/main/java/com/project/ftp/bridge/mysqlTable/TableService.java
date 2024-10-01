@@ -199,7 +199,7 @@ public class TableService {
             throw new AppException(ErrorCodes.BAD_REQUEST_ERROR);
         }
         HashMap<String, ArrayList<String>> requestFilterParameter = this.getRequestFilterParameter(tableConfiguration, filterRequest, defaultFilterMappingId);
-        return tableMysqlDb.getByMultipleParameter(tableConfiguration, requestFilterParameter, true);
+        return tableMysqlDb.getByMultipleParameter(request, tableConfigId, defaultFilterMappingId, tableConfiguration, requestFilterParameter, true);
     }
     public ArrayList<ArrayList<String>> getTableDataArray(HttpServletRequest request,
                                                            String tableConfigId,
@@ -210,8 +210,10 @@ public class TableService {
             logger.info("getTableDataArray: tableConfiguration is null for tableConfigId: {}", tableConfigId);
             throw new AppException(ErrorCodes.BAD_REQUEST_ERROR);
         }
-        HashMap<String, ArrayList<String>> requestFilterParameter = this.getRequestFilterParameter(tableConfiguration, filterRequest, defaultFilterMappingId);
-        ArrayList<HashMap<String, String>> tableData = tableMysqlDb.getByMultipleParameter(tableConfiguration, requestFilterParameter, true);
+        HashMap<String, ArrayList<String>> requestFilterParameter = this.getRequestFilterParameter(tableConfiguration,
+                filterRequest, defaultFilterMappingId);
+        ArrayList<HashMap<String, String>> tableData = tableMysqlDb.getByMultipleParameter(request, tableConfigId,
+                defaultFilterMappingId, tableConfiguration, requestFilterParameter, true);
         ArrayList<String> columnNames = tableConfiguration.getColumnName();
         ArrayList<ArrayList<String>> result = new ArrayList<>();
         ArrayList<String> arrayRowData;

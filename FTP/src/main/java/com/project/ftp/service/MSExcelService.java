@@ -12,6 +12,7 @@ import com.project.ftp.event.EventTracking;
 import com.project.ftp.exceptions.AppException;
 import com.project.ftp.exceptions.ErrorCodes;
 import com.project.ftp.obj.ApiResponse;
+import com.project.ftp.obj.yamlObj.TableConfiguration;
 import com.project.ftp.parser.YamlFileParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -245,13 +246,20 @@ public class MSExcelService {
         ArrayList<ExcelDataConfig> excelDataConfigs = this.getActualMSExcelSheetDataConfig(request, requestId, true);
         ArrayList<BridgeResponseSheetData> response = this.getActualMSExcelSheetData(request, excelDataConfigs, false);
         ArrayList<ArrayList<String>> sheetData = new ArrayList<>();
-        ArrayList<String> result = new ArrayList<>();
         for (BridgeResponseSheetData bridgeResponseSheetData: response) {
             if (bridgeResponseSheetData != null && bridgeResponseSheetData.getSheetData() != null) {
                 sheetData.addAll(bridgeResponseSheetData.getSheetData());
             }
         }
         return sheetData;
+    }
+    public ArrayList<HashMap<String, String>> applyCsvConfigOnTableData(HttpServletRequest request,
+                                                                        String requestTableConfigId,
+                                                                        String requestDefaultFilterMappingId,
+                                                                        ArrayList<HashMap<String, String>> tableData,
+                                                                        TableConfiguration tableConfiguration) throws AppException {
+        return appConfig.getAppToBridge().applyCsvConfigOnTableData(request, requestTableConfigId,
+                requestDefaultFilterMappingId, tableData, tableConfiguration);
     }
     public ApiResponse updateMSExcelSheetData(HttpServletRequest request, String requestId) throws AppException {
         ArrayList<ExcelDataConfig> excelDataConfigs = this.getActualMSExcelSheetDataConfig(request, requestId, true);

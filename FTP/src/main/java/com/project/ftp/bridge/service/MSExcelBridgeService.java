@@ -12,6 +12,7 @@ import com.project.ftp.config.AppConstant;
 import com.project.ftp.event.EventTracking;
 import com.project.ftp.exceptions.AppException;
 import com.project.ftp.exceptions.ErrorCodes;
+import com.project.ftp.obj.yamlObj.TableConfiguration;
 import com.project.ftp.parser.MSExcelSheetParser;
 import com.project.ftp.parser.TextFileParser;
 import com.project.ftp.service.StaticService;
@@ -25,7 +26,7 @@ import java.util.HashMap;
 
 public class MSExcelBridgeService {
     final static Logger logger = LoggerFactory.getLogger(MSExcelBridgeService.class);
-    private final ExcelToCsvDataConvertService excelToCsvDataConvertService;
+    private final ExcelToCsvDataConvertServiceV2 excelToCsvDataConvertService;
     private final GoogleOAuthClientConfig googleOAuthClientConfig;
     private final HttpServletRequest request;
     private final EventTracking eventTracking;
@@ -35,7 +36,7 @@ public class MSExcelBridgeService {
                                 TableService tableService){
         this.googleOAuthClientConfig = googleOAuthClientConfig;
         this.eventTracking = eventTracking;
-        this.excelToCsvDataConvertService = new ExcelToCsvDataConvertService();
+        this.excelToCsvDataConvertService = new ExcelToCsvDataConvertServiceV2();
         this.tableService = tableService;
         this.request = request;
     }
@@ -54,10 +55,19 @@ public class MSExcelBridgeService {
         excelToCsvDataConvertService.copyCellDataIndex(sheetData, excelDataConfigById);
         sheetData = excelToCsvDataConvertService.applyCellMapping(sheetData, excelDataConfigById, srcFilepath, sheetName);
         excelToCsvDataConvertService.applyReplaceCellString(sheetData, excelDataConfigById);
-        sheetData = excelToCsvDataConvertService.applyColumnMapping(sheetData, excelDataConfigById);
+        sheetData = excelToCsvDataConvertService.applyMergeColumnMapping(sheetData, excelDataConfigById);
         sheetData = excelToCsvDataConvertService.applyRemoveColumnConfig(sheetData, excelDataConfigById);
         sheetData = excelToCsvDataConvertService.applyUniqueEntry(sheetData, excelDataConfigById, uniqueStrings);
         return sheetData;
+    }
+    public ArrayList<HashMap<String, String>> applyCsvConfigOnTableData(String requestTableConfigId,
+                                                                        String requestDefaultFilterMappingId,
+                                                                        ArrayList<HashMap<String, String>> tableData,
+                                                            TableConfiguration tableConfiguration) throws AppException{
+        tableData = excelToCsvDataConvertService.applySkipRowCriteriaV2(tableData, tableConfiguration);
+        tableData = excelToCsvDataConvertService.applyCellMappingV2(requestTableConfigId, requestDefaultFilterMappingId,
+                                    tableData, tableConfiguration);
+        return tableData;
     }
     private ArrayList<ArrayList<String>> readCsvFilePath(String srcFilepath, String sheetName,
                                                            ExcelDataConfig excelDataConfigById,
@@ -75,7 +85,7 @@ public class MSExcelBridgeService {
         excelToCsvDataConvertService.copyCellDataIndex(sheetData, excelDataConfigById);
         sheetData = excelToCsvDataConvertService.applyCellMapping(sheetData, excelDataConfigById, srcFilepath, sheetName);
         excelToCsvDataConvertService.applyReplaceCellString(sheetData, excelDataConfigById);
-        sheetData = excelToCsvDataConvertService.applyColumnMapping(sheetData, excelDataConfigById);
+        sheetData = excelToCsvDataConvertService.applyMergeColumnMapping(sheetData, excelDataConfigById);
         sheetData = excelToCsvDataConvertService.applyRemoveColumnConfig(sheetData, excelDataConfigById);
         sheetData = excelToCsvDataConvertService.applyUniqueEntry(sheetData, excelDataConfigById, uniqueStrings);
         return sheetData;
@@ -96,7 +106,7 @@ public class MSExcelBridgeService {
         excelToCsvDataConvertService.copyCellDataIndex(sheetData, excelDataConfigById);
         sheetData = excelToCsvDataConvertService.applyCellMapping(sheetData, excelDataConfigById, srcFilepath, sheetName);
         excelToCsvDataConvertService.applyReplaceCellString(sheetData, excelDataConfigById);
-        sheetData = excelToCsvDataConvertService.applyColumnMapping(sheetData, excelDataConfigById);
+        sheetData = excelToCsvDataConvertService.applyMergeColumnMapping(sheetData, excelDataConfigById);
         sheetData = excelToCsvDataConvertService.applyRemoveColumnConfig(sheetData, excelDataConfigById);
         sheetData = excelToCsvDataConvertService.applyUniqueEntry(sheetData, excelDataConfigById, uniqueStrings);
         return sheetData;
@@ -113,7 +123,7 @@ public class MSExcelBridgeService {
         excelToCsvDataConvertService.copyCellDataIndex(sheetData, excelDataConfigById);
         sheetData = excelToCsvDataConvertService.applyCellMapping(sheetData, excelDataConfigById, spreadSheetId, sheetName);
         excelToCsvDataConvertService.applyReplaceCellString(sheetData, excelDataConfigById);
-        sheetData = excelToCsvDataConvertService.applyColumnMapping(sheetData, excelDataConfigById);
+        sheetData = excelToCsvDataConvertService.applyMergeColumnMapping(sheetData, excelDataConfigById);
         sheetData = excelToCsvDataConvertService.applyRemoveColumnConfig(sheetData, excelDataConfigById);
         sheetData = excelToCsvDataConvertService.applyUniqueEntry(sheetData, excelDataConfigById, uniqueStrings);
         return sheetData;
@@ -144,7 +154,7 @@ public class MSExcelBridgeService {
         excelToCsvDataConvertService.copyCellDataIndex(sheetData, excelDataConfigById);
         sheetData = excelToCsvDataConvertService.applyCellMapping(sheetData, excelDataConfigById, mysqlTableConfigId, sheetName);
         excelToCsvDataConvertService.applyReplaceCellString(sheetData, excelDataConfigById);
-        sheetData = excelToCsvDataConvertService.applyColumnMapping(sheetData, excelDataConfigById);
+        sheetData = excelToCsvDataConvertService.applyMergeColumnMapping(sheetData, excelDataConfigById);
         sheetData = excelToCsvDataConvertService.applyRemoveColumnConfig(sheetData, excelDataConfigById);
         sheetData = excelToCsvDataConvertService.applyUniqueEntry(sheetData, excelDataConfigById, uniqueStrings);
         return sheetData;

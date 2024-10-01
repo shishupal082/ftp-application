@@ -4,6 +4,7 @@ import com.project.ftp.bridge.obj.yamlObj.*;
 import com.project.ftp.common.DateUtilities;
 import com.project.ftp.config.AppConstant;
 import com.project.ftp.obj.PathInfo;
+import com.project.ftp.obj.yamlObj.TableConfiguration;
 import com.project.ftp.service.FileService;
 import com.project.ftp.service.StaticService;
 import org.slf4j.Logger;
@@ -12,10 +13,10 @@ import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class ExcelToCsvDataConvertService {
-    final static Logger logger = LoggerFactory.getLogger(ExcelToCsvDataConvertService.class);
+public class ExcelToCsvDataConvertServiceV2 {
+    final static Logger logger = LoggerFactory.getLogger(ExcelToCsvDataConvertServiceV2.class);
     final FileService fileService;
-    public ExcelToCsvDataConvertService() {
+    public ExcelToCsvDataConvertServiceV2() {
         this.fileService = new FileService();
     }
     public ArrayList<ArrayList<String>> removeFirstEmptyRow(ArrayList<ArrayList<String>> csvData) {
@@ -31,7 +32,7 @@ public class ExcelToCsvDataConvertService {
                     str = strings.get(i);
                     if (str != null) {
                         str = str.trim();
-                        if (str.length() > 0) {
+                        if (!str.isEmpty()) {
                             isEmptyRow = false;
                         }
                     }
@@ -64,7 +65,7 @@ public class ExcelToCsvDataConvertService {
                             cellData = cellData.replaceAll("\r", "");
                             cellData = cellData.replaceAll(",", "...");
                             cellData = cellData.trim();
-                            if (!cellData.equals("")) {
+                            if (!cellData.isEmpty()) {
                                 lastValidIndex = i;
                             }
                         }
@@ -74,7 +75,7 @@ public class ExcelToCsvDataConvertService {
                         temp.add(rowData.get(i));
                     }
                 }
-                if (temp.size() > 0) {
+                if (!temp.isEmpty()) {
                     lastRowIndex = j;
                 }
                 sheetData.set(j, temp);
@@ -127,33 +128,23 @@ public class ExcelToCsvDataConvertService {
         if (skipRowCriteriaList == null) {
             return sheetData;
         }
-        logger.info("SheetData size before skipRowCriteria: {}", sheetData.size());
+        logger.info("sheetData size before skipRowCriteria: {}", sheetData.size());
         int i;
         Integer colIndex;
-        Boolean isEmpty;
-        String regex, notRegex, cellData;
-        ArrayList<String> range, notInRange, rowData;
+        String cellData;
+        ArrayList<String> rowData;
         ArrayList<Integer> removeIndex = new ArrayList<>();
-        for(SkipRowCriteria skipRowCriteria: skipRowCriteriaList) {
-            if (skipRowCriteria == null) {
+        for(i=0; i<sheetData.size(); i++) {
+            rowData = sheetData.get(i);
+            if (rowData == null) {
                 continue;
             }
-            colIndex = skipRowCriteria.getCol_index();
-            if (colIndex == null) {
-                continue;
-            }
-            isEmpty = skipRowCriteria.getIs_empty();
-            regex = skipRowCriteria.getRegex();
-            notRegex = skipRowCriteria.getNotRegex();
-            range = skipRowCriteria.getRange();
-            notInRange = skipRowCriteria.getNotInRange();
-            for(i=0; i<sheetData.size(); i++) {
-                rowData = sheetData.get(i);
-                if (rowData == null) {
-                    removeIndex.add(i);
+            for(SkipRowCriteria skipRowCriteria: skipRowCriteriaList) {
+                if (skipRowCriteria == null) {
                     continue;
                 }
-                if (colIndex < 0) {
+                colIndex = skipRowCriteria.getCol_index();
+                if (colIndex == null || colIndex < 0) {
                     continue;
                 }
                 if (colIndex >= rowData.size()) {
@@ -161,31 +152,10 @@ public class ExcelToCsvDataConvertService {
                 } else {
                     cellData = rowData.get(colIndex);
                 }
-                if (isEmpty != null && isEmpty) {
-                    if (cellData == null || cellData.isEmpty()) {
-                        removeIndex.add(i);
-                        continue;
-                    }
-                }
-                if (range != null && range.contains(cellData)) {
-                    removeIndex.add(i);
+                if (this.isValidCellData(cellData, skipRowCriteria)) {
                     continue;
                 }
-                if (notInRange != null && !notInRange.contains(cellData)) {
-                    removeIndex.add(i);
-                    continue;
-                }
-                if (regex != null) {
-                    if (StaticService.isPatternMatching(cellData, regex, false)) {
-                        removeIndex.add(i);
-                        continue;
-                    }
-                }
-                if (notRegex != null) {
-                    if (!StaticService.isPatternMatching(cellData, notRegex, false)) {
-                        removeIndex.add(i);
-                    }
-                }
+                removeIndex.add(i);
             }
         }
         for(i=0; i<sheetData.size(); i++) {
@@ -194,7 +164,106 @@ public class ExcelToCsvDataConvertService {
             }
             result.add(sheetData.get(i));
         }
-        logger.info("SheetData size after skipRowCriteria: {}", result.size());
+        logger.info("sheetData size after skipRowCriteria: {}", result.size());
+        return result;
+    }
+    private String getColumnNameFromCelIndex(Integer celIndex, ArrayList<String> columnNames) {
+        if (celIndex == null || celIndex < 0 || columnNames == null) {
+            return null;
+        }
+        if (columnNames.size() > celIndex) {
+            return columnNames.get(celIndex);
+        }
+        return null;
+    }
+    private String getCellData(Integer celIndex, ArrayList<String> columnNames, HashMap<String, String> rowData) {
+        if (rowData == null) {
+            return null;
+        }
+        String columnName = this.getColumnNameFromCelIndex(celIndex, columnNames);
+        if (columnName == null) {
+            return null;
+        }
+        return rowData.get(columnName);
+    }
+    private boolean isValidCellData(String cellData, SkipRowCriteria skipRowCriteria) {
+        if (skipRowCriteria == null) {
+            return true;
+        }
+        String regex, notRegex;
+        ArrayList<String> range, notInRange;
+        Boolean isEmpty = skipRowCriteria.getIs_empty();
+        regex = skipRowCriteria.getRegex();
+        notRegex = skipRowCriteria.getNotRegex();
+        range = skipRowCriteria.getRange();
+        notInRange = skipRowCriteria.getNotInRange();
+        if (isEmpty != null && isEmpty) {
+            if (cellData == null || cellData.isEmpty()) {
+                return false;
+            }
+        }
+        if (range != null && range.contains(cellData)) {
+            return false;
+        }
+        if (notInRange != null && !notInRange.contains(cellData)) {
+            return false;
+        }
+        if (regex != null) {
+            if (StaticService.isPatternMatching(cellData, regex, false)) {
+                return false;
+            }
+        }
+        if (notRegex != null) {
+            if (!StaticService.isPatternMatching(cellData, notRegex, false)) {
+                return false;
+            }
+        }
+        return true;
+    }
+    public ArrayList<HashMap<String, String>> applySkipRowCriteriaV2(ArrayList<HashMap<String, String>> tableData,
+                                                              TableConfiguration tableConfiguration) {
+        ArrayList<HashMap<String, String>> result = new ArrayList<>();
+        if (tableData == null || tableConfiguration == null) {
+            return tableData;
+        }
+        ArrayList<String> columnNames = tableConfiguration.getColumnName();
+        ArrayList<SkipRowCriteria> skipRowCriteriaList = tableConfiguration.getSkipRowCriteria();
+        if (skipRowCriteriaList == null || columnNames == null) {
+            return tableData;
+        }
+        logger.info("tableData size before skipRowCriteria: {}", tableData.size());
+        int i;
+        Integer colIndex;
+        String cellData;
+        HashMap<String, String> rowData;
+        ArrayList<Integer> removeIndex = new ArrayList<>();
+        for(i=0; i<tableData.size(); i++) {
+            rowData = tableData.get(i);
+            if (rowData == null) {
+                continue;
+            }
+            for(SkipRowCriteria skipRowCriteria: skipRowCriteriaList) {
+                if (skipRowCriteria == null) {
+                    continue;
+                }
+                colIndex = skipRowCriteria.getCol_index();
+                if (colIndex == null || colIndex < 0) {
+                    continue;
+                }
+                cellData = this.getCellData(colIndex, columnNames, rowData);
+                if (this.isValidCellData(cellData, skipRowCriteria)) {
+                    continue;
+                }
+                removeIndex.add(i);
+            }
+        }
+        for(i=0; i<tableData.size(); i++) {
+            if (removeIndex.contains(i)) {
+                continue;
+            }
+            result.add(tableData.get(i));
+        }
+        logger.info("tableData size after skipRowCriteria: {}", result.size());
         return result;
     }
     public ArrayList<ArrayList<String>> applySkipRowEntry(ArrayList<ArrayList<String>> sheetData,
@@ -204,7 +273,7 @@ public class ExcelToCsvDataConvertService {
         }
         int lastRowIndex = sheetData.size()-1;
         ArrayList<Integer> skipRowsIndex = this.getSkipRowIndexes(excelDataConfigById, lastRowIndex);
-        if (skipRowsIndex == null || skipRowsIndex.size() == 0) {
+        if (skipRowsIndex == null || skipRowsIndex.isEmpty()) {
             return sheetData;
         }
         ArrayList<ArrayList<String>> sheetDataUpdated = new ArrayList<>();
@@ -376,13 +445,17 @@ public class ExcelToCsvDataConvertService {
             defaultCellData = dateUtilities.getDateStrFromPattern(dateRegex, defaultCellData);
         }
         String cellData = defaultCellData;
-        if (colIndex != null && colIndex >= 0 && rowData.size() > colIndex) {
+        if (colIndex == null) {
+            return cellData;
+        } else if (colIndex >= 0 && rowData.size() > colIndex) {
             cellData = rowData.get(colIndex);
-        } else if (colIndex != null && colIndex == -2) {
+        } else if (colIndex == -1) {
+            cellData = defaultCellData;
+        } else if (colIndex == -2) {
             cellData = sheetName;
-        } else if (colIndex != null && colIndex == -3) {
+        } else if (colIndex == -3) {
             cellData = this.getFileName(srcFilepath, defaultCellData);
-        } else if (colIndex != null && colIndex == -4) {
+        } else if (colIndex == -4) {
             cellData = srcFilepath;
         }
         if (cellData == null) {
@@ -390,48 +463,75 @@ public class ExcelToCsvDataConvertService {
         }
         return cellData;
     }
-    private String getUpdatedCellData(String sheetName, String srcFilepath, ArrayList<String> rowData,
-                                      String cellData, CellMappingData cellMappingData) {
-        if (cellMappingData == null) {
-            return cellData;
+    private String getFormatedCellDataV2(String requestTableConfigId, String requestDefaultFilterMappingId,
+                                         TableConfiguration tableConfiguration, HashMap<String, String> rowData,
+                                       String defaultCellData, Integer colIndex, String dateRegex) {
+        if (tableConfiguration == null) {
+            return null;
         }
         DateUtilities dateUtilities = new DateUtilities();
-        Integer colIndex2 = cellMappingData.getCol_index();
+        if (AppConstant.NOW.equals(defaultCellData) && dateRegex != null) {
+            defaultCellData = dateUtilities.getDateStrFromPattern(dateRegex, defaultCellData);
+        }
+        String cellData = defaultCellData;
+        if (colIndex == null) {
+            return cellData;
+        } else if (colIndex >= 0) {
+            cellData = this.getCellData(colIndex, tableConfiguration.getColumnName(), rowData);
+        } else if (colIndex == -1) {
+            cellData = defaultCellData;
+        } else if (colIndex == -2) {
+            cellData = requestTableConfigId;
+        } else if (colIndex == -3) {
+            cellData = requestDefaultFilterMappingId;
+        } else if (colIndex == -4) {
+            cellData = tableConfiguration.getTableConfigId();
+        } else if (colIndex == -5) {
+            cellData = tableConfiguration.getTableName();
+        } else if (colIndex == -6) {
+            cellData = tableConfiguration.getDbType();
+        } else if (colIndex == -7) {
+            cellData = tableConfiguration.getDbIdentifier();
+        } else if (colIndex == -8) {
+            cellData = tableConfiguration.getExcelConfigId();
+        }
+        return cellData;
+    }
+    private String getFinalUpdatedCellData(String cellData, String cellData2,
+                                           CellMappingData cellMappingData) {
+        DateUtilities dateUtilities = new DateUtilities();
         String value = cellMappingData.getValue();
         ArrayList<String> range = cellMappingData.getRange();
         String regex = cellMappingData.getRegex();
         ArrayList<Integer> subStringConfig = cellMappingData.getSubStringConfig();
         String dateRegex = cellMappingData.getDateRegex();
         String oldDateText;
-        String cellData2 = this.getFormatedCellData(sheetName, srcFilepath, rowData, cellData, colIndex2, null);
-        if (colIndex2 != null && colIndex2 != -1 && colIndex2 >= -4) {
-            if (range != null && range.contains(cellData2)) {
+        if (range != null && range.contains(cellData2)) {
+            cellData = value;
+            if (subStringConfig != null) {
+                cellData = this.getSubStringTextFromCellData(subStringConfig, cellData2);
+            }
+        } else if (regex != null && StaticService.isPatternMatching(cellData2, regex, false)) {
+            if (dateRegex != null) {
+                if (StaticService.isPatternMatching(cellData2, regex, false)) {
+                    oldDateText = this.getSubStringTextFromCellData(subStringConfig, cellData2);
+                    cellData = dateUtilities.getDateStrInNewPattern(value, dateRegex, oldDateText, oldDateText);
+                }
+            } else {
                 cellData = value;
                 if (subStringConfig != null) {
                     cellData = this.getSubStringTextFromCellData(subStringConfig, cellData2);
                 }
-            } else if (regex != null && StaticService.isPatternMatching(cellData2, regex, false)) {
-                if (dateRegex != null) {
-                    if (StaticService.isPatternMatching(cellData2, regex, false)) {
-                        oldDateText = this.getSubStringTextFromCellData(subStringConfig, cellData2);
-                        cellData = dateUtilities.getDateStrInNewPattern(value, dateRegex, oldDateText, oldDateText);
-                    }
-                } else {
-                    cellData = value;
-                    if (subStringConfig != null) {
-                        cellData = this.getSubStringTextFromCellData(subStringConfig, cellData2);
-                    }
-                }
             }
-            if (subStringConfig != null) {
-                cellData2 = this.getSubStringTextFromCellData(subStringConfig, cellData2);
-                if (range != null) {
-                    if (range.contains(cellData2)) {
-                        cellData = value;
-                    }
-                } else if (regex == null) {
-                    cellData = cellData2;
+        }
+        if (subStringConfig != null) {
+            cellData2 = this.getSubStringTextFromCellData(subStringConfig, cellData2);
+            if (range != null) {
+                if (range.contains(cellData2)) {
+                    cellData = value;
                 }
+            } else if (regex == null) {
+                cellData = cellData2;
             }
         }
         return cellData;
@@ -447,7 +547,7 @@ public class ExcelToCsvDataConvertService {
         ArrayList<ArrayList<String>> result = new ArrayList<>();
         CellMapping cellMapping;
         ArrayList<CellMappingData> cellsMappingData;
-        Integer colIndex;
+        Integer colIndex, colIndex2;
         String defaultCellData, cellData, cellData2, dateRegex;
         ArrayList<String> rowDataFinal;
         Boolean rewrite;
@@ -466,8 +566,10 @@ public class ExcelToCsvDataConvertService {
                         if (cellsMappingData != null) {
                             for (CellMappingData cellMappingData : cellsMappingData) {
                                 if (cellMappingData != null) {
-                                    cellData2 = this.getUpdatedCellData(sheetName, srcFilepath,
-                                            rowData, cellData, cellMappingData);
+                                    colIndex2 = cellMappingData.getCol_index();
+                                    cellData2 = this.getFormatedCellData(sheetName, srcFilepath,
+                                            rowData, cellData, colIndex2, null);
+                                    cellData2 = this.getFinalUpdatedCellData(cellData, cellData2, cellMappingData);
                                     if (cellData2 != null && !cellData2.equals(cellData)) {
                                         cellData = cellData2;
                                         break;
@@ -489,6 +591,61 @@ public class ExcelToCsvDataConvertService {
             }
         }
         return result;
+    }
+    public ArrayList<HashMap<String, String>> applyCellMappingV2(String requestTableConfigId,
+                                                                 String requestDefaultFilterMappingId,
+                                                                 ArrayList<HashMap<String, String>> tableData,
+                                                                 TableConfiguration tableConfiguration) {
+        if (tableData == null || tableConfiguration == null) {
+            return tableData;
+        }
+        ArrayList<String> columnNames = tableConfiguration.getColumnName();
+        ArrayList<CellMapping> cellMappings = tableConfiguration.getCellMapping();
+        CellMapping cellMapping;
+        ArrayList<CellMappingData> cellsMappingData;
+        Integer colIndex, colIndex2;
+        String newColumnName, defaultCellData, cellData, cellData2, dateRegex;
+        Boolean rewrite;
+        for(HashMap<String, String> rowData: tableData) {
+            if (rowData != null) {
+                if (cellMappings != null) {
+                    for (CellMapping mapping : cellMappings) {
+                        cellMapping = mapping;
+                        newColumnName = cellMapping.getNewColumnName();
+                        rewrite = cellMapping.getRewrite();
+                        colIndex = cellMapping.getCol_index();
+                        if (rewrite != null && rewrite) {
+                            newColumnName = this.getColumnNameFromCelIndex(colIndex, columnNames);
+                        }
+                        if (newColumnName == null || newColumnName.isEmpty()) {
+                            continue;
+                        }
+                        defaultCellData = cellMapping.getDefaultCellData();
+                        dateRegex = cellMapping.getDateRegex();
+                        cellsMappingData = cellMapping.getMappingData();
+                        cellData = this.getFormatedCellDataV2(requestTableConfigId, requestDefaultFilterMappingId,
+                                tableConfiguration, rowData, defaultCellData, colIndex, dateRegex);
+                        if (cellsMappingData != null) {
+                            for (CellMappingData cellMappingData : cellsMappingData) {
+                                if (cellMappingData != null) {
+                                    colIndex2 = cellMappingData.getCol_index();
+                                    cellData2 = this.getFormatedCellDataV2(requestTableConfigId,
+                                            requestDefaultFilterMappingId, tableConfiguration, rowData, cellData,
+                                            colIndex2, null);
+                                    cellData2 = this.getFinalUpdatedCellData(cellData, cellData2, cellMappingData);
+                                    if (cellData2 != null && !cellData2.equals(cellData)) {
+                                        cellData = cellData2;
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                        rowData.put(newColumnName, cellData);
+                    }
+                }
+            }
+        }
+        return tableData;
     }
     public void applyReplaceCellString(ArrayList<ArrayList<String>> sheetData, ExcelDataConfig excelDataConfigById) {
         if (sheetData == null || excelDataConfigById == null) {
@@ -562,8 +719,8 @@ public class ExcelToCsvDataConvertService {
             }
         }
     }
-    public ArrayList<ArrayList<String>> applyColumnMapping(ArrayList<ArrayList<String>> sheetData,
-                                                           ExcelDataConfig excelDataConfigById) {
+    public ArrayList<ArrayList<String>> applyMergeColumnMapping(ArrayList<ArrayList<String>> sheetData,
+                                                                ExcelDataConfig excelDataConfigById) {
         if (sheetData == null || excelDataConfigById == null) {
             return sheetData;
         }

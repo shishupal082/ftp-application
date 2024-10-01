@@ -1,14 +1,17 @@
 package com.project.ftp.bridge.mysqlTable;
 
+import com.project.ftp.config.AppConfig;
 import com.project.ftp.jdbc.JdbcQueryStatus;
 import com.project.ftp.jdbc.MysqlConnection;
 import com.project.ftp.obj.yamlObj.OracleDatabaseConfig;
 import com.project.ftp.obj.yamlObj.TableConfiguration;
+import com.project.ftp.service.MSExcelService;
 import com.project.ftp.service.StaticService;
 import io.dropwizard.db.DataSourceFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.servlet.http.HttpServletRequest;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -16,11 +19,14 @@ import java.util.Map;
 
 public class TableMysqlDb implements TableDb {
     private final static Logger logger = LoggerFactory.getLogger(TableMysqlDb.class);
+    private final AppConfig appConfig;
     private final MysqlConnection mysqlConnection;
     private final HashMap<String, OracleDatabaseConfig> oracleDatabaseConfigs;
     private final HashMap<String, MysqlConnection> oracleConnections;
     private int closeCount = 0;
-    public TableMysqlDb(DataSourceFactory dataSourceFactory, HashMap<String, OracleDatabaseConfig> oracleDatabaseConfigs) {
+    public TableMysqlDb(AppConfig appConfig, DataSourceFactory dataSourceFactory,
+                        HashMap<String, OracleDatabaseConfig> oracleDatabaseConfigs) {
+        this.appConfig = appConfig;
         this.mysqlConnection = new MysqlConnection(dataSourceFactory.getDriverClass(), dataSourceFactory.getUrl(),
                 dataSourceFactory.getUser(), dataSourceFactory.getPassword());
         if (oracleDatabaseConfigs == null) {
@@ -175,9 +181,13 @@ public class TableMysqlDb implements TableDb {
         }
         return "0";
     }
-    public ArrayList<HashMap<String, String>> getByMultipleParameter(TableConfiguration tableConfiguration,
-                                                                     HashMap<String, ArrayList<String>> requestFilterParameter,
-                                                                     boolean logQuery) {
+    public ArrayList<HashMap<String, String>> getByMultipleParameter(
+                        HttpServletRequest request,
+                        String requestTableConfigId,
+                        String requestDefaultFilterMappingId,
+                        TableConfiguration tableConfiguration,
+                        HashMap<String, ArrayList<String>> requestFilterParameter,
+                        boolean logQuery) {
         if (tableConfiguration == null) {
             logger.info("getByMultipleParameter: invalid tableConfiguration: null");
             return null;
@@ -296,10 +306,13 @@ public class TableMysqlDb implements TableDb {
         }
         MysqlConnection dbConnection = this.getDBConnection(tableConfiguration);
         ResultSet rs = dbConnection.query(query, finalQueryParam);
-        return this.generateTableData(tableConfiguration, rs);
+        ArrayList<HashMap<String, String>> sqlTableResult = this.generateTableData(tableConfiguration, rs);
+        return appConfig.getMsExcelService().applyCsvConfigOnTableData(request, requestTableConfigId,
+                requestDefaultFilterMappingId, sqlTableResult, tableConfiguration);
     }
     public ArrayList<HashMap<String, String>> getAll(TableConfiguration tableConfiguration) {
-        return this.getByMultipleParameter(tableConfiguration, null, true);
+//        return this.getByMultipleParameter(tableConfiguration, null, true);
+        return null;
     }
     public JdbcQueryStatus updateTableEntry(TableConfiguration tableConfiguration, HashMap<String, String> data,
                                              HashMap<String, ArrayList<String>> requestFilterParameter) {
@@ -440,7 +453,8 @@ public class TableMysqlDb implements TableDb {
             filterParam.add(columnValue);
             requestFilterParameter.put(columnName, filterParam);
         }
-        return this.getByMultipleParameter(tableConfiguration, requestFilterParameter, false);
+        return this.getByMultipleParameter(null, null, null,
+                tableConfiguration, requestFilterParameter, false);
     }
     public int getEntryCount(TableConfiguration tableConfiguration, HashMap<String, String> data) {
         ArrayList<HashMap<String, String>> existingData = this.searchData(tableConfiguration, data);

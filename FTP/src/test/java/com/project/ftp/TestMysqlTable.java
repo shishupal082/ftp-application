@@ -100,6 +100,7 @@ public class TestMysqlTable {
         Assert.assertEquals(2, result.size());
         result = tableService.getTableData(null, "get-mysql-smms-assets-list", null, "asset_unique");
         Assert.assertEquals(1, result.size());
+        Assert.assertEquals("Modified asset code", result.get(0).get("modified_asset_code"));
     }
     @Test
     public void testUpdateMySqlTableDb() {

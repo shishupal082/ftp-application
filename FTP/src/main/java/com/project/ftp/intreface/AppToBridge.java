@@ -21,6 +21,7 @@ import com.project.ftp.event.EventTracking;
 import com.project.ftp.exceptions.AppException;
 import com.project.ftp.exceptions.ErrorCodes;
 import com.project.ftp.mysql.MysqlUser;
+import com.project.ftp.obj.yamlObj.TableConfiguration;
 import com.project.ftp.service.StaticService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -187,6 +188,17 @@ public class AppToBridge implements AppToBridgeInterface {
             logger.info("excelSheetDataRead completed: {}, and result is null.", excelDataConfigById);
         }
         return result;
+    }
+    @Override
+    public ArrayList<HashMap<String, String>> applyCsvConfigOnTableData(HttpServletRequest request,
+                                                                        String requestTableConfigId,
+                                                                        String requestDefaultFilterMappingId,
+                                                                        ArrayList<HashMap<String, String>> tableData,
+                                                                        TableConfiguration tableConfiguration) throws AppException {
+        MSExcelBridgeService msExcelBridgeService = new MSExcelBridgeService(request, eventTracking,
+                null, null);
+        return msExcelBridgeService.applyCsvConfigOnTableData(requestTableConfigId, requestDefaultFilterMappingId,
+                                    tableData, tableConfiguration);
     }
     @Override
     public String verifyGoogleIdToken(String googleIdToken) {

@@ -144,7 +144,7 @@ public class FtpApplication  extends Application<FtpConfiguration> {
         }
         SingleThreadingService singleThreadingService = new SingleThreadingService(appConfig.getFtpConfiguration());
         appConfig.setSingleThreadingService(singleThreadingService);
-        TableDb tableMysqlDb = new TableMysqlDb(ftpConfiguration.getDataSourceFactory(),
+        TableDb tableMysqlDb = new TableMysqlDb(appConfig, ftpConfiguration.getDataSourceFactory(),
                 ftpConfiguration.getOracleDatabaseConfigs());
         UserService userService = new UserService(appConfig, userInterface);
         appConfig.setUserService(userService);
