@@ -15,15 +15,12 @@ import com.project.ftp.service.MSExcelService;
 import com.project.ftp.service.UserService;
 import org.junit.Assert;
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.HashMap;
 
 public class TestMSExcelService {
-    final static Logger logger = LoggerFactory.getLogger(TestMSExcelService.class);
     private EventTracking getEventTracking(AppConfig appConfig) {
         UserInterface userInterface = new UserFile(appConfig);
         UserService userService = new UserService(appConfig, userInterface);
@@ -31,7 +28,6 @@ public class TestMSExcelService {
         return new EventTracking(appConfig, userService, eventInterface);
     }
     public AppConfig getAppConfig(boolean isMysqlEnable) {
-        FtpApplication ftpApplication = new FtpApplication();
         FtpConfiguration ftpConfiguration = new FtpConfiguration();
         ArrayList<String> arguments = new ArrayList<>();
         if (isMysqlEnable) {
@@ -44,7 +40,7 @@ public class TestMSExcelService {
         arguments.add("meta-data/app_env_config.yml");
         arguments.add("meta-data/app_env_config_2.yml");
         arguments.add("meta-data/app_env_config_4.yml");
-        return ftpApplication.getAppConfig(ftpConfiguration, arguments, AppConstant.SOURCE_TEST);
+        return AppConfig.getAppConfig(null, ftpConfiguration, arguments, AppConstant.SOURCE_TEST);
     }
     public ApiResource getApiResource() {
         AppConfig appConfig = this.getAppConfig(false);

@@ -6,19 +6,24 @@ package com.project.ftp.config;
 */
 
 import com.project.ftp.FtpConfiguration;
+import com.project.ftp.bridge.mysqlTable.TableDb;
+import com.project.ftp.bridge.mysqlTable.TableMysqlDb;
 import com.project.ftp.bridge.mysqlTable.TableService;
 import com.project.ftp.event.EventTracking;
 import com.project.ftp.exceptions.AppException;
 import com.project.ftp.exceptions.ErrorCodes;
-import com.project.ftp.intreface.AppToBridge;
+import com.project.ftp.intreface.*;
+import com.project.ftp.mysql.DbDAO;
 import com.project.ftp.obj.AppConfigObj;
 import com.project.ftp.obj.LoginUserDetails;
 import com.project.ftp.obj.PathInfo;
+import com.project.ftp.obj.yamlObj.DatabaseParams;
 import com.project.ftp.obj.yamlObj.FtlConfig;
 import com.project.ftp.obj.yamlObj.PageConfig404;
 import com.project.ftp.parser.YamlFileParser;
 import com.project.ftp.service.*;
 import com.project.ftp.session.SessionData;
+import io.dropwizard.hibernate.HibernateBundle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -294,5 +299,109 @@ public class AppConfig {
     @Override
     public String toString() {
         return this.getAppConfigObj().toString();
+    }
+    private DbDAO getDbDAO(final HibernateBundle<FtpConfiguration> hibernateBundle, FtpConfiguration ftpConfiguration,
+                           String isStaticPath, String configPath, String source) {
+        YamlFileParser yamlFileParser = new YamlFileParser();
+        if (AppConstant.SOURCE_RUNTIME.equals(source)) {
+            if (hibernateBundle != null) {
+                return new DbDAO(hibernateBundle.getSessionFactory(), ftpConfiguration.getDataSourceFactory());
+            }
+        } else {
+            // Read database configuration for junit test case and put it into ftpConfiguration
+            DatabaseParams databaseParams = yamlFileParser.getDatabaseConfig(isStaticPath, configPath).getDatabase();
+            if (databaseParams != null) {
+                ftpConfiguration.getDataSourceFactory().setDriverClass(databaseParams.getDriverClass());
+                ftpConfiguration.getDataSourceFactory().setUser(databaseParams.getUser());
+                ftpConfiguration.getDataSourceFactory().setPassword(databaseParams.getPassword());
+                ftpConfiguration.getDataSourceFactory().setUrl(databaseParams.getUrl());
+            }
+        }
+        return null;
+    }
+    public static AppConfig getAppConfig(final HibernateBundle<FtpConfiguration> hibernateBundle, final FtpConfiguration ftpConfiguration, ArrayList<String> args, String source) {
+        AppConfig appConfig = new AppConfig();
+        if (args.size() < AppConstant.CMD_LINE_ARG_MIN_SIZE) {
+            logger.info("getAppConfig: minimum required command line argument is: {}", AppConstant.CMD_LINE_ARG_MIN_SIZE);
+            return null;
+        }
+        String isStaticPath = args.get(AppConstant.CMD_LINE_ARG_MIN_SIZE-2);
+        String configPath = args.get(AppConstant.CMD_LINE_ARG_MIN_SIZE-1);
+        appConfig.setCmdArguments(args);
+        appConfig.updateFinalFtpConfiguration(ftpConfiguration);
+//        ShutdownTask shutdownTask = new ShutdownTask(appConfig);
+//        appConfig.setShutdownTask(shutdownTask);
+//        appConfig.setFtpConfiguration(ftpConfiguration);
+        // For log config setup
+        StaticService.initApplication(appConfig, args.get(AppConstant.CMD_LINE_ARG_MIN_SIZE-2), args.get(AppConstant.CMD_LINE_ARG_MIN_SIZE-1));
+        appConfig.updatePageConfig404();
+        logger.info("appConfig: {}", appConfig);
+        EventInterface eventInterface = null;
+        UserInterface userInterface = null;
+        FilepathInterface filepathInterface = null;
+        if (appConfig.getFtpConfiguration().isMysqlEnable()) {
+            logger.info("mysql config enable");
+            ArrayList<String> enableMysqlTable = null;
+            if (ftpConfiguration.isMysqlEnable()) {
+                enableMysqlTable = ftpConfiguration.getEnableMysqlTableName();
+            }
+            if (enableMysqlTable != null) {
+                DbDAO dbDAO = appConfig.getDbDAO(hibernateBundle, ftpConfiguration, isStaticPath, configPath, source);
+                if (appConfig.getFtpConfiguration().isMysqlEnable()) {
+                    if (enableMysqlTable.contains(AppConstant.TABLE_FILE_PATH)) {
+                        filepathInterface = new FilepathDb(ftpConfiguration.getDataSourceFactory());
+                        logger.info("filepathInterface configured from mysql");
+                    } else {
+                        logger.info("filepathInterface not configured from mysql");
+                    }
+                }
+                if (AppConstant.SOURCE_RUNTIME.equals(source)) {
+                    if (enableMysqlTable.contains(AppConstant.TABLE_NAME_EVENT)) {
+                        eventInterface = new EventDb(dbDAO);
+                        logger.info("eventInterface configured from mysql");
+                    } else {
+                        logger.info("eventInterface not configured from mysql");
+                    }
+                    if (enableMysqlTable.contains(AppConstant.TABLE_NAME_USER)) {
+                        userInterface = new UserDb(dbDAO);
+                        logger.info("userInterface configured from mysql");
+                    } else {
+                        logger.info("userInterface not configured from mysql");
+                    }
+                }
+            }
+        } else {
+            logger.info("mysql config not enabled, interface configure from file");
+        }
+        if (eventInterface == null) {
+            eventInterface = new EventFile(appConfig);
+            logger.info("eventInterface configured from file");
+        }
+        if (userInterface == null) {
+            userInterface = new UserFile(appConfig);
+            logger.info("userInterface configured from file");
+        }
+        if (filepathInterface == null) {
+            filepathInterface = new FilepathCsv(appConfig);
+            logger.info("filepathInterface configured from file");
+        }
+        SingleThreadingService singleThreadingService = new SingleThreadingService(appConfig.getFtpConfiguration());
+        appConfig.setSingleThreadingService(singleThreadingService);
+        TableDb tableMysqlDb = new TableMysqlDb(appConfig, ftpConfiguration.getDataSourceFactory(),
+                ftpConfiguration.getOracleDatabaseConfigs());
+        UserService userService = new UserService(appConfig, userInterface);
+        appConfig.setUserService(userService);
+        EventTracking eventTracking = new EventTracking(appConfig, userService, eventInterface);
+        appConfig.setEventTracking(eventTracking);
+        appConfig.setMsExcelService(new MSExcelService(appConfig, eventTracking, userService));
+        AuthService authService = new AuthService(userService);
+        appConfig.setAuthService(authService);
+        ScanDirService scanDirService = new ScanDirService(appConfig, filepathInterface);
+        appConfig.setScanDirService(scanDirService);
+        appConfig.setAppToBridge(new AppToBridge(appConfig, ftpConfiguration, eventTracking));
+        TableService tableService = new TableService(appConfig.getFtpConfiguration(), appConfig.getSingleThreadingService(),
+                appConfig.getMsExcelService(), tableMysqlDb);
+        appConfig.setTableService(tableService);
+        return appConfig;
     }
 }
