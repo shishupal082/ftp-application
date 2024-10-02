@@ -14,7 +14,6 @@ import com.project.ftp.intreface.*;
 import com.project.ftp.mysql.DbDAO;
 import com.project.ftp.mysql.MysqlUser;
 import com.project.ftp.obj.yamlObj.DatabaseParams;
-import com.project.ftp.obj.yamlObj.OracleDatabaseConfig;
 import com.project.ftp.parser.YamlFileParser;
 import com.project.ftp.resources.ApiResource;
 import com.project.ftp.resources.AppResource;
@@ -34,7 +33,6 @@ import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 
 
 public class FtpApplication  extends Application<FtpConfiguration> {

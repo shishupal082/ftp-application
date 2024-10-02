@@ -213,6 +213,16 @@ public class MSExcelService {
         ArrayList<ExcelDataConfig> excelDataConfigs = this.getActualMSExcelSheetDataConfig(request, requestId, true);
         return this.getActualMSExcelSheetData(request, excelDataConfigs, false);
     }
+    public ArrayList<ArrayList<String>> getMSExcelSheetDataArray(HttpServletRequest request, String requestId) throws AppException {
+        ArrayList<BridgeResponseSheetData> response = this.getMSExcelSheetData(request, requestId);
+        ArrayList<ArrayList<String>> sheetData = new ArrayList<>();
+        for (BridgeResponseSheetData bridgeResponseSheetData : response) {
+            if (bridgeResponseSheetData != null && bridgeResponseSheetData.getSheetData() != null) {
+                sheetData.addAll(bridgeResponseSheetData.getSheetData());
+            }
+        }
+        return sheetData;
+    }
     public ArrayList<HashMap<String, String>> getMSExcelSheetDataJson(HttpServletRequest request, String requestId) throws AppException {
         ArrayList<ExcelDataConfig> excelDataConfigs = this.getActualMSExcelSheetDataConfig(request, requestId, true);
         ArrayList<BridgeResponseSheetData> bridgeResponseSheetData = this.getActualMSExcelSheetData(request, excelDataConfigs, true);
@@ -228,30 +238,14 @@ public class MSExcelService {
         return result;
     }
     public String getMSExcelSheetDataCsv(HttpServletRequest request, String requestId) throws AppException {
-        ArrayList<ExcelDataConfig> excelDataConfigs = this.getActualMSExcelSheetDataConfig(request, requestId, true);
-        ArrayList<BridgeResponseSheetData> response = this.getActualMSExcelSheetData(request, excelDataConfigs, false);
-        ArrayList<ArrayList<String>> sheetData = new ArrayList<>();
+        ArrayList<ArrayList<String>> sheetData = this.getMSExcelSheetDataArray(request, requestId);
         ArrayList<String> result = new ArrayList<>();
-        for (BridgeResponseSheetData bridgeResponseSheetData: response) {
-            if (bridgeResponseSheetData != null && bridgeResponseSheetData.getSheetData() != null) {
-                sheetData.addAll(bridgeResponseSheetData.getSheetData());
+        if (sheetData != null) {
+            for(ArrayList<String> rowData: sheetData) {
+                result.add(strUtils.joinArrayList(rowData, AppConstant.commaDelimater));
             }
-        }
-        for(ArrayList<String> rowData: sheetData) {
-            result.add(strUtils.joinArrayList(rowData, AppConstant.commaDelimater));
         }
         return strUtils.joinArrayList(result, AppConstant.NEW_LINE_STRING);
-    }
-    public ArrayList<ArrayList<String>> getMSExcelSheetDataArray(HttpServletRequest request, String requestId) throws AppException {
-        ArrayList<ExcelDataConfig> excelDataConfigs = this.getActualMSExcelSheetDataConfig(request, requestId, true);
-        ArrayList<BridgeResponseSheetData> response = this.getActualMSExcelSheetData(request, excelDataConfigs, false);
-        ArrayList<ArrayList<String>> sheetData = new ArrayList<>();
-        for (BridgeResponseSheetData bridgeResponseSheetData: response) {
-            if (bridgeResponseSheetData != null && bridgeResponseSheetData.getSheetData() != null) {
-                sheetData.addAll(bridgeResponseSheetData.getSheetData());
-            }
-        }
-        return sheetData;
     }
     public ArrayList<HashMap<String, String>> applyCsvConfigOnTableData(HttpServletRequest request,
                                                                         String requestTableConfigId,

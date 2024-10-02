@@ -12,7 +12,6 @@ import com.project.ftp.obj.yamlObj.TableConfiguration;
 import com.project.ftp.obj.yamlObj.TableFileConfiguration;
 import com.project.ftp.parser.YamlFileParser;
 import com.project.ftp.service.MSExcelService;
-import com.project.ftp.service.MiscService;
 import com.project.ftp.service.SingleThreadingService;
 import com.project.ftp.service.StaticService;
 import org.slf4j.Logger;
@@ -427,14 +426,12 @@ public class TableService {
             this.singleThreadingService.setSingleThreadStatus(null);
         }
         TableConfiguration tableConfiguration = this.getTableConfiguration(tableConfigId);
-        MiscService miscService = new MiscService();
         if (tableConfiguration == null) {
             logger.info("updateTableDataFromCsv: tableConfiguration is null for tableConfigId: {}", tableConfigId);
             throw new AppException(ErrorCodes.BAD_REQUEST_ERROR);
         }
         String excelConfigId = tableConfiguration.getExcelConfigId();
-        ArrayList<ArrayList<String>> csvDataArray = msExcelService.getMSExcelSheetDataArray(request, excelConfigId);
-        ArrayList<HashMap<String, String>> csvDataJson = miscService.convertArraySheetDataToJsonData(csvDataArray, tableConfiguration.getUpdateColumnName());
+        ArrayList<HashMap<String, String>> csvDataJson = msExcelService.getMSExcelSheetDataJson(request, excelConfigId);
         int index = 1;
         int size = 0;
         int entryCount;
