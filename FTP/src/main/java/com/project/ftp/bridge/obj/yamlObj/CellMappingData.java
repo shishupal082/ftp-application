@@ -8,8 +8,10 @@ import java.util.ArrayList;
 
 public class CellMappingData {
     private Integer col_index;
+    private Boolean is_empty;
     private String value;
     private ArrayList<String> range;
+    private ArrayList<String> notInRange;
     private ArrayList<Integer> subStringConfig;
     private String regex;
     private String dateRegex;
@@ -20,6 +22,14 @@ public class CellMappingData {
 
     public void setCol_index(Integer col_index) {
         this.col_index = col_index;
+    }
+
+    public Boolean getIs_empty() {
+        return is_empty;
+    }
+
+    public void setIs_empty(Boolean is_empty) {
+        this.is_empty = is_empty;
     }
 
     public String getValue() {
@@ -36,6 +46,14 @@ public class CellMappingData {
 
     public void setRange(ArrayList<String> range) {
         this.range = range;
+    }
+
+    public ArrayList<String> getNotInRange() {
+        return notInRange;
+    }
+
+    public void setNotInRange(ArrayList<String> notInRange) {
+        this.notInRange = notInRange;
     }
 
     public ArrayList<Integer> getSubStringConfig() {

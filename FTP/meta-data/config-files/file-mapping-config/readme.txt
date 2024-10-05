@@ -65,6 +65,8 @@ mappingData1:
   - col_index: Integer (Row index, -4 to ...)
     value: String
     range: [String1, String2]
+    notInRange: [String1, String2]
+    is_empty: Boolean
     regex: String
     subStringConfig: [start, length, end]
     dateRegex: String

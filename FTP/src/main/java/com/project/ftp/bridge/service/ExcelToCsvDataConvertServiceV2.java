@@ -501,12 +501,24 @@ public class ExcelToCsvDataConvertServiceV2 {
                                            CellMappingData cellMappingData) {
         DateUtilities dateUtilities = new DateUtilities();
         String value = cellMappingData.getValue();
+        Boolean isEmpty = cellMappingData.getIs_empty();
         ArrayList<String> range = cellMappingData.getRange();
+        ArrayList<String> notInRange = cellMappingData.getNotInRange();
         String regex = cellMappingData.getRegex();
         ArrayList<Integer> subStringConfig = cellMappingData.getSubStringConfig();
         String dateRegex = cellMappingData.getDateRegex();
         String oldDateText;
         if (range != null && range.contains(cellData2)) {
+            cellData = value;
+            if (subStringConfig != null) {
+                cellData = this.getSubStringTextFromCellData(subStringConfig, cellData2);
+            }
+        } else if (notInRange != null && !notInRange.contains(cellData2)) {
+            cellData = value;
+            if (subStringConfig != null) {
+                cellData = this.getSubStringTextFromCellData(subStringConfig, cellData2);
+            }
+        } else if (isEmpty != null && isEmpty && (cellData2==null || cellData2.isEmpty())) {
             cellData = value;
             if (subStringConfig != null) {
                 cellData = this.getSubStringTextFromCellData(subStringConfig, cellData2);
