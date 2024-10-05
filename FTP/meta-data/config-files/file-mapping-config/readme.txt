@@ -71,6 +71,12 @@ mappingData1:
     subStringConfig: [start, length, end]
     dateRegex: String
 
+sequence of operation
+- range
+- notInRange
+- is_empty
+- regex
+
 if col_index in mappingData == -1
     continue;
 
