@@ -45,7 +45,7 @@ Sequence of operation
 - copyCellDataIndex
 - cellMapping & appendCellDataIndex
 - replaceCellString
-- mergeColumnConfig
+- (11) mergeColumnConfig
 - removeColumnConfig
 - uniqueEntry
 
@@ -129,3 +129,8 @@ cellData2 = subString of cellData2
     cellData = value
     if regex == null and range == null
     cellData = cellData2
+
+(11)
+mergeColumnConfig: ArrayList<MergeColumnConfig>
+If condition is provided in the MergeColumnConfig
+then it will be executed only when condition is true

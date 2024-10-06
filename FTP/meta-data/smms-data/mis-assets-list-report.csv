@@ -1,3 +1,4 @@
 
-2024-08-08,Test Muri-Jhalida,Test ADSTE/MURI,1,DC Track Circuit,,95TR,,,,,23.3698176,85.8660553,,,Test Muri,Station/IBH,Test Muri-Jhalida,Test Ranchi,Test South Eastern Railway,Survey Completed
-2024-08-08,Test Muri-Jhalida,Test ADSTE/MURI,2,DC Track Circuit,Test-DCTMURI00002,96BTF,,,,,23.3713117,85.8663751,,,Test Muri,Station/IBH,Test Muri-Jhalida,Test Ranchi,Test South Eastern Railway,Survey Completed
+2024-08-08,1,Test South Eastern Railway,Test Ranchi,Test Muri-Jhalida,Station/IBH,Test Muri,Test-DC Track Circuit,95TR,Test-DCTMURI00001,rfid,make,model,serial-no,23.3698176,85.8660553,installation-date,warranty,status
+2024-08-08,2,Test South Eastern Railway,Test Ranchi,Test Muri-Jhalida,Station/IBH,Test Muri,Test-DC Track Circuit,96BTF-1,Test-DCTMURI00002,rfid,make,model,serial-no,23.3698176,85.8660553,installation-date,warranty,status
+2024-08-08,3,Test South Eastern Railway,Test Ranchi,Test Muri-Jhalida,Station/IBH,Test Muri,Test-DC Track Circuit,96BTF-2,Test-DCTMURI00002,rfid,,model,serial-no,23.3698176,85.8660553,installation-date,warranty,status

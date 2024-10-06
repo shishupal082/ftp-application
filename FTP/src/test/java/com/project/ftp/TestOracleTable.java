@@ -54,6 +54,9 @@ public class TestOracleTable {
         result = tableService.getTableData(null, "get_smms_assets_list_view_oracle", null, "all");
         Assert.assertNotNull(result);
 
+        result = tableService.getTableData(null, "get-oracle-smms-assets-list", null, "rnc_division");
+        Assert.assertNotNull(result);
+
         result = tableService.getTableData(null, "get_smms_assets_list_duplicate", null, "all");
         Assert.assertNotNull(result);
 

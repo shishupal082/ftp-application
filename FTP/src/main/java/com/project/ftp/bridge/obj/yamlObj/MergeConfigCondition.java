@@ -6,15 +6,12 @@ import java.util.ArrayList;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 
-public class CellMappingData {
+public class MergeConfigCondition {
     private Integer col_index;
     private Boolean is_empty;
-    private String value;
     private ArrayList<String> range;
     private ArrayList<String> notInRange;
-    private ArrayList<Integer> subStringConfig;
     private String regex;
-    private String dateRegex;
 
     public Integer getCol_index() {
         return col_index;
@@ -30,14 +27,6 @@ public class CellMappingData {
 
     public void setIs_empty(Boolean is_empty) {
         this.is_empty = is_empty;
-    }
-
-    public String getValue() {
-        return value;
-    }
-
-    public void setValue(String value) {
-        this.value = value;
     }
 
     public ArrayList<String> getRange() {
@@ -56,14 +45,6 @@ public class CellMappingData {
         this.notInRange = notInRange;
     }
 
-    public ArrayList<Integer> getSubStringConfig() {
-        return subStringConfig;
-    }
-
-    public void setSubStringConfig(ArrayList<Integer> subStringConfig) {
-        this.subStringConfig = subStringConfig;
-    }
-
     public String getRegex() {
         return regex;
     }
@@ -72,25 +53,14 @@ public class CellMappingData {
         this.regex = regex;
     }
 
-    public String getDateRegex() {
-        return dateRegex;
-    }
-
-    public void setDateRegex(String dateRegex) {
-        this.dateRegex = dateRegex;
-    }
-
     @Override
     public String toString() {
-        return "CellMappingData{" +
+        return "MergeConfigCondition{" +
                 "col_index=" + col_index +
                 ", is_empty=" + is_empty +
-                ", value='" + value + '\'' +
                 ", range=" + range +
                 ", notInRange=" + notInRange +
-                ", subStringConfig=" + subStringConfig +
                 ", regex='" + regex + '\'' +
-                ", dateRegex='" + dateRegex + '\'' +
                 '}';
     }
 }

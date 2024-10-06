@@ -10,7 +10,6 @@ public class SkipRowCriteria {
     private Integer col_index;
     private Boolean is_empty;
     private String regex;
-    private String notRegex;
     private ArrayList<String> range;
     private ArrayList<String> notInRange;
 
@@ -38,14 +37,6 @@ public class SkipRowCriteria {
         this.regex = regex;
     }
 
-    public String getNotRegex() {
-        return notRegex;
-    }
-
-    public void setNotRegex(String notRegex) {
-        this.notRegex = notRegex;
-    }
-
     public ArrayList<String> getRange() {
         return range;
     }
@@ -68,7 +59,6 @@ public class SkipRowCriteria {
                 "col_index=" + col_index +
                 ", is_empty=" + is_empty +
                 ", regex='" + regex + '\'' +
-                ", notRegex='" + notRegex + '\'' +
                 ", range=" + range +
                 ", notInRange=" + notInRange +
                 '}';

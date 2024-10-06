@@ -96,10 +96,10 @@ public class TestMysqlTable {
         AppConfig appConfig = testMSExcelService.getAppConfig(true);
         TableService tableService = appConfig.getTableService();
         ArrayList<HashMap<String, String>> result;
-        result = tableService.getTableData(null, "get-mysql-smms-assets-list", null, "rnc_division");
+        result = tableService.getTableData(null, "get-oracle-smms-assets-list", null, "rnc_division");
+        Assert.assertEquals(3, result.size());
+        result = tableService.getTableData(null, "get-oracle-smms-assets-list", null, "asset_unique");
         Assert.assertEquals(2, result.size());
-        result = tableService.getTableData(null, "get-mysql-smms-assets-list", null, "asset_unique");
-        Assert.assertEquals(1, result.size());
         Assert.assertEquals("Modified asset code", result.get(0).get("modified_asset_code"));
     }
     @Test

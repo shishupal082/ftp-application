@@ -231,10 +231,10 @@ public class TestMSExcelService {
         String requestId;
         MSExcelService msExcelService = this.getMSExcelService();
 
-        requestId = "mysql-csv-smms-assets-list";
+        requestId = "oracle-to-csv-smms-assets-list";
         ArrayList<ExcelDataConfig> excelDataConfigs =  msExcelService.getActualMSExcelSheetDataConfig(request, requestId, false);
         Assert.assertEquals(requestId, excelDataConfigs.get(0).getId());
-        Assert.assertEquals("get-mysql-smms-assets-list", excelDataConfigs.get(0).getMysqlConfig().get(0).getSource());
+        Assert.assertEquals("get-oracle-smms-assets-list", excelDataConfigs.get(0).getMysqlConfig().get(0).getSource());
         Assert.assertEquals("empty-mysql-sheet-name", excelDataConfigs.get(0).getMysqlConfig().get(0).getSheetName());
         Assert.assertEquals(2, excelDataConfigs.get(0).getMysqlCsvDataConfig().getFilterValues().size());
     }
@@ -244,15 +244,15 @@ public class TestMSExcelService {
         String requestId;
         ApiResponse apiResponse;
         ApiResource apiResource = this.getApiResourceMysql();
-        requestId = "mysql-csv-smms-assets-list";
+        requestId = "oracle-to-csv-smms-assets-list-2";
 
         apiResponse =  apiResource.getMSExcelData(request, requestId);
         ArrayList<BridgeResponseSheetData> data = (ArrayList<BridgeResponseSheetData>) apiResponse.getData();
         Assert.assertEquals("SUCCESS", apiResponse.getStatus());
         Assert.assertEquals(2, data.get(0).getSheetData().size());
-        Assert.assertEquals(24, data.get(0).getSheetData().get(0).size());
+        Assert.assertEquals(21, data.get(0).getSheetData().get(0).size());
 
-        apiResponse =  apiResource.updateMSExcelData(request, requestId);
+        apiResponse =  apiResource.updateMSExcelData(request, "oracle-to-csv-smms-assets-list");
         Assert.assertEquals("SUCCESS", apiResponse.getStatus());
     }
 }

@@ -1,5 +1,68 @@
 excelDataConfig:
-  mysql-csv-smms-assets-list:
+  csv-smms-assets-ser:
+    appendCellDataIndex:
+      - [ 1,-1 ]
+    mergeColumnConfig:
+      - finalIndex: 24
+        sourceIndex: [ 14,13,19,20 ]
+        info: "asset_code + gear_name + lat + long"
+        join: "--"
+        conditions:
+          - col_index: 14
+            range:
+              - "Test-DCTMURI00002"
+      - finalIndex: 24
+        sourceIndex: [ 14 ]
+        info: "asset_code"
+        join: "--"
+        conditions:
+          - col_index: 14
+            notInRange:
+              - "Test-DCTMURI00002"
+    tableMappingIndex:
+      - "file_date"
+      - "sub_section"
+      - "section_officer"
+      - "section_incharge"
+      - "asset_group1"
+      - "asset_group2"
+      - "s_no"
+      - "zone"
+      - "division"
+      - "section"
+      - "location_type"
+      - "location"
+      - "asset_type"
+      - "gear_name"
+      - "asset_code"
+      - "rfid"
+      - "make"
+      - "model"
+      - "serial_no"
+      - "latitude"
+      - "longitude"
+      - "installation_date"
+      - "waranty_expiry_date"
+      - "status"
+      - "asset_code_v2"
+    cellMapping:
+      - defaultCellData: "file-date"
+        col_index: 0
+      - defaultCellData: "default-sub-section"
+        col_index: -1
+      - defaultCellData: "default-section-officer"
+        col_index: -1
+      - defaultCellData: "deault-section-incharge"
+        col_index: -1
+      - defaultCellData: "asset-group-1-as-per-smms"
+        col_index: -1
+      - defaultCellData: "asset-group-2-vital/non-vital"
+        col_index: -1
+
+  oracle-to-csv-smms-assets-list-2:
+    mysqlCsvDataConfig:
+      defaultFilterMappingId: "asset_unique"
+  oracle-to-csv-smms-assets-list:
     appendCellDataIndex:
       - [0,-1]
     mysqlCsvDataConfig:

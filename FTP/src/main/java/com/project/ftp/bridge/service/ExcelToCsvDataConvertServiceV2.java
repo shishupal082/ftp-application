@@ -190,35 +190,13 @@ public class ExcelToCsvDataConvertServiceV2 {
         if (skipRowCriteria == null) {
             return true;
         }
-        String regex, notRegex;
+        String regex;
         ArrayList<String> range, notInRange;
         Boolean isEmpty = skipRowCriteria.getIs_empty();
         regex = skipRowCriteria.getRegex();
-        notRegex = skipRowCriteria.getNotRegex();
         range = skipRowCriteria.getRange();
         notInRange = skipRowCriteria.getNotInRange();
-        if (isEmpty != null && isEmpty) {
-            if (cellData == null || cellData.isEmpty()) {
-                return false;
-            }
-        }
-        if (range != null && range.contains(cellData)) {
-            return false;
-        }
-        if (notInRange != null && !notInRange.contains(cellData)) {
-            return false;
-        }
-        if (regex != null) {
-            if (StaticService.isPatternMatching(cellData, regex, false)) {
-                return false;
-            }
-        }
-        if (notRegex != null) {
-            if (!StaticService.isPatternMatching(cellData, notRegex, false)) {
-                return false;
-            }
-        }
-        return true;
+        return this.isValidCondition(cellData, range, notInRange, isEmpty, regex);
     }
     public ArrayList<HashMap<String, String>> applySkipRowCriteriaV2(ArrayList<HashMap<String, String>> tableData,
                                                               TableConfiguration tableConfiguration) {
@@ -532,8 +510,7 @@ public class ExcelToCsvDataConvertServiceV2 {
                     cellData = this.getSubStringTextFromCellData(subStringConfig, cellData2);
                 }
             }
-        }
-        if (subStringConfig != null) {
+        } else if (subStringConfig != null) {
             cellData2 = this.getSubStringTextFromCellData(subStringConfig, cellData2);
             if (range != null && range.contains(cellData2)) {
                 cellData = value;
@@ -686,6 +663,54 @@ public class ExcelToCsvDataConvertServiceV2 {
             }
         }
     }
+    private boolean isValidCondition(String cellData, ArrayList<String> range, ArrayList<String> notInRange,
+                                     Boolean isEmpty, String regex) {
+        if (range != null && range.contains(cellData)) {
+            return true;
+        }
+        if (notInRange != null && !notInRange.contains(cellData)) {
+            return true;
+        }
+        if (regex != null && StaticService.isPatternMatching(cellData, regex, false)) {
+            return true;
+        }
+        return isEmpty != null && isEmpty && (cellData == null || cellData.isEmpty());
+    }
+    private boolean isValidMergeColumnConfigCondition(ArrayList<String> rowData,
+                                                      ArrayList<MergeConfigCondition> conditions) {
+        if (conditions == null) {
+            return true;
+        }
+        Integer colIndex;
+        ArrayList<String> range;
+        ArrayList<String> notInRange;
+        Boolean isEmpty;
+        String regex;
+        String cellData;
+        boolean currentStatus;
+        for (MergeConfigCondition condition: conditions) {
+            if (condition == null) {
+                continue;
+            }
+            colIndex = condition.getCol_index();
+            if (colIndex == null) {
+                continue;
+            }
+            if (colIndex < 0 || colIndex >= rowData.size()) {
+                continue;
+            }
+            cellData = rowData.get(colIndex);
+            range = condition.getRange();
+            notInRange = condition.getNotInRange();
+            regex = condition.getRegex();
+            isEmpty = condition.getIs_empty();
+            currentStatus = this.isValidCondition(cellData, range, notInRange, isEmpty, regex);
+            if (currentStatus) {
+                return true;
+            }
+        }
+        return false;
+    }
     private void applyCellMerging(ArrayList<ArrayList<String>> sheetData,
                                   ArrayList<ArrayList<String>> updatedSheetData,
                                   MergeColumnConfig mergeColumnConfig) {
@@ -695,8 +720,9 @@ public class ExcelToCsvDataConvertServiceV2 {
         Integer finalIndex = mergeColumnConfig.getFinalIndex();
         ArrayList<Integer> sourceIndex = mergeColumnConfig.getSourceIndex();
         String join = mergeColumnConfig.getJoin();
-        ArrayList<String> temp;
+        ArrayList<String> tempFinalData;
         ArrayList<String> rowData, updatedRowData;
+        ArrayList<MergeConfigCondition> conditions = mergeColumnConfig.getConditions();
         if (join == null) {
             join = "";
         }
@@ -709,10 +735,15 @@ public class ExcelToCsvDataConvertServiceV2 {
             if (rowData == null) {
                 continue;
             }
-            temp = new ArrayList<>();
+            if (conditions != null) {
+                if (!this.isValidMergeColumnConfigCondition(rowData, conditions)) {
+                    continue;
+                }
+            }
+            tempFinalData = new ArrayList<>();
             for (Integer index: sourceIndex) {
                 if (index != null && index >= 0 && index < rowData.size()) {
-                    temp.add(rowData.get(index));
+                    tempFinalData.add(rowData.get(index));
                 }
             }
             if (i < updatedSheetData.size()) {
@@ -722,7 +753,7 @@ public class ExcelToCsvDataConvertServiceV2 {
                         updatedRowData.add(AppConstant.EmptyStr);
                     }
                 }
-                updatedRowData.set(finalIndex, String.join(join, temp));
+                updatedRowData.set(finalIndex, String.join(join, tempFinalData));
             } else {
                 logger.info("sheetData and updatedSheetData mismatch in row.");
             }
@@ -767,7 +798,6 @@ public class ExcelToCsvDataConvertServiceV2 {
                             sourceIndex.add(j);
                         }
                     }
-                    mergeColumnConfig.setSourceIndex(sourceIndex);
                     break;
                 }
             }

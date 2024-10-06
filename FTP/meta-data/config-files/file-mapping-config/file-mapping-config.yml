@@ -20,7 +20,8 @@ googleConfig:
 csvConfig:
   - fileDataSource: "mysql"
     validRequestId:
-      - mysql-csv-smms-assets-list
+      - oracle-to-csv-smms-assets-list
+      - oracle-to-csv-smms-assets-list-2
     requiredColIndex: [0,1,2,3]
     fileConfig: [ "D:/workspace/ftp-application/FTP/meta-data/test-data/config-data/csv-config.csv", "CSV reading data config path" ]
   - fileDataSource: "google"
