@@ -42,6 +42,10 @@ public class ExpressionEvaluator {
         String t;
         for (i=0; i<validTokens.size(); i++) {
             t = validTokens.get(i);
+            if (t == null) {
+                continue;
+            }
+            t = t.trim();
             temp = BridgeStaticService.splitStringOnLimit(expression, t, -1);
             if (i == 0) {
                 t = BridgeConstant.OPEN;
@@ -77,6 +81,10 @@ public class ExpressionEvaluator {
         String t;
         for (i=0; i<validTokens.size(); i++) {
             t = validTokens.get(i);
+            if (t == null) {
+                continue;
+            }
+            t = t.trim();
             temp = BridgeStaticService.splitStringOnLimit(expression, t, -1);
             if (i == 0) {
                 t = BridgeConstant.OPEN;
@@ -97,18 +105,10 @@ public class ExpressionEvaluator {
         }
         return tokens;
     }
-    private ArrayList<String> generatePosixBinary(String str) {
-        ArrayList<String> tokens = this.tokenizeBinary(str);
-        BinaryTree binaryTree = BinaryTree.createBinaryTree(tokens);
-        return binaryTree.getPostOrder(binaryTree);
-    }
-    private ArrayList<String> generatePosix(String str) {
-        ArrayList<String> tokens = this.tokenizeNumeric(str);
-        BinaryTree binaryTree = BinaryTree.createBinaryTree(tokens);
-        return binaryTree.getPostOrder(binaryTree);
-    }
     public Boolean evaluateBinaryExpression(String expression) {
-        ArrayList<String> binaryPosix = this.generatePosixBinary(expression);
+        ArrayList<String> tokens = this.tokenizeBinary(expression);
+        BinaryTree binaryTree = BinaryTree.createBinaryTree(tokens);
+        ArrayList<String> binaryPosix = binaryTree.getPostOrder(binaryTree);
         String result = this.evaluateBinaryPosix(binaryPosix);
         if (BridgeConstant.TRUE.equals(result) || BridgeConstant.FALSE.equals(result)) {
             return BridgeConstant.TRUE.equals(result);
@@ -116,10 +116,10 @@ public class ExpressionEvaluator {
         return null;
     }
     public String evaluateNumericExpression(String expression) {
-        String result;
-        ArrayList<String> binaryPosix = this.generatePosix(expression);
-        result = this.evaluateNumericPosix(binaryPosix);
-        return result;
+        ArrayList<String> tokens = this.tokenizeNumeric(expression);
+        BinaryTree binaryTree = BinaryTree.createBinaryTree(tokens);
+        ArrayList<String> binaryPosix = binaryTree.getPostOrder(binaryTree);
+        return this.evaluateNumericPosix(binaryPosix);
     }
     private String evaluate(String a, String op, String b) {
         boolean aV, bV;

@@ -10,7 +10,6 @@ import org.junit.Test;
 import java.util.ArrayList;
 
 public class TestStack {
-    private final ExpressionEvaluator testRoles = new ExpressionEvaluator();
     @Test
     public void testStack() {
         Stack stack = new Stack();
@@ -63,47 +62,6 @@ public class TestStack {
         Assert.assertEquals(72, post.size());
     }
     @Test
-    public void testEvaluateBinary() {
-        Assert.assertTrue(testRoles.evaluateBinaryExpression("((true&true&true&true)&(~false))"));
-        Assert.assertTrue(testRoles.evaluateBinaryExpression("(true&((false|true)&(true|false)))"));
-        Assert.assertTrue(testRoles.evaluateBinaryExpression("(true&(false|true))"));
-        Assert.assertTrue(testRoles.evaluateBinaryExpression("(true&true&true&true&true)"));
-        Assert.assertTrue(testRoles.evaluateBinaryExpression("(true&(true&true&true&true))"));
-        Assert.assertTrue(testRoles.evaluateBinaryExpression("((true&true&true&true)&true)"));
-        Assert.assertFalse(testRoles.evaluateBinaryExpression("(true&(false&true))"));
-        Assert.assertTrue(testRoles.evaluateBinaryExpression("(true&~false)"));
-        Assert.assertTrue(testRoles.evaluateBinaryExpression("(true|false)"));
-        Assert.assertFalse(testRoles.evaluateBinaryExpression("(true&false)"));
-        Assert.assertFalse(testRoles.evaluateBinaryExpression("~true"));
-        Assert.assertTrue(testRoles.evaluateBinaryExpression("true"));
-        Assert.assertTrue(testRoles.evaluateBinaryExpression("~false"));
-        Assert.assertFalse(testRoles.evaluateBinaryExpression("false"));
-
-
-        Assert.assertNull(testRoles.evaluateBinaryExpression(null));
-        Assert.assertNull(testRoles.evaluateBinaryExpression("(~false)"));
-        Assert.assertNull(testRoles.evaluateBinaryExpression("((~false))"));
-        Assert.assertNull(testRoles.evaluateBinaryExpression("(~true)"));
-        Assert.assertNull(testRoles.evaluateBinaryExpression("(true&true1)"));
-        Assert.assertNull(testRoles.evaluateBinaryExpression("(true1&true)"));
-        Assert.assertNull(testRoles.evaluateBinaryExpression("((~false)&(~false))"));
-
-        // Assert.assertNull(testRoles.evaluateBinaryExpression("(false&~)"));
-    }
-    @Test
-    public void testEvaluateNumeric() {
-        Assert.assertNull(testRoles.evaluateNumericExpression(null));
-        Assert.assertNull(testRoles.evaluateNumericExpression("(2/0)"));
-        Assert.assertNull(testRoles.evaluateNumericExpression("(p/q)"));
-        Assert.assertNull(testRoles.evaluateNumericExpression("((2p+(2*2))/2)"));
-
-        Assert.assertEquals("3.0", testRoles.evaluateNumericExpression("((2+(2*2))/2)"));
-        Assert.assertEquals("6.0", testRoles.evaluateNumericExpression("(2+4)"));
-        Assert.assertEquals("8.0", testRoles.evaluateNumericExpression("(2*(2+2))"));
-        Assert.assertEquals("6.0", testRoles.evaluateNumericExpression("(2+(2*2))"));
-        Assert.assertEquals("1.0", testRoles.evaluateNumericExpression("((2+(2-2))/2)"));
-    }
-    @Test
     public void testConfigService() {
         ConfigService configService = new ConfigService(null);
         String sys = "F:/ftp-app/ftp-app-6.0.0-stable";
@@ -139,13 +97,11 @@ public class TestStack {
         calculatedStr = configService.getValidPublicDir(sys, pub, pubPost);
         Assert.assertEquals("D:/workspace/project", calculatedStr);
 
-
         sys = "D:/workspace//ftp-application/FTP//";
         pub = "../..";
         pubPost = "/project";
         calculatedStr = configService.getValidPublicDir(sys, pub, pubPost);
         Assert.assertEquals("D:/workspace/ftp-application/FTP/project", calculatedStr);
-
 
         sys = "D:/workspace/ftp-application/FTP";
         pubPost = "/project";

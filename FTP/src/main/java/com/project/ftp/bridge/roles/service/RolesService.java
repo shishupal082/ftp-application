@@ -311,7 +311,7 @@ public class RolesService {
             return false;
         }
         if (BridgeStaticService.isInValidString(userName)) {
-            logger.info("Invalid userName:{}", userName);
+            logger.info("isRoleAuthorised: Invalid userName:{}", userName);
             return false;
         }
         boolean result = false;
@@ -430,13 +430,13 @@ public class RolesService {
         }
         return BridgeConstant.FALSE;
     }
-    public boolean apiRolesIncludeUser(String apiRoles, String userName) {
-        if (BridgeStaticService.isInValidString(apiRoles)) {
-            logger.info("Invalid apiRoles:{}", apiRoles);
+    public boolean apiRolesIncludeUser(String roleAccessMappingId, String userName) {
+        if (BridgeStaticService.isInValidString(roleAccessMappingId)) {
+            logger.info("Invalid apiRoles: {}", roleAccessMappingId);
             return false;
         }
         ExpressionEvaluator evaluator = new ExpressionEvaluator();
-        ArrayList<String> tokens = evaluator.tokenizeBinary(apiRoles);
+        ArrayList<String> tokens = evaluator.tokenizeBinary(roleAccessMappingId);
         ArrayList<String> parameters = new ArrayList<>();
         parameters.add(BridgeConstant.OPEN);
         parameters.add(BridgeConstant.CLOSE);
@@ -446,14 +446,15 @@ public class RolesService {
         String token;
         for (int i=0; i<tokens.size(); i++) {
             token = tokens.get(i);
-            if (parameters.contains(token)) {
+            if (token == null || parameters.contains(token)) {
                 continue;
             }
+            token = token.trim();
             tokens.set(i, this.getBooleanEquivalentToRole(token, userName));
         }
         Boolean finalResult = evaluator.evaluateBinaryExpression(String.join("", tokens));
         if (finalResult == null) {
-            logger.info("Invalid finalResult:{}", finalResult);
+            logger.info("Invalid finalResult: null");
             return false;
         }
         return finalResult;
