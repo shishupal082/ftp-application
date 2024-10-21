@@ -547,7 +547,7 @@ public class TableService {
                 singeThreadStatus = "Index=" + index + "/Size=" + size + "/Add=" + addEntryCount +
                         "/Update=" + updateEntryCount + "/Skip=" + skipEntryCount +
                         "/AddError=" + addEntryErrorCount + "/UpdateError=" + updateEntryErrorCount +
-                        "/SearchError" + searchErrorCount;
+                        "/SearchError=" + searchErrorCount;
                 if (this.singleThreadingService != null) {
                     this.singleThreadingService.setSingleThreadStatus(new SingleThreadStatus(startedTime,
                             singleThreadItem, singeThreadStatus));
