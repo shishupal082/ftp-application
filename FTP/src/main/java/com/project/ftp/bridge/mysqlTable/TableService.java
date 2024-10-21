@@ -458,6 +458,12 @@ public class TableService {
         if (csvDataJson != null) {
             size = csvDataJson.size();
             for(HashMap<String, String> rowData: csvDataJson) {
+                if (this.singleThreadingService != null) {
+                    if (this.singleThreadingService.getStopped()) {
+                        logger.info("Service stopped.");
+                        break;
+                    }
+                }
                 tableMysqlDb.closeIfOracle(tableConfiguration);
                 nextAction = this.getNextAction(tableConfiguration, rowData, updateIfFound,
                         maintainHistoryRequired, maintainHistoryExcludedColumn);
@@ -551,10 +557,6 @@ public class TableService {
                 if (this.singleThreadingService != null) {
                     this.singleThreadingService.setSingleThreadStatus(new SingleThreadStatus(startedTime,
                             singleThreadItem, singeThreadStatus));
-                    if (this.singleThreadingService.getStopped()) {
-                        logger.info("Service stopped.");
-                        break;
-                    }
                 }
                 index++;
             }
