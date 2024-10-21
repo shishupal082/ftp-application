@@ -42,6 +42,14 @@ public class TestMSExcelService {
         arguments.add("meta-data/app_env_config_4.yml");
         return AppConfig.getAppConfig(null, ftpConfiguration, arguments, AppConstant.SOURCE_TEST);
     }
+    public AppConfig getAppConfigV2() {
+        FtpConfiguration ftpConfiguration = new FtpConfiguration();
+        ArrayList<String> arguments = new ArrayList<>();
+        arguments.add("false");
+        arguments.add("false");
+        arguments.add("meta-data/app_env_config.yml");
+        return AppConfig.getAppConfig(null, ftpConfiguration, arguments, AppConstant.SOURCE_TEST);
+    }
     public ApiResource getApiResource() {
         AppConfig appConfig = this.getAppConfig(false);
         return new ApiResource(appConfig);

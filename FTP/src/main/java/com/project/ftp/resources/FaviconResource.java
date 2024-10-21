@@ -27,11 +27,13 @@ public class FaviconResource {
     @GET
     @Produces("image/x-icon")
     public Response LoadFaviconIcon() throws URISyntaxException {
-        File file = new File(icoFilePath);
-        if (file.isFile()) {
-            Response.ResponseBuilder response = Response.ok(file);
-            response.header(HttpHeaders.CACHE_CONTROL, "attachment; filename=favicon.ico");
-            return response.build();
+        if (icoFilePath != null) {
+            File file = new File(icoFilePath);
+            if (file.isFile()) {
+                Response.ResponseBuilder response = Response.ok(file);
+                response.header(HttpHeaders.CACHE_CONTROL, "attachment; filename=favicon.ico");
+                return response.build();
+            }
         }
         return Response.seeOther(new URI("/assets/favicon.ico")).build();
     }

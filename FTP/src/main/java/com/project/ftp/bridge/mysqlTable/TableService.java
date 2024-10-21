@@ -551,6 +551,10 @@ public class TableService {
                 if (this.singleThreadingService != null) {
                     this.singleThreadingService.setSingleThreadStatus(new SingleThreadStatus(startedTime,
                             singleThreadItem, singeThreadStatus));
+                    if (this.singleThreadingService.getStopped()) {
+                        logger.info("Service stopped.");
+                        break;
+                    }
                 }
                 index++;
             }

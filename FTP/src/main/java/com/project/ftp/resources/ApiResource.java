@@ -1359,11 +1359,11 @@ public class ApiResource {
     public ApiResponse updateMySqlTableDataFromCsv(@Context HttpServletRequest request,
                                          @QueryParam("table_config_id") String tableConfigId) throws AppException {
         this.singleThreadingService.checkSingleThreadStatus(request, "api");
+        this.singleThreadingService.setStopped(false);
         LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
         logger.info("updateMySqlTableDataFromCsv: In, user: {}, table_config_id: {}",
                 loginUserDetails, tableConfigId);
         ApiResponse response;
-        ArrayList<HashMap<String, String>> result;
         try {
             authService.isLogin(request);
             tableService.updateTableDataFromCsv(request, tableConfigId);
@@ -1383,6 +1383,15 @@ public class ApiResource {
     public ApiResponse getSingleThreadStatus(@Context HttpServletRequest request) throws AppException {
         ApiResponse response = new ApiResponse(this.singleThreadingService.getSingleThreadStatus(request));
         logger.info("getSingleThreadStatus: Out, {}", response);
+        return response;
+    }
+    @GET
+    @Path("/stop_single_thread")
+    @UnitOfWork
+    public ApiResponse stopSingleThread(@Context HttpServletRequest request) throws AppException {
+        this.singleThreadingService.setStopped(true);
+        ApiResponse response = new ApiResponse();
+        logger.info("stopSingleThread: Out, {}", response);
         return response;
     }
     /**

@@ -16,6 +16,7 @@ public class SingleThreadingService {
     private final static Logger logger = LoggerFactory.getLogger(SingleThreadingService.class);
     private ArrayList<SingleThread> singleThreadItem = new ArrayList<>();
     private final FtpConfiguration ftpConfiguration;
+    private Boolean isStopped;
     private SingleThreadStatus singleThreadStatus;
     public SingleThreadingService(final FtpConfiguration ftpConfiguration) {
         this.ftpConfiguration = ftpConfiguration;
@@ -27,6 +28,17 @@ public class SingleThreadingService {
 
     public void setSingleThreadStatus(SingleThreadStatus singleThreadStatus) {
         this.singleThreadStatus = singleThreadStatus;
+    }
+
+    public boolean getStopped() {
+        if (isStopped == null) {
+            return false;
+        }
+        return isStopped;
+    }
+
+    public void setStopped(Boolean stopped) {
+        isStopped = stopped;
     }
 
     private boolean isSingleThreading(HttpServletRequest request) {
@@ -57,13 +69,6 @@ public class SingleThreadingService {
             return;
         }
         if (!singleThreadItem.isEmpty()) {
-//            ArrayList<SingleThread> finalSingleThreadStatus = new ArrayList<>();
-//            for(SingleThread singleThread: singleThreadStatus) {
-//                if (singleThread != null && singleThread.getName() == null) {
-//                    finalSingleThreadStatus.add(singleThread);
-//                }
-//            }
-//            singleThreadStatus = finalSingleThreadStatus;
             singleThreadItem = new ArrayList<>();
         }
     }
@@ -71,6 +76,7 @@ public class SingleThreadingService {
         HashMap<String, String> result = new HashMap<>();
         result.put("isEnabled", Boolean.toString(this.isSingleThreading(request)));
         result.put("item", singleThreadItem.toString());
+        result.put("stopped", Boolean.toString(this.getStopped()));
         if (singleThreadStatus == null) {
             result.put("status", null);
         } else {

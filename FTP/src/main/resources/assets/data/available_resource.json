@@ -288,6 +288,10 @@
     "Call get single thread status [GET]"
   ],
   [
+    "/api/stop_single_thread",
+    "Call stop single thread [GET]"
+  ],
+  [
     "/assets-dir/{default: *}",
     "Load assets data from asses-dir folder [GET]"
   ]
