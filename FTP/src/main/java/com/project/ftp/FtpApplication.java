@@ -28,8 +28,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 
-public class FtpApplication  extends Application<FtpConfiguration> {
-    final static Logger LOGGER = LoggerFactory.getLogger(FtpApplication.class);
+public class FtpApplication extends Application<FtpConfiguration> {
+    final static Logger logger = LoggerFactory.getLogger(FtpApplication.class);
     final static ArrayList<String> arguments = new ArrayList<>();
 
     private final HibernateBundle<FtpConfiguration> hibernateBundle
@@ -52,11 +52,11 @@ public class FtpApplication  extends Application<FtpConfiguration> {
     }
     @Override
     public void run(FtpConfiguration ftpConfiguration, Environment environment) {
-        LOGGER.info("commandLineArguments: {}", arguments.toString());
+        logger.info("commandLineArguments: {}", arguments.toString());
         AppConfig appConfig = AppConfig.getAppConfig(hibernateBundle,  ftpConfiguration,
                 arguments, AppConstant.SOURCE_RUNTIME);
         if (appConfig == null) {
-            LOGGER.info("Error in generating appConfig");
+            logger.info("Error in generating appConfig");
             return;
         }
         EventTracking eventTracking = appConfig.getEventTracking();
@@ -80,7 +80,7 @@ public class FtpApplication  extends Application<FtpConfiguration> {
             StaticService.renameOldLogFile(args[AppConstant.CMD_LINE_ARG_MIN_SIZE-2], args[AppConstant.CMD_LINE_ARG_MIN_SIZE-1]);
             new FtpApplication().run(AppConstant.SERVER, args[AppConstant.CMD_LINE_ARG_MIN_SIZE-1]);
         } else {
-            LOGGER.info("main: minimum required command line argument is: {}", AppConstant.CMD_LINE_ARG_MIN_SIZE);
+            logger.info("main: minimum required command line argument is: {}", AppConstant.CMD_LINE_ARG_MIN_SIZE);
         }
     }
 }

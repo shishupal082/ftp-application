@@ -460,6 +460,12 @@ public class TableService {
             for(HashMap<String, String> rowData: csvDataJson) {
                 if (this.singleThreadingService != null) {
                     if (this.singleThreadingService.getStopped()) {
+                        singeThreadStatus = "Index=" + (index-1) + "/Size=" + size + "/Add=" + addEntryCount +
+                                "/Update=" + updateEntryCount + "/Skip=" + skipEntryCount +
+                                "/AddError=" + addEntryErrorCount + "/UpdateError=" + updateEntryErrorCount +
+                                "/SearchError=" + searchErrorCount;
+                        this.singleThreadingService.setSingleThreadStatus(new SingleThreadStatus(startedTime,
+                                singleThreadItem, singeThreadStatus));
                         logger.info("Service stopped.");
                         break;
                     }
