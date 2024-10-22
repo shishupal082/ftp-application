@@ -45,6 +45,7 @@ csvConfig:
       - csv-test-09
       - csv-test-id-not-found-in-csv-config
       - csv-test-10
+      - csv-test-10-2
       - csv-test-11
       - csv-smms-assets-ser
     requiredColIndex: [0,1,2,3]

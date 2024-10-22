@@ -153,9 +153,8 @@ public class ExcelToCsvDataConvertServiceV2 {
                     cellData = rowData.get(colIndex);
                 }
                 if (this.isValidCellData(cellData, skipRowCriteria)) {
-                    continue;
+                    removeIndex.add(i);
                 }
-                removeIndex.add(i);
             }
         }
         for(i=0; i<sheetData.size(); i++) {
@@ -230,9 +229,8 @@ public class ExcelToCsvDataConvertServiceV2 {
                 }
                 cellData = this.getCellData(colIndex, columnNames, rowData);
                 if (this.isValidCellData(cellData, skipRowCriteria)) {
-                    continue;
+                    removeIndex.add(i);
                 }
-                removeIndex.add(i);
             }
         }
         for(i=0; i<tableData.size(); i++) {

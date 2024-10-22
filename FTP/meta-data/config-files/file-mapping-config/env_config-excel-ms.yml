@@ -255,6 +255,10 @@ excelDataConfig:
             regex: "^[0-9]{2}-[0-9]{2}-[0-9]{4}[T][0-9]{2}[:][0-9]{2}$"
   csv-test-10:
     uniqueEntry: [0,2]
+  csv-test-10-2:
+    skipRowCriteria:
+      - col_index: 2
+        range: ["id1"]
   csv-test-id-not-found-in-csv-config:
     appendCellDataIndex:
       - [ 0, -1 ]

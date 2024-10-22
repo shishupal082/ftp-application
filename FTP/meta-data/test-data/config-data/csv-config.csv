@@ -9,6 +9,7 @@ csv-test-08,D:/workspace/ftp-application/FTP/meta-data/test-data/test-data/02-so
 csv-test-09,D:/workspace/ftp-application/FTP/meta-data/test-data/test-data/02-source-csv.csv,sheet-name-empty,D:/workspace/ftp-application/FTP/meta-data/test-data/test-data/02-test-09-destination-csv.csv
 
 csv-test-10,D:/workspace/ftp-application/FTP/meta-data/test-data/test-data/03-source-csv.csv,sheet-name-empty,D:/workspace/ftp-application/FTP/meta-data/test-data/test-data/03-test-10-destination-csv.csv
+csv-test-10-2,D:/workspace/ftp-application/FTP/meta-data/test-data/test-data/03-source-csv.csv,sheet-name-empty_read-only-test
 
 csv-test-11,D:/workspace/ftp-application/FTP/meta-data/test-data/test-data/04-source-csv.csv,sheet-name-empty,D:/workspace/ftp-application/FTP/meta-data/test-data/test-data/04-test-11-destination-csv.csv
 gs-csv-test-13,spreadsheet-id,sheet-name,destination-filename.csv

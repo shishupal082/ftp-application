@@ -176,6 +176,10 @@ public class TestMSExcelService {
         requestId = "csv-test-10";
         apiResponse =  apiResource.updateMSExcelData(request, requestId);
         Assert.assertEquals(AppConstant.SUCCESS, apiResponse.getStatus());
+        requestId = "csv-test-10-2";
+        apiResponse =  apiResource.getMSExcelDataJson(request, requestId);
+        ArrayList<HashMap<String, String>> result = (ArrayList<HashMap<String, String>>) apiResponse.getData();
+        Assert.assertEquals(4, result.size());
     }
     @Test
     public void testTestMSExcelServiceV11() {
