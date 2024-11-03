@@ -32,6 +32,12 @@ public class Stack {
         top--;
         return result;
     }
+    public Object getTopElement() {
+        if (top < 0) {
+            return null;
+        }
+        return strings.get(top);
+    }
 
     public int getTop() {
         return top;

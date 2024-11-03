@@ -13,6 +13,31 @@ public class BinaryTree {
         this.right = null;
         this.left = null;
     }
+
+    public String getData() {
+        return data;
+    }
+
+    public void setData(String data) {
+        this.data = data;
+    }
+
+    public BinaryTree getLeft() {
+        return left;
+    }
+
+    public void setLeft(BinaryTree left) {
+        this.left = left;
+    }
+
+    public BinaryTree getRight() {
+        return right;
+    }
+
+    public void setRight(BinaryTree right) {
+        this.right = right;
+    }
+
     private BinaryTree getLeftChild(BinaryTree bt) {
         if (bt != null && bt.left != null) {
             return bt.left;
@@ -65,7 +90,47 @@ public class BinaryTree {
         result.add(root.data);
         return result;
     }
-
+    public static ArrayList<String> infixToPostfix(ArrayList<String> infix) {
+        ArrayList<String> postFix = new ArrayList<>();
+        String temp, temp2, topElement;
+        Stack stack = new Stack();
+        ArrayList<String> binaryOp = new ArrayList<>();
+        binaryOp.add(BridgeConstant.AND);
+        binaryOp.add(BridgeConstant.OR);
+        binaryOp.add(BridgeConstant.PLUS);
+        binaryOp.add(BridgeConstant.MINUS);
+        binaryOp.add(BridgeConstant.PROD);
+        binaryOp.add(BridgeConstant.DIV);
+        ArrayList<String> unaryOp = new ArrayList<>();
+        unaryOp.add(BridgeConstant.NOT);
+        for (String s : infix) {
+            temp = s;
+            if (BridgeConstant.OPEN.equals(temp)) {
+                stack.push(temp);
+            } else if (BridgeConstant.CLOSE.equals(temp)) {
+                temp2 = (String) stack.pop();
+                while (!BridgeConstant.OPEN.equals(temp2)) {
+                    postFix.add(temp2);
+                    temp2 = (String) stack.pop();
+                }
+            } else if (binaryOp.contains(temp)) {
+                stack.push(temp);
+            } else if (unaryOp.contains(temp)) {
+                stack.push(temp);
+            } else {
+                postFix.add(temp);
+                topElement = (String) stack.getTopElement();
+                if (unaryOp.contains(topElement)) {
+                    stack.pop();
+                    postFix.add(topElement);
+                }
+            }
+        }
+        while (stack.getTop() >= 0) {
+            postFix.add((String) stack.pop());
+        }
+        return postFix;
+    }
     public static BinaryTree createBinaryTree(ArrayList<String> strings) {
         Stack stack = new Stack();
         BinaryTree root = new BinaryTree("");

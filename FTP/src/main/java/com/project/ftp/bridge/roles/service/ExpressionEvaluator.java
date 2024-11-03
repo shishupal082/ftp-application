@@ -107,8 +107,7 @@ public class ExpressionEvaluator {
     }
     public Boolean evaluateBinaryExpression(String expression) {
         ArrayList<String> tokens = this.tokenizeBinary(expression);
-        BinaryTree binaryTree = BinaryTree.createBinaryTree(tokens);
-        ArrayList<String> binaryPosix = binaryTree.getPostOrder(binaryTree);
+        ArrayList<String> binaryPosix = BinaryTree.infixToPostfix(tokens);
         String result = this.evaluateBinaryPosix(binaryPosix);
         if (BridgeConstant.TRUE.equals(result) || BridgeConstant.FALSE.equals(result)) {
             return BridgeConstant.TRUE.equals(result);
@@ -117,8 +116,7 @@ public class ExpressionEvaluator {
     }
     public String evaluateNumericExpression(String expression) {
         ArrayList<String> tokens = this.tokenizeNumeric(expression);
-        BinaryTree binaryTree = BinaryTree.createBinaryTree(tokens);
-        ArrayList<String> binaryPosix = binaryTree.getPostOrder(binaryTree);
+        ArrayList<String> binaryPosix = BinaryTree.infixToPostfix(tokens);
         return this.evaluateNumericPosix(binaryPosix);
     }
     private String evaluate(String a, String op, String b) {
@@ -208,7 +206,7 @@ public class ExpressionEvaluator {
         }
         return (String) st.pop();
     }
-    private String evaluateNumericPosix(ArrayList<String> posix) {
+    public String evaluateNumericPosix(ArrayList<String> posix) {
         Stack st = new Stack();
         String result;
         String a, b, op, temp;
