@@ -40,42 +40,6 @@ public class BinaryTree {
     public void setRight(BinaryTree right) {
         this.right = right;
     }
-
-    private BinaryTree getLeftChild(BinaryTree bt) {
-        if (bt != null && bt.left != null) {
-            return bt.left;
-        }
-        return bt;
-    }
-    private BinaryTree getRightChild(BinaryTree bt) {
-        if (bt != null && bt.right != null) {
-            return bt.right;
-        }
-        return bt;
-    }
-    private void insertLeft(BinaryTree bt, String data) {
-        BinaryTree newBt = new BinaryTree(data);
-        if (bt == null) {
-            bt = newBt;
-        } else {
-            bt.left = newBt;
-        }
-    }
-    private void insertNodeInLeft(BinaryTree bt, BinaryTree leftNode) {
-        if (bt == null) {
-            bt = leftNode;
-        } else {
-            bt.left = leftNode;
-        }
-    }
-    private void insertRight(BinaryTree bt, String data) {
-        BinaryTree newBt = new BinaryTree(data);
-        if (bt == null) {
-            bt = newBt;
-        } else {
-            bt.right = newBt;
-        }
-    }
     public ArrayList<String> getPostOrder(BinaryTree root) {
         ArrayList<String> result = new ArrayList<>();
         if (root == null) {
