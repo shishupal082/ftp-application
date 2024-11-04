@@ -1,10 +1,13 @@
 package com.project.ftp.bridge.roles.service;
 
 import com.project.ftp.bridge.BridgeConstant;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 
 public class BinaryTree {
+    final static Logger logger = LoggerFactory.getLogger(BinaryTree.class);
     private String data;
     private BinaryTree left;
     private BinaryTree right;
@@ -92,7 +95,7 @@ public class BinaryTree {
     }
     public static ArrayList<String> infixToPostfix(ArrayList<String> infix) {
         ArrayList<String> postFix = new ArrayList<>();
-        String temp, temp2, topElement;
+        String temp2, topElement;
         Stack stack = new Stack();
         ArrayList<String> binaryOp = new ArrayList<>();
         binaryOp.add(BridgeConstant.AND);
@@ -103,8 +106,10 @@ public class BinaryTree {
         binaryOp.add(BridgeConstant.DIV);
         ArrayList<String> unaryOp = new ArrayList<>();
         unaryOp.add(BridgeConstant.NOT);
-        for (String s : infix) {
-            temp = s;
+        for (String temp : infix) {
+            if (temp == null || temp.isEmpty()) {
+                continue;
+            }
             if (BridgeConstant.OPEN.equals(temp)) {
                 stack.push(temp);
             } else if (BridgeConstant.CLOSE.equals(temp)) {
@@ -127,15 +132,21 @@ public class BinaryTree {
             }
         }
         while (stack.getTop() >= 0) {
-            postFix.add((String) stack.pop());
+            temp2 = (String) stack.pop();
+            if (BridgeConstant.OPEN.equals(temp2)) {
+                logger.info("Invalid infix expression: {}, contains: ( in result", infix);
+                return null;
+            }
+            postFix.add(temp2);
         }
         return postFix;
     }
-    public static BinaryTree createBinaryTree(ArrayList<String> strings) {
+    public static BinaryTree createBinaryTreeUsingPosix(ArrayList<String> posix) {
+        if (posix == null) {
+            logger.info("Invalid posix expression: null");
+            return null;
+        }
         Stack stack = new Stack();
-        BinaryTree root = new BinaryTree("");
-        stack.push(root);
-        BinaryTree currentTree = root;
         ArrayList<String> binaryOp = new ArrayList<>();
         binaryOp.add(BridgeConstant.AND);
         binaryOp.add(BridgeConstant.OR);
@@ -145,42 +156,36 @@ public class BinaryTree {
         binaryOp.add(BridgeConstant.DIV);
         ArrayList<String> unaryOp = new ArrayList<>();
         unaryOp.add(BridgeConstant.NOT);
-        String temp;
-        BinaryTree oldRight, parent;
-        for (int i=0; i<strings.size(); i++) {
-            temp = strings.get(i);
-            if (BridgeConstant.OPEN.equals(temp)) {
-                currentTree.insertLeft(currentTree, "");
-                stack.push(currentTree);
-                currentTree = currentTree.getLeftChild(currentTree);
-            } else if (BridgeConstant.CLOSE.equals(temp)) {
-                currentTree = (BinaryTree) stack.pop();
-            } else if (binaryOp.contains(temp)) {
-                if (!BridgeConstant.EMPTY.equals(currentTree.data)) {
-                    oldRight = currentTree.right;
-                    currentTree.insertRight(currentTree, temp);
-                    currentTree = currentTree.getRightChild(currentTree);
-                    currentTree.insertNodeInLeft(currentTree, oldRight);
-                } else {
-                    currentTree.data = temp;
-                }
-                currentTree.insertRight(currentTree, "");
-                stack.push(currentTree);
-                currentTree = currentTree.getRightChild(currentTree);
-            } else if (unaryOp.contains(temp)) {
-                currentTree.data = temp;
-                if (i < strings.size()-1) {
-                    i++;
-                    currentTree.insertLeft(currentTree, strings.get(i));
-                }
-                parent = (BinaryTree) stack.pop();
-                currentTree = parent;
-            } else {
-                currentTree.data = temp;
-                parent = (BinaryTree) stack.pop();
-                currentTree = parent;
+        BinaryTree newNode;
+        for (String temp : posix) {
+            if (temp == null) {
+                continue;
             }
+            newNode = new BinaryTree(temp);
+            if (binaryOp.contains(temp)) {
+                if (stack.getTop() < 1) {
+                    logger.info("Stack underflow for binary operator");
+                    return null;
+                }
+                newNode.setRight((BinaryTree) stack.pop());
+                newNode.setLeft((BinaryTree) stack.pop());
+            } else if (unaryOp.contains(temp)) {
+                if (stack.getTop() < 0) {
+                    logger.info("Stack underflow for unary operator");
+                    return null;
+                }
+                newNode.setLeft((BinaryTree) stack.pop());
+            }
+            stack.push(newNode);
         }
-        return root;
+        if (stack.getTop() == 0) {
+            return (BinaryTree) stack.pop();
+        }
+        logger.info("Invalid posix expression for binary tree: {}", posix);
+        return null;
+    }
+    public static BinaryTree createBinaryTree(ArrayList<String> infix) {
+        ArrayList<String> postFix = BinaryTree.infixToPostfix(infix);
+        return createBinaryTreeUsingPosix(postFix);
     }
 }

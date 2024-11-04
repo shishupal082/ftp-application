@@ -31,11 +31,11 @@ public class TestStack {
         ArrayList<String> post = binaryTree.getPostOrder(binaryTree);
         Assert.assertEquals(3, post.size());
 
-        str = "(~one)"; // Invalid expression
+        str = "(~one)";
         strings = expressionEvaluator.tokenizeBinary(str);
         binaryTree = BinaryTree.createBinaryTree(strings);
         post = binaryTree.getPostOrder(binaryTree);
-        Assert.assertEquals(3, post.size());
+        Assert.assertEquals(2, post.size());
 
 
         str = "~one";
@@ -50,11 +50,11 @@ public class TestStack {
         post = binaryTree.getPostOrder(binaryTree);
         Assert.assertEquals(4, post.size());
 
-        str = "((~one)&two)"; // Invalid expression
+        str = "((~one)&two)";
         strings = expressionEvaluator.tokenizeBinary(str);
         binaryTree = BinaryTree.createBinaryTree(strings);
         post = binaryTree.getPostOrder(binaryTree);
-        Assert.assertEquals(5, post.size());
+        Assert.assertEquals(4, post.size());
 
         str = "(~Q&(R|S|T))";
         strings = expressionEvaluator.tokenizeBinary(str);
@@ -68,21 +68,21 @@ public class TestStack {
         Assert.assertEquals(16, strings.size());
         binaryTree = BinaryTree.createBinaryTree(strings);
         post = binaryTree.getPostOrder(binaryTree);
-        Assert.assertEquals("PQ~RST||&&", String.join("", post));// Correct result
+        Assert.assertEquals("PQ~RST||&&", String.join("", post));
         Assert.assertEquals(10, post.size());
 
         str = "P&(~Q&(R|S|T))";
         strings = expressionEvaluator.tokenizeBinary(str);
         binaryTree = BinaryTree.createBinaryTree(strings);
         post = binaryTree.getPostOrder(binaryTree);
-        Assert.assertEquals("Q~RST||&&P", String.join("", post));// Wrong result
+        Assert.assertEquals("PQ~RST||&&", String.join("", post));
 
         str = "(A&(B&(C&(D&(E&(~E&(F&(G&((H&(J&(K&(L&(M&(N&(P&(~Q&(R|S|T))))))))))))))))))";
         strings = expressionEvaluator.tokenizeBinary(str);
         Assert.assertEquals(75, strings.size());
         binaryTree = BinaryTree.createBinaryTree(strings);
         post = binaryTree.getPostOrder(binaryTree);
-        Assert.assertEquals(40, post.size());
+        Assert.assertEquals(39, post.size());
         Assert.assertEquals("ABCDEE~FGHJKLMNPQ~RST||&&&&&&&&&&&&&&&&", String.join("", post));
 
         str = "(1&(2&(3&(4&(5&(~6&(7&(8&((9&(10&(11&(12&(13&(14&(15&(~16&(17|18|19)))))))))|(20&(21&(~22&(23&(24&(((12&~25&26)|(27&13&14&~28&29))&(30|31))))))))))))))))";
