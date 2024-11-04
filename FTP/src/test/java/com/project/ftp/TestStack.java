@@ -50,6 +50,12 @@ public class TestStack {
         post = binaryTree.getPostOrder(binaryTree);
         Assert.assertEquals(4, post.size());
 
+
+        str = "((~one&two)";
+        strings = expressionEvaluator.tokenizeBinary(str);
+        binaryTree = BinaryTree.createBinaryTree(strings);
+        Assert.assertNull(binaryTree);
+
         str = "((~one)&two)";
         strings = expressionEvaluator.tokenizeBinary(str);
         binaryTree = BinaryTree.createBinaryTree(strings);

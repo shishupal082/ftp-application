@@ -196,6 +196,47 @@ public class TestExpressionEvaluator {
         Assert.assertEquals("3242/+*", String.join("",postFix));
         result = expressionEvaluator.evaluateNumericPosix(postFix);
         Assert.assertEquals("12.0", result);
+
+        expression = "2*3*+5";
+        infix = expressionEvaluator.tokenizeNumeric(expression);
+        BinaryTree binaryTree = BinaryTree.createBinaryTree(infix);
+        Assert.assertNull(binaryTree);
+
+        expression = "A&B&~C";
+        infix = expressionEvaluator.tokenizeBinary(expression);
+        binaryTree = BinaryTree.createBinaryTree(infix);
+        postFix = binaryTree.getPostOrder(binaryTree);
+        Assert.assertEquals("ABC~&&", String.join("", postFix));
+
+        expression = "A&B&(~C)";
+        infix = expressionEvaluator.tokenizeBinary(expression);
+        binaryTree = BinaryTree.createBinaryTree(infix);
+        postFix = binaryTree.getPostOrder(binaryTree);
+        Assert.assertEquals("ABC~&&", String.join("", postFix));
+
+        expression = "A&B&(~~C)";
+        infix = expressionEvaluator.tokenizeBinary(expression);
+        binaryTree = BinaryTree.createBinaryTree(infix);
+        postFix = binaryTree.getPostOrder(binaryTree);
+        Assert.assertEquals("ABC~~&&", String.join("", postFix));
+
+        expression = "~~C";
+        infix = expressionEvaluator.tokenizeBinary(expression);
+        binaryTree = BinaryTree.createBinaryTree(infix);
+        postFix = binaryTree.getPostOrder(binaryTree);
+        Assert.assertEquals("C~~", String.join("", postFix));
+
+        expression = "~A";
+        infix = expressionEvaluator.tokenizeBinary(expression);
+        binaryTree = BinaryTree.createBinaryTree(infix);
+        postFix = binaryTree.getPostOrder(binaryTree);
+        Assert.assertEquals("A~", String.join("", postFix));
+
+
+        expression = "~";
+        infix = expressionEvaluator.tokenizeBinary(expression);
+        binaryTree = BinaryTree.createBinaryTree(infix);
+        Assert.assertNull(binaryTree);
     }
     @Test
     public void testInfixToPostFix() {
