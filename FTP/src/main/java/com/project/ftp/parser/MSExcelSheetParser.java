@@ -76,7 +76,7 @@ public class MSExcelSheetParser {
         String dateFormat, timeFormat, dateTimeFormat;
         dateFormat = AppConstant.DATE_FORMAT;
         timeFormat = AppConstant.TIME_FORMAT2;
-        dateTimeFormat = AppConstant.DateTimeFormat7;
+        dateTimeFormat = AppConstant.DateTimeFormat6;
         DateUtilities dateUtilities = new DateUtilities();
         if (excelDataConfigById != null) {
             if (excelDataConfigById.getDateFormat() != null) {

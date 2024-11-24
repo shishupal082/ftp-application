@@ -71,6 +71,22 @@ mappingData1:
     subStringConfig: [start, length, end]
     dateRegex: String
 
+subStringConfig
+start: start index of the string (starting from 0)
+start = -1, then start index calculated from end and length
+startIndex = subString.length()-length-end;
+
+length: length of the string to be taken
+length < 1, then endIndex calculated from end value
+
+end: end index of the string ()
+end = -1, then it will be skip
+
+startIndex = subString.length()-length-end;
+endIndex = subString.length()-end-1;
+
+subString = subString.substring(startIndex, endIndex+1)
+
 sequence of operation
 - range
 - notInRange

@@ -152,10 +152,10 @@ public class TestMSExcelService {
         String requestId = "csv-test-08";
         ArrayList<HashMap<String, String>> result;
         result = msExcelService.getMSExcelSheetDataJson(null, requestId);
-        Assert.assertEquals(14, result.size());
-        Assert.assertEquals("test-00", result.get(0).get("col"));
+        Assert.assertEquals(15, result.size());
+        Assert.assertEquals("test-00", result.get(0).get("col_2"));
         Assert.assertEquals(4, result.get(0).size());
-        Assert.assertEquals(1, result.get(13).size());
+        Assert.assertEquals(4, result.get(13).size());
     }
     @Test
     public void testTestMSExcelServiceV09() {
