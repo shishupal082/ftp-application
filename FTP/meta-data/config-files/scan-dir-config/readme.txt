@@ -81,16 +81,21 @@ Note:
 
 Apis
 -----
-API-1) api/get_scan_dir_config?scan_dir_id=id1|id2
+1) /api/get_scan_dir_config?scan_dir_id=id1|id2&pathname=single-file/folder_path
+2) /api/update_scan_dir?scan_dir_id=singleId&recursive=true/false
+3) /api/read_scan_dir [Output Array]
+4) /api/read_scan_dir_json
+5) /api/read_scan_dir_csv
+6) /api/get_scan_dir [Output Array]
+7) /api/get_scan_dir_json
+8) /api/get_scan_dir_csv
+
+All api from (3) to (8)
+- 5 query parameter
+(1) scan_dir_id (2) pathname (3) filetype (4) recursive (5) csv_mapping_id
 
 Test case
 scan_dir_id = null, empty, invalid id
-
-
-api/read_scan_dir?pathname=String&recursive=boolean
-api/update_scan_dir?pathname=String&recursive=boolean
-api/get_scan_dir?pathname=str1|str2&filetype=pdf|csv&scan_dir_id=id1|id2&recursive=boolean
-api/get_scan_dir_csv?pathname=str1|str2&filetype=pdf|csv&scan_dir_id=id1|id2&recursive=boolean
 
 Query parameter for getScanDir and getScanDirCsv
 pathname (multiple separated by |), filetype (multiple separated by |), scan_dir_id,(multiple separated by |),
@@ -150,6 +155,36 @@ It is used only when corresponding request parameters are null
 3) get_scan_dir
 4) get_scan_dir_csv
 
+Mapping between scan-dir-config-id and csv-config-id
+--------------------------------------------------------
+Index for scan-dir-data
+**************************
+0: Long.toString(id)
+1: orgUsername
+2: entryTime
+3: loginUsername
+4: tableName
+5: tableUniqueId
+6: uiEntryTime
+7: deviceName
+8: scanDirMappingId
+9: type
+10: Double.toString(sizeInKb)
+11: size
+12: scannedDate
+13: detectedAt
+14: editedAt
+15: deletedAt
+16: remark
+17: parentPath
+18: pathName
+19: fileName
+20: extension
+21: reqScanDirId
+22: reqPathName
+23: reqFileType
+24: reqRecursive
+25: reqCsvMappingId
 
 UI side
 ---------

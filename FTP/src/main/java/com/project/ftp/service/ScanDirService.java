@@ -113,7 +113,6 @@ public class ScanDirService {
         }
         this.updateFolderSize(scanResult);
 
-
         this.updatePathInfoDetails(pathInfoScanResults, scanResult, scanMappingDirId, requestScanDir);
         ArrayList<FilepathDBParameters> pathInfoScanFinalResults = new ArrayList<>();
         ArrayList<String> fileTypeList = requestScanDir.getFinalFiletypeList();
@@ -127,12 +126,19 @@ public class ScanDirService {
         }
         return pathInfoScanResults;
     }
+    private boolean isValidRequestPath(String requestPath, String configPath) {
+        if (requestPath != null && configPath != null) {
+            return requestPath.contains(configPath);
+        }
+        return false;
+    }
     private ArrayList<FilepathDBParameters> getPathInfoScanResultV2(final RequestScanDir requestScanDir,
                                                                     LoginUserDetails loginUserDetails) throws AppException {
         ArrayList<ScanDirMapping> scanDirMapping = this.getScanDirMapping(requestScanDir, true);
         ArrayList<FilepathDBParameters> pathInfoScanResults = null;
-        ArrayList<FilepathDBParameters> tempPathInfoScanResults, tempPathInfoScanResults2;
+        ArrayList<FilepathDBParameters> tempPathInfoScanResults;
         ArrayList<String> pathIndex;
+        String requestPathName = requestScanDir.getReqPathName();
         for(ScanDirMapping dirMapping: scanDirMapping) {
             if(dirMapping == null || dirMapping.getPathIndex() == null) {
                 continue;
@@ -140,27 +146,19 @@ public class ScanDirService {
             pathIndex = dirMapping.getPathIndex();
             for(String path: pathIndex) {
                 path = StaticService.replaceBackSlashToSlash(path);
+                if (requestPathName != null && !requestPathName.isEmpty()) {
+                    if (!this.isValidRequestPath(requestPathName, path)) {
+                        continue;
+                    }
+                    path = requestPathName;
+                }
                 tempPathInfoScanResults = this.getPathInfoScanResult(dirMapping.getId(), path, requestScanDir);
                 if (tempPathInfoScanResults != null) {
                     if (pathInfoScanResults == null) {
                         pathInfoScanResults = new ArrayList<>();
                     }
-                    if (requestScanDir.getReqPathName() != null) {
-                        tempPathInfoScanResults2 = new ArrayList<>();
-                        for(FilepathDBParameters dbParameters: tempPathInfoScanResults) {
-                            if (dbParameters == null || dbParameters.getFileName() == null) {
-                                continue;
-                            }
-                            if (dbParameters.getPathName().contains(requestScanDir.getReqPathName())) {
-                                tempPathInfoScanResults2.add(dbParameters);
-                            }
-                        }
-                        this.updateDBParameter(tempPathInfoScanResults2, loginUserDetails, dirMapping);
-                        pathInfoScanResults.addAll(tempPathInfoScanResults2);
-                    } else {
-                        this.updateDBParameter(tempPathInfoScanResults, loginUserDetails, dirMapping);
-                        pathInfoScanResults.addAll(tempPathInfoScanResults);
-                    }
+                    this.updateDBParameter(tempPathInfoScanResults, loginUserDetails, dirMapping);
+                    pathInfoScanResults.addAll(tempPathInfoScanResults);
                 }
             }
         }

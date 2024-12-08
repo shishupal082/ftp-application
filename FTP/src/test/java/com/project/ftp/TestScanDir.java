@@ -339,4 +339,26 @@ public class TestScanDir {
         Assert.assertEquals(1, result.size());
         Assert.assertEquals(26, result.get(0).size());
     }
+    @Test
+    public void testReadScanDirV2() {
+        TestMSExcelService testMSExcelService = new TestMSExcelService();
+        AppConfig appConfig = testMSExcelService.getAppConfig(true);
+        ScanDirService scanDirService = appConfig.getScanDirService();
+        String scanDirId, path;
+        ArrayList<ArrayList<String>> result;
+        scanDirId = "meta-data-dir";
+        result = scanDirService.readScanDirectory(null, scanDirId, null, null, AppConstant.TRUE, null);
+        Assert.assertFalse(result.isEmpty());
+
+        result = scanDirService.readScanDirectory(null, scanDirId, null, null, AppConstant.FALSE, null);
+        Assert.assertFalse(result.isEmpty());
+
+        path = "D:/workspace/ftp-application/FTP/meta-data/smms-data/";
+        result = scanDirService.readScanDirectory(null, scanDirId, path, null, null, null);
+        Assert.assertEquals(26, result.get(0).size());
+
+        path = "D:/workspace/ftp-application/FTP/meta-data/test-data/";
+        result = scanDirService.readScanDirectory(null, scanDirId, path, null, AppConstant.FALSE, null);
+        Assert.assertEquals(26, result.get(0).size());
+    }
 }
