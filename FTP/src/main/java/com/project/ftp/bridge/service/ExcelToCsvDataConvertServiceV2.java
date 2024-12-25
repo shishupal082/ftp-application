@@ -399,7 +399,7 @@ public class ExcelToCsvDataConvertServiceV2 {
             endIndex = subString.length()-end-1;
         }
         if (startIndex >= 0 && endIndex >= 0 && startIndex < endIndex && startIndex < subString.length() && endIndex < subString.length()) {
-            subString = subString.substring(startIndex, endIndex+1);
+            subString = subString.substring(startIndex, endIndex+1).trim();
         }
         return subString;
     }
@@ -498,10 +498,8 @@ public class ExcelToCsvDataConvertServiceV2 {
             cellData = value;
         } else if (regex != null && StaticService.isPatternMatching(cellData2, regex, false)) {
             if (dateRegex != null) {
-                if (StaticService.isPatternMatching(cellData2, regex, false)) {
-                    oldDateText = this.getSubStringTextFromCellData(subStringConfig, cellData2);
-                    cellData = dateUtilities.getDateStrInNewPattern(value, dateRegex, oldDateText, oldDateText);
-                }
+                oldDateText = this.getSubStringTextFromCellData(subStringConfig, cellData2);
+                cellData = dateUtilities.getDateStrInNewPattern(value, dateRegex, oldDateText, oldDateText);
             } else {
                 cellData = value;
                 if (subStringConfig != null) {

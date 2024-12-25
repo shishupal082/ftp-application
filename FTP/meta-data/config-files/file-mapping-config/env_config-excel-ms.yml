@@ -230,6 +230,13 @@ excelDataConfig:
             dateRegex: "yyyy-MM-dd"
             regex: "[0-9]{4}[-][0-9]{2}[-][0-9]{2}"
             subStringConfig: [ -1, 10, 11 ]
+      - defaultCellData: ""
+        col_index: -1
+        rewrite: false
+        mappingData:
+          - col_index: 1
+            info: "Extract only variable text after length of 22 char"
+            subStringConfig: [22, -1, 0]
   csv-test-09:
     replaceCellString:
       - index: 0

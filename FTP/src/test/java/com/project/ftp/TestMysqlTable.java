@@ -109,4 +109,14 @@ public class TestMysqlTable {
         TableService tableService = appConfig.getTableService();
         tableService.updateTableDataFromCsv(null, "csv-mysql-update-smms_assets_list");
     }
+    /*Production data testing*/
+    /**
+    @Test
+    public void testProdMySqlUserTableDb() {
+        TestMSExcelService testMSExcelService = new TestMSExcelService();
+        AppConfig appConfig = testMSExcelService.getAppConfigProd(true);
+        TableService tableService = appConfig.getTableService();
+        tableService.updateTableDataFromCsv(null, "csv-mysql-update-staff-details");
+    }
+    */
 }

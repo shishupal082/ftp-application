@@ -140,9 +140,9 @@ public class TableMysqlDb implements TableDb {
         }
         ArrayList<String> columnNames = tableConfiguration.getColumnName();
         if (columnNames == null) {
-            columnNames = tableConfiguration.getUniquePattern();
+            columnNames = tableConfiguration.getUpdateColumnName();
             if (columnNames == null) {
-                columnNames = tableConfiguration.getUpdateColumnName();
+                columnNames = tableConfiguration.getUniquePattern();
                 if (columnNames == null) {
                     return null;
                 }

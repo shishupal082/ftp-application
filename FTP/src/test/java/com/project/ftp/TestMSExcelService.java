@@ -42,6 +42,21 @@ public class TestMSExcelService {
         arguments.add("meta-data/app_env_config_4.yml");
         return AppConfig.getAppConfig(null, ftpConfiguration, arguments, AppConstant.SOURCE_TEST);
     }
+    public AppConfig getAppConfigProd(boolean isMysqlEnable) {
+        FtpConfiguration ftpConfiguration = new FtpConfiguration();
+        ArrayList<String> arguments = new ArrayList<>();
+        if (isMysqlEnable) {
+            arguments.add(AppConstant.TRUE);
+        } else {
+            arguments.add("false");
+        }
+        arguments.add("false");
+        // first-file-reading-equal-to-calling-main-function-will-be-skipped same will be used for initApplication
+        arguments.add("meta-data/app_env_config.yml");
+        arguments.add("meta-data/app_env_config_2.yml");
+        arguments.add("meta-data/app_env_config_4_prod.yml");
+        return AppConfig.getAppConfig(null, ftpConfiguration, arguments, AppConstant.SOURCE_TEST);
+    }
     public AppConfig getAppConfigV2() {
         FtpConfiguration ftpConfiguration = new FtpConfiguration();
         ArrayList<String> arguments = new ArrayList<>();
@@ -153,9 +168,9 @@ public class TestMSExcelService {
         ArrayList<HashMap<String, String>> result;
         result = msExcelService.getMSExcelSheetDataJson(null, requestId);
         Assert.assertEquals(15, result.size());
-        Assert.assertEquals("test-00", result.get(0).get("col_2"));
-        Assert.assertEquals(4, result.get(0).size());
-        Assert.assertEquals(4, result.get(13).size());
+        Assert.assertEquals("test-00", result.get(0).get("col_3"));
+        Assert.assertEquals(5, result.get(0).size());
+        Assert.assertEquals(5, result.get(13).size());
     }
     @Test
     public void testTestMSExcelServiceV09() {

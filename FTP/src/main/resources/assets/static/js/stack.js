@@ -676,6 +676,7 @@ var UrlParserObj = (function(){
         if (!isString(href)) {
             href = "";
         }
+        data = {};
         var hrefObj = href.split("?");
         if (hrefObj.length) {
             data["hrefPath"] = hrefObj[0];
@@ -699,6 +700,9 @@ var UrlParserObj = (function(){
             return data[key];
         }
         return defaultValue;
+    };
+    UrlParser.prototype.getAllQueryData = function () {
+        return data;
     };
     return UrlParser;
 })();
@@ -1838,6 +1842,10 @@ Stack.extend({
     },
     getUrlParserObject: function(url) {
         return new UrlParserObj(url);
+    },
+    getAllQueryData: function(url) {
+        var UrlParser = new UrlParserObj(url);
+        return UrlParser.getAllQueryData();
     },
     getPlatform: function() {
         return Platform;
