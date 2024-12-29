@@ -298,6 +298,7 @@ public class TableService {
         ArrayList<String> uniquePattern = tableConfiguration.getUniquePattern();
         String uniqueColumn = "";
         StringBuilder uniqueParameter = new StringBuilder();
+        String tempColumnName;
         StringBuilder columnName = new StringBuilder();
         StringBuilder oldValue = new StringBuilder();
         StringBuilder newValue = new StringBuilder();
@@ -320,32 +321,36 @@ public class TableService {
                 }
                 i++;
             }
+        }
+        if (maintainHistory) {
             i = 0;
             for(ArrayList<String> changeData2: changeHistory) {
                 if (changeData2 == null || changeData2.size() != 3) {
                     continue;
                 }
+                tempColumnName = changeData2.get(0);
+                if (maintainHistoryExcludedColumn.contains(tempColumnName)) {
+                    continue;
+                }
                 if (i==0) {
-                    columnName = new StringBuilder(changeData2.get(0));
+                    columnName = new StringBuilder(tempColumnName);
                     oldValue = new StringBuilder(changeData2.get(1));
                     newValue = new StringBuilder(changeData2.get(2));
                     i++;
                 } else {
-                    columnName.append(",").append(changeData2.get(0));
+                    columnName.append(",").append(tempColumnName);
                     oldValue.append(",").append(changeData2.get(1));
                     newValue.append(",").append(changeData2.get(2));
                 }
             }
+            if (i>0) {
+                this.saveHistory(tableConfiguration.getDbType(), tableConfiguration.getTableName(), uniqueColumn, uniqueParameter.toString(),
+                        columnName.toString(), oldValue.toString(), newValue.toString());
+            }
         }
-        String finalColumnName = columnName.toString();
-        if (maintainHistoryExcludedColumn.contains(finalColumnName)) {
-            return;
+        if (!changeHistory.isEmpty()) {
+            logger.info("Change History: {}", changeHistory);
         }
-        if (maintainHistory) {
-            this.saveHistory(tableConfiguration.getDbType(), tableConfiguration.getTableName(), uniqueColumn, uniqueParameter.toString(),
-                    finalColumnName, oldValue.toString(), newValue.toString());
-        }
-        logger.info("Change History: {}", changeHistory);
     }
     private TableUpdateEnum getNextAction(TableConfiguration tableConfiguration, HashMap<String, String> currentRowData,
                                  boolean updateIfFound, boolean maintainHistory, ArrayList<String> maintainHistoryExcludedColumn) {
