@@ -333,7 +333,7 @@ public class AppConfig {
 //        appConfig.setShutdownTask(shutdownTask);
 //        appConfig.setFtpConfiguration(ftpConfiguration);
         // For log config setup
-        StaticService.initApplication(appConfig, args.get(AppConstant.CMD_LINE_ARG_MIN_SIZE-2), args.get(AppConstant.CMD_LINE_ARG_MIN_SIZE-1));
+        StaticService.initApplication(appConfig, isStaticPath, configPath);
         appConfig.updatePageConfig404();
         logger.info("appConfig: {}", appConfig);
         EventInterface eventInterface = null;

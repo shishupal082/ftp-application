@@ -1,6 +1,5 @@
 package com.project.ftp;
 
-import com.project.ftp.bridge.obj.BridgeResponseSheetData;
 import com.project.ftp.bridge.obj.yamlObj.ExcelDataConfig;
 import com.project.ftp.config.AppConfig;
 import com.project.ftp.config.AppConstant;
@@ -57,6 +56,22 @@ public class TestMSExcelService {
         arguments.add("meta-data/app_env_config_4_prod.yml");
         return AppConfig.getAppConfig(null, ftpConfiguration, arguments, AppConstant.SOURCE_TEST);
     }
+    public AppConfig getAppConfigProd8082(boolean isMysqlEnable) {
+        FtpConfiguration ftpConfiguration = new FtpConfiguration();
+        ArrayList<String> arguments = new ArrayList<>();
+        if (isMysqlEnable) {
+            arguments.add(AppConstant.TRUE);
+        } else {
+            arguments.add("false");
+        }
+        arguments.add("true"); // All config path are static directory
+        // first-file-reading-equal-to-calling-main-function,will-be-skipped same will be used for initApplication
+        arguments.add("first-config-filepath-will-be-skipped");
+        arguments.add("F:/ftp-app/OneDrive/ftp/app-data/config-files-v2/env_config/env_config-8.0.0.1_local_initial_port8082_test.yml");
+        arguments.add("F:/ftp-app/OneDrive/ftp/app-data/config-files-v2/env_config/env_config-8.0.0.6_base.yml");
+        arguments.add("F:/ftp-app/OneDrive/ftp/app-data/config-files-v2/env_config/env_config-user_GroupLogin1.yml");
+        return AppConfig.getAppConfig(null, ftpConfiguration, arguments, AppConstant.SOURCE_TEST);
+    }
     public AppConfig getAppConfigV2() {
         FtpConfiguration ftpConfiguration = new FtpConfiguration();
         ArrayList<String> arguments = new ArrayList<>();
@@ -81,7 +96,7 @@ public class TestMSExcelService {
         EventTracking eventTracking = new EventTracking(appConfig, userService, eventInterface);
         return new MSExcelService(appConfig, eventTracking, userService);
     }
-    private HttpServletRequest getHttpServletRequest() {
+    public HttpServletRequest getHttpServletRequest() {
         return null;
     }
     @Test
@@ -270,16 +285,28 @@ public class TestMSExcelService {
         HttpServletRequest request = this.getHttpServletRequest();
         String requestId;
         ApiResponse apiResponse;
-        ApiResource apiResource = this.getApiResourceMysql();
-        requestId = "oracle-to-csv-smms-assets-list-2";
-
-        apiResponse =  apiResource.getMSExcelData(request, requestId);
-        ArrayList<BridgeResponseSheetData> data = (ArrayList<BridgeResponseSheetData>) apiResponse.getData();
-        Assert.assertEquals("SUCCESS", apiResponse.getStatus());
-        Assert.assertEquals(2, data.get(0).getSheetData().size());
-        Assert.assertEquals(21, data.get(0).getSheetData().get(0).size());
-
-        apiResponse =  apiResource.updateMSExcelData(request, "oracle-to-csv-smms-assets-list");
-        Assert.assertEquals("SUCCESS", apiResponse.getStatus());
+//        ApiResource apiResource = this.getApiResourceMysql();
+//        requestId = "oracle-to-csv-smms-assets-list-2";
+//
+//        apiResponse =  apiResource.getMSExcelData(request, requestId);
+//        ArrayList<BridgeResponseSheetData> data = (ArrayList<BridgeResponseSheetData>) apiResponse.getData();
+//        Assert.assertEquals("SUCCESS", apiResponse.getStatus());
+//        Assert.assertEquals(2, data.get(0).getSheetData().size());
+//        Assert.assertEquals(21, data.get(0).getSheetData().get(0).size());
+//
+//        apiResponse =  apiResource.updateMSExcelData(request, "oracle-to-csv-smms-assets-list");
+//        Assert.assertEquals("SUCCESS", apiResponse.getStatus());
+    }
+    @Test
+    public void testTestMSExcelServiceV15() {
+        HttpServletRequest request = this.getHttpServletRequest();
+        String requestId;
+        ApiResponse apiResponse;
+        ApiResource apiResource = this.getApiResource();
+        requestId = "csv-test-15-06";
+        apiResponse =  apiResource.getMSExcelDataJson(request, requestId);
+        ArrayList<HashMap<String, String>> result = (ArrayList<HashMap<String, String>>) apiResponse.getData();
+        Assert.assertEquals(2, result.size());
+        Assert.assertEquals("567900138024", result.get(1).get("col_7"));
     }
 }

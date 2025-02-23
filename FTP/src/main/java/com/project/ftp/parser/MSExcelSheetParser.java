@@ -14,6 +14,8 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.text.DecimalFormat;
+import java.text.ParsePosition;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
@@ -100,7 +102,11 @@ public class MSExcelSheetParser {
             }
         } else {
             if (numericCellData % 1 == 0) {
-                result = Integer.toString((int) numericCellData);
+                // Used for converting big number (12 digit) into string
+                DecimalFormat df = new DecimalFormat();
+                Number n = df.parse(Double.toString(numericCellData), new ParsePosition(0));
+                result = n.toString();
+//                result = Integer.toString((int) numericCellData);
             } else {
                 result = Double.toString(numericCellData);
             }

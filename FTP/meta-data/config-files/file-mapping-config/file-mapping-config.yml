@@ -57,5 +57,6 @@ csvConfig:
       - csv-test-02
       - csv-test-03
       - api-scan-dir
+      - csv-test-15-06
     requiredColIndex: [0,1,2,3]
     fileConfig: ["D:/workspace/ftp-application/FTP/meta-data/test-data/config-data/excel-config.csv", "Excel reading data config path"]

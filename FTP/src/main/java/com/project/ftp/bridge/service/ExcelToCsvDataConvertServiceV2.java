@@ -423,8 +423,10 @@ public class ExcelToCsvDataConvertServiceV2 {
         String cellData = defaultCellData;
         if (colIndex == null) {
             return cellData;
-        } else if (colIndex >= 0 && rowData.size() > colIndex) {
-            cellData = rowData.get(colIndex);
+        } else if (colIndex >= 0) {
+            if (colIndex < rowData.size()) {
+                cellData = rowData.get(colIndex);
+            }
         } else if (colIndex == -1) {
             cellData = defaultCellData;
         } else if (colIndex == -2) {
@@ -560,6 +562,11 @@ public class ExcelToCsvDataConvertServiceV2 {
                             }
                         }
                         if (rewrite != null && rewrite && colIndex != null && colIndex >= 0) {
+                            if (colIndex >= rowData.size() && cellData != null && !cellData.isEmpty()) {
+                                for (int i=rowData.size(); i<=colIndex; i++) {
+                                    rowData.add("");
+                                }
+                            }
                             if (colIndex < rowData.size()) {
                                 rowData.set(colIndex, cellData);
                             }

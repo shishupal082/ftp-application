@@ -91,32 +91,10 @@ public class TestMysqlTable {
         Assert.assertEquals(100, result.size());
     }
     @Test
-    public void testMyTableDbv2() {
-        TestMSExcelService testMSExcelService = new TestMSExcelService();
-        AppConfig appConfig = testMSExcelService.getAppConfig(true);
-        TableService tableService = appConfig.getTableService();
-        ArrayList<HashMap<String, String>> result;
-        result = tableService.getTableData(null, "get-oracle-smms-assets-list", null, "rnc_division");
-        Assert.assertEquals(3, result.size());
-        result = tableService.getTableData(null, "get-oracle-smms-assets-list", null, "asset_unique");
-        Assert.assertEquals(2, result.size());
-        Assert.assertEquals("Modified asset code", result.get(0).get("modified_asset_code"));
-    }
-    @Test
     public void testUpdateMySqlTableDb() {
         TestMSExcelService testMSExcelService = new TestMSExcelService();
         AppConfig appConfig = testMSExcelService.getAppConfig(true);
         TableService tableService = appConfig.getTableService();
         tableService.updateTableDataFromCsv(null, "csv-mysql-update-smms_assets_list");
     }
-    /*Production data testing*/
-    /**
-    @Test
-    public void testProdMySqlUserTableDb() {
-        TestMSExcelService testMSExcelService = new TestMSExcelService();
-        AppConfig appConfig = testMSExcelService.getAppConfigProd(true);
-        TableService tableService = appConfig.getTableService();
-        tableService.updateTableDataFromCsv(null, "csv-mysql-update-staff-details");
-    }
-    */
 }

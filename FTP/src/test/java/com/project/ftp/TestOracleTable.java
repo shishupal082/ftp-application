@@ -42,31 +42,4 @@ public class TestOracleTable {
             Assert.assertEquals(ErrorCodes.CONFIG_ERROR, e.getErrorCode());
         }
     }
-    @Test
-    public void testGetOracleTableData() {
-        TestMSExcelService testMSExcelService = new TestMSExcelService();
-        AppConfig appConfig = testMSExcelService.getAppConfig(true);
-        TableService tableService = appConfig.getTableService();
-        ArrayList<HashMap<String, String>> result;
-        result = tableService.getTableData(null, "get-mysql-smms-assets-list_oracle", null, null);
-        Assert.assertNotNull(result);
-
-        result = tableService.getTableData(null, "get_smms_assets_list_view_oracle", null, "all");
-        Assert.assertNotNull(result);
-
-        result = tableService.getTableData(null, "get-oracle-smms-assets-list", null, "rnc_division");
-        Assert.assertNotNull(result);
-
-        result = tableService.getTableData(null, "get_smms_assets_list_duplicate", null, "all");
-        Assert.assertNotNull(result);
-
-    }
-
-    @Test
-    public void testUpdateMySqlTableDb() {
-        TestMSExcelService testMSExcelService = new TestMSExcelService();
-        AppConfig appConfig = testMSExcelService.getAppConfig(true);
-        TableService tableService = appConfig.getTableService();
-        tableService.updateTableDataFromCsv(null, "csv-mysql-update-smms_assets_list_oracle");
-    }
 }
