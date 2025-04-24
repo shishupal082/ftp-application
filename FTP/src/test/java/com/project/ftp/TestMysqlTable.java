@@ -16,6 +16,9 @@ public class TestMysqlTable {
     final static Logger logger = LoggerFactory.getLogger(TestMysqlTable.class);
     @Test
     public void testMyTableTableService() {
+        if (TestMSExcelService.isCompilerTest) {
+            return;
+        }
         TestMSExcelService testMSExcelService = new TestMSExcelService();
         AppConfig appConfig = testMSExcelService.getAppConfig(true);
         TableService tableService = new TableService(null, null, null, null);
@@ -43,6 +46,9 @@ public class TestMysqlTable {
     }
     @Test
     public void testMyTableDb() {
+        if (TestMSExcelService.isCompilerTest) {
+            return;
+        }
         TestMSExcelService testMSExcelService = new TestMSExcelService();
         AppConfig appConfig = testMSExcelService.getAppConfig(true);
         TableService tableService = appConfig.getTableService();

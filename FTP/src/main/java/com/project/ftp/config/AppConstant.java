@@ -46,6 +46,8 @@ public class AppConstant {
     public static final String DateTimeFormat5 = "yyyy-MM-dd-HH:mm"; // used for file_details.csv data generation
     public static final String DateTimeFormat6 = "yyyy-MM-dd HH:mm:ss"; // used for timestamp in UserFile interface
     public static final String DateTimeFormat7 = "dd/MM/yyyy HH:mm:ss"; // used for reading excel sheet data
+    public static final String FinancialYearFormat = "fy"; // used for reading excel sheet and convert to financial year
+
     public static final String UTF8 = "UTF-8";
     public static final String FAVICON_ICO_PATH = "favicon.ico";
     public static final String INDEX_PAGE_RE_ROUTE = "/login";

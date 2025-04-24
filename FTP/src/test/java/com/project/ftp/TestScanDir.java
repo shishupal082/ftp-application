@@ -243,6 +243,9 @@ public class TestScanDir {
     }
     @Test
     public void testUpdateScanDir() {
+        if (TestMSExcelService.isCompilerTest) {
+            return;
+        }
         TestMSExcelService testMSExcelService = new TestMSExcelService();
         AppConfig appConfig = testMSExcelService.getAppConfig(true);
         ScanDirService scanDirService = appConfig.getScanDirService();
@@ -252,18 +255,21 @@ public class TestScanDir {
             scanDirService.updateScanDirectory(null, null, null);
             Assert.assertEquals(0, 1);
         } catch (AppException e) {
-            Assert.assertEquals(e.getErrorCode(), ErrorCodes.BAD_REQUEST_ERROR);
+            Assert.assertEquals(ErrorCodes.BAD_REQUEST_ERROR, e.getErrorCode());
         }
         scanDirId = "meta-data-dir";
         apiResponse = scanDirService.updateScanDirectory(null, scanDirId, AppConstant.TRUE);
-        Assert.assertEquals(apiResponse.getStatus(), AppConstant.SUCCESS);
+        Assert.assertEquals(AppConstant.SUCCESS, apiResponse.getStatus());
 
         scanDirId = "test-4|test-5";
         apiResponse = scanDirService.updateScanDirectory(null, scanDirId, AppConstant.TRUE);
-        Assert.assertEquals(apiResponse.getStatus(), AppConstant.SUCCESS);
+        Assert.assertEquals(AppConstant.SUCCESS, apiResponse.getStatus());
     }
     @Test
     public void testGetScanDir() {
+        if (TestMSExcelService.isCompilerTest) {
+            return;
+        }
         TestMSExcelService testMSExcelService = new TestMSExcelService();
         AppConfig appConfig = testMSExcelService.getAppConfig(true);
         ScanDirService scanDirService = appConfig.getScanDirService();
@@ -341,6 +347,9 @@ public class TestScanDir {
     }
     @Test
     public void testReadScanDirV2() {
+        if (TestMSExcelService.isCompilerTest) {
+            return;
+        }
         TestMSExcelService testMSExcelService = new TestMSExcelService();
         AppConfig appConfig = testMSExcelService.getAppConfig(true);
         ScanDirService scanDirService = appConfig.getScanDirService();

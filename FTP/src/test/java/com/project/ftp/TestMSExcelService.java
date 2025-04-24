@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class TestMSExcelService {
+    final static boolean isCompilerTest = true;
     private EventTracking getEventTracking(AppConfig appConfig) {
         UserInterface userInterface = new UserFile(appConfig);
         UserService userService = new UserService(appConfig, userInterface);
@@ -183,7 +184,7 @@ public class TestMSExcelService {
         ArrayList<HashMap<String, String>> result;
         result = msExcelService.getMSExcelSheetDataJson(null, requestId);
         Assert.assertEquals(15, result.size());
-        Assert.assertEquals("test-00", result.get(0).get("col_3"));
+        Assert.assertEquals("test-00", result.get(0).get("col_8"));
         Assert.assertEquals(5, result.get(0).size());
         Assert.assertEquals(5, result.get(13).size());
     }

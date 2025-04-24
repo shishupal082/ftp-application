@@ -1,5 +1,7 @@
 package com.project.ftp.common;
 
+import com.project.ftp.config.AppConstant;
+
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
@@ -51,10 +53,27 @@ public class DateUtilities {
             return defaultDate;
         }
         String result;
+        String year, month;
+        int yearNum, monthNum;
+        DateFormat newDateFormat;
         try {
             Date date = new SimpleDateFormat(oldPattern).parse(dateStr);
-            DateFormat newDateFormat = new SimpleDateFormat(newPattern);
-            result = newDateFormat.format(date);
+            if (newPattern.equals(AppConstant.FinancialYearFormat)) {
+                newDateFormat = new SimpleDateFormat("yyyy");
+                year = newDateFormat.format(date);
+                newDateFormat = new SimpleDateFormat("M");
+                month = newDateFormat.format(date);
+                yearNum = Integer.parseInt(year);
+                monthNum = Integer.parseInt(month);
+                if (monthNum <= 3) {
+                    result = (yearNum-1) + "-" + yearNum;
+                } else {
+                    result = yearNum + "-" + (yearNum+1);
+                }
+            } else {
+                newDateFormat = new SimpleDateFormat(newPattern);
+                result = newDateFormat.format(date);
+            }
         } catch (Exception e) {
             result = defaultDate;
         }

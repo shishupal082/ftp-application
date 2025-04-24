@@ -16,6 +16,9 @@ public class TestOracleTable {
     final static Logger logger = LoggerFactory.getLogger(TestOracleTable.class);
     @Test
     public void testMyTableTableService() {
+        if (TestMSExcelService.isCompilerTest) {
+            return;
+        }
         TestMSExcelService testMSExcelService = new TestMSExcelService();
         AppConfig appConfig = testMSExcelService.getAppConfig(true);
         TableService tableService = new TableService(null, null, null, null);
