@@ -1,0 +1,10 @@
+H1,H2,H3,H4
+test-00,30-09-2023T09:30,r-1-c-2,r-1&-c-3
+test-07,Dt. 20/09/2023,r-1-c-2,r-1&-c-3
+test-08,Variable text 20/09/2023,r-1-c-2,r-1&-c-3
+test-09,20/09/2023 Variable text,r-1-c-2,r-1&-c-3
+test-10,2023-09-20,r-1-c-2,r-1&-c-3
+test-11,Fixed text 20/09/2023 Variable text,r-1-c-2,r-1&-c-3
+test-12,Variable text 20/09/2023 Fixed text,r-1-c-2,r-1&-c-3
+test-13,Invalid-date,r-1-c-2,r-1-c-3
+test-14

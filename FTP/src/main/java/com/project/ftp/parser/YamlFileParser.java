@@ -3,6 +3,9 @@ package com.project.ftp.parser;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.project.ftp.FtpConfiguration;
+import com.project.ftp.bridge.obj.splitTextFile.SplitFileConfig1;
+import com.project.ftp.bridge.obj.splitTextFile.SplitFileConfig2;
+import com.project.ftp.bridge.obj.splitTextFile.SplitTextFileConfig;
 import com.project.ftp.bridge.obj.yamlObj.ExcelConfig;
 import com.project.ftp.bridge.obj.yamlObj.ExcelDataConfig;
 import com.project.ftp.bridge.obj.yamlObj.FileMappingConfig;
@@ -115,6 +118,20 @@ public class YamlFileParser {
         }
         return fileMappingConfig;
     }
+    public SplitFileConfig1 getSplitFileConfigFromPath(String staticPath) {
+        if (staticPath == null || staticPath.isEmpty()) {
+            logger.info("Static Path for reading SplitFileConfig is invalid: {}", staticPath);
+            return null;
+        }
+        SplitFileConfig1 splitFileConfig1 = null;
+        ObjectMapper objectMapper = new ObjectMapper(new YAMLFactory());
+        try {
+            splitFileConfig1 = objectMapper.readValue(new File(staticPath), SplitFileConfig1.class);
+        } catch (IOException ioe) {
+            logger.info("getSplitFileConfigFromPath: IOE : for file : {}", staticPath);
+        }
+        return splitFileConfig1;
+    }
     public TableFileConfiguration tableDbConfigByConfigPath(String staticPath) {
         if (staticPath == null || staticPath.isEmpty()) {
             logger.info("tableDbConfigPath: staticPath for reading tableDbConfigPath is invalid: {}", staticPath);
@@ -143,6 +160,21 @@ public class YamlFileParser {
             throw new AppException(ErrorCodes.CONFIG_ERROR);
         }
         return excelConfig.getExcelDataConfig();
+    }
+    private SplitFileConfig2 getSplitFileConfigFromPath2(String staticPath) throws AppException {
+        if (staticPath == null || staticPath.isEmpty()) {
+            logger.info("Static Path for reading getSplitFileConfigFromPath2 is invalid: {}", staticPath);
+            return null;
+        }
+        SplitFileConfig2 splitFileConfig2;
+        ObjectMapper objectMapper = new ObjectMapper(new YAMLFactory());
+        try {
+            splitFileConfig2 = objectMapper.readValue(new File(staticPath), SplitFileConfig2.class);
+        } catch (IOException ioe) {
+            logger.info("getSplitFileConfigFromPath2: IOE: for file: {}", staticPath);
+            throw new AppException(ErrorCodes.CONFIG_ERROR);
+        }
+        return splitFileConfig2;
     }
     public HashMap<String, ExcelDataConfig> getExcelDataConfig(ArrayList<String> excelConfigFilePaths)
             throws AppException {
@@ -181,6 +213,39 @@ public class YamlFileParser {
             }
         }
         return excelDataConfigHashMap;
+    }
+    public SplitTextFileConfig getSplitTextFileConfig(ArrayList<String> splitTextFileConfigPaths,
+                                                                   String requestId)
+            throws AppException {
+        SplitFileConfig2 temp;
+        HashMap<String, SplitTextFileConfig> temp2;
+        String key;
+        SplitTextFileConfig splitTextFileConfig = null;
+        if (splitTextFileConfigPaths == null) {
+            return null;
+        }
+        for(String filePath: splitTextFileConfigPaths) {
+            temp = this.getSplitFileConfigFromPath2(filePath);
+            if (temp != null) {
+                temp2 = temp.getSplitTextFileConfig();
+                if (temp2 != null) {
+                    for(Map.Entry<String, SplitTextFileConfig> entry: temp2.entrySet()) {
+                        key = entry.getKey();
+                        if (key != null && key.equals(requestId)) {
+                            splitTextFileConfig = entry.getValue();
+                            if (splitTextFileConfig != null) {
+                                splitTextFileConfig.setId(requestId);
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+            if (splitTextFileConfig != null) {
+                break;
+            }
+        }
+        return splitTextFileConfig;
     }
     private String get404Filename(UserService userService, LoginUserDetails userDetails, Page404Entry page404Entry) {
         String filename = null;

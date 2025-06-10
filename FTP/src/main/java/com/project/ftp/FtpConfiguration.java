@@ -27,6 +27,7 @@ public class FtpConfiguration extends Configuration {
     private String publicPostDir;
     private String assetsDir;
     private String fileMappingConfigFilePath;
+    private String splitTextFileConfigPath;
     private String scanDirConfigFilePath;
     private ArrayList<String> tableDbConfigFilePath;
     private String filenameFormat;
@@ -125,6 +126,14 @@ public class FtpConfiguration extends Configuration {
 
     public void setFileMappingConfigFilePath(String fileMappingConfigFilePath) {
         this.fileMappingConfigFilePath = fileMappingConfigFilePath;
+    }
+
+    public String getSplitTextFileConfigPath() {
+        return splitTextFileConfigPath;
+    }
+
+    public void setSplitTextFileConfigPath(String splitTextFileConfigPath) {
+        this.splitTextFileConfigPath = splitTextFileConfigPath;
     }
 
     public String getScanDirConfigFilePath() {
@@ -463,6 +472,11 @@ public class FtpConfiguration extends Configuration {
         if (fileMappingConfigFilePath != null) {
             this.fileMappingConfigFilePath = fileMappingConfigFilePath;
         }
+
+        String splitTextFileConfigPath = tempFtpConfiguration.getSplitTextFileConfigPath();
+        if (splitTextFileConfigPath != null) {
+            this.splitTextFileConfigPath = splitTextFileConfigPath;
+        }
         String scanDirConfigFilePath = tempFtpConfiguration.getScanDirConfigFilePath();
         if (scanDirConfigFilePath != null) {
             this.scanDirConfigFilePath = scanDirConfigFilePath;
@@ -619,6 +633,7 @@ public class FtpConfiguration extends Configuration {
                 ", publicPostDir='" + publicPostDir + '\'' +
                 ", assetsDir='" + assetsDir + '\'' +
                 ", fileMappingConfigFilePath='" + fileMappingConfigFilePath + '\'' +
+                ", splitTextFileConfigPath='" + splitTextFileConfigPath + '\'' +
                 ", scanDirConfigFilePath='" + scanDirConfigFilePath + '\'' +
                 ", tableDbConfigFilePath=" + tableDbConfigFilePath +
                 ", filenameFormat='" + filenameFormat + '\'' +

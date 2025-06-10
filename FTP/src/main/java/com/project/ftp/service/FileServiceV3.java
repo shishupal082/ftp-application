@@ -32,7 +32,7 @@ public class FileServiceV3 {
             return null;
         }
         if (fileSaveDir == null) {
-            logger.info("fileSaveDir is: null");
+            logger.info("parseUserFileName: fileSaveDir is: null");
             return null;
         }
         String[] fileNameArr = fileName.split(fileSaveDir);
@@ -112,7 +112,7 @@ public class FileServiceV3 {
         ArrayList<ScanResult> scanResults = new ArrayList<>();
         ArrayList<String> response = new ArrayList<>();
         if (saveDir == null) {
-            logger.info("fileSaveDir is: null");
+            logger.info("getUsersFilePathByRelatedUsers: fileSaveDir is: null");
             return response;
         }
         String scanDir;
@@ -153,7 +153,7 @@ public class FileServiceV3 {
         HashMap<String, String> response = new HashMap<>();
         response.put(AppConstant.STATUS, AppConstant.FAILURE);
         if (filename == null) {
-            logger.info("filename can not be null");
+            logger.info("getCurrentUsersFilePath: filename can not be null");
             return response;
         }
         String[] filenameArr = filename.split("/");
@@ -169,11 +169,11 @@ public class FileServiceV3 {
         }
 
         if (StaticService.isInValidString(fileUsername)) {
-            logger.info("filename does not contain username: {}", filename);
+            logger.info("getCurrentUsersFilePath: filename does not contain username: {}", filename);
             return response;
         }
         if (StaticService.isInValidString(filenameStr)) {
-            logger.info("filename is empty in request: {}", filename);
+            logger.info("getCurrentUsersFilePath: filename is empty in request: {}", filename);
             return response;
         }
         response.put(AppConstant.STATUS, AppConstant.SUCCESS);
@@ -256,17 +256,17 @@ public class FileServiceV3 {
     }
     public void verifyAddTextRequest(RequestAddText addText) throws AppException {
         if (addText == null) {
-            logger.info("Invalid addText request: null");
+            logger.info("verifyAddTextRequest: Invalid addText request: null");
             throw new AppException(ErrorCodes.BAD_REQUEST_ERROR);
         }
         String filename = addText.getFilename();
         String[] textData = addText.getText();
         if (StaticService.isInValidString(filename)) {
-            logger.info("Invalid addText.filename: {}", addText);
+            logger.info("verifyAddTextRequest: addText.filename: {}", addText);
             throw new AppException(ErrorCodes.BAD_REQUEST_ERROR);
         }
         if (textData == null || textData.length < 1) {
-            logger.info("Invalid addText.text: {}", addText);
+            logger.info("verifyAddTextRequest: Invalid addText.text: {}", addText);
             throw new AppException(ErrorCodes.BAD_REQUEST_ERROR);
         }
         for (int i=0; i<textData.length; i++) {
@@ -328,12 +328,12 @@ public class FileServiceV3 {
         String loginUsername = loginUserDetails.getUsername();
         String orgUsername = loginUserDetails.getOrgUsername();
         if (StaticService.isInValidString(saveDir) || StaticService.isInValidString(loginUsername) || addText == null) {
-            logger.info("Invalid saveDir or loginUsername or addText");
+            logger.info("saveAddText: Invalid saveDir or loginUsername or addText");
             return false;
         }
         String addTextFilename = addText.getFilename();
         if (!this.isValidAddTextFilename(addTextFilename)) {
-            logger.info("Invalid addTextFilename: {}", addTextFilename);
+            logger.info("saveAddText: Invalid addTextFilename: {}", addTextFilename);
             return false;
         }
         ArrayList<String> requiredDir = new ArrayList<>();
@@ -342,14 +342,14 @@ public class FileServiceV3 {
         requiredDir.add(AppConstant.DATABASE);
         String finalDir = fileService.createDir(requiredDir);
         if (StaticService.isInValidString(finalDir)) {
-            logger.info("Error in creating required dir: {}", requiredDir);
+            logger.info("saveAddText: Error in creating required dir: {}", requiredDir);
             return false;
         }
         finalDir += "/";
         String filePath = finalDir + addTextFilename;
         String userFilename = this.parseUserFileName(saveDir, filePath);
         if (userFilename == null) {
-            logger.info("Invalid final filePath: {}", filePath);
+            logger.info("saveAddText: Invalid final filePath: {}", filePath);
             return false;
         }
         boolean fileExist = true;
@@ -371,7 +371,7 @@ public class FileServiceV3 {
     }
     public boolean saveAddTextV2(String saveDir, String loginUsername, RequestAddText addText) {
         if (StaticService.isInValidString(saveDir) || StaticService.isInValidString(loginUsername) || addText == null) {
-            logger.info("Invalid saveDir or loginUsername or addText");
+            logger.info("saveAddTextV2: Invalid saveDir or loginUsername or addText");
             return false;
         }
         ArrayList<String> requiredDir = new ArrayList<>();
@@ -379,14 +379,14 @@ public class FileServiceV3 {
         requiredDir.add(loginUsername);
         String finalDir = fileService.createDir(requiredDir);
         if (StaticService.isInValidString(finalDir)) {
-            logger.info("Error in creating required dir: {}", requiredDir);
+            logger.info("saveAddTextV2: Error in creating required dir: {}", requiredDir);
             return false;
         }
         finalDir += "/";
         String filePath = finalDir + addText.getFilename();
         String userFilename = this.parseUserFileName(saveDir, filePath);
         if (userFilename == null) {
-            logger.info("Invalid final filePath: {}", filePath);
+            logger.info("saveAddTextV2: Invalid final filePath: {}", filePath);
             return false;
         }
         String[] text = addText.getText();

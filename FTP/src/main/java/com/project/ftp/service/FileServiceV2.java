@@ -48,10 +48,10 @@ public class FileServiceV2 {
         if (response == null) {
             response = new ArrayList<>();
         }
-        logger.info("scanUserDirectory result size: {}", response.size());
+        logger.info("scanCurrentUserDirectory result size: {}", response.size());
         ArrayList<ResponseFilesInfo> filesInfo =
                 this.generateFileInfoResponse(response, loginUserDetails, false);
-        logger.info("final result size: {}", filesInfo.size());
+        logger.info("scanCurrentUserDirectory: final result size: {}", filesInfo.size());
         return new ApiResponse(filesInfo);
     }
     public ApiResponse scanUserDirectory(LoginUserDetails loginUserDetails) throws AppException {
@@ -59,7 +59,7 @@ public class FileServiceV2 {
         ArrayList<String> response = this.getUsersFilePath(loginUserDetails, saveDir, false);
         ArrayList<ResponseFilesInfo> filesInfo =
                 this.generateFileInfoResponse(response, loginUserDetails, false);
-        logger.info("final result size: {}", filesInfo.size());
+        logger.info("scanUserDirectory: final result size: {}", filesInfo.size());
         return new ApiResponse(filesInfo);
     }
     public ApiResponse scanUserDirectoryByPattern(LoginUserDetails loginUserDetails,
@@ -70,7 +70,7 @@ public class FileServiceV2 {
         ArrayList<String> filterFileName = this.filterFilename(responseFilenames, filenamePattern, usernamePattern);
         ArrayList<ResponseFilesInfo> filesInfo =
                 this.generateFileInfoResponse(filterFileName, loginUserDetails, false);
-        logger.info("final result size: {}", filesInfo.size());
+        logger.info("scanUserDirectoryByPattern: final result size: {}", filesInfo.size());
         return new ApiResponse(filesInfo);
     }
     public ApiResponse scanUserDatabaseDirectory(LoginUserDetails loginUserDetails, String filenamePattern,
@@ -103,9 +103,9 @@ public class FileServiceV2 {
         if (responseFilenames == null) {
             throw new AppException(ErrorCodes.RUNTIME_ERROR);
         }
-        logger.info("scanUserDirectory result size: {}", responseFilenames.size());
+        logger.info("getFinalPathInfo: scanUserDirectory result size: {}", responseFilenames.size());
         if (saveDir == null) {
-            logger.info("fileSaveDir is: null");
+            logger.info("getFinalPathInfo: fileSaveDir is: null");
             throw new AppException(ErrorCodes.CONFIG_ERROR);
         }
         StringBuilder textData = new StringBuilder();
@@ -119,7 +119,7 @@ public class FileServiceV2 {
         requiredDirs.add(loginUserName);
         String trashV2Folder = fileService.createDir(requiredDirs);
         if (trashV2Folder == null) {
-            logger.info("Error in creating temp folder for user: {}", requiredDirs);
+            logger.info("getFinalPathInfo: Error in creating temp folder for user: {}", requiredDirs);
             throw new AppException(ErrorCodes.RUNTIME_ERROR);
         }
         String responseFilename = StaticService.getProperDirString(String.join("/", requiredDirs))
@@ -128,12 +128,13 @@ public class FileServiceV2 {
         boolean createStatus, addTextStatus = false;
         createStatus = fileService.createNewFile(responseFilename);
         if (createStatus) {
-            addTextStatus = new TextFileParser(responseFilename, true).addText(textData.toString(), true);
+            TextFileParser textFileParser = new TextFileParser();
+            addTextStatus = textFileParser.writeTextData(responseFilename, textData.toString(), true);
         }
         if (createStatus && addTextStatus) {
             return fileService.getPathInfo(responseFilename);
         }
-        logger.info("Error in creating response file: {}", responseFilename);
+        logger.info("getFinalPathInfo: Error in creating response file: {}", responseFilename);
         throw new AppException(ErrorCodes.RUNTIME_ERROR);
     }
     private ArrayList<String> filterFilename(ArrayList<String> responseFilenames,
@@ -173,7 +174,7 @@ public class FileServiceV2 {
     public PathInfo searchRequestedFileV2(LoginUserDetails loginUserDetails,
                                           String filename) throws AppException {
         if (filename == null) {
-            logger.info("filename can not be null");
+            logger.info("searchRequestedFileV2: filename can not be null");
             throw new AppException(ErrorCodes.INVALID_QUERY_PARAMS);
         }
         String filePath = appConfig.getFileSaveDirV2(loginUserDetails);
@@ -184,7 +185,7 @@ public class FileServiceV2 {
             filePath += filename;
             pathInfo = fileService.getPathInfo(filePath);
             if (!AppConstant.FILE.equals(pathInfo.getType())) {
-                logger.info("file not found: {}", pathInfo);
+                logger.info("searchRequestedFileV2: file not found: {}", pathInfo);
                 throw new AppException(ErrorCodes.FILE_NOT_FOUND);
             }
             // Now file exist, checking for valid permission
@@ -193,21 +194,21 @@ public class FileServiceV2 {
                 ArrayList<String> relatedUsers = userService.getRelatedUsers(loginUserName);
                 // Need not to check public separately
                 if (!relatedUsers.contains(fileUsername)) {
-                    logger.info("Unauthorised access loginUserName: {}, filename: {}",
+                    logger.info("searchRequestedFileV2: Unauthorised access loginUserName: {}, filename: {}",
                             loginUserName, filename);
                     throw new AppException(ErrorCodes.UNAUTHORIZED_USER);
                 }
             }
-            logger.info("Search result: {}", pathInfo);
+            logger.info("searchRequestedFileV2: Search result: {}", pathInfo);
         } else {
-            logger.info("Invalid filename:{}", filename);
+            logger.info("searchRequestedFileV2: Invalid filename:{}", filename);
             throw new AppException(ErrorCodes.INVALID_QUERY_PARAMS);
         }
         return pathInfo;
     }
     public PathInfo searchRequestedPath(String path) throws AppException {
         if (path == null || path.isEmpty()) {
-            logger.info("path can not be null or empty: {}", path);
+            logger.info("searchRequestedPath: path can not be null or empty: {}", path);
             throw new AppException(ErrorCodes.INVALID_QUERY_PARAMS);
         }
         return fileService.getPathInfo(path);
@@ -218,11 +219,11 @@ public class FileServiceV2 {
             filepath = StaticService.replaceString(filepath, "\\.\\.\\.", ",");
             pathInfo = fileService.getPathInfo(filepath);
             if (!AppConstant.FILE.equals(pathInfo.getType())) {
-                logger.info("file not found: {}, {}", filepath, pathInfo);
+                logger.info("searchRequestedFileV3: file not found: {}, {}", filepath, pathInfo);
                 throw new AppException(ErrorCodes.FILE_NOT_FOUND);
             }
         }
-        logger.info("Search result: {}", pathInfo);
+        logger.info("searchRequestedFileV3: Search result: {}", pathInfo);
         return pathInfo;
     }
     private HashMap<String, String> verifyDeleteRequestParameters(RequestDeleteFile deleteFile) throws AppException {
@@ -241,7 +242,7 @@ public class FileServiceV2 {
     private void deleteFile(String saveDir, String fileUsername,
                             String filename) throws AppException {
         if (saveDir == null) {
-            logger.info("fileSaveDir is: null");
+            logger.info("deleteFile: fileSaveDir is: null");
             throw new AppException(ErrorCodes.CONFIG_ERROR);
         }
         PathInfo pathInfo = fileService.getPathInfo(saveDir + fileUsername + "/" + filename);
@@ -253,20 +254,20 @@ public class FileServiceV2 {
             requiredDirs.add(fileUsername);
             String trashFolder = fileService.createDir(requiredDirs);
             if (trashFolder == null) {
-                logger.info("Error in creating trash folder for user: {}", fileUsername);
+                logger.info("deleteFile: Error in creating trash folder for user: {}", fileUsername);
                 throw new AppException(ErrorCodes.RUNTIME_ERROR);
             }
             String currentFolder = pathInfo.getParentFolder();
             fileDeleteStatus = fileService.moveFile(currentFolder, trashFolder,
                     pathInfo.getFilenameWithoutExt(), pathInfo.getExtension());
             if (!fileDeleteStatus) {
-                logger.info("Error in deleting requested file: {}", pathInfo.getPath());
+                logger.info("deleteFile: Error in deleting requested file: {}", pathInfo.getPath());
                 throw new AppException(ErrorCodes.RUNTIME_ERROR);
             } else {
-                logger.info("Requested file deleted: {}", pathInfo.getPath());
+                logger.info("deleteFile: Requested file deleted: {}", pathInfo.getPath());
             }
         } else {
-            logger.info("Requested deleteFile: {}, does not exist.", pathInfo.getPath());
+            logger.info("deleteFile: Requested deleteFile: {}, does not exist.", pathInfo.getPath());
             throw new AppException(ErrorCodes.FILE_NOT_FOUND);
         }
     }

@@ -41,6 +41,7 @@ public class ApiResource {
     private final EventTracking eventTracking;
     private final RequestService requestService;
     private final MSExcelService msExcelService;
+    private final SplitTextFileService splitTextFileService;
     private final ScanDirService scanDirService;
     private final TableService tableService;
     private final SingleThreadingService singleThreadingService;
@@ -54,6 +55,7 @@ public class ApiResource {
         this.securityService = new SecurityService();
         this.requestService = new RequestService(appConfig, userService, fileServiceV2);
         this.msExcelService = appConfig.getMsExcelService();
+        this.splitTextFileService = new SplitTextFileService(appConfig, eventTracking, userService);
         this.tableService = appConfig.getTableService();
         this.singleThreadingService = appConfig.getSingleThreadingService();
     }
@@ -1392,6 +1394,21 @@ public class ApiResource {
         this.singleThreadingService.setStopped(true);
         ApiResponse response = new ApiResponse();
         logger.info("stopSingleThread: Out, {}", response);
+        return response;
+    }
+    @GET
+    @Path("/split_file")
+    @UnitOfWork
+    public ApiResponse splitFile(@Context HttpServletRequest request,
+                                 @QueryParam("split_file_id") String splitFileId) throws AppException {
+        this.singleThreadingService.checkSingleThreadStatus(request, "api");
+        this.singleThreadingService.setStopped(false);
+        LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
+        logger.info("splitFile: In, user: {}, split_file_id: {}",
+                loginUserDetails, splitFileId);
+        ApiResponse response = splitTextFileService.splitTextFile(request, splitFileId);
+        logger.info("splitFile: Out, {}", response);
+        this.singleThreadingService.clearSingleThread(request, "api");
         return response;
     }
     /**

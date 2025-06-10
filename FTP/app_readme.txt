@@ -1437,6 +1437,17 @@ Added new api
     - /api/get_table_data?table_config_id=string&filter0=f0&filter1=f1&filter2=f2&filter3=f3&filter4=f4&filter5=f5
     - /api/update_mysql_table_data_from_csv?table_config_id=string
 
+
+8.0.2.017 @ 04.05.2025
+-----------------------
+8.0.2.016 build used for (1) ftp-app-file-upload and (2) ftp-app-iriset-2019
+Therefore, new build 8.0.2.017 initiated for all future changes
+
+8.0.2.017 @ 10.06.2025
+-----------------------
+Added new api
+    - /api/split_file?split_file_id=string
+
 Future releases
 -------------------
 Add new role called

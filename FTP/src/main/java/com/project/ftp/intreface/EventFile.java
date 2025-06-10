@@ -63,8 +63,8 @@ public class EventFile implements EventInterface {
         eventLog += "," + StaticService.encodeComma(comment);
         String eventDataFilepath = this.getEventDataFileName();
         fileService.createNewFile(eventDataFilepath);
-        TextFileParser textFileParser = new TextFileParser(eventDataFilepath, false);
-        textFileParser.addText(eventLog, false);
+        TextFileParser textFileParser = new TextFileParser();
+        textFileParser.writeTextData(eventDataFilepath, eventLog, false);
         logger.info("Event added: {}", eventLog);
     }
 

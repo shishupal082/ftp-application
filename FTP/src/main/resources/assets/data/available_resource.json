@@ -244,6 +244,10 @@
     "Call get GS/CSV/MS_Excel Data config [GET]"
   ],
   [
+    "/api/split_file?split_file_id=split-csv-file",
+    "Call Split file api/split_file?split_file_id=split-csv-file [GET]"
+  ],
+  [
     "/api/get_scan_dir_config?scan_dir_id=id1|id2&pathname=single-file/folder_path",
     "Call get scan dir config [GET]"
   ],

@@ -1,0 +1,135 @@
+splitTextFileConfig:
+  split-csv-file:
+    sourceFilePath: "D:/workspace/ftp-application/FTP/meta-data/test-data/split-text-data/source.csv"
+    destinationHeader:
+      - "H1,H2,H3,H4"
+    destinationConfig:
+      - destinationFileName: "d1.csv"
+        destinationFileDir: "D:/workspace/ftp-application/FTP/meta-data/test-data/split-text-data/"
+        dataRange:
+          - [0,5]
+      - destinationFileName: "d2.csv"
+        destinationFileDir: "D:/workspace/ftp-application/FTP/meta-data/test-data/split-text-data/"
+        dataRange:
+          - [0,0]
+          - [6,9]
+      - destinationFileName: "d3.csv"
+        destinationFileDir: "D:/workspace/ftp-application/FTP/meta-data/test-data/split-text-data/"
+        dataRange:
+          - [0,0]
+          - [7,-1]
+  split-csv-file-v2:
+    sourceFilePath: "D:/DSTE-RNC/apr-2025/522500265731_Invoice_Itemized_20250504054805.csv"
+    destinationConfig:
+      - destinationFileName: "d1.csv"
+        destinationFileDir: "D:/DSTE-RNC/apr-2025/out/"
+        dataRange:
+          - [0,100000]
+      - destinationFileName: "d2.csv"
+        destinationFileDir: "D:/DSTE-RNC/apr-2025/out/"
+        dataRange:
+          - [0,0]
+          - [100001,200000]
+      - destinationFileName: "d3.csv"
+        destinationFileDir: "D:/DSTE-RNC/apr-2025/out/"
+        dataRange:
+          - [0,0]
+          - [200001,300000]
+      - destinationFileName: "d4.csv"
+        destinationFileDir: "D:/DSTE-RNC/apr-2025/out/"
+        dataRange:
+          - [0,0]
+          - [300001,400000]
+      - destinationFileName: "d5.csv"
+        destinationFileDir: "D:/DSTE-RNC/apr-2025/out/"
+        dataRange:
+          - [0,0]
+          - [400001,500000]
+      - destinationFileName: "d6.csv"
+        destinationFileDir: "D:/DSTE-RNC/apr-2025/out/"
+        dataRange:
+          - [0,0]
+          - [500001,600000]
+      - destinationFileName: "d7.csv"
+        destinationFileDir: "D:/DSTE-RNC/apr-2025/out/"
+        dataRange:
+          - [0,0]
+          - [600001,700000]
+      - destinationFileName: "d8.csv"
+        destinationFileDir: "D:/DSTE-RNC/apr-2025/out/"
+        dataRange:
+          - [0,0]
+          - [700001,800000]
+      - destinationFileName: "d9.csv"
+        destinationFileDir: "D:/DSTE-RNC/apr-2025/out/"
+        dataRange:
+          - [0,0]
+          - [800001,900000]
+      - destinationFileName: "d10.csv"
+        destinationFileDir: "D:/DSTE-RNC/apr-2025/out/"
+        dataRange:
+          - [0,0]
+          - [900001,1000000]
+      - destinationFileName: "d11.csv"
+        destinationFileDir: "D:/DSTE-RNC/apr-2025/out/"
+        dataRange:
+          - [0,0]
+          - [1000001,1100000]
+      - destinationFileName: "d12.csv"
+        destinationFileDir: "D:/DSTE-RNC/apr-2025/out/"
+        dataRange:
+          - [0,0]
+          - [1100001,1200000]
+      - destinationFileName: "d13.csv"
+        destinationFileDir: "D:/DSTE-RNC/apr-2025/out/"
+        dataRange:
+          - [0,0]
+          - [1200001,1300000]
+      - destinationFileName: "d14.csv"
+        destinationFileDir: "D:/DSTE-RNC/apr-2025/out/"
+        dataRange:
+          - [0,0]
+          - [1300001,1400000]
+      - destinationFileName: "d15.csv"
+        destinationFileDir: "D:/DSTE-RNC/apr-2025/out/"
+        dataRange:
+          - [0,0]
+          - [1400001,1500000]
+      - destinationFileName: "d16.csv"
+        destinationFileDir: "D:/DSTE-RNC/apr-2025/out/"
+        dataRange:
+          - [0,0]
+          - [1500001,1600000]
+      - destinationFileName: "d17.csv"
+        destinationFileDir: "D:/DSTE-RNC/apr-2025/out/"
+        dataRange:
+          - [0,0]
+          - [1600001,1700000]
+      - destinationFileName: "d18.csv"
+        destinationFileDir: "D:/DSTE-RNC/apr-2025/out/"
+        dataRange:
+          - [0,0]
+          - [1700001,1800000]
+      - destinationFileName: "d19.csv"
+        destinationFileDir: "D:/DSTE-RNC/apr-2025/out/"
+        dataRange:
+          - [0,0]
+          - [1800001,1900000]
+      - destinationFileName: "d20.csv"
+        destinationFileDir: "D:/DSTE-RNC/apr-2025/out/"
+        dataRange:
+          - [0,0]
+          - [1900001,2000000]
+
+  split-csv-file-v3:
+    sourceFilePath: "D:/DSTE-RNC/apr-2025/522500265731_Invoice_Itemized_20250504054805.csv"
+    destinationConfig:
+      - destinationFileName: "d1.csv"
+        destinationFileDir: "D:/DSTE-RNC/apr-2025/out2/"
+        dataRange:
+          - [0,1000000]
+      - destinationFileName: "d2.csv"
+        destinationFileDir: "D:/DSTE-RNC/apr-2025/out2/"
+        dataRange:
+          - [0,0]
+          - [1000001,2000000]
