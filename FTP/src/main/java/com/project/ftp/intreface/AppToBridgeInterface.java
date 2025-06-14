@@ -20,6 +20,7 @@ public interface AppToBridgeInterface {
     Object getRolesConfig();
     String getTcpResponse(String tcpId, String data);
     ArrayList<BridgeResponseSheetData> getExcelData(HttpServletRequest request, ExcelDataConfig excelDataConfig);
+    boolean updateExcelData(HttpServletRequest request, ExcelDataConfig excelDataConfig);
     ArrayList<HashMap<String, String>> applyCsvConfigOnTableData(HttpServletRequest request,
                                                                  String requestTableConfigId,
                                                                  String requestDefaultFilterMappingId,

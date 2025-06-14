@@ -15,6 +15,7 @@ public class ExcelDataConfig {
     private String dateTimeFormat;
     private ArrayList<String> tableMappingIndex;
     private ArrayList<String> validFor;
+    private ArrayList<String> allowedApi;
     private ArrayList<ExcelFileConfig> excelConfig;
     private ArrayList<ExcelFileConfig> csvConfig;
     private ArrayList<ExcelFileConfig> gsConfig;
@@ -95,6 +96,14 @@ public class ExcelDataConfig {
 
     public void setValidFor(ArrayList<String> validFor) {
         this.validFor = validFor;
+    }
+
+    public ArrayList<String> getAllowedApi() {
+        return allowedApi;
+    }
+
+    public void setAllowedApi(ArrayList<String> allowedApi) {
+        this.allowedApi = allowedApi;
     }
 
     public ArrayList<ExcelFileConfig> getExcelConfig() {
@@ -220,6 +229,7 @@ public class ExcelDataConfig {
                 ", dateTimeFormat='" + dateTimeFormat + '\'' +
                 ", tableMappingIndex=" + tableMappingIndex +
                 ", validFor=" + validFor +
+                ", allowedApi=" + allowedApi +
                 ", excelConfig=" + excelConfig +
                 ", csvConfig=" + csvConfig +
                 ", gsConfig=" + gsConfig +

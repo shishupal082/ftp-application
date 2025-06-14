@@ -35,16 +35,19 @@ It will convert:
 Sequence of operation
 *********************
 - validFor: ["gs-csv-test-12-direct"]
+- allowedApi: ["update_excel_data_v2","update_excel_data","get_excel_data"]
 - dateFormat, timeFormat and dateTimeFormat [Only used for excel sheet reading not for google sheet]
 - it will change \n to ; and , to ...
+- replaceCellString
+    - It is used before other cell operation, so that if after cell replace empty row is there that can be removed
 - skipRowIndex
     - First skip row index is required to be executed
       otherwise row index will be changed (After skipEmptyRows operation)
+    - It is an OR operation
 - skipEmptyRows
 - skipRowCriteria
 - copyCellDataIndex
 - cellMapping & appendCellDataIndex
-- replaceCellString
 - (11) mergeColumnConfig
 - removeColumnConfig
 - uniqueEntry

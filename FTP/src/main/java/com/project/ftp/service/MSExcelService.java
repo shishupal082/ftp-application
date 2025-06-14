@@ -39,6 +39,26 @@ public class MSExcelService {
         this.strUtils = new StrUtils();
         this.miscService = new MiscService();
     }
+    private void isApiAllowed(ArrayList<ExcelDataConfig> excelDataConfigs, String apiName) throws AppException {
+        if (apiName == null || apiName.isEmpty()) {
+            return;
+        }
+        ArrayList<String> allowedApis;
+        for(ExcelDataConfig excelDataConfig: excelDataConfigs) {
+            if(excelDataConfig == null) {
+                return;
+            }
+            allowedApis = excelDataConfig.getAllowedApi();
+            if (allowedApis == null || allowedApis.isEmpty()) {
+                return;
+            }
+            if (allowedApis.contains(apiName)) {
+                return;
+            }
+        }
+        logger.info("Api not allowed for apiName: {}, {}", apiName,excelDataConfigs);
+        throw new AppException(ErrorCodes.CONFIG_ERROR);
+    }
     private void saveCsvData(BridgeResponseSheetData bridgeResponseSheetData, ArrayList<String> tempSavedFilePath) {
         if (bridgeResponseSheetData == null) {
             logger.info("Invalid bridgeResponseSheetData: null");
@@ -86,7 +106,7 @@ public class MSExcelService {
                 if (excelDataConfigById != null) {
                     result = appConfig.getAppToBridge().getExcelData(request, excelDataConfigById);
                     if (result == null) {
-                        logger.info("Error in reading excelSheetData for id: {}", excelDataConfigById.getId());
+                        logger.info("Error in getActualMSExcelSheetData for id: {}", excelDataConfigById.getId());
                     } else {
                         if (response == null) {
                             response = new ArrayList<>();
@@ -105,6 +125,25 @@ public class MSExcelService {
             throw new AppException(ErrorCodes.SERVER_ERROR);
         }
         return response;
+    }
+    private void updateActualMSExcelSheetData(HttpServletRequest request,
+                                              ArrayList<ExcelDataConfig> excelDataConfigs) throws AppException {
+        boolean isUpdateInValid = true, isUpdated;
+        if (excelDataConfigs != null) {
+            for(ExcelDataConfig excelDataConfigById: excelDataConfigs) {
+                if (excelDataConfigById != null) {
+                    isUpdated = appConfig.getAppToBridge().updateExcelData(request, excelDataConfigById);
+                    if (!isUpdated) {
+                        logger.info("Error in updateActualMSExcelSheetData for id: {}", excelDataConfigById.getId());
+                    } else {
+                        isUpdateInValid = false;
+                    }
+                }
+            }
+        }
+        if (isUpdateInValid) {
+            throw new AppException(ErrorCodes.SERVER_ERROR);
+        }
     }
     public ArrayList<ExcelDataConfig> getActualMSExcelSheetDataConfig(HttpServletRequest request, String requestId,
                                                                       boolean updateGsConfig) throws AppException {
@@ -211,6 +250,7 @@ public class MSExcelService {
     }
     public ArrayList<BridgeResponseSheetData> getMSExcelSheetData(HttpServletRequest request, String requestId) throws AppException {
         ArrayList<ExcelDataConfig> excelDataConfigs = this.getActualMSExcelSheetDataConfig(request, requestId, true);
+        this.isApiAllowed(excelDataConfigs,AppConstant.API_get_excel_data);
         return this.getActualMSExcelSheetData(request, excelDataConfigs, false);
     }
     public ArrayList<ArrayList<String>> getMSExcelSheetDataArray(HttpServletRequest request, String requestId) throws AppException {
@@ -225,6 +265,7 @@ public class MSExcelService {
     }
     public ArrayList<HashMap<String, String>> getMSExcelSheetDataJson(HttpServletRequest request, String requestId) throws AppException {
         ArrayList<ExcelDataConfig> excelDataConfigs = this.getActualMSExcelSheetDataConfig(request, requestId, true);
+        this.isApiAllowed(excelDataConfigs,AppConstant.API_get_excel_data);
         ArrayList<BridgeResponseSheetData> bridgeResponseSheetData = this.getActualMSExcelSheetData(request, excelDataConfigs, true);
         ArrayList<HashMap<String, String>> result = new ArrayList<>();
         ArrayList<String> tableIndex;
@@ -257,11 +298,18 @@ public class MSExcelService {
     }
     public ApiResponse updateMSExcelSheetData(HttpServletRequest request, String requestId) throws AppException {
         ArrayList<ExcelDataConfig> excelDataConfigs = this.getActualMSExcelSheetDataConfig(request, requestId, true);
+        this.isApiAllowed(excelDataConfigs,AppConstant.API_update_excel_data);
         ArrayList<BridgeResponseSheetData> response = this.getActualMSExcelSheetData(request, excelDataConfigs, false);
         ArrayList<String> tempSavedFilePath = new ArrayList<>();
         for (BridgeResponseSheetData bridgeResponseSheetData: response) {
             this.saveCsvData(bridgeResponseSheetData, tempSavedFilePath);
         }
+        return new ApiResponse(AppConstant.SUCCESS);
+    }
+    public ApiResponse updateMSExcelSheetDataV2(HttpServletRequest request, String requestId) throws AppException {
+        ArrayList<ExcelDataConfig> excelDataConfigs = this.getActualMSExcelSheetDataConfig(request, requestId, true);
+        this.isApiAllowed(excelDataConfigs,AppConstant.API_update_excel_data_v2);
+        this.updateActualMSExcelSheetData(request, excelDataConfigs);
         return new ApiResponse(AppConstant.SUCCESS);
     }
     public ApiResponse getMSExcelSheetDataConfig(HttpServletRequest request, String requestId, String updateGsConfig) throws AppException {

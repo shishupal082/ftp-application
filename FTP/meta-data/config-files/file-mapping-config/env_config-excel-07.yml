@@ -1,0 +1,87 @@
+excelDataConfig:
+  csv-test-16:
+    allowedApi:
+      - "update_excel_data_v2"
+    skipRowCriteria:
+      - col_index: 1
+        is_empty: true
+      - col_index: 1
+        notInRange:
+          - "9771484801"
+          - "MSISDN"
+    replaceCellString:
+      - index: 0
+        find: "\""
+        replace: ""
+      - index: 1
+        find: "\""
+        replace: ""
+      - index: 2
+        find: "\""
+        replace: ""
+      - index: 3
+        find: "\""
+        replace: ""
+      - index: 4
+        find: "\""
+        replace: ""
+      - index: 5
+        find: "\""
+        replace: ""
+      - index: 6
+        find: "\""
+        replace: ""
+      - index: 7
+        find: "\""
+        replace: ""
+      - index: 8
+        find: "\""
+        replace: ""
+      - index: 9
+        find: "\""
+        replace: ""
+      - index: 10
+        find: "\""
+        replace: ""
+      - index: 11
+        find: "\""
+        replace: ""
+      - index: 12
+        find: "\""
+        replace: ""
+      - index: 13
+        find: "\""
+        replace: ""
+      - index: 14
+        find: "\""
+        replace: ""
+      - index: 15
+        find: "\""
+        replace: ""
+      - index: 16
+        find: "\""
+        replace: ""
+      - index: 17
+        find: "\""
+        replace: ""
+      - index: 18
+        find: "\""
+        replace: ""
+      - index: 19
+        find: "\""
+        replace: ""
+      - index: 20
+        find: "\""
+        replace: ""
+      - index: 21
+        find: "\""
+        replace: ""
+      - index: 22
+        find: "\""
+        replace: ""
+      - index: 23
+        find: "\""
+        replace: ""
+      - index: 24
+        find: "\""
+        replace: ""

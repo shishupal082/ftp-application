@@ -45,6 +45,16 @@ public class ExcelToCsvDataConvertServiceV2 {
         }
         return result;
     }
+    private String applyBasicFormatOnCellData(String cellData) {
+        if (cellData == null) {
+            return null;
+        }
+        cellData = cellData.replaceAll("\r\n", ";");
+        cellData = cellData.replaceAll("\n", ";");
+        cellData = cellData.replaceAll("\r", "");
+        cellData = cellData.replaceAll(",", "...");
+        return cellData.trim();
+    }
     public ArrayList<ArrayList<String>> formatCellData(ArrayList<ArrayList<String>> sheetData) {
         String cellData;
         ArrayList<String> temp, rowData;
@@ -60,11 +70,7 @@ public class ExcelToCsvDataConvertServiceV2 {
                     for(i=0; i< rowData.size(); i++) {
                         cellData = rowData.get(i);
                         if (cellData != null) {
-                            cellData = cellData.replaceAll("\r\n", ";");
-                            cellData = cellData.replaceAll("\n", ";");
-                            cellData = cellData.replaceAll("\r", "");
-                            cellData = cellData.replaceAll(",", "...");
-                            cellData = cellData.trim();
+                            cellData = applyBasicFormatOnCellData(cellData);
                             if (!cellData.isEmpty()) {
                                 lastValidIndex = i;
                             }
@@ -128,7 +134,7 @@ public class ExcelToCsvDataConvertServiceV2 {
         if (skipRowCriteriaList == null) {
             return sheetData;
         }
-        logger.info("sheetData size before skipRowCriteria: {}", sheetData.size());
+//        logger.info("sheetData size before skipRowCriteria: {}", sheetData.size());
         int i;
         Integer colIndex;
         String cellData;
@@ -163,7 +169,7 @@ public class ExcelToCsvDataConvertServiceV2 {
             }
             result.add(sheetData.get(i));
         }
-        logger.info("sheetData size after skipRowCriteria: {}", result.size());
+//        logger.info("sheetData size after skipRowCriteria: {}", result.size());
         return result;
     }
     private String getColumnNameFromCelIndex(Integer celIndex, ArrayList<String> columnNames) {
@@ -208,7 +214,7 @@ public class ExcelToCsvDataConvertServiceV2 {
         if (skipRowCriteriaList == null || columnNames == null) {
             return tableData;
         }
-        logger.info("tableData size before skipRowCriteria: {}", tableData.size());
+//        logger.info("tableData size before skipRowCriteria: {}", tableData.size());
         int i;
         Integer colIndex;
         String cellData;
@@ -239,7 +245,7 @@ public class ExcelToCsvDataConvertServiceV2 {
             }
             result.add(tableData.get(i));
         }
-        logger.info("tableData size after skipRowCriteria: {}", result.size());
+//        logger.info("tableData size after skipRowCriteria: {}", result.size());
         return result;
     }
     public ArrayList<ArrayList<String>> applySkipRowEntry(ArrayList<ArrayList<String>> sheetData,
@@ -646,6 +652,7 @@ public class ExcelToCsvDataConvertServiceV2 {
         }
         Integer index;
         String find, replace;
+        String finalCellData;
         for(ReplaceCellDataMapping replaceCellDataMapping: replaceCellDataMappings) {
             if (replaceCellDataMapping == null) {
                 continue;
@@ -661,7 +668,9 @@ public class ExcelToCsvDataConvertServiceV2 {
                     continue;
                 }
                 if (index < rowData.size()) {
-                    rowData.set(index, StaticService.replaceString(rowData.get(index), find, replace));
+                    finalCellData = StaticService.replaceString(rowData.get(index), find, replace);
+                    finalCellData = this.applyBasicFormatOnCellData(finalCellData);
+                    rowData.set(index, finalCellData);
                 }
             }
         }

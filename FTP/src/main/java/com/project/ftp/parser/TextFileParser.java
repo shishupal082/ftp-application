@@ -1,5 +1,8 @@
 package com.project.ftp.parser;
 
+import com.project.ftp.bridge.obj.yamlObj.ExcelDataConfig;
+import com.project.ftp.bridge.service.MSExcelBridgeService;
+import com.project.ftp.common.StrUtils;
 import com.project.ftp.config.AppConstant;
 import com.project.ftp.obj.PathInfo;
 import com.project.ftp.service.StaticService;
@@ -14,6 +17,7 @@ public class TextFileParser {
     private final static Logger logger = LoggerFactory.getLogger(TextFileParser.class);
     private final String filepath;
     private final boolean isNewFile;
+    private final StrUtils strUtils = new StrUtils();
     public TextFileParser() {
         this.filepath = null;
         this.isNewFile = false;
@@ -22,18 +26,85 @@ public class TextFileParser {
         this.filepath = filepath;
         this.isNewFile = false;
     }
-    public ArrayList<ArrayList<String>> readCsvData() {
-        ArrayList<ArrayList<String>> result = new ArrayList<>();
-        ArrayList<String> fileData = this.readTextFile();
-        if (fileData == null || fileData.isEmpty()) {
+    private ArrayList<String> convertLineToRow(String line) {
+        if (line == null) {
             return null;
         }
         String[] tempArr;
+        tempArr = line.split(",");
+        return new ArrayList<>(Arrays.asList(tempArr));
+    }
+    public ArrayList<ArrayList<String>> readCsvData() {
+        ArrayList<ArrayList<String>> result = new ArrayList<>();
+        ArrayList<String> fileData = this.readTextFile();
+        ArrayList<String> row;
+        if (fileData == null || fileData.isEmpty()) {
+            return null;
+        }
         for (String line: fileData) {
-            tempArr = line.split(",");
-            result.add(new ArrayList<>(Arrays.asList(tempArr)));
+            row = this.convertLineToRow(line);
+            if (row != null) {
+                result.add(row);
+            }
         }
         return result;
+    }
+    public void readAndWriteCsvData(String sourceFilePath, String destinationFilePath,
+                                    boolean isNewFile2, MSExcelBridgeService msExcelBridgeService,
+                                    String sheetName,
+                                    ExcelDataConfig excelDataConfigById,
+                                    ArrayList<String> uniqueStrings) {
+        logger.info("readAndWriteCsvData request: {},{},{}", sourceFilePath, destinationFilePath,isNewFile2);
+        if (sourceFilePath == null) {
+            logger.info("readAndWriteCsvData: Invalid sourceFilePath: null");
+            return;
+        }
+        if (destinationFilePath == null) {
+            logger.info("readAndWriteCsvData: Invalid destinationFilePath: null");
+            return;
+        }
+        File file = new File(sourceFilePath);
+        int lineIndex = -1;
+        boolean isValidLineIndex = false;
+        ArrayList<String> row;
+        try {
+            BufferedReader in = new BufferedReader(
+                    new InputStreamReader(
+                            new FileInputStream(file), AppConstant.UTF8));
+            File file2 = new File(destinationFilePath);
+            Writer writer = new BufferedWriter(new OutputStreamWriter(
+                    new FileOutputStream(file2, true), AppConstant.UTF8));
+            String str;
+            while ((str = in.readLine()) != null) {
+                isValidLineIndex = false;
+                lineIndex++;
+                row = this.convertLineToRow(str);
+                row = msExcelBridgeService.applyCsvConfigOnRowData(row,sourceFilePath,
+                        sheetName,excelDataConfigById,uniqueStrings);
+
+                if (row != null && !row.isEmpty()) {
+                    isValidLineIndex = true;
+                }
+                if (isValidLineIndex) {
+                    if (!isNewFile2) {
+                        writer.append("\n");
+                    }
+                    str = strUtils.joinArrayList(row,AppConstant.commaDelimater);
+                    writer.append(str);
+                    isNewFile2 = false;
+                }
+                if (lineIndex % 1000 == 0) {
+                    logger.info("readAndWriteCsvData in progress: {}", lineIndex);
+                }
+            }
+            in.close();
+            writer.close();
+            logger.info("readAndWriteCsvData completed: {}", lineIndex);
+        } catch (FileNotFoundException e) {
+            logger.info("readAndWriteCsvData: FileNotFoundException, fileName: {}, {}", filepath, e.getMessage());
+        } catch (Exception e) {
+            logger.info("readAndWriteCsvData: Unknown Exception, fileName: {}, {}", filepath, e.getMessage());
+        }
     }
     public String getTextDataV2() {
         ArrayList<String> fileData = this.readTextFile();

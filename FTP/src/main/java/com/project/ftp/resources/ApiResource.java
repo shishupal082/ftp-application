@@ -1102,6 +1102,27 @@ public class ApiResource {
         return response;
     }
     @GET
+    @Path("/update_excel_data_v2")
+    @UnitOfWork
+    public ApiResponse updateMSExcelDataV2(@Context HttpServletRequest request,
+                                         @QueryParam("requestId") String requestId) throws AppException {
+        this.singleThreadingService.checkSingleThreadStatus(request, "api");
+        LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
+        logger.info("updateMSExcelDataV2: In, user: {}, requestId: {}", loginUserDetails, requestId);
+        ApiResponse response;
+        try {
+            authService.isLogin(request);
+            response = msExcelService.updateMSExcelSheetDataV2(request, requestId);
+        } catch (AppException ae) {
+            logger.info("Error in updateMSExcelDataV2: {}", ae.getErrorCode().getErrorCode());
+            eventTracking.trackFailureEvent(request, EventName.MS_EXCEL_DATA, ae.getErrorCode());
+            response = new ApiResponse(ae.getErrorCode());
+        }
+        logger.info("updateMSExcelDataV2: Out, {}", response.toStringV2());
+        this.singleThreadingService.clearSingleThread(request, "api");
+        return response;
+    }
+    @GET
     @Path("/get_scan_dir_config")
     @UnitOfWork
     public ApiResponse getScanDirConfig(@Context HttpServletRequest request,

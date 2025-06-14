@@ -190,6 +190,23 @@ public class AppToBridge implements AppToBridgeInterface {
         return result;
     }
     @Override
+    public boolean updateExcelData(HttpServletRequest request, ExcelDataConfig excelDataConfigById) throws AppException {
+        if (excelDataConfigById == null) {
+            logger.info("updateExcelData error: excelDataConfig is null.");
+            throw new AppException(ErrorCodes.CONFIG_ERROR);
+        }
+        MSExcelBridgeService msExcelBridgeService = new MSExcelBridgeService(request, eventTracking,
+                ftpConfiguration.getGoogleOAuthClientConfig(), appConfig.getTableService());
+        boolean result = msExcelBridgeService.readAndWriteExcelSheetData(excelDataConfigById);
+        if (result) {
+            logger.info("updateExcelData completed for excelDataConfigById.id: {}", excelDataConfigById.getId());
+        } else {
+            logger.info("updateExcelData completed: {}, and result is null.", excelDataConfigById);
+            return false;
+        }
+        return true;
+    }
+    @Override
     public ArrayList<HashMap<String, String>> applyCsvConfigOnTableData(HttpServletRequest request,
                                                                         String requestTableConfigId,
                                                                         String requestDefaultFilterMappingId,

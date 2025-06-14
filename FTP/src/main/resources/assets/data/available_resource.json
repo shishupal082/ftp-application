@@ -228,6 +228,10 @@
     "Call Update GS/CSV/MS_Excel_sheet_Data [GET]"
   ],
   [
+    "/api/update_excel_data_v2?requestId=gs-excel-id",
+    "Call Update CSV Data v2 [GET]"
+  ],
+  [
     "/api/get_excel_data?requestId=gs-excel-id",
     "Call get GS/CSV/MS_Excel_sheet_Data as Array [GET]"
   ],
