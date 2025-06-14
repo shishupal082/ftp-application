@@ -425,6 +425,129 @@ public class TableService {
         }
         this.saveHistory(tableConfiguration.getDbType(), tableName, uniqueColumn, uniqueParameter, columnName,  oldValue,  newValue);
     }
+    public boolean saveTableRowData(HashMap<String,String> rowData,
+                                    SaveTableParameter saveTableParameter) {
+        TableConfiguration tableConfiguration = saveTableParameter.getTableConfiguration();
+        TableUpdateEnum nextAction;
+        String singeThreadStatus;
+        String singleThreadItem = "updateTableDataFromCsv";
+        JdbcQueryStatus jdbcQueryStatus;
+        int entryCount;
+        if (this.singleThreadingService != null) {
+            if (this.singleThreadingService.getStopped()) {
+                singeThreadStatus = saveTableParameter.toString();
+                this.singleThreadingService.setSingleThreadStatus(new SingleThreadStatus(
+                        saveTableParameter.getStartedTime(),
+                        singleThreadItem, singeThreadStatus));
+                logger.info("Service stopped.");
+                return false;
+            }
+        }
+        tableMysqlDb.closeIfOracle(tableConfiguration);
+        nextAction = this.getNextAction(tableConfiguration, rowData, saveTableParameter.isUpdateIfFound(),
+                saveTableParameter.isMaintainHistory(), saveTableParameter.getMaintainHistoryExcludedColumn());
+        String startedTime = saveTableParameter.getStartedTime();
+        int index = saveTableParameter.getIndex();
+        int size = saveTableParameter.getSize();
+        int addEntryCount = saveTableParameter.getAddEntryCount();
+        int updateEntryCount = saveTableParameter.getUpdateEntryCount();
+        int skipEntryCount = saveTableParameter.getSkipEntryCount();
+        int addEntryErrorCount = saveTableParameter.getAddEntryErrorCount();
+        int updateEntryErrorCount = saveTableParameter.getUpdateEntryErrorCount();
+        int searchErrorCount = saveTableParameter.getSearchErrorCount();
+        if (nextAction != null) {
+            switch (nextAction) {
+                case UPDATE:
+                    entryCount = 1;
+                    jdbcQueryStatus = tableMysqlDb.updateEntry(tableConfiguration, rowData, entryCount);
+                    if (jdbcQueryStatus != null && AppConstant.SUCCESS.equals(jdbcQueryStatus.getStatus())) {
+                        updateEntryCount = saveTableParameter.incrementUpdateEntryCount();
+                        logger.info("{}/{}: update completed. summary: {},{},{},{},{},{}: Add, Update+, Skip, " +
+                                        "AddError, UpdateError, SearchError",
+                                index, size, addEntryCount, updateEntryCount, skipEntryCount,
+                                addEntryErrorCount, updateEntryErrorCount, searchErrorCount);
+                    } else {
+                        updateEntryErrorCount = saveTableParameter.incrementUpdateEntryErrorCount();
+                        logger.info("{}/{}: update error. summary: {},{},{},{},{},{}: Add, Update, Skip, " +
+                                        "AddError, UpdateError+, SearchError",
+                                index, size, addEntryCount, updateEntryCount, skipEntryCount,
+                                addEntryErrorCount, updateEntryErrorCount, searchErrorCount);
+                        this.trackMysqlError(tableConfiguration, jdbcQueryStatus);
+                    }
+                    break;
+                case ADD:
+                    entryCount = 0;
+                    jdbcQueryStatus = tableMysqlDb.addEntry(tableConfiguration, rowData, entryCount);
+                    if (jdbcQueryStatus != null && AppConstant.SUCCESS.equals(jdbcQueryStatus.getStatus())) {
+                        addEntryCount = saveTableParameter.incrementAddEntryCount();
+                        logger.info("{}/{}: Add completed. summary: {},{},{},{},{},{}: Add+, Update, Skip " +
+                                        "AddError, UpdateError, SearchError",
+                                index, size, addEntryCount, updateEntryCount, skipEntryCount,
+                                addEntryErrorCount, updateEntryErrorCount, searchErrorCount);
+                    } else {
+                        addEntryErrorCount = saveTableParameter.incrementAddEntryErrorCount();
+                        logger.info("{}/{}: Add error. summary: {},{},{},{},{},{}: Add, Update, Skip, " +
+                                        "AddError+, UpdateError, SearchError",
+                                index, size, addEntryCount, updateEntryCount, skipEntryCount,
+                                addEntryErrorCount, updateEntryErrorCount, searchErrorCount);
+                        this.trackMysqlError(tableConfiguration, jdbcQueryStatus);
+                    }
+                    break;
+                case SEARCH_ERROR:
+                    searchErrorCount = saveTableParameter.incrementSearchErrorCount();
+                    logger.info("{}/{}: updateTableDataFromCsv: search error " +
+                                    "data: {}, summary: {},{},{},{},{},{}: Add, " +
+                                    "Update, Skip, AddError, UpdateError, SearchError+",
+                            index, size, rowData, addEntryCount, updateEntryCount, skipEntryCount,
+                            addEntryErrorCount, updateEntryErrorCount, searchErrorCount);
+                    break;
+                case SKIP:
+                    skipEntryCount = saveTableParameter.incrementSkipEntryCount();
+                    logger.info("{}/{}: updateTableDataFromCsv: Multi entry exist, add " +
+                                    "or update not possible. data: {}, summary: {},{},{},{},{},{}: Add, " +
+                                    "Update, Skip+, AddError, UpdateError, SearchError",
+                            index, size, rowData, addEntryCount, updateEntryCount, skipEntryCount,
+                            addEntryErrorCount, updateEntryErrorCount, searchErrorCount);
+                    break;
+                case SKIP_WITHOUT_LOG:
+                    skipEntryCount = saveTableParameter.incrementSkipEntryCount();
+                    break;
+                case SKIP_IGNORE:
+                    skipEntryCount = saveTableParameter.incrementSkipEntryCount();
+                    logger.info("{}/{}: updateTableDataFromCsv: existing data same as current data, " +
+                                    "update not required. summary: {},{},{},{},{},{}: Add, Update, " +
+                                    "Skip+, AddError, UpdateError, SearchError",
+                            index, size, addEntryCount, updateEntryCount, skipEntryCount,
+                            addEntryErrorCount, updateEntryErrorCount, searchErrorCount);
+                    break;
+                case INVALID_UNIQUE_PARAMETER:
+                    skipEntryCount = saveTableParameter.incrementSkipEntryCount();
+                    logger.info("{}/{}: updateTableDataFromCsv: invalid unique parameter in " +
+                                    "data: {}. summary: {},{},{},{},{},{}: Add, Update, Skip+, " +
+                                    "AddError, UpdateError, SearchError",
+                            index, size, rowData, addEntryCount, updateEntryCount, skipEntryCount,
+                            addEntryErrorCount, updateEntryErrorCount, searchErrorCount);
+                    break;
+                case NULL:
+                    skipEntryCount = saveTableParameter.incrementSkipEntryCount();
+                    logger.info("{}/{}, {}: invalid next action. data: {}", index, size, nextAction, rowData);
+                    break;
+            }
+        } else {
+            saveTableParameter.incrementSkipEntryCount();
+            logger.info("{}/{}: unhandled next action null. data: {}", index, size, rowData);
+            return false;
+        }
+        singeThreadStatus = "Index=" + index + "/Size=" + size + "/Add=" + addEntryCount +
+                "/Update=" + updateEntryCount + "/Skip=" + skipEntryCount +
+                "/AddError=" + addEntryErrorCount + "/UpdateError=" + updateEntryErrorCount +
+                "/SearchError=" + searchErrorCount;
+        if (this.singleThreadingService != null) {
+            this.singleThreadingService.setSingleThreadStatus(new SingleThreadStatus(startedTime,
+                    singleThreadItem, singeThreadStatus));
+        }
+        return true;
+    }
     public void updateTableDataFromCsv(HttpServletRequest request,
                                        String tableConfigId) throws AppException {
         if (this.singleThreadingService != null) {
@@ -435,145 +558,29 @@ public class TableService {
             logger.info("updateTableDataFromCsv: tableConfiguration is null for tableConfigId: {}", tableConfigId);
             throw new AppException(ErrorCodes.BAD_REQUEST_ERROR);
         }
+        SaveTableParameter saveTableParameter = new SaveTableParameter(tableConfiguration);
         String excelConfigId = tableConfiguration.getExcelConfigId();
-        ArrayList<HashMap<String, String>> csvDataJson = msExcelService.getMSExcelSheetDataJson(request, excelConfigId);
-        int index = 1;
-        int size = 0;
-        int entryCount;
-        int updateEntryCount = 0;
-        int addEntryCount = 0;
-        int updateEntryErrorCount = 0;
-        int addEntryErrorCount = 0;
-        int skipEntryCount = 0;
-        int searchErrorCount = 0;
-        TableUpdateEnum nextAction;
-        boolean updateIfFound = this.isUpdateIfFoundEnabled(tableConfiguration);
+        saveTableParameter.setUpdateIfFound(this.isUpdateIfFoundEnabled(tableConfiguration));
         MaintainHistory maintainHistory = tableConfiguration.getMaintainHistory();
-        boolean maintainHistoryRequired = false;
-        ArrayList<String> maintainHistoryExcludedColumn = null;
         if (maintainHistory != null) {
-            maintainHistoryRequired = maintainHistory.isRequired();
-            maintainHistoryExcludedColumn = maintainHistory.getExcludeColumnName();
+            saveTableParameter.setMaintainHistory(maintainHistory.isRequired());
+            saveTableParameter.setMaintainHistoryExcludedColumn(maintainHistory.getExcludeColumnName());
         }
         DateUtilities dateUtilities = new DateUtilities();
-        JdbcQueryStatus jdbcQueryStatus;
         String startedTime = dateUtilities.getDateStrFromPattern(AppConstant.DateTimeFormat6, "");
-        String singleThreadItem = "updateTableDataFromCsv";
-        String singeThreadStatus;
+        saveTableParameter.setStartedTime(startedTime);
+        boolean isNextRequired;
+        ArrayList<HashMap<String, String>> csvDataJson = msExcelService.getMSExcelSheetDataJson(request, excelConfigId);
         if (csvDataJson != null) {
-            size = csvDataJson.size();
+            saveTableParameter.setSize(csvDataJson.size());
             for(HashMap<String, String> rowData: csvDataJson) {
-                if (this.singleThreadingService != null) {
-                    if (this.singleThreadingService.getStopped()) {
-                        singeThreadStatus = "Index=" + (index-1) + "/Size=" + size + "/Add=" + addEntryCount +
-                                "/Update=" + updateEntryCount + "/Skip=" + skipEntryCount +
-                                "/AddError=" + addEntryErrorCount + "/UpdateError=" + updateEntryErrorCount +
-                                "/SearchError=" + searchErrorCount;
-                        this.singleThreadingService.setSingleThreadStatus(new SingleThreadStatus(startedTime,
-                                singleThreadItem, singeThreadStatus));
-                        logger.info("Service stopped.");
-                        break;
-                    }
-                }
-                tableMysqlDb.closeIfOracle(tableConfiguration);
-                nextAction = this.getNextAction(tableConfiguration, rowData, updateIfFound,
-                        maintainHistoryRequired, maintainHistoryExcludedColumn);
-                if (nextAction != null) {
-                    switch (nextAction) {
-                        case UPDATE:
-                            entryCount = 1;
-                            jdbcQueryStatus = tableMysqlDb.updateEntry(tableConfiguration, rowData, entryCount);
-                            if (jdbcQueryStatus != null && AppConstant.SUCCESS.equals(jdbcQueryStatus.getStatus())) {
-                                updateEntryCount++;
-                                logger.info("{}/{}: update completed. summary: {},{},{},{},{},{}: Add, Update+, Skip, " +
-                                                "AddError, UpdateError, SearchError",
-                                        index, size, addEntryCount, updateEntryCount, skipEntryCount,
-                                        addEntryErrorCount, updateEntryErrorCount, searchErrorCount);
-                            } else {
-                                updateEntryErrorCount++;
-                                logger.info("{}/{}: update error. summary: {},{},{},{},{},{}: Add, Update, Skip, " +
-                                                "AddError, UpdateError+, SearchError",
-                                        index, size, addEntryCount, updateEntryCount, skipEntryCount,
-                                        addEntryErrorCount, updateEntryErrorCount, searchErrorCount);
-                                this.trackMysqlError(tableConfiguration, jdbcQueryStatus);
-                            }
-                            break;
-                        case ADD:
-                            entryCount = 0;
-                            jdbcQueryStatus = tableMysqlDb.addEntry(tableConfiguration, rowData, entryCount);
-                            if (jdbcQueryStatus != null && AppConstant.SUCCESS.equals(jdbcQueryStatus.getStatus())) {
-                                addEntryCount++;
-                                logger.info("{}/{}: Add completed. summary: {},{},{},{},{},{}: Add+, Update, Skip " +
-                                                "AddError, UpdateError, SearchError",
-                                        index, size, addEntryCount, updateEntryCount, skipEntryCount,
-                                        addEntryErrorCount, updateEntryErrorCount, searchErrorCount);
-                            } else {
-                                addEntryErrorCount++;
-                                logger.info("{}/{}: Add error. summary: {},{},{},{},{},{}: Add, Update, Skip, " +
-                                                "AddError+, UpdateError, SearchError",
-                                        index, size, addEntryCount, updateEntryCount, skipEntryCount,
-                                        addEntryErrorCount, updateEntryErrorCount, searchErrorCount);
-                                this.trackMysqlError(tableConfiguration, jdbcQueryStatus);
-                            }
-                            break;
-                        case SEARCH_ERROR:
-                            searchErrorCount++;
-                            logger.info("{}/{}: updateTableDataFromCsv: search error " +
-                                            "data: {}, summary: {},{},{},{},{},{}: Add, " +
-                                            "Update, Skip, AddError, UpdateError, SearchError+",
-                                    index, size, rowData, addEntryCount, updateEntryCount, skipEntryCount,
-                                    addEntryErrorCount, updateEntryErrorCount, searchErrorCount);
-                            break;
-                        case SKIP:
-                            skipEntryCount++;
-                            logger.info("{}/{}: updateTableDataFromCsv: Multi entry exist, add " +
-                                            "or update not possible. data: {}, summary: {},{},{},{},{},{}: Add, " +
-                                            "Update, Skip+, AddError, UpdateError, SearchError",
-                                    index, size, rowData, addEntryCount, updateEntryCount, skipEntryCount,
-                                    addEntryErrorCount, updateEntryErrorCount, searchErrorCount);
-                            break;
-                        case SKIP_WITHOUT_LOG:
-                            skipEntryCount++;
-                            break;
-                        case SKIP_IGNORE:
-                            skipEntryCount++;
-                            logger.info("{}/{}: updateTableDataFromCsv: existing data same as current data, " +
-                                            "update not required. summary: {},{},{},{},{},{}: Add, Update, " +
-                                            "Skip+, AddError, UpdateError, SearchError",
-                                    index, size, addEntryCount, updateEntryCount, skipEntryCount,
-                                    addEntryErrorCount, updateEntryErrorCount, searchErrorCount);
-                            break;
-                        case INVALID_UNIQUE_PARAMETER:
-                            skipEntryCount++;
-                            logger.info("{}/{}: updateTableDataFromCsv: invalid unique parameter in " +
-                                            "data: {}. summary: {},{},{},{},{},{}: Add, Update, Skip+, " +
-                                            "AddError, UpdateError, SearchError",
-                                    index, size, rowData, addEntryCount, updateEntryCount, skipEntryCount,
-                                    addEntryErrorCount, updateEntryErrorCount, searchErrorCount);
-                            break;
-                        case NULL:
-                            skipEntryCount++;
-                            logger.info("{}/{}, {}: invalid next action. data: {}", index, size, nextAction, rowData);
-                            break;
-                    }
-                } else {
-                    skipEntryCount++;
-                    logger.info("{}/{}, {}: unhandled next action. data: {}", index, size, nextAction, rowData);
+                isNextRequired = this.saveTableRowData(rowData, saveTableParameter);
+                if (!isNextRequired) {
                     break;
                 }
-                singeThreadStatus = "Index=" + index + "/Size=" + size + "/Add=" + addEntryCount +
-                        "/Update=" + updateEntryCount + "/Skip=" + skipEntryCount +
-                        "/AddError=" + addEntryErrorCount + "/UpdateError=" + updateEntryErrorCount +
-                        "/SearchError=" + searchErrorCount;
-                if (this.singleThreadingService != null) {
-                    this.singleThreadingService.setSingleThreadStatus(new SingleThreadStatus(startedTime,
-                            singleThreadItem, singeThreadStatus));
-                }
-                index++;
+                saveTableParameter.incrementIndex();
             }
-            logger.info("Final update summary, {}/{}/{}/{}/{}/{}/{}: Add, Update, Skip, AddError, UpdateError, SearchError, Total",
-                    addEntryCount, updateEntryCount, skipEntryCount, addEntryErrorCount,
-                    updateEntryErrorCount, searchErrorCount, size);
+            logger.info(saveTableParameter.getFinalUpdateSummary());
         }
     }
 }
