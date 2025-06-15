@@ -79,7 +79,7 @@ public class TextFileParser {
                     isValidLineIndex = true;
                 }
                 if (isValidLineIndex) {
-                    writerStatus = msExcelBridgeService.writerService(writerType,writer,row,isNewFile2,
+                    writerStatus = msExcelBridgeService.writerService(lineIndex,writerType,writer,row,isNewFile2,
                             sourceFilePath,sheetName,excelDataConfigById,uniqueStrings,saveTableParameter);
                     isNewFile2 = false;
                 }

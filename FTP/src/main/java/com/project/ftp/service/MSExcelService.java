@@ -213,7 +213,7 @@ public class MSExcelService {
         if (excelDataConfigs != null) {
             for(ExcelDataConfig excelDataConfigById: excelDataConfigs) {
                 if (excelDataConfigById != null) {
-                    result = msExcelBridgeService.applyCsvConfigOnData(sheetData, null, null, excelDataConfigById, null);;
+                    result = msExcelBridgeService.applyCsvConfigOnData(-1,sheetData, null, null, excelDataConfigById, null);;
                     if (result == null) {
                         logger.info("Error in applyCsvConfigOnData for id: {}", excelDataConfigById.getId());
                     } else {
@@ -238,7 +238,7 @@ public class MSExcelService {
         if (excelDataConfigs != null) {
             for(ExcelDataConfig excelDataConfigById: excelDataConfigs) {
                 if (excelDataConfigById != null) {
-                    result = msExcelBridgeService.applyCsvConfigOnData(sheetData, null, null, excelDataConfigById, null);;
+                    result = msExcelBridgeService.applyCsvConfigOnData(-1,sheetData, null, null, excelDataConfigById, null);;
                     if (result == null) {
                         logger.info("Error in applyCsvConfigOnDataOutputJson for id: {}", excelDataConfigById.getId());
                     } else {

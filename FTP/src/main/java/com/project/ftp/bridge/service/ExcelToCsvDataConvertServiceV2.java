@@ -248,15 +248,22 @@ public class ExcelToCsvDataConvertServiceV2 {
 //        logger.info("tableData size after skipRowCriteria: {}", result.size());
         return result;
     }
-    public ArrayList<ArrayList<String>> applySkipRowEntry(ArrayList<ArrayList<String>> sheetData,
+    public ArrayList<ArrayList<String>> applySkipRowEntry(int lineIndex,ArrayList<ArrayList<String>> sheetData,
                                                       ExcelDataConfig excelDataConfigById) {
-        if (excelDataConfigById == null || sheetData == null) {
+        if (excelDataConfigById == null || sheetData == null || sheetData.isEmpty()) {
             return sheetData;
         }
         int lastRowIndex = sheetData.size()-1;
-        ArrayList<Integer> skipRowsIndex = this.getSkipRowIndexes(excelDataConfigById, lastRowIndex);
+        ArrayList<Integer> skipRowsIndex = this.getSkipRowIndexes(lineIndex,excelDataConfigById, lastRowIndex);
         if (skipRowsIndex == null || skipRowsIndex.isEmpty()) {
             return sheetData;
+        }
+        if (lineIndex >= 0) {
+            if (skipRowsIndex.contains(lineIndex)) {
+                return null;
+            } else {
+                return sheetData;
+            }
         }
         ArrayList<ArrayList<String>> sheetDataUpdated = new ArrayList<>();
         for (int i=0; i<=lastRowIndex; i++) {
@@ -268,9 +275,9 @@ public class ExcelToCsvDataConvertServiceV2 {
         sheetData = sheetDataUpdated;
         return sheetData;
     }
-    private ArrayList<Integer> getSkipRowIndexes(ExcelDataConfig excelDataConfigById, int lastRowIndex) {
+    private ArrayList<Integer> getSkipRowIndexes(int lineIndex,ExcelDataConfig excelDataConfigById, int lastRowIndex) {
         ArrayList<Integer> result = new ArrayList<>();
-        if (excelDataConfigById == null || lastRowIndex < 1) {
+        if (excelDataConfigById == null || lastRowIndex < 0) {
             return null;
         }
         ArrayList<ArrayList<Integer>> skipRowIndex = excelDataConfigById.getSkipRowIndex();
@@ -287,6 +294,13 @@ public class ExcelToCsvDataConvertServiceV2 {
                     return null;
                 } else if (lastIndex == -1) {
                     // All rows after firstIndex are not required
+                    if (lineIndex >= 0) {
+                        if (firstIndex <= lineIndex) {
+                            if (!result.contains(lineIndex)) {
+                                result.add(lineIndex);
+                            }
+                        }
+                    }
                     if (firstIndex <= lastRowIndex) {
                         for(int i=firstIndex; i<=lastRowIndex; i++) {
                             if (!result.contains(i)) {
@@ -295,6 +309,13 @@ public class ExcelToCsvDataConvertServiceV2 {
                         }
                     }
                 } else if (firstIndex <= lastIndex) {
+                    if (lineIndex >= 0) {
+                        if (firstIndex <= lineIndex && lastIndex >= lineIndex) {
+                            if (!result.contains(lineIndex)) {
+                                result.add(lineIndex);
+                            }
+                        }
+                    }
                     for(int i=firstIndex; i<=lastIndex; i++) {
                         if (i>lastRowIndex) {
                             break;

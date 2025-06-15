@@ -120,6 +120,14 @@ public class TestMSExcelService {
         Assert.assertEquals(66, result.length());
     }
     @Test
+    public void testTestMSExcelServiceCsv001() {
+        HttpServletRequest request = this.getHttpServletRequest();
+        String requestId;
+        MSExcelService msExcelService = this.getMSExcelService();
+        requestId = "excel-data-id-001";
+        msExcelService.updateMSExcelSheetDataV2(request, requestId, null);
+    }
+    @Test
     public void testTestMSExcelServiceV1() {
         HttpServletRequest request = this.getHttpServletRequest();
         String requestId;

@@ -23,7 +23,7 @@ public class SaveTableParameter {
         this.tableConfiguration = tableConfiguration;
         updateIfFound = false;
         maintainHistory = false;
-        index = 1;
+        index = 0;
         size = 0;
         addEntryCount = 0;
         updateEntryCount = 0;
@@ -161,10 +161,10 @@ public class SaveTableParameter {
         return this.searchErrorCount;
     }
     public String getFinalUpdateSummary() {
-        return "Final update summary,"+ addEntryCount + "/" + updateEntryCount + "/" +
+        return addEntryCount + "/" + updateEntryCount + "/" +
                 skipEntryCount + "/" + addEntryErrorCount + "/" + updateEntryErrorCount + "/" +
-                searchErrorCount + "/" + size +
-                ": Add, Update, Skip, AddError, UpdateError, SearchError, Total";
+                searchErrorCount + "/" + index + "/" + size +
+                ": Add, Update, Skip, AddError, UpdateError, SearchError, Index, Total";
     }
 
     @Override

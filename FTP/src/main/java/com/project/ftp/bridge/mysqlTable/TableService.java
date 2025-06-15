@@ -426,7 +426,7 @@ public class TableService {
         this.saveHistory(tableConfiguration.getDbType(), tableName, uniqueColumn, uniqueParameter, columnName,  oldValue,  newValue);
     }
     public boolean saveTableRowData(HashMap<String,String> rowData,
-                                    SaveTableParameter saveTableParameter) {
+                                    SaveTableParameter saveTableParameter) throws AppException {
         if (rowData == null || saveTableParameter == null) {
             return false;
         }
@@ -443,14 +443,14 @@ public class TableService {
                         saveTableParameter.getStartedTime(),
                         singleThreadItem, singeThreadStatus));
                 logger.info("Service stopped.");
-                return false;
+                throw new AppException(ErrorCodes.RUNTIME_ERROR);
             }
         }
         tableMysqlDb.closeIfOracle(tableConfiguration);
         nextAction = this.getNextAction(tableConfiguration, rowData, saveTableParameter.isUpdateIfFound(),
                 saveTableParameter.isMaintainHistory(), saveTableParameter.getMaintainHistoryExcludedColumn());
         String startedTime = saveTableParameter.getStartedTime();
-        int index = saveTableParameter.getIndex();
+        int index = saveTableParameter.incrementIndex();
         int size = saveTableParameter.getSize();
         int addEntryCount = saveTableParameter.getAddEntryCount();
         int updateEntryCount = saveTableParameter.getUpdateEntryCount();
@@ -465,10 +465,10 @@ public class TableService {
                     jdbcQueryStatus = tableMysqlDb.updateEntry(tableConfiguration, rowData, entryCount);
                     if (jdbcQueryStatus != null && AppConstant.SUCCESS.equals(jdbcQueryStatus.getStatus())) {
                         updateEntryCount = saveTableParameter.incrementUpdateEntryCount();
-                        logger.info("{}/{}: update completed. summary: {},{},{},{},{},{}: Add, Update+, Skip, " +
-                                        "AddError, UpdateError, SearchError",
-                                index, size, addEntryCount, updateEntryCount, skipEntryCount,
-                                addEntryErrorCount, updateEntryErrorCount, searchErrorCount);
+//                        logger.info("{}/{}: update completed. summary: {},{},{},{},{},{}: Add, Update+, Skip, " +
+//                                        "AddError, UpdateError, SearchError",
+//                                index, size, addEntryCount, updateEntryCount, skipEntryCount,
+//                                addEntryErrorCount, updateEntryErrorCount, searchErrorCount);
                     } else {
                         updateEntryErrorCount = saveTableParameter.incrementUpdateEntryErrorCount();
                         logger.info("{}/{}: update error. summary: {},{},{},{},{},{}: Add, Update, Skip, " +
@@ -483,10 +483,10 @@ public class TableService {
                     jdbcQueryStatus = tableMysqlDb.addEntry(tableConfiguration, rowData, entryCount);
                     if (jdbcQueryStatus != null && AppConstant.SUCCESS.equals(jdbcQueryStatus.getStatus())) {
                         addEntryCount = saveTableParameter.incrementAddEntryCount();
-                        logger.info("{}/{}: Add completed. summary: {},{},{},{},{},{}: Add+, Update, Skip " +
-                                        "AddError, UpdateError, SearchError",
-                                index, size, addEntryCount, updateEntryCount, skipEntryCount,
-                                addEntryErrorCount, updateEntryErrorCount, searchErrorCount);
+//                        logger.info("{}/{}: Add completed. summary: {},{},{},{},{},{}: Add+, Update, Skip " +
+//                                        "AddError, UpdateError, SearchError",
+//                                index, size, addEntryCount, updateEntryCount, skipEntryCount,
+//                                addEntryErrorCount, updateEntryErrorCount, searchErrorCount);
                     } else {
                         addEntryErrorCount = saveTableParameter.incrementAddEntryErrorCount();
                         logger.info("{}/{}: Add error. summary: {},{},{},{},{},{}: Add, Update, Skip, " +
@@ -517,11 +517,11 @@ public class TableService {
                     break;
                 case SKIP_IGNORE:
                     skipEntryCount = saveTableParameter.incrementSkipEntryCount();
-                    logger.info("{}/{}: updateTableDataFromCsv: existing data same as current data, " +
-                                    "update not required. summary: {},{},{},{},{},{}: Add, Update, " +
-                                    "Skip+, AddError, UpdateError, SearchError",
-                            index, size, addEntryCount, updateEntryCount, skipEntryCount,
-                            addEntryErrorCount, updateEntryErrorCount, searchErrorCount);
+//                    logger.info("{}/{}: updateTableDataFromCsv: existing data same as current data, " +
+//                                    "update not required. summary: {},{},{},{},{},{}: Add, Update, " +
+//                                    "Skip+, AddError, UpdateError, SearchError",
+//                            index, size, addEntryCount, updateEntryCount, skipEntryCount,
+//                            addEntryErrorCount, updateEntryErrorCount, searchErrorCount);
                     break;
                 case INVALID_UNIQUE_PARAMETER:
                     skipEntryCount = saveTableParameter.incrementSkipEntryCount();
@@ -537,7 +537,7 @@ public class TableService {
                     break;
             }
         } else {
-            saveTableParameter.incrementSkipEntryCount();
+            skipEntryCount = saveTableParameter.incrementSkipEntryCount();
             logger.info("{}/{}: unhandled next action null. data: {}", index, size, rowData);
             return false;
         }
@@ -549,7 +549,12 @@ public class TableService {
             this.singleThreadingService.setSingleThreadStatus(new SingleThreadStatus(startedTime,
                     singleThreadItem, singeThreadStatus));
         }
-        saveTableParameter.incrementIndex();
+        if (index % 1000 == 0) {
+            logger.info("{}/{}: update  summary: {},{},{},{},{},{}: Add, Update, Skip, " +
+                        "AddError, UpdateError, SearchError",
+                index, size, addEntryCount, updateEntryCount, skipEntryCount,
+                addEntryErrorCount, updateEntryErrorCount, searchErrorCount);
+        }
         return true;
     }
     public void updateTableDataFromCsv(HttpServletRequest request,
@@ -574,5 +579,6 @@ public class TableService {
         String startedTime = dateUtilities.getDateStrFromPattern(AppConstant.DateTimeFormat6, "");
         saveTableParameter.setStartedTime(startedTime);
         msExcelService.updateMSExcelSheetDataV2(request, excelConfigId, saveTableParameter);
+        logger.info("Final update summary: {}", saveTableParameter.getFinalUpdateSummary());
     }
 }

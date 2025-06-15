@@ -37,7 +37,7 @@ excelDataConfig:
     timeFormat: "HH:mm"
     dateTimeFormat: "dd/MM/yyyy HH:mm"
     copyOldData: true
-    skipRowIndex:
+    skipRowIndex2:
       - [ 0, 0 ]
       - [ 3, 4 ]
       - [ 10, -1 ]

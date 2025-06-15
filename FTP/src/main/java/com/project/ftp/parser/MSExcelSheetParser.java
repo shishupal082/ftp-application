@@ -109,8 +109,9 @@ public class MSExcelSheetParser {
                     cellData = this.parseCellData(cell, excelDataConfigById);
                     miscService.insertDataInRow(rowData, cell.getColumnIndex(), cellData);
                 }
-                msExcelBridgeService.writerService(writerType,writer,rowData,isNewFile2,
+                msExcelBridgeService.writerService(lineIndex,writerType,writer,rowData,isNewFile2,
                         srcFilepath,sheetName,excelDataConfigById,uniqueStrings,saveTableParameter);
+                isNewFile2 = false;
                 if (lineIndex % 1000 == 0) {
                     logger.info("readExcelAndWriteData in progress: {}", lineIndex);
                 }
