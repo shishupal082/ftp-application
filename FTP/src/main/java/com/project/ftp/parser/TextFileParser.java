@@ -1,5 +1,6 @@
 package com.project.ftp.parser;
 
+import com.project.ftp.bridge.mysqlTable.SaveTableParameter;
 import com.project.ftp.bridge.obj.yamlObj.ExcelDataConfig;
 import com.project.ftp.bridge.service.MSExcelBridgeService;
 import com.project.ftp.common.StrUtils;
@@ -49,48 +50,37 @@ public class TextFileParser {
         }
         return result;
     }
-    public void readAndWriteCsvData(String sourceFilePath, String destinationFilePath,
+    public void readAndWriteCsvData(String writerType, String sourceFilePath, Writer writer,
                                     boolean isNewFile2, MSExcelBridgeService msExcelBridgeService,
                                     String sheetName,
                                     ExcelDataConfig excelDataConfigById,
-                                    ArrayList<String> uniqueStrings) {
-        logger.info("readAndWriteCsvData request: {},{},{}", sourceFilePath, destinationFilePath,isNewFile2);
+                                    ArrayList<String> uniqueStrings,
+                                    SaveTableParameter saveTableParameter) {
+        logger.info("readAndWriteCsvData request: writerType={},sourceFilePath={}", writerType,sourceFilePath);
         if (sourceFilePath == null) {
             logger.info("readAndWriteCsvData: Invalid sourceFilePath: null");
             return;
         }
-        if (destinationFilePath == null) {
-            logger.info("readAndWriteCsvData: Invalid destinationFilePath: null");
-            return;
-        }
         File file = new File(sourceFilePath);
         int lineIndex = -1;
-        boolean isValidLineIndex = false;
+        boolean isValidLineIndex;
         ArrayList<String> row;
+        boolean writerStatus = false;
         try {
             BufferedReader in = new BufferedReader(
                     new InputStreamReader(
                             new FileInputStream(file), AppConstant.UTF8));
-            File file2 = new File(destinationFilePath);
-            Writer writer = new BufferedWriter(new OutputStreamWriter(
-                    new FileOutputStream(file2, true), AppConstant.UTF8));
             String str;
             while ((str = in.readLine()) != null) {
                 isValidLineIndex = false;
                 lineIndex++;
                 row = this.convertLineToRow(str);
-                row = msExcelBridgeService.applyCsvConfigOnRowData(row,sourceFilePath,
-                        sheetName,excelDataConfigById,uniqueStrings);
-
                 if (row != null && !row.isEmpty()) {
                     isValidLineIndex = true;
                 }
                 if (isValidLineIndex) {
-                    if (!isNewFile2) {
-                        writer.append("\n");
-                    }
-                    str = strUtils.joinArrayList(row,AppConstant.commaDelimater);
-                    writer.append(str);
+                    writerStatus = msExcelBridgeService.writerService(writerType,writer,row,isNewFile2,
+                            sourceFilePath,sheetName,excelDataConfigById,uniqueStrings,saveTableParameter);
                     isNewFile2 = false;
                 }
                 if (lineIndex % 1000 == 0) {
@@ -98,12 +88,12 @@ public class TextFileParser {
                 }
             }
             in.close();
-            writer.close();
             logger.info("readAndWriteCsvData completed: {}", lineIndex);
         } catch (FileNotFoundException e) {
-            logger.info("readAndWriteCsvData: FileNotFoundException, fileName: {}, {}", filepath, e.getMessage());
+            logger.info("readAndWriteCsvData: FileNotFoundException, fileName: {},{},writerStatus={}",
+                    sourceFilePath, e.getMessage(), writerStatus);
         } catch (Exception e) {
-            logger.info("readAndWriteCsvData: Unknown Exception, fileName: {}, {}", filepath, e.getMessage());
+            logger.info("readAndWriteCsvData: Unknown Exception, fileName: {}, {}", sourceFilePath, e.getMessage());
         }
     }
     public String getTextDataV2() {

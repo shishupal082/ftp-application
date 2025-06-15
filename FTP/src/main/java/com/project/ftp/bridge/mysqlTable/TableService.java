@@ -427,6 +427,9 @@ public class TableService {
     }
     public boolean saveTableRowData(HashMap<String,String> rowData,
                                     SaveTableParameter saveTableParameter) {
+        if (rowData == null || saveTableParameter == null) {
+            return false;
+        }
         TableConfiguration tableConfiguration = saveTableParameter.getTableConfiguration();
         TableUpdateEnum nextAction;
         String singeThreadStatus;
@@ -546,6 +549,7 @@ public class TableService {
             this.singleThreadingService.setSingleThreadStatus(new SingleThreadStatus(startedTime,
                     singleThreadItem, singeThreadStatus));
         }
+        saveTableParameter.incrementIndex();
         return true;
     }
     public void updateTableDataFromCsv(HttpServletRequest request,
@@ -569,18 +573,6 @@ public class TableService {
         DateUtilities dateUtilities = new DateUtilities();
         String startedTime = dateUtilities.getDateStrFromPattern(AppConstant.DateTimeFormat6, "");
         saveTableParameter.setStartedTime(startedTime);
-        boolean isNextRequired;
-        ArrayList<HashMap<String, String>> csvDataJson = msExcelService.getMSExcelSheetDataJson(request, excelConfigId);
-        if (csvDataJson != null) {
-            saveTableParameter.setSize(csvDataJson.size());
-            for(HashMap<String, String> rowData: csvDataJson) {
-                isNextRequired = this.saveTableRowData(rowData, saveTableParameter);
-                if (!isNextRequired) {
-                    break;
-                }
-                saveTableParameter.incrementIndex();
-            }
-            logger.info(saveTableParameter.getFinalUpdateSummary());
-        }
+        msExcelService.updateMSExcelSheetDataV2(request, excelConfigId, saveTableParameter);
     }
 }

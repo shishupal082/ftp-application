@@ -7,6 +7,7 @@ import com.project.ftp.bridge.BridgeTracking;
 import com.project.ftp.bridge.config.BridgeConfig;
 import com.project.ftp.bridge.config.EmailConfig;
 import com.project.ftp.bridge.config.SocialLoginConfig;
+import com.project.ftp.bridge.mysqlTable.SaveTableParameter;
 import com.project.ftp.bridge.obj.BridgeRequestSendCreatePasswordOtp;
 import com.project.ftp.bridge.obj.BridgeResponseSheetData;
 import com.project.ftp.bridge.obj.yamlObj.*;
@@ -190,14 +191,15 @@ public class AppToBridge implements AppToBridgeInterface {
         return result;
     }
     @Override
-    public boolean updateExcelData(HttpServletRequest request, ExcelDataConfig excelDataConfigById) throws AppException {
+    public boolean updateExcelData(HttpServletRequest request, ExcelDataConfig excelDataConfigById,
+                                   SaveTableParameter saveTableParameter) throws AppException {
         if (excelDataConfigById == null) {
             logger.info("updateExcelData error: excelDataConfig is null.");
             throw new AppException(ErrorCodes.CONFIG_ERROR);
         }
         MSExcelBridgeService msExcelBridgeService = new MSExcelBridgeService(request, eventTracking,
                 ftpConfiguration.getGoogleOAuthClientConfig(), appConfig.getTableService());
-        boolean result = msExcelBridgeService.readAndWriteExcelSheetData(excelDataConfigById);
+        boolean result = msExcelBridgeService.readAndWriteExcelSheetData(excelDataConfigById, saveTableParameter);
         if (result) {
             logger.info("updateExcelData completed for excelDataConfigById.id: {}", excelDataConfigById.getId());
         } else {

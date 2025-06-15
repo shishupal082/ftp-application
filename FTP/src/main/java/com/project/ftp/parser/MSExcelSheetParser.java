@@ -1,6 +1,8 @@
 package com.project.ftp.parser;
 
+import com.project.ftp.bridge.mysqlTable.SaveTableParameter;
 import com.project.ftp.bridge.obj.yamlObj.ExcelDataConfig;
+import com.project.ftp.bridge.service.MSExcelBridgeService;
 import com.project.ftp.common.DateUtilities;
 import com.project.ftp.config.AppConstant;
 import com.project.ftp.exceptions.AppException;
@@ -14,6 +16,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.Writer;
 import java.text.DecimalFormat;
 import java.text.ParsePosition;
 import java.util.ArrayList;
@@ -72,6 +75,65 @@ public class MSExcelSheetParser {
         }
         return sheetData;
     }
+
+    public void readExcelSheetDataV2(String writerType, Writer writer,boolean isNewFile2,
+                                     String srcFilepath, String sheetName, ExcelDataConfig excelDataConfigById,
+                                     MSExcelBridgeService msExcelBridgeService,
+                                     ArrayList<String> uniqueStrings,
+                                     SaveTableParameter saveTableParameter) throws AppException {
+        if (sheetName == null || excelDataConfigById == null) {
+            throw new AppException(ErrorCodes.BAD_REQUEST_ERROR);
+        }
+        ArrayList<String> rowData;
+        MiscService miscService = new MiscService();
+        String cellData;
+        FileInputStream file =null;
+        boolean isError = false;
+        File file1 = new File(srcFilepath);
+        int lineIndex = -1;
+        if (!file1.isFile()) {
+            logger.info("readExcelSheetDataV2: Source excel filepath: {} does not exist, {}", srcFilepath, excelDataConfigById);
+            throw new AppException(ErrorCodes.FILE_NOT_FOUND);
+        }
+        try {
+            file = new FileInputStream(file1);
+            XSSFWorkbook workbook = new XSSFWorkbook(file);
+            evaluator = workbook.getCreationHelper().createFormulaEvaluator();
+            XSSFSheet sheet = workbook.getSheet(sheetName);
+            for (Row row : sheet) {
+                lineIndex++;
+                rowData = new ArrayList<>();
+                Iterator<Cell> cellIterator = row.cellIterator();
+                while (cellIterator.hasNext()) {
+                    Cell cell = cellIterator.next();
+                    cellData = this.parseCellData(cell, excelDataConfigById);
+                    miscService.insertDataInRow(rowData, cell.getColumnIndex(), cellData);
+                }
+                msExcelBridgeService.writerService(writerType,writer,rowData,isNewFile2,
+                        srcFilepath,sheetName,excelDataConfigById,uniqueStrings,saveTableParameter);
+                if (lineIndex % 1000 == 0) {
+                    logger.info("readExcelAndWriteData in progress: {}", lineIndex);
+                }
+            }
+            file.close();
+            logger.info("readExcelAndWriteData completed: {}", lineIndex);
+        } catch (Exception e) {
+            logger.info("readExcelSheetDataV2: Error in reading excel filepath: {}, sheetName: {}, {}", srcFilepath, sheetName, excelDataConfigById);
+            isError = true;
+        }
+        try {
+            if (file != null) {
+                file.close();
+            }
+            if (isError) {
+                throw new AppException(ErrorCodes.SERVER_ERROR);
+            }
+        } catch (Exception e) {
+            logger.info("readExcelSheetDataV2: Error in closing excel filepath: {}, sheetName: {}, {}", srcFilepath, sheetName, excelDataConfigById);
+            throw new AppException(ErrorCodes.SERVER_ERROR);
+        }
+    }
+
     private String convertNumericCellToString(Cell cell, ExcelDataConfig excelDataConfigById) {
         String result;
         double numericCellData = cell.getNumericCellValue();

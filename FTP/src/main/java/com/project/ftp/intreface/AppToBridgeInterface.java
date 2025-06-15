@@ -1,5 +1,6 @@
 package com.project.ftp.intreface;
 
+import com.project.ftp.bridge.mysqlTable.SaveTableParameter;
 import com.project.ftp.bridge.obj.BridgeResponseSheetData;
 import com.project.ftp.bridge.obj.yamlObj.ExcelDataConfig;
 import com.project.ftp.bridge.obj.yamlObj.FileMappingConfig;
@@ -20,7 +21,8 @@ public interface AppToBridgeInterface {
     Object getRolesConfig();
     String getTcpResponse(String tcpId, String data);
     ArrayList<BridgeResponseSheetData> getExcelData(HttpServletRequest request, ExcelDataConfig excelDataConfig);
-    boolean updateExcelData(HttpServletRequest request, ExcelDataConfig excelDataConfig);
+    boolean updateExcelData(HttpServletRequest request, ExcelDataConfig excelDataConfig,
+                            SaveTableParameter saveTableParameter);
     ArrayList<HashMap<String, String>> applyCsvConfigOnTableData(HttpServletRequest request,
                                                                  String requestTableConfigId,
                                                                  String requestDefaultFilterMappingId,

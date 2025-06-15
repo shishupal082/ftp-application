@@ -1,7 +1,6 @@
 package com.project.ftp.bridge.mysqlTable;
 
 import com.project.ftp.obj.yamlObj.TableConfiguration;
-import sun.tools.jconsole.Tab;
 
 import java.util.ArrayList;
 

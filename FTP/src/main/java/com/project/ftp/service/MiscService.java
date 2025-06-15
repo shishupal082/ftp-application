@@ -51,6 +51,17 @@ public class MiscService {
         }
         return result;
     }
+    public void insertDataInRow(ArrayList<String> rowData, int colIndex, String cellData) {
+        if (rowData == null) {
+            return;
+        }
+        if (rowData.size() <= colIndex) {
+            for (int i=rowData.size(); i<colIndex; i++) {
+                rowData.add(AppConstant.EmptyStr);
+            }
+        }
+        rowData.add(cellData);
+    }
     public void insertData(ArrayList<ArrayList<String>> sheetData, int rowIndex, int colIndex, String cellData) {
         if (sheetData == null) {
             return;

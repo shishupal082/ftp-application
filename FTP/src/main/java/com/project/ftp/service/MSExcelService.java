@@ -1,6 +1,8 @@
 package com.project.ftp.service;
 
 import com.project.ftp.FtpConfiguration;
+import com.project.ftp.bridge.mysqlTable.SaveTableParameter;
+import com.project.ftp.bridge.mysqlTable.TableService;
 import com.project.ftp.bridge.obj.BridgeResponseSheetData;
 import com.project.ftp.bridge.obj.yamlObj.ExcelDataConfig;
 import com.project.ftp.bridge.obj.yamlObj.FileMappingConfig;
@@ -127,12 +129,14 @@ public class MSExcelService {
         return response;
     }
     private void updateActualMSExcelSheetData(HttpServletRequest request,
-                                              ArrayList<ExcelDataConfig> excelDataConfigs) throws AppException {
+                                              ArrayList<ExcelDataConfig> excelDataConfigs,
+                                              SaveTableParameter saveTableParameter) throws AppException {
         boolean isUpdateInValid = true, isUpdated;
         if (excelDataConfigs != null) {
             for(ExcelDataConfig excelDataConfigById: excelDataConfigs) {
                 if (excelDataConfigById != null) {
-                    isUpdated = appConfig.getAppToBridge().updateExcelData(request, excelDataConfigById);
+                    isUpdated = appConfig.getAppToBridge().updateExcelData(request,
+                            excelDataConfigById, saveTableParameter);
                     if (!isUpdated) {
                         logger.info("Error in updateActualMSExcelSheetData for id: {}", excelDataConfigById.getId());
                     } else {
@@ -306,10 +310,11 @@ public class MSExcelService {
         }
         return new ApiResponse(AppConstant.SUCCESS);
     }
-    public ApiResponse updateMSExcelSheetDataV2(HttpServletRequest request, String requestId) throws AppException {
+    public ApiResponse updateMSExcelSheetDataV2(HttpServletRequest request, String requestId,
+                                                SaveTableParameter saveTableParameter) throws AppException {
         ArrayList<ExcelDataConfig> excelDataConfigs = this.getActualMSExcelSheetDataConfig(request, requestId, true);
         this.isApiAllowed(excelDataConfigs,AppConstant.API_update_excel_data_v2);
-        this.updateActualMSExcelSheetData(request, excelDataConfigs);
+        this.updateActualMSExcelSheetData(request, excelDataConfigs, saveTableParameter);
         return new ApiResponse(AppConstant.SUCCESS);
     }
     public ApiResponse getMSExcelSheetDataConfig(HttpServletRequest request, String requestId, String updateGsConfig) throws AppException {

@@ -1,6 +1,7 @@
 package com.project.ftp.bridge.service;
 
 import com.project.ftp.bridge.config.GoogleOAuthClientConfig;
+import com.project.ftp.bridge.mysqlTable.SaveTableParameter;
 import com.project.ftp.bridge.mysqlTable.TableService;
 import com.project.ftp.bridge.obj.BridgeResponseSheetData;
 import com.project.ftp.bridge.obj.yamlObj.ExcelDataConfig;
@@ -16,12 +17,13 @@ import com.project.ftp.obj.yamlObj.TableConfiguration;
 import com.project.ftp.parser.MSExcelSheetParser;
 import com.project.ftp.parser.TextFileParser;
 import com.project.ftp.service.FileService;
+import com.project.ftp.service.MiscService;
 import com.project.ftp.service.StaticService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.File;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -33,6 +35,8 @@ public class MSExcelBridgeService {
     private final EventTracking eventTracking;
     private final TableService tableService;
     private final FileService fileService = new FileService();
+    private final StrUtils strUtils = new StrUtils();
+    private final MiscService miscService = new MiscService();
     public MSExcelBridgeService(HttpServletRequest request, EventTracking eventTracking,
                                 GoogleOAuthClientConfig googleOAuthClientConfig,
                                 TableService tableService){
@@ -85,10 +89,75 @@ public class MSExcelBridgeService {
         }
         return null;
     }
+    private boolean saveRowData(ArrayList<String> rowData, Writer writer, boolean isNewFile) {
+        if (rowData == null || rowData.isEmpty()) {
+            return false;
+        }
+        try {
+            if (!isNewFile) {
+                writer.append("\n");
+            }
+            String str = strUtils.joinArrayList(rowData,AppConstant.commaDelimater);
+            writer.append(str);
+        } catch (Exception e) {
+            logger.info("saveRowData: Error in saving row data");
+            return false;
+        }
+        return true;
+    }
+    private boolean callBackSaveTableRow(ArrayList<String> rowData, ExcelDataConfig excelDataConfig,
+                                         SaveTableParameter saveTableParameter) {
+        if (rowData == null || rowData.isEmpty()) {
+            return false;
+        }
+        ArrayList<HashMap<String,String>> rowJsonData;
+        ArrayList<ArrayList<String>> sheetData = new ArrayList<>();
+        sheetData.add(rowData);
+        rowJsonData = miscService.convertArraySheetDataToJsonData(sheetData, excelDataConfig.getTableMappingIndex());
+        if (rowJsonData != null && !rowJsonData.isEmpty()) {
+            return tableService.saveTableRowData(rowJsonData.get(0),saveTableParameter);
+        }
+        return false;
+    }
+    public boolean writerService(String writerType, Writer writer, ArrayList<String> rowData,
+                                 boolean isNewFile,
+                                 String sourceFilePath,
+                                 String sheetName,
+                                 ExcelDataConfig excelDataConfigById,
+                                 ArrayList<String> uniqueStrings,
+                                 SaveTableParameter saveTableParameter) {
+        if (writerType == null) {
+            return false;
+        }
+        ArrayList<String> rowData2 = this.applyCsvConfigOnRowData(rowData,sourceFilePath,
+                sheetName,excelDataConfigById,uniqueStrings);
+        if (writerType.equals("destinationFile")) {
+            return this.saveRowData(rowData2, writer, isNewFile);
+        } else if (writerType.equals("saveAsTableRow")) {
+            return this.callBackSaveTableRow(rowData2,excelDataConfigById, saveTableParameter);
+        }
+        return false;
+    }
+    // (1/2) readCsvFile --> writeDbTableRow
+    private boolean readCsvAndWriteToTableRow(String srcFilepath, String sheetName,
+                                              ExcelDataConfig excelDataConfigById,
+                                              ArrayList<String> uniqueStrings,
+                                              SaveTableParameter saveTableParameter) throws AppException {
+        File file1 = new File(srcFilepath);
+        if (!file1.isFile()) {
+            logger.info("readAndWriteToDbCsvFilePath: Source csv filepath: {} does not exist, {}", srcFilepath, excelDataConfigById);
+            throw new AppException(ErrorCodes.FILE_NOT_FOUND);
+        }
+        TextFileParser textFileParser = new TextFileParser();
+        textFileParser.readAndWriteCsvData("saveAsTableRow",srcFilepath, null, false,
+                this, sheetName,excelDataConfigById,uniqueStrings,saveTableParameter);
+        return true;
+    }
+    // (2/4) readCsvFile --> writeCsvFile
     private boolean readAndWriteCsvFilePath(String srcFilepath, String destinationFilePath, String sheetName,
-                                                         ExcelDataConfig excelDataConfigById,
-                                                         ArrayList<String> uniqueStrings,
-                                            boolean isNewFile) throws AppException{
+                                            ExcelDataConfig excelDataConfigById,
+                                            ArrayList<String> uniqueStrings,
+                                            boolean isNewFile) throws AppException {
         File file1 = new File(srcFilepath);
         if (!file1.isFile()) {
             logger.info("readAndWriteCsvFilePath: Source csv filepath: {} does not exist, {}", srcFilepath, excelDataConfigById);
@@ -100,10 +169,65 @@ public class MSExcelBridgeService {
             throw new AppException(ErrorCodes.FILE_NOT_FOUND);
         }
         TextFileParser textFileParser = new TextFileParser();
-        textFileParser.readAndWriteCsvData(srcFilepath, destinationFilePath, isNewFile, this,
-                sheetName,excelDataConfigById,uniqueStrings);
+        try {
+            Writer writer = new BufferedWriter(new OutputStreamWriter(
+                    new FileOutputStream(file2, true), AppConstant.UTF8));
+            textFileParser.readAndWriteCsvData("destinationFile",srcFilepath, writer, isNewFile, this,
+                    sheetName,excelDataConfigById,uniqueStrings,null);
+            writer.close();
+        } catch (Exception e) {
+            logger.info("readAndWriteCsvFilePath: Error in writer service");
+            return false;
+        }
         return true;
     }
+
+    // (3/4) readExcelFile --> writeDbTableRow
+    private boolean readExcelAndWriteToTableRow(String srcFilepath, String sheetName,
+                                              ExcelDataConfig excelDataConfigById,
+                                              ArrayList<String> uniqueStrings,
+                                              SaveTableParameter saveTableParameter) throws AppException {
+        File file1 = new File(srcFilepath);
+        if (!file1.isFile()) {
+            logger.info("readExcelAndWriteToTableRow: Source csv filepath: {} does not exist, {}", srcFilepath, excelDataConfigById);
+            throw new AppException(ErrorCodes.FILE_NOT_FOUND);
+        }
+        MSExcelSheetParser msExcelSheetParser = new MSExcelSheetParser();
+        msExcelSheetParser.readExcelSheetDataV2("saveAsTableRow", null, false,
+                srcFilepath, sheetName, excelDataConfigById,
+                this,uniqueStrings,saveTableParameter);
+        return true;
+    }
+    // (4/4) readExcelFile --> writeCsvFile
+    private boolean readExcelAndWriteCsvFilePath(String srcFilepath, String destinationFilePath, String sheetName,
+                                            ExcelDataConfig excelDataConfigById,
+                                            ArrayList<String> uniqueStrings,
+                                            boolean isNewFile) throws AppException {
+        File file1 = new File(srcFilepath);
+        if (!file1.isFile()) {
+            logger.info("readExcelAndWriteCsvFilePath: Source csv filepath: {} does not exist, {}", srcFilepath, excelDataConfigById);
+            throw new AppException(ErrorCodes.FILE_NOT_FOUND);
+        }
+        File file2 = new File(destinationFilePath);
+        if (!file2.isFile()) {
+            logger.info("readExcelAndWriteCsvFilePath: Destination csv filepath: {} does not exist, {}", destinationFilePath, excelDataConfigById);
+            throw new AppException(ErrorCodes.FILE_NOT_FOUND);
+        }
+        MSExcelSheetParser msExcelSheetParser = new MSExcelSheetParser();
+        try {
+            Writer writer = new BufferedWriter(new OutputStreamWriter(
+                    new FileOutputStream(file2, true), AppConstant.UTF8));
+            msExcelSheetParser.readExcelSheetDataV2("destinationFile", writer, isNewFile,
+                    srcFilepath, sheetName, excelDataConfigById,
+                    this,uniqueStrings,null);
+            writer.close();
+        } catch (Exception e) {
+            logger.info("readExcelAndWriteCsvFilePath: Error in writer service");
+            return false;
+        }
+        return true;
+    }
+
     private ArrayList<ArrayList<String>> readCsvFilePath(String srcFilepath, String sheetName,
                                                            ExcelDataConfig excelDataConfigById,
                                                          ArrayList<String> uniqueStrings) throws AppException{
@@ -202,12 +326,12 @@ public class MSExcelBridgeService {
         }
         ExcelDataConfig excelDataConfigById = excelConfig.get(requestId);
         if (excelDataConfigById == null) {
-            logger.info("excelDataConfigById is null for request id: {}", requestId);
+            logger.info("getExcelDataConfigByIdV1: excelDataConfigById is null for request id: {}", requestId);
         } else {
             excelDataConfigById.setExcelConfig(null);
             excelDataConfigById.setCsvConfig(null);
             excelDataConfigById.setGsConfig(null);
-            logger.info("excelDataConfigById for requestId: {}, {}", requestId, excelDataConfigById);
+            logger.info("getExcelDataConfigByIdV1: excelDataConfigById for requestId: {}, {}", requestId, excelDataConfigById);
         }
         return excelDataConfigById;
     }
@@ -459,18 +583,15 @@ public class MSExcelBridgeService {
         logger.info("excelDataConfigById generated from csv for requestId: {}, {}", requestId, excelDataConfigById);
         return excelDataConfigById;
     }
-    public boolean readAndWriteExcelSheetData(ExcelDataConfig excelDataConfigById) throws AppException {
+    public boolean readAndWriteExcelSheetData(ExcelDataConfig excelDataConfigById,
+                                              SaveTableParameter saveTableParameter) throws AppException {
         if (excelDataConfigById == null) {
             throw new AppException(ErrorCodes.BAD_REQUEST_ERROR);
         }
         ArrayList<ExcelFileConfig> excelFileConfig = excelDataConfigById.getExcelConfig();
         ArrayList<ExcelFileConfig> csvFileConfig = excelDataConfigById.getCsvConfig();
-        ArrayList<ExcelFileConfig> gsFileConfig = excelDataConfigById.getGsConfig();
-        ArrayList<ExcelFileConfig> mysqlConfig = excelDataConfigById.getMysqlConfig();
         ArrayList<String> uniqueStrings;
-        String srcFilepath, sheetName, destination, copyDestination;
-        boolean copyOldData;
-        ArrayList<ArrayList<String>> sheetData;
+        String srcFilepath, sheetName, destination;
         ArrayList<Boolean> finalResult = new ArrayList<>();
         boolean result, isNewFile;
         HashMap<String,Boolean> deletedDestination = new HashMap<>();
@@ -478,14 +599,26 @@ public class MSExcelBridgeService {
         if (excelFileConfig != null && !excelFileConfig.isEmpty()) {
             uniqueStrings = new ArrayList<>();
             for (ExcelFileConfig fileConfig : excelFileConfig) {
-                copyOldData = excelDataConfigById.isCopyOldData();
                 srcFilepath = fileConfig.getSource();
                 sheetName = fileConfig.getSheetName();
                 destination = fileConfig.getDestination();
-                copyDestination = fileConfig.getCopyDestination();
-//                sheetData = this.readExcelFilePath(srcFilepath, sheetName, excelDataConfigById, uniqueStrings);
-//                bridgeResponseSheetsData.add(new BridgeResponseSheetData(copyOldData,
-//                        destination, copyDestination, sheetData));
+                isDestinationDeleted = deletedDestination.get(destination);
+                if (saveTableParameter == null) {
+                    if (isDestinationDeleted == null || !isDestinationDeleted) {
+                        fileService.deleteFileV2(destination);
+                        fileService.createNewFile(destination);
+                        isNewFile = true;
+                        deletedDestination.put(destination,true);
+                    } else {
+                        isNewFile = false;
+                    }
+                    result = this.readExcelAndWriteCsvFilePath(srcFilepath, destination, sheetName,
+                            excelDataConfigById, uniqueStrings, isNewFile);
+                } else {
+                    result = this.readExcelAndWriteToTableRow(srcFilepath, sheetName,
+                            excelDataConfigById, uniqueStrings, saveTableParameter);
+                }
+                finalResult.add(result);
             }
         }
         if (csvFileConfig != null && !csvFileConfig.isEmpty()) {
@@ -495,51 +628,28 @@ public class MSExcelBridgeService {
                 sheetName = fileConfig.getSheetName();
                 destination = fileConfig.getDestination();
                 isDestinationDeleted = deletedDestination.get(destination);
-                if (isDestinationDeleted == null || !isDestinationDeleted) {
-                    fileService.deleteFileV2(destination);
-                    fileService.createNewFile(destination);
-                    isNewFile = true;
-                    deletedDestination.put(destination,true);
+                if (saveTableParameter == null) {
+                    if (isDestinationDeleted == null || !isDestinationDeleted) {
+                        fileService.deleteFileV2(destination);
+                        fileService.createNewFile(destination);
+                        isNewFile = true;
+                        deletedDestination.put(destination,true);
+                    } else {
+                        isNewFile = false;
+                    }
+                    result = this.readAndWriteCsvFilePath(srcFilepath, destination, sheetName,
+                            excelDataConfigById, uniqueStrings, isNewFile);
                 } else {
-                    isNewFile = false;
+                    result = this.readCsvAndWriteToTableRow(srcFilepath, sheetName,
+                            excelDataConfigById, uniqueStrings, saveTableParameter);
                 }
-                result = this.readAndWriteCsvFilePath(srcFilepath, destination, sheetName,
-                        excelDataConfigById, uniqueStrings, isNewFile);
                 finalResult.add(result);
             }
         }
-        if (gsFileConfig != null && !gsFileConfig.isEmpty()) {
-            uniqueStrings = new ArrayList<>();
-            for (ExcelFileConfig fileConfig : gsFileConfig) {
-                copyOldData = excelDataConfigById.isCopyOldData();
-                srcFilepath = fileConfig.getSource();
-                sheetName = fileConfig.getSheetName();
-                destination = fileConfig.getDestination();
-                copyDestination = fileConfig.getCopyDestination();
-//                sheetData = this.readGoogleSheetData(srcFilepath, sheetName, excelDataConfigById, uniqueStrings);
-//                bridgeResponseSheetsData.add(new BridgeResponseSheetData(copyOldData,
-//                        destination, copyDestination, sheetData));
-            }
-        }
-        if (mysqlConfig != null && !mysqlConfig.isEmpty()) {
-            uniqueStrings = new ArrayList<>();
-            for (ExcelFileConfig fileConfig : mysqlConfig) {
-                copyOldData = excelDataConfigById.isCopyOldData();
-                srcFilepath = fileConfig.getSource(); // mysqlTableConfigId
-                sheetName = fileConfig.getSheetName(); // may be used as external parameter if required in output
-                destination = fileConfig.getDestination();
-                copyDestination = fileConfig.getCopyDestination();
-//                sheetData = this.readMysqlData(srcFilepath, sheetName, excelDataConfigById, uniqueStrings);
-//                bridgeResponseSheetsData.add(new BridgeResponseSheetData(copyOldData,
-//                        destination, copyDestination, sheetData));
-            }
-        }
         if ((excelFileConfig == null || excelFileConfig.isEmpty()) &&
-                (csvFileConfig == null || csvFileConfig.isEmpty()) &&
-                (gsFileConfig == null || gsFileConfig.isEmpty()) &&
-                (mysqlConfig == null || mysqlConfig.isEmpty())
+                (csvFileConfig == null || csvFileConfig.isEmpty())
         ) {
-            logger.info("readAndWriteExcelSheetData: invalid excelFileConfig, csvFileConfig, gsFileConfig and mysqlConfig: {}", excelDataConfigById);
+            logger.info("readAndWriteExcelSheetData: invalid excelFileConfig and csvFileConfig: {}", excelDataConfigById);
             throw new AppException(ErrorCodes.CONFIG_ERROR);
         }
         for (boolean r : finalResult) {
