@@ -1,5 +1,6 @@
 fileMappingConfigFilePath: "D:/workspace/ftp-application/FTP/meta-data/config-files/file-mapping-config/file-mapping-config.yml"
 splitTextFileConfigPath: "D:/workspace/ftp-application/FTP/meta-data/config-files/file-mapping-config/split-file-config.yml"
+standAloneConfigPath: "D:/workspace/ftp-application/FTP/meta-data/config-files/standalone/cug-config.yml"
 scanDirConfigFilePath: "D:/workspace/ftp-application/FTP/meta-data/config-files/scan-dir-config/scan-dir-config.yml"
 tableDbConfigFilePath:
   - "D:/workspace/ftp-application/FTP/meta-data/config-files/table-db-config/table-db-config.yml"

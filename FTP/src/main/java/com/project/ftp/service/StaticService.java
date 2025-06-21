@@ -97,7 +97,7 @@ public class StaticService {
         if (AppConstant.FOLDER.equals(pathInfo.getType())) {
             appConfig.setLogFiles(fileService.getAvailableFiles(logFilePath));
         } else {
-            logger.info("logFilePath is not a folder: {}", pathInfo);
+            logger.info("initApplication: logFilePath is not a folder: {}", pathInfo);
         }
     }
     public static String getDateStrFromTimeMs(String format, Long timeInMs) {

@@ -308,5 +308,19 @@ public class YamlFileParser {
         }
         return pageConfig404;
     }
-
+    public StandAloneConfig getStandAloneConfig(String standAloneConfigPath) throws AppException {
+        if (standAloneConfigPath == null || standAloneConfigPath.isEmpty()) {
+            logger.info("getStandAloneConfig: invalid path: {}", standAloneConfigPath);
+            return null;
+        }
+        StandAloneConfig standAloneConfig = null;
+        ObjectMapper objectMapper = new ObjectMapper(new YAMLFactory());
+        try {
+            standAloneConfig = objectMapper.readValue(new File(standAloneConfigPath), StandAloneConfig.class);
+        } catch (IOException ioe) {
+            logger.info("getStandAloneConfig: IOE: for file: {}", standAloneConfigPath);
+            throw new AppException(ErrorCodes.CONFIG_ERROR);
+        }
+        return standAloneConfig;
+    }
 }

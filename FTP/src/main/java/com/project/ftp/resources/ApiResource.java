@@ -45,7 +45,11 @@ public class ApiResource {
     private final ScanDirService scanDirService;
     private final TableService tableService;
     private final SingleThreadingService singleThreadingService;
-    public ApiResource(final AppConfig appConfig) {
+    public ApiResource(final AppConfig appConfig) throws AppException {
+        if (appConfig == null) {
+            logger.info("ApiResource.Constructor: appConfig is null");
+            throw new AppException(ErrorCodes.CONFIG_ERROR);
+        }
         this.appConfig = appConfig;
         this.fileServiceV2 = new FileServiceV2(appConfig, appConfig.getUserService());
         this.userService = appConfig.getUserService();

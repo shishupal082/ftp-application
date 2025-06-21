@@ -1,0 +1,4 @@
+resource: "api"
+path: "split_file"
+params:
+  - "split-csv-file"

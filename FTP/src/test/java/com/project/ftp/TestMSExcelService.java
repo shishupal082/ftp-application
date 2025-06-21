@@ -28,58 +28,44 @@ public class TestMSExcelService {
         return new EventTracking(appConfig, userService, eventInterface);
     }
     public AppConfig getAppConfig(boolean isMysqlEnable) {
-        FtpConfiguration ftpConfiguration = new FtpConfiguration();
         ArrayList<String> arguments = new ArrayList<>();
+        arguments.add(AppConstant.SERVER);
         if (isMysqlEnable) {
             arguments.add(AppConstant.TRUE);
         } else {
             arguments.add("false");
         }
         arguments.add("false");
-        // first-file-reading-equal-to-calling-main-function-will-be-skipped same will be used for initApplication
-        arguments.add("meta-data/app_env_config.yml");
         arguments.add("meta-data/app_env_config_2.yml");
         arguments.add("meta-data/app_env_config_4.yml");
-        return AppConfig.getAppConfig(null, ftpConfiguration, arguments, AppConstant.SOURCE_TEST);
+        return AppConfig.getAppConfigFromCmdArgs(arguments, AppConstant.SOURCE_TEST);
     }
     public AppConfig getAppConfigProd(boolean isMysqlEnable) {
-        FtpConfiguration ftpConfiguration = new FtpConfiguration();
         ArrayList<String> arguments = new ArrayList<>();
+        arguments.add(AppConstant.SERVER);
         if (isMysqlEnable) {
             arguments.add(AppConstant.TRUE);
         } else {
             arguments.add("false");
         }
         arguments.add("false");
-        // first-file-reading-equal-to-calling-main-function-will-be-skipped same will be used for initApplication
-        arguments.add("meta-data/app_env_config.yml");
         arguments.add("meta-data/app_env_config_2.yml");
         arguments.add("meta-data/app_env_config_4_prod.yml");
-        return AppConfig.getAppConfig(null, ftpConfiguration, arguments, AppConstant.SOURCE_TEST);
+        return AppConfig.getAppConfigFromCmdArgs(arguments, AppConstant.SOURCE_TEST);
     }
     public AppConfig getAppConfigProd8082(boolean isMysqlEnable) {
-        FtpConfiguration ftpConfiguration = new FtpConfiguration();
         ArrayList<String> arguments = new ArrayList<>();
+        arguments.add(AppConstant.SERVER);
         if (isMysqlEnable) {
             arguments.add(AppConstant.TRUE);
         } else {
             arguments.add("false");
         }
         arguments.add("true"); // All config path are static directory
-        // first-file-reading-equal-to-calling-main-function,will-be-skipped same will be used for initApplication
-        arguments.add("first-config-filepath-will-be-skipped");
         arguments.add("F:/ftp-app/OneDrive/ftp/app-data/config-files-v2/env_config/env_config-8.0.0.1_local_initial_port8082_test.yml");
         arguments.add("F:/ftp-app/OneDrive/ftp/app-data/config-files-v2/env_config/env_config-8.0.0.6_base.yml");
         arguments.add("F:/ftp-app/OneDrive/ftp/app-data/config-files-v2/env_config/env_config-user_GroupLogin1.yml");
-        return AppConfig.getAppConfig(null, ftpConfiguration, arguments, AppConstant.SOURCE_TEST);
-    }
-    public AppConfig getAppConfigV2() {
-        FtpConfiguration ftpConfiguration = new FtpConfiguration();
-        ArrayList<String> arguments = new ArrayList<>();
-        arguments.add("false");
-        arguments.add("false");
-        arguments.add("meta-data/app_env_config.yml");
-        return AppConfig.getAppConfig(null, ftpConfiguration, arguments, AppConstant.SOURCE_TEST);
+        return AppConfig.getAppConfigFromCmdArgs(arguments, AppConstant.SOURCE_TEST);
     }
     public ApiResource getApiResource() {
         AppConfig appConfig = this.getAppConfig(false);

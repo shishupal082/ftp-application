@@ -20,6 +20,7 @@ public class AppConstant {
     public static final String FALSE = "false";
     public static final String SOURCE_RUNTIME = "runtime";
     public static final String SOURCE_TEST = "test";
+    public static final String SOURCE_STANDALONE = "standalone";
     public static final boolean ADMIN_TRUE = true;
     public static final boolean DB_TRUE = true;
     public static final boolean EXACT_MATCH = true;
@@ -108,7 +109,13 @@ public class AppConstant {
     public static final String CSV = "csv";
     public static final String MYSQL = "mysql";
 
-    public static final int CMD_LINE_ARG_MIN_SIZE = 3;
+    /**
+     * 0: server/standalone
+     * 1 (CMD_LINE_ARG_MIN_SIZE-3): isMySqlEnable
+     * 2 (CMD_LINE_ARG_MIN_SIZE-2): isStaticPath
+     * 3 (CMD_LINE_ARG_MIN_SIZE-1): firstConfigPath
+     */
+    public static final int CMD_LINE_ARG_MIN_SIZE = 4;
 
     public static final int maxLengthLogDisplay = 512;
     public static final String commaDelimater = ",";

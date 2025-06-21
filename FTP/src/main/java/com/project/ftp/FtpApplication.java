@@ -74,13 +74,19 @@ public class FtpApplication extends Application<FtpConfiguration> {
         eventTracking.trackApplicationStart(ftpConfiguration.getInstance());
     }
     public static void main(String[] args) throws Exception {
-        // java -jar meta-data/FTP-*-SNAPSHOT.jar <isMySqlEnable> <isStaticPath> <config file 1> <config file 2> ...
+        // java -jar meta-data/FTP-*-SNAPSHOT.jar <server/standalone> <isMySqlEnable> <isStaticPath> <config file 1> <config file 2> ...
         arguments.addAll(Arrays.asList(args));
         if (arguments.size() >= AppConstant.CMD_LINE_ARG_MIN_SIZE) {
-            StaticService.renameOldLogFile(args[AppConstant.CMD_LINE_ARG_MIN_SIZE-2], args[AppConstant.CMD_LINE_ARG_MIN_SIZE-1]);
-            new FtpApplication().run(AppConstant.SERVER, args[AppConstant.CMD_LINE_ARG_MIN_SIZE-1]);
+            if (AppConstant.SERVER.equals(arguments.get(0))) {
+                StaticService.renameOldLogFile(args[AppConstant.CMD_LINE_ARG_MIN_SIZE-2], args[AppConstant.CMD_LINE_ARG_MIN_SIZE-1]);
+                new FtpApplication().run(AppConstant.SERVER, args[AppConstant.CMD_LINE_ARG_MIN_SIZE-1]);
+            } else {
+                StandAlone standAlone = new StandAlone(arguments);
+                standAlone.handleRequest();
+            }
         } else {
-            logger.info("main: minimum required command line argument is: {}", AppConstant.CMD_LINE_ARG_MIN_SIZE);
+            logger.info("main: minimum required command line argument is: {}, found: {}",
+                    AppConstant.CMD_LINE_ARG_MIN_SIZE, args);
         }
     }
 }

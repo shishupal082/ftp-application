@@ -320,6 +320,10 @@ public class AppConfig {
         return null;
     }
     public static AppConfig getAppConfig(final HibernateBundle<FtpConfiguration> hibernateBundle, final FtpConfiguration ftpConfiguration, ArrayList<String> args, String source) {
+        if (ftpConfiguration == null) {
+            logger.info("getAppConfig: Invalid first FtpConfiguration");
+            return null;
+        }
         AppConfig appConfig = new AppConfig();
         if (args.size() < AppConstant.CMD_LINE_ARG_MIN_SIZE) {
             logger.info("getAppConfig: minimum required command line argument is: {}", AppConstant.CMD_LINE_ARG_MIN_SIZE);
@@ -334,6 +338,7 @@ public class AppConfig {
 //        appConfig.setFtpConfiguration(ftpConfiguration);
         // For log config setup
         StaticService.initApplication(appConfig, isStaticPath, configPath);
+
         appConfig.updatePageConfig404();
         logger.info("appConfig: {}", appConfig);
         EventInterface eventInterface = null;
@@ -403,5 +408,20 @@ public class AppConfig {
                 appConfig.getMsExcelService(), tableMysqlDb);
         appConfig.setTableService(tableService);
         return appConfig;
+    }
+    public static AppConfig getAppConfigFromCmdArgs(ArrayList<String> cmdArgument, String source) {
+        if (cmdArgument == null) {
+            logger.info("getAppConfigFromCmdArgs: invalid cmdArgument: null");
+            return null;
+        }
+        if (cmdArgument.size() < AppConstant.CMD_LINE_ARG_MIN_SIZE) {
+            logger.info("getAppConfigFromCmdArgs: minimum required command line argument is: {}", AppConstant.CMD_LINE_ARG_MIN_SIZE);
+            return null;
+        }
+        String isStaticPath = cmdArgument.get(AppConstant.CMD_LINE_ARG_MIN_SIZE-2);
+        String firstConfigPath = cmdArgument.get(AppConstant.CMD_LINE_ARG_MIN_SIZE-1);
+        YamlFileParser yamlFileParser = new YamlFileParser();
+        FtpConfiguration ftpConfiguration = yamlFileParser.getFtpConfigurationFromPath(isStaticPath, firstConfigPath);
+        return getAppConfig(null,ftpConfiguration,cmdArgument,source);
     }
 }

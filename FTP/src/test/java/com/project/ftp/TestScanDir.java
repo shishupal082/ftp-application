@@ -34,18 +34,18 @@ public class TestScanDir {
             scanDirService.getScanDirectoryConfig(null, "invalid-scan-dir-id", null);
             Assert.assertEquals(0, 1);
         } catch (AppException e) {
-            Assert.assertEquals(e.getErrorCode(), ErrorCodes.BAD_REQUEST_ERROR);
+            Assert.assertEquals(ErrorCodes.BAD_REQUEST_ERROR, e.getErrorCode());
         }
         apiResponse = scanDirService.getScanDirectoryConfig(null, "test-with-null-path-index", null);
         scanDirMapping = (ArrayList<ScanDirMapping>) apiResponse.getData();
         Assert.assertEquals(1, scanDirMapping.size());
-        Assert.assertEquals(scanDirMapping.get(0).getId(), "test-with-null-path-index");
+        Assert.assertEquals("test-with-null-path-index", scanDirMapping.get(0).getId());
         Assert.assertNull(scanDirMapping.get(0).getPathIndex());
 
         scanDirService.getScanDirectoryConfig(null, "test-with-null-path-index", "invalid-path");
         scanDirMapping = (ArrayList<ScanDirMapping>) apiResponse.getData();
         Assert.assertEquals(1, scanDirMapping.size());
-        Assert.assertEquals(scanDirMapping.get(0).getId(), "test-with-null-path-index");
+        Assert.assertEquals("test-with-null-path-index", scanDirMapping.get(0).getId());
         Assert.assertNull(scanDirMapping.get(0).getPathIndex());
 
         apiResponse = scanDirService.getScanDirectoryConfig(null, "test-1", null);
@@ -72,29 +72,29 @@ public class TestScanDir {
             scanDirService.readScanDirectory(null, null,null, null, null, null);
             Assert.assertEquals(0, 1);
         } catch (AppException e) {
-            Assert.assertEquals(e.getErrorCode(), ErrorCodes.BAD_REQUEST_ERROR);
+            Assert.assertEquals(ErrorCodes.BAD_REQUEST_ERROR, e.getErrorCode());
         }
         try {
             scanDirService.readScanDirectory(null, "",null, null, null, null);
             Assert.assertEquals(0, 1);
         } catch (AppException e) {
-            Assert.assertEquals(e.getErrorCode(), ErrorCodes.BAD_REQUEST_ERROR);
+            Assert.assertEquals(ErrorCodes.BAD_REQUEST_ERROR, e.getErrorCode());
         }
         try {
             scanDirService.readScanDirectory(null, "invalid-path",null, null, null, null);
             Assert.assertEquals(0, 1);
         } catch (AppException e) {
-            Assert.assertEquals(e.getErrorCode(), ErrorCodes.BAD_REQUEST_ERROR);
+            Assert.assertEquals(ErrorCodes.BAD_REQUEST_ERROR, e.getErrorCode());
         }
         try {
             scanDirService.readScanDirectory(null, null, "E:/invalid-file-or-folder/", null, null, null);
             Assert.assertEquals(0, 1);
         } catch (AppException e) {
-            Assert.assertEquals(e.getErrorCode(), ErrorCodes.BAD_REQUEST_ERROR);
+            Assert.assertEquals(ErrorCodes.BAD_REQUEST_ERROR, e.getErrorCode());
         }
         scanDirId = "d-workspace-ftp-application-ftp";
         ArrayList<ArrayList<String>> pathInfoScanResults = scanDirService.readScanDirectory(null, scanDirId, null, null, null, null);
-        Assert.assertEquals(pathInfoScanResults.size(), 20);
+        Assert.assertEquals(20, pathInfoScanResults.size());
     }
     @Test
     public void testReadScanDir2() {
@@ -107,27 +107,27 @@ public class TestScanDir {
         String csvData;
         ArrayList<ArrayList<String>> pathInfoScanResults;
         pathInfoScanResults = scanDirService.readScanDirectory(null, scanDirId, null, null, recursive, null);
-        Assert.assertEquals(pathInfoScanResults.size(), 18);
+        Assert.assertEquals(19, pathInfoScanResults.size());
         scanDirId = "workspace-ftp-config-files/";
         pathInfoScanResults = scanDirService.readScanDirectory(null, scanDirId, null, null, recursive, null);
-        Assert.assertEquals(pathInfoScanResults.size(), 18);
+        Assert.assertEquals(19, pathInfoScanResults.size());
         recursive = "false";
         pathInfoScanResults = scanDirService.readScanDirectory(null, scanDirId, null, null, recursive, null);
-        Assert.assertEquals(pathInfoScanResults.size(), 18);
+        Assert.assertEquals(19, pathInfoScanResults.size());
         recursive = "invalid-boolean";
         pathInfoScanResults = scanDirService.readScanDirectory(null, scanDirId, null, null, recursive, null);
-        Assert.assertEquals(pathInfoScanResults.size(), 18);
+        Assert.assertEquals(19, pathInfoScanResults.size());
         recursive = "true";
         pathInfoScanResults = scanDirService.readScanDirectory(null, scanDirId, null, null, recursive, null);
-        Assert.assertEquals(pathInfoScanResults.size(), 44);
+        Assert.assertEquals(47, pathInfoScanResults.size());
         scanDirId = "workspace-ftp-empty-folder";
         recursive = "true";
         pathInfoScanResults = scanDirService.readScanDirectory(null, scanDirId, null, null, recursive, null);
-        Assert.assertEquals(pathInfoScanResults.size(), 1);
+        Assert.assertEquals(1, pathInfoScanResults.size());
         scanDirId = "workspace-ftp-empty-folder/";
         recursive = "false";
         pathInfoScanResults = scanDirService.readScanDirectory(null, scanDirId, null, null, recursive, null);
-        Assert.assertEquals(pathInfoScanResults.size(), 1);
+        Assert.assertEquals(1, pathInfoScanResults.size());
 
         scanDirId = "workspace-ftp-single-file-folder";
         pathInfoScanResults = scanDirService.readScanDirectory(null, scanDirId, null, null, null, null);
@@ -179,15 +179,15 @@ public class TestScanDir {
         String recursive = "false";
         ArrayList<ArrayList<String>> result;
         result = scanDirService.readScanDirectory(null, scanDirId, null, null, recursive, null);
-        Assert.assertEquals(result.size(), 3);
+        Assert.assertEquals(3, result.size());
         recursive = "true";
         result = scanDirService.readScanDirectory(null, scanDirId, null, null, recursive, null);
-        Assert.assertEquals(result.size(), 3);
+        Assert.assertEquals(3, result.size());
 
         scanDirId = "test-4|test-5";
         recursive = "true-ok";
         result = scanDirService.readScanDirectory(null, scanDirId, null, null, recursive, "test-4|test-5-csv-mapping-id");
-        Assert.assertEquals(result.size(), 3);
+        Assert.assertEquals(3, result.size());
 
         Assert.assertEquals("test-4|test-5-csv-mapping-id", result.get(1).get(25));//reqCsvMappingId
         Assert.assertEquals("true-ok", result.get(1).get(24));//reqRecursive
@@ -206,7 +206,7 @@ public class TestScanDir {
 
         scanDirId = "invalid-1|test-5";
         result = scanDirService.readScanDirectory(null, scanDirId, null, "txt|ok", null, null);
-        Assert.assertEquals(result.size(), 1);
+        Assert.assertEquals(1, result.size());
 
         Assert.assertNull(result.get(0).get(25));//reqCsvMappingId
         Assert.assertNull(result.get(0).get(24));//reqRecursive
@@ -283,20 +283,20 @@ public class TestScanDir {
             scanDirService.getScanDirectory(null, scanDirId, null, null, AppConstant.TRUE, null);
             Assert.assertEquals(0, 1);
         } catch (AppException e) {
-            Assert.assertEquals(e.getErrorCode(), ErrorCodes.BAD_REQUEST_ERROR);
+            Assert.assertEquals(ErrorCodes.BAD_REQUEST_ERROR, e.getErrorCode());
         }
         try {
             scanDirService.getScanDirectory(null, null, null, null, AppConstant.TRUE, null);
             Assert.assertEquals(0, 1);
         } catch (AppException e) {
-            Assert.assertEquals(e.getErrorCode(), ErrorCodes.BAD_REQUEST_ERROR);
+            Assert.assertEquals(ErrorCodes.BAD_REQUEST_ERROR, e.getErrorCode());
         }
         String path = "D:\\workspace\\ftp-application\\FTP\\meta-data\\config-files\\file-mapping-config\\readme.txt";
         try {
             scanDirService.getScanDirectory(null, null, path, null, AppConstant.TRUE, null);
             Assert.assertEquals(0, 1);
         } catch (AppException e) {
-            Assert.assertEquals(e.getErrorCode(), ErrorCodes.BAD_REQUEST_ERROR);
+            Assert.assertEquals(ErrorCodes.BAD_REQUEST_ERROR, e.getErrorCode());
         }
         scanDirId = "meta-data-dir";
         result = scanDirService.getScanDirectory(null, scanDirId, null, null, AppConstant.TRUE, null);

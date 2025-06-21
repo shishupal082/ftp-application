@@ -1009,7 +1009,13 @@ Added support for adding multiple config files
     - read all config files and merge into FtpConfiguration config
 
 Command line argument
-java -jar meta-data/FTP-*-SNAPSHOT.jar <serverName> <isMySqlEnable> <config file 1> <config file 2> ...
+java -jar meta-data/FTP-*-SNAPSHOT.jar <server/standalone> <isMySqlEnable> <isStaticPath> <config file 1> <config file 2> ...
+
+isStaticPath: true/false
+
+true: config parameter path is static
+false: config parameter path is relative to working project directory
+
 
 Config parameter which are required in 1st config file
     - logFilePath
@@ -1411,9 +1417,6 @@ Project setup done in new Dell Inspiron 15 laptop
 8.0.2.014 @ 18.12.2023
 -----------------------
 - Minimum config parameter changed from 2 to 3
-- 3rd parameter will be (true/false)
-true: config parameter path is static
-false: config parameter path is relative to working project directory
 
 8.0.2.015 @ 29.12.2023
 -----------------------
@@ -1447,6 +1450,20 @@ Therefore, new build 8.0.2.017 initiated for all future changes
 -----------------------
 Added new api
     - /api/split_file?split_file_id=string
+
+8.0.2.017 @ 21.06.2025
+----------------------
+Added new api
+    - /api/update_excel_data_v2?requestId=excelId [GET]
+    - this api is used for reading big size file and directly saving into csv file
+
+- Minimum config parameter changed from 3 to 4
+Command line argument
+java -jar meta-data/FTP-*-SNAPSHOT.jar <server/standalone> <isMySqlEnable> <isStaticPath> <config file 1> <config file 2> ...
+
+standalone
+- Directly run apis and generate result in the console
+
 
 Future releases
 -------------------
