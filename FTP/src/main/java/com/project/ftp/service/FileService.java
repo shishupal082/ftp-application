@@ -346,12 +346,12 @@ public class FileService {
         if (file.isFile()) {
             if (file.delete()) {
                 fileDeleteStatus = true;
-                logger.info("File deleted: {}", filePath);
+                logger.info("deleteFileV2: File deleted: {}", filePath);
             } else {
-                logger.info("Error in file delete: {}", filePath);
+                logger.info("deleteFileV2: Error in file delete: {}", filePath);
             }
         } else {
-            logger.info("Requested in file delete: {}, does not exist.", filePath);
+            logger.info("deleteFileV2: file: {}, does not exist.", filePath);
         }
         return fileDeleteStatus;
     }

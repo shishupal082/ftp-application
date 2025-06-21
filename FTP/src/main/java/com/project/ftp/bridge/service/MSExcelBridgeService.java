@@ -160,12 +160,12 @@ public class MSExcelBridgeService {
                                             boolean isNewFile) throws AppException {
         File file1 = new File(srcFilepath);
         if (!file1.isFile()) {
-            logger.info("readAndWriteCsvFilePath: Source csv filepath: {} does not exist, {}", srcFilepath, excelDataConfigById);
+            logger.info("readAndWriteCsvFilePath: Source csv filepath: {} does not exist", srcFilepath);
             throw new AppException(ErrorCodes.FILE_NOT_FOUND);
         }
         File file2 = new File(destinationFilePath);
         if (!file2.isFile()) {
-            logger.info("readAndWriteCsvFilePath: Destination csv filepath: {} does not exist, {}", destinationFilePath, excelDataConfigById);
+            logger.info("readAndWriteCsvFilePath: Destination csv filepath: {} does not exist", destinationFilePath);
             throw new AppException(ErrorCodes.FILE_NOT_FOUND);
         }
         TextFileParser textFileParser = new TextFileParser();
@@ -331,7 +331,7 @@ public class MSExcelBridgeService {
             excelDataConfigById.setExcelConfig(null);
             excelDataConfigById.setCsvConfig(null);
             excelDataConfigById.setGsConfig(null);
-            logger.info("getExcelDataConfigByIdV1: excelDataConfigById for requestId: {}, {}", requestId, excelDataConfigById);
+            logger.info("getExcelDataConfigByIdV1: excelDataConfigById generated for requestId: {}", requestId);
         }
         return excelDataConfigById;
     }
@@ -348,7 +348,7 @@ public class MSExcelBridgeService {
             excelDataConfigById.setExcelConfig(null);
             excelDataConfigById.setCsvConfig(null);
             excelDataConfigById.setGsConfig(null);
-            logger.info("excelDataConfigById for requestId: {}, {}", requestId, excelDataConfigById);
+            logger.info("excelDataConfigById generated for requestId: {}", requestId);
         } else {
             logger.info("excelDataConfigById is null for request id: {}", requestId);
         }
