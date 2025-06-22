@@ -12,6 +12,7 @@ import com.project.ftp.obj.ApiResponse;
 import com.project.ftp.resources.ApiResource;
 import com.project.ftp.service.MSExcelService;
 import com.project.ftp.service.UserService;
+import io.dropwizard.db.DataSourceFactory;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -33,9 +34,10 @@ public class TestMSExcelService {
         if (isMysqlEnable) {
             arguments.add(AppConstant.TRUE);
         } else {
-            arguments.add("false");
+            arguments.add(AppConstant.FALSE);
         }
-        arguments.add("false");
+        arguments.add(AppConstant.FALSE);
+        arguments.add("meta-data/app_env_config_mysql_db.yml");
         arguments.add("meta-data/app_env_config_2.yml");
         arguments.add("meta-data/app_env_config_4.yml");
         return AppConfig.getAppConfigFromCmdArgs(arguments, AppConstant.SOURCE_TEST);

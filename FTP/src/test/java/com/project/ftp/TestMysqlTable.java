@@ -32,12 +32,16 @@ public class TestMysqlTable {
         appConfig.getFtpConfiguration().setTableDbConfigFilePath(null);
         tableService = appConfig.getTableService();
         try {
+            //tableConfigId: valid, ftpConfiguration.tableDbConfigFilePath: null
+            //Through CONFIG_ERROR due to ftpConfiguration.tableDbConfigFilePath
             tableService.getTableData(null, "get-users", null, null);
             Assert.assertEquals(0, 1);
         } catch (AppException e) {
             Assert.assertEquals(ErrorCodes.CONFIG_ERROR, e.getErrorCode());
         }
         try {
+            //tableConfigId: invalid, ftpConfiguration.tableDbConfigFilePath: null
+            //Through CONFIG_ERROR due to ftpConfiguration.tableDbConfigFilePath
             tableService.getTableData(null, "invalid-table-config-id", null, null);
             Assert.assertEquals(0, 1);
         } catch (AppException e) {

@@ -131,9 +131,9 @@ public class MSExcelBridgeService {
         }
         ArrayList<String> rowData2 = this.applyCsvConfigOnRowData(lineIndex,rowData,sourceFilePath,
                 sheetName,excelDataConfigById,uniqueStrings);
-        if (writerType.equals("destinationFile")) {
+        if (AppConstant.EXCEL_UPDATE_FILE.equals(writerType)) {
             return this.saveRowData(rowData2, writer, isNewFile);
-        } else if (writerType.equals("saveAsTableRow")) {
+        } else if (AppConstant.EXCEL_UPDATE_TABLE.equals(writerType)) {
             return this.callBackSaveTableRow(rowData2,excelDataConfigById, saveTableParameter);
         }
         return false;
@@ -149,7 +149,7 @@ public class MSExcelBridgeService {
             throw new AppException(ErrorCodes.FILE_NOT_FOUND);
         }
         TextFileParser textFileParser = new TextFileParser();
-        textFileParser.readAndWriteCsvData("saveAsTableRow",srcFilepath, null, false,
+        textFileParser.readAndWriteCsvData(AppConstant.EXCEL_UPDATE_TABLE,srcFilepath, null, false,
                 this, sheetName,excelDataConfigById,uniqueStrings,saveTableParameter);
         return true;
     }
@@ -172,7 +172,7 @@ public class MSExcelBridgeService {
         try {
             Writer writer = new BufferedWriter(new OutputStreamWriter(
                     new FileOutputStream(file2, true), AppConstant.UTF8));
-            textFileParser.readAndWriteCsvData("destinationFile",srcFilepath, writer, isNewFile, this,
+            textFileParser.readAndWriteCsvData(AppConstant.EXCEL_UPDATE_FILE,srcFilepath, writer, isNewFile, this,
                     sheetName,excelDataConfigById,uniqueStrings,null);
             writer.close();
         } catch (Exception e) {
@@ -193,7 +193,7 @@ public class MSExcelBridgeService {
             throw new AppException(ErrorCodes.FILE_NOT_FOUND);
         }
         MSExcelSheetParser msExcelSheetParser = new MSExcelSheetParser();
-        msExcelSheetParser.readExcelSheetDataV2("saveAsTableRow", null, false,
+        msExcelSheetParser.readExcelSheetDataV2(AppConstant.EXCEL_UPDATE_TABLE, null, false,
                 srcFilepath, sheetName, excelDataConfigById,
                 this,uniqueStrings,saveTableParameter);
         return true;
@@ -217,7 +217,7 @@ public class MSExcelBridgeService {
         try {
             Writer writer = new BufferedWriter(new OutputStreamWriter(
                     new FileOutputStream(file2, true), AppConstant.UTF8));
-            msExcelSheetParser.readExcelSheetDataV2("destinationFile", writer, isNewFile,
+            msExcelSheetParser.readExcelSheetDataV2(AppConstant.EXCEL_UPDATE_FILE, writer, isNewFile,
                     srcFilepath, sheetName, excelDataConfigById,
                     this,uniqueStrings,null);
             writer.close();

@@ -2,7 +2,6 @@ package com.project.ftp.service;
 
 import com.project.ftp.FtpConfiguration;
 import com.project.ftp.bridge.mysqlTable.SaveTableParameter;
-import com.project.ftp.bridge.mysqlTable.TableService;
 import com.project.ftp.bridge.obj.BridgeResponseSheetData;
 import com.project.ftp.bridge.obj.yamlObj.ExcelDataConfig;
 import com.project.ftp.bridge.obj.yamlObj.FileMappingConfig;

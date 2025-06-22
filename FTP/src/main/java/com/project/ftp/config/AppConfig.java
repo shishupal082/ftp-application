@@ -19,10 +19,12 @@ import com.project.ftp.obj.LoginUserDetails;
 import com.project.ftp.obj.PathInfo;
 import com.project.ftp.obj.yamlObj.DatabaseParams;
 import com.project.ftp.obj.yamlObj.FtlConfig;
+import com.project.ftp.obj.yamlObj.OracleDatabaseConfig;
 import com.project.ftp.obj.yamlObj.PageConfig404;
 import com.project.ftp.parser.YamlFileParser;
 import com.project.ftp.service.*;
 import com.project.ftp.session.SessionData;
+import io.dropwizard.db.DataSourceFactory;
 import io.dropwizard.hibernate.HibernateBundle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -420,8 +422,24 @@ public class AppConfig {
         }
         String isStaticPath = cmdArgument.get(AppConstant.CMD_LINE_ARG_MIN_SIZE-2);
         String firstConfigPath = cmdArgument.get(AppConstant.CMD_LINE_ARG_MIN_SIZE-1);
+        FtpConfiguration ftpConfiguration = getFirstFtpConfiguration(isStaticPath, firstConfigPath);
+        return getAppConfig(null,ftpConfiguration,cmdArgument,source);
+    }
+
+    private static FtpConfiguration getFirstFtpConfiguration(String isStaticPath, String firstConfigPath) {
         YamlFileParser yamlFileParser = new YamlFileParser();
         FtpConfiguration ftpConfiguration = yamlFileParser.getFtpConfigurationFromPath(isStaticPath, firstConfigPath);
-        return getAppConfig(null,ftpConfiguration,cmdArgument,source);
+        if (ftpConfiguration != null) {
+            OracleDatabaseConfig mysqlDatabaseConfigs = ftpConfiguration.getMysqlDatabaseConfigs();
+            if (mysqlDatabaseConfigs != null) {
+                DataSourceFactory dataSourceFactory = new DataSourceFactory();
+                dataSourceFactory.setDriverClass(mysqlDatabaseConfigs.getDriver());
+                dataSourceFactory.setUser(mysqlDatabaseConfigs.getUsername());
+                dataSourceFactory.setPassword(mysqlDatabaseConfigs.getPassword());
+                dataSourceFactory.setUrl(mysqlDatabaseConfigs.getUrl());
+                ftpConfiguration.setDataSourceFactory(dataSourceFactory);
+            }
+        }
+        return ftpConfiguration;
     }
 }

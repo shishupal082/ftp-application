@@ -57,8 +57,6 @@ public class TableService {
             throw new AppException(ErrorCodes.CONFIG_ERROR);
         }
         ArrayList<String> tableDbConfigs = ftpConfiguration.getTableDbConfigFilePath();
-//        String filepath = "D:/workspace/ftp-application/FTP/meta-data/config-files/table-db/table-db-config.yml";
-//        tableDbConfigs.add(filepath);
         YamlFileParser yamlFileParser = new YamlFileParser();
         TableFileConfiguration tableFileConfiguration;
         ArrayList<TableConfiguration> tableConfigurations;
@@ -348,9 +346,9 @@ public class TableService {
                         columnName.toString(), oldValue.toString(), newValue.toString());
             }
         }
-        if (!changeHistory.isEmpty()) {
-            logger.info("Change History: {}", changeHistory);
-        }
+//        if (!changeHistory.isEmpty()) {
+//            logger.info("Change History: {}", changeHistory);
+//        }
     }
     private TableUpdateEnum getNextAction(TableConfiguration tableConfiguration, HashMap<String, String> currentRowData,
                                  boolean updateIfFound, boolean maintainHistory, ArrayList<String> maintainHistoryExcludedColumn) {
@@ -425,6 +423,7 @@ public class TableService {
         }
         this.saveHistory(tableConfiguration.getDbType(), tableName, uniqueColumn, uniqueParameter, columnName,  oldValue,  newValue);
     }
+    //It will be fire callback after reading each row of data
     public boolean saveTableRowData(HashMap<String,String> rowData,
                                     SaveTableParameter saveTableParameter) throws AppException {
         if (rowData == null || saveTableParameter == null) {

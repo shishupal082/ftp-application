@@ -72,6 +72,7 @@ public class FtpConfiguration extends Configuration {
     @JsonProperty("database")
     private DataSourceFactory dataSourceFactory = new DataSourceFactory();
     private HashMap<String, OracleDatabaseConfig> oracleDatabaseConfigs;
+    private OracleDatabaseConfig mysqlDatabaseConfigs;
 
     public String getIndexPageReRoute() {
         return indexPageReRoute;
@@ -449,6 +450,14 @@ public class FtpConfiguration extends Configuration {
         this.oracleDatabaseConfigs = oracleDatabaseConfigs;
     }
 
+    public OracleDatabaseConfig getMysqlDatabaseConfigs() {
+        return mysqlDatabaseConfigs;
+    }
+
+    public void setMysqlDatabaseConfigs(OracleDatabaseConfig mysqlDatabaseConfigs) {
+        this.mysqlDatabaseConfigs = mysqlDatabaseConfigs;
+    }
+
     public void updateFtpConfig(final FtpConfiguration tempFtpConfiguration) {
         if (tempFtpConfiguration == null) {
             return;
@@ -634,6 +643,10 @@ public class FtpConfiguration extends Configuration {
         if (tempOracleDatabaseConfigs != null) {
             this.oracleDatabaseConfigs = tempOracleDatabaseConfigs;
         }
+        OracleDatabaseConfig tempMysqlDatabaseConfigs = tempFtpConfiguration.getMysqlDatabaseConfigs();
+        if (mysqlDatabaseConfigs != null) {
+            this.mysqlDatabaseConfigs = tempMysqlDatabaseConfigs;
+        }
     }
 
     @Override
@@ -685,6 +698,7 @@ public class FtpConfiguration extends Configuration {
                 ", socialLoginConfig=" + socialLoginConfig +
                 ", googleOAuthClientConfig=" + googleOAuthClientConfig +
                 ", oracleDatabaseConfigs=" + "*****" +
+                ", mysqlDatabaseConfigs=" + "*****" +
                 ", dataSourceFactory=" + "*****" +
                 '}';
     }

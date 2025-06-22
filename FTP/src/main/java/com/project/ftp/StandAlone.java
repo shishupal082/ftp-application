@@ -28,16 +28,23 @@ public class StandAlone {
             e.printStackTrace();
         }
     }
+    private void handleApiUpdateMysql(StandAloneConfig standAloneConfig, ArrayList<String> params) {
+        if (params == null || params.isEmpty()) {
+            logger.info("handleApiUpdateMysql: Invalid config: {}", standAloneConfig);
+            return;
+        }
+        apiResource.updateMySqlTableDataFromCsv(null, params.get(0));
+    }
     private void handleApiUpdateExcelDataV2(StandAloneConfig standAloneConfig, ArrayList<String> params) {
         if (params == null || params.isEmpty()) {
-            logger.info("Invalid update-excel-data-v2 config: {}", standAloneConfig);
+            logger.info("handleApiUpdateExcelDataV2: Invalid config: {}", standAloneConfig);
             return;
         }
         apiResource.updateMSExcelDataV2(null, params.get(0));
     }
     private void handleApiSplitFile(StandAloneConfig standAloneConfig, ArrayList<String> params) {
         if (params == null || params.isEmpty()) {
-            logger.info("Invalid split file config: {}", standAloneConfig);
+            logger.info("handleApiSplitFile: Invalid config: {}", standAloneConfig);
             return;
         }
         apiResource.splitFile(null, params.get(0));
@@ -57,14 +64,21 @@ public class StandAlone {
 //        String resource = standAloneConfig.getResource();
         String path = standAloneConfig.getPath();
         ArrayList<String> params = standAloneConfig.getParams();
-        if ("split_file".equals(path)) {
-            this.handleApiSplitFile(standAloneConfig, params);
-        } else if ("update_excel_data_v2".equals(path)) {
-            this.handleApiUpdateExcelDataV2(standAloneConfig, params);
-        } else {
-            logger.info("Invalid standAloneConfig: {}", standAloneConfig);
-            logger.info("Press any key to exit...");
+        switch (path) {
+            case AppConstant.API_update_mysql_table:
+                this.handleApiUpdateMysql(standAloneConfig, params);
+                break;
+            case AppConstant.API_update_excel_data_v2:
+                this.handleApiUpdateExcelDataV2(standAloneConfig, params);
+                break;
+            case AppConstant.API_split_file:
+                this.handleApiSplitFile(standAloneConfig, params);
+                break;
+            default:
+                logger.info("Invalid standAloneConfig: {}", standAloneConfig);
         }
+        logger.info("Press any key to exit...");
+        waitForInput();
     }
 
     private void waitForInput() {
