@@ -43,14 +43,14 @@ Sequence of operation
 - skipRowIndex
     - First skip row index is required to be executed
       otherwise row index will be changed (After skipEmptyRows operation)
-    - It is an OR operation
+    - It is OR operation
 - skipEmptyRows
-- skipRowCriteria
 - copyCellDataIndex
 - cellMapping & appendCellDataIndex
-- (11) mergeColumnConfig
-- removeColumnConfig
+- mergeColumnConfig (Details below)
 - uniqueEntry
+- skipRowCriteria (Details below)
+- removeColumnConfig
 
 cellMapping:
   - defaultCellData: String|now
@@ -73,6 +73,8 @@ mappingData1:
     regex: String
     subStringConfig: [start, length, end]
     dateRegex: String
+
+It is OR operations
 
 subStringConfig
 Here, start is startIndex and end is endIndex
@@ -151,7 +153,11 @@ cellData2 = subString of cellData2
     if regex == null and range == null
     cellData = cellData2
 
-(11)
 mergeColumnConfig: ArrayList<MergeColumnConfig>
 If condition is provided in the MergeColumnConfig
 then it will be executed only when condition is true
+
+
+skipRowCriteria
+  - It is AND operation
+  - It is shifted before removeColumnConfig and after cellMapping, so that complex filter operation can be achieved
