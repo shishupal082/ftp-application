@@ -707,7 +707,14 @@ public class ExcelToCsvDataConvertServiceV2 {
         if (regex != null && StaticService.isPatternMatching(cellData, regex, false)) {
             return true;
         }
-        return isEmpty != null && isEmpty && (cellData == null || cellData.isEmpty());
+        if (isEmpty != null) {
+            if (isEmpty) {
+                return cellData.isEmpty();
+            } else {
+                return !cellData.isEmpty();
+            }
+        }
+        return false;
     }
     private boolean isValidMergeColumnConfigCondition(ArrayList<String> rowData,
                                                       ArrayList<MergeConfigCondition> conditions) {
