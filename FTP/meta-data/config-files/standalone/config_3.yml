@@ -1,4 +1,12 @@
-resource: "api"
-path: "update_mysql_table_data_from_csv"
-params:
-  - "csv-mysql-update-smms_assets_list"
+standAloneConfig:
+  currentSequence: sequence_1
+  sequence:
+    sequence_1:
+      - id: id1
+        confirmationRequired: false
+  apiList:
+    id1:
+      resource: "api"
+      path: "update_mysql_table_data_from_csv"
+      params:
+        - "csv-mysql-update-smms_assets_list"

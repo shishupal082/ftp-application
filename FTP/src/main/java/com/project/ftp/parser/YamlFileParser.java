@@ -9,6 +9,7 @@ import com.project.ftp.bridge.obj.splitTextFile.SplitTextFileConfig;
 import com.project.ftp.bridge.obj.yamlObj.ExcelConfig;
 import com.project.ftp.bridge.obj.yamlObj.ExcelDataConfig;
 import com.project.ftp.bridge.obj.yamlObj.FileMappingConfig;
+import com.project.ftp.bridge.standalone.obj.StandAloneConfigObj;
 import com.project.ftp.config.AppConfig;
 import com.project.ftp.config.AppConstant;
 import com.project.ftp.exceptions.AppException;
@@ -308,19 +309,19 @@ public class YamlFileParser {
         }
         return pageConfig404;
     }
-    public StandAloneConfig getStandAloneConfig(String standAloneConfigPath) throws AppException {
+    public StandAloneConfigObj getStandAloneConfigObj(String standAloneConfigPath) throws AppException {
         if (standAloneConfigPath == null || standAloneConfigPath.isEmpty()) {
             logger.info("getStandAloneConfig: invalid path: {}", standAloneConfigPath);
             return null;
         }
-        StandAloneConfig standAloneConfig = null;
+        StandAloneConfigObj standAloneConfigObj = null;
         ObjectMapper objectMapper = new ObjectMapper(new YAMLFactory());
         try {
-            standAloneConfig = objectMapper.readValue(new File(standAloneConfigPath), StandAloneConfig.class);
+            standAloneConfigObj = objectMapper.readValue(new File(standAloneConfigPath), StandAloneConfigObj.class);
         } catch (IOException ioe) {
-            logger.info("getStandAloneConfig: IOE: for file: {}", standAloneConfigPath);
-            throw new AppException(ErrorCodes.CONFIG_ERROR);
+            logger.info("getStandAloneConfigObj: IOE: for file: {}", standAloneConfigPath);
+//            throw new AppException(ErrorCodes.CONFIG_ERROR);
         }
-        return standAloneConfig;
+        return standAloneConfigObj;
     }
 }

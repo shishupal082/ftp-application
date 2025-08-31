@@ -1,4 +1,12 @@
-resource: "api"
-path: "split_file"
-params:
-  - "split-csv-file"
+standAloneConfig:
+  currentSequence: sequence_1
+  sequence:
+    sequence_1:
+      - id: id1
+        confirmationRequired: false
+  apiList:
+    id1:
+      resource: "api"
+      path: "split_file"
+      params:
+        - "split-csv-file"

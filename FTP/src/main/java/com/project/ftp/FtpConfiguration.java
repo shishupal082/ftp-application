@@ -28,8 +28,8 @@ public class FtpConfiguration extends Configuration {
     private String assetsDir;
     private String fileMappingConfigFilePath;
     private String splitTextFileConfigPath;
-    private String standAloneConfigPath;
     private String scanDirConfigFilePath;
+    private ArrayList<String> standAloneConfigPath;
     private ArrayList<String> tableDbConfigFilePath;
     private String filenameFormat;
     private String instance;
@@ -138,11 +138,11 @@ public class FtpConfiguration extends Configuration {
         this.splitTextFileConfigPath = splitTextFileConfigPath;
     }
 
-    public String getStandAloneConfigPath() {
+    public ArrayList<String> getStandAloneConfigPath() {
         return standAloneConfigPath;
     }
 
-    public void setStandAloneConfigPath(String standAloneConfigPath) {
+    public void setStandAloneConfigPath(ArrayList<String> standAloneConfigPath) {
         this.standAloneConfigPath = standAloneConfigPath;
     }
 
@@ -495,7 +495,7 @@ public class FtpConfiguration extends Configuration {
         if (splitTextFileConfigPath != null) {
             this.splitTextFileConfigPath = splitTextFileConfigPath;
         }
-        String standAloneConfigPath = tempFtpConfiguration.getStandAloneConfigPath();
+        ArrayList<String> standAloneConfigPath = tempFtpConfiguration.getStandAloneConfigPath();
         if (standAloneConfigPath != null) {
             this.standAloneConfigPath = standAloneConfigPath;
         }
@@ -660,8 +660,8 @@ public class FtpConfiguration extends Configuration {
                 ", assetsDir='" + assetsDir + '\'' +
                 ", fileMappingConfigFilePath='" + fileMappingConfigFilePath + '\'' +
                 ", splitTextFileConfigPath='" + splitTextFileConfigPath + '\'' +
-                ", standAloneConfigPath='" + standAloneConfigPath + '\'' +
                 ", scanDirConfigFilePath='" + scanDirConfigFilePath + '\'' +
+                ", standAloneConfigPath='" + standAloneConfigPath +
                 ", tableDbConfigFilePath=" + tableDbConfigFilePath +
                 ", filenameFormat='" + filenameFormat + '\'' +
                 ", instance='" + instance + '\'' +

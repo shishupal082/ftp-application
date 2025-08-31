@@ -1,0 +1,30 @@
+standAloneConfig:
+  currentSequence: sequence_1
+  sequence:
+    sequence_1:
+      - id: id1
+        confirmationRequired: false
+    sequence_1_true:
+      - id: id1
+        confirmationRequired: true
+    sequence_2_1:
+      - id: id1
+        confirmationRequired: false
+      - id: id2
+        confirmationRequired: true
+    sequence_2_2:
+      - id: id1
+        confirmationRequired: true
+      - id: id2
+        confirmationRequired: true
+  apiList:
+    id1:
+      resource: "api"
+      path: "update_mysql_table_data_from_csv"
+      params:
+        - "csv-mysql-update-smms_assets_list"
+    id2:
+      resource: "api"
+      path: "update_mysql_table_data_from_csv"
+      params:
+        - "csv-mysql-update-smms_assets_list"

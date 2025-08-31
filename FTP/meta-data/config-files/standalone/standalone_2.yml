@@ -1,1 +1,2 @@
-standAloneConfigPath: "D:/workspace/ftp-application/FTP/meta-data/config-files/standalone/config_2.yml"
+standAloneConfigPath:
+  - "D:/workspace/ftp-application/FTP/meta-data/config-files/standalone/config_2.yml"

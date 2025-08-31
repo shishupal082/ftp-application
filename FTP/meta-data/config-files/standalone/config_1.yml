@@ -1,4 +1,12 @@
-resource: "api"
-path: "update_excel_data_v2"
-params:
-  - "csv-test-16"
+standAloneConfig:
+  currentSequence: sequence_1
+  sequence:
+    sequence_1:
+      - id: id1
+        confirmationRequired: false
+  apiList:
+    id1:
+      resource: "api"
+      path: "update_excel_data_v2"
+      params:
+        - "csv-test-16"

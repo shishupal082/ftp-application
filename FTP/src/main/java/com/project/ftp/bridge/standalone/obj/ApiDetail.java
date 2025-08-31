@@ -1,4 +1,4 @@
-package com.project.ftp.obj.yamlObj;
+package com.project.ftp.bridge.standalone.obj;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
@@ -6,10 +6,12 @@ import java.util.ArrayList;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 
-public class StandAloneConfig {
+
+public class ApiDetail {
     private String resource;
     private String path;
     private ArrayList<String> params;
+    private Boolean confirmationRequired;
 
     public String getResource() {
         return resource;
@@ -35,12 +37,21 @@ public class StandAloneConfig {
         this.params = params;
     }
 
+    public Boolean getConfirmationRequired() {
+        return confirmationRequired;
+    }
+
+    public void setConfirmationRequired(Boolean confirmationRequired) {
+        this.confirmationRequired = confirmationRequired;
+    }
+
     @Override
     public String toString() {
-        return "StandAloneConfig{" +
+        return "ApiDetail{" +
                 "resource='" + resource + '\'' +
                 ", path='" + path + '\'' +
                 ", params=" + params +
+                ", confirmationRequired=" + confirmationRequired +
                 '}';
     }
 }

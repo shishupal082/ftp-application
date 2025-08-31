@@ -1,10 +1,11 @@
 package com.project.ftp;
 
+import com.project.ftp.bridge.service.StandAloneService;
+import com.project.ftp.bridge.standalone.obj.ApiDetail;
+import com.project.ftp.bridge.standalone.obj.StandAloneConfig;
 import com.project.ftp.config.AppConfig;
 import com.project.ftp.config.AppConstant;
 import com.project.ftp.exceptions.AppException;
-import com.project.ftp.obj.yamlObj.StandAloneConfig;
-import com.project.ftp.parser.YamlFileParser;
 import com.project.ftp.resources.ApiResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,11 +16,12 @@ import java.util.Scanner;
 public class StandAlone {
     final static Logger logger = LoggerFactory.getLogger(StandAlone.class);
     private final ArrayList<String> cmdArguments;
+    private final StandAloneService standAloneService;
     private final AppConfig appConfig;
-    private final YamlFileParser yamlFileParser = new YamlFileParser();
     private ApiResource apiResource;
     public StandAlone(ArrayList<String> cmdArgument) {
         cmdArguments = cmdArgument;
+        standAloneService = new StandAloneService();
         appConfig = AppConfig.getAppConfigFromCmdArgs(cmdArgument,AppConstant.SOURCE_STANDALONE);
         try {
             apiResource = new ApiResource(appConfig);
@@ -28,26 +30,63 @@ public class StandAlone {
             e.printStackTrace();
         }
     }
-    private void handleApiUpdateMysql(StandAloneConfig standAloneConfig, ArrayList<String> params) {
+    private void handleApiUpdateMysql(ApiDetail apiDetail, ArrayList<String> params) {
         if (params == null || params.isEmpty()) {
-            logger.info("handleApiUpdateMysql: Invalid config: {}", standAloneConfig);
+            logger.info("handleApiUpdateMysql: Invalid config: {}", apiDetail);
             return;
         }
         apiResource.updateMySqlTableDataFromCsv(null, params.get(0));
     }
-    private void handleApiUpdateExcelDataV2(StandAloneConfig standAloneConfig, ArrayList<String> params) {
+    private void handleApiUpdateExcelDataV2(ApiDetail apiDetail, ArrayList<String> params) {
         if (params == null || params.isEmpty()) {
-            logger.info("handleApiUpdateExcelDataV2: Invalid config: {}", standAloneConfig);
+            logger.info("handleApiUpdateExcelDataV2: Invalid config: {}", apiDetail);
             return;
         }
         apiResource.updateMSExcelDataV2(null, params.get(0));
     }
-    private void handleApiSplitFile(StandAloneConfig standAloneConfig, ArrayList<String> params) {
+    private void handleApiSplitFile(ApiDetail apiDetail, ArrayList<String> params) {
         if (params == null || params.isEmpty()) {
-            logger.info("handleApiSplitFile: Invalid config: {}", standAloneConfig);
+            logger.info("handleApiSplitFile: Invalid config: {}", apiDetail);
             return;
         }
         apiResource.splitFile(null, params.get(0));
+    }
+    private void askConfirmation(ApiDetail apiDetail) {
+        if (apiDetail == null) {
+            return;
+        }
+        Boolean confirmationRequired = apiDetail.getConfirmationRequired();
+        if (confirmationRequired == null) {
+            return;
+        }
+        if (confirmationRequired) {
+            logger.info("Press any key to continue...");
+            waitForInput();
+        }
+    }
+    private void handleApiSequentially(ApiDetail apiDetail) {
+        if (apiDetail == null) {
+            logger.info("Invalid apiDetail: null");
+            return;
+        }
+        String path = apiDetail.getPath();
+        ArrayList<String> params = apiDetail.getParams();
+        switch (path) {
+            case AppConstant.API_update_mysql_table:
+                this.handleApiUpdateMysql(apiDetail, params);
+                this.askConfirmation(apiDetail);
+                break;
+            case AppConstant.API_update_excel_data_v2:
+                this.handleApiUpdateExcelDataV2(apiDetail, params);
+                this.askConfirmation(apiDetail);
+                break;
+            case AppConstant.API_split_file:
+                this.handleApiSplitFile(apiDetail, params);
+                this.askConfirmation(apiDetail);
+                break;
+            default:
+                logger.info("Invalid apiDetail: {}", apiDetail);
+        }
     }
     public void handleRequest() {
         if (appConfig == null || apiResource == null) {
@@ -56,26 +95,21 @@ public class StandAlone {
             return;
         }
         FtpConfiguration ftpConfiguration = appConfig.getFtpConfiguration();
-        StandAloneConfig standAloneConfig = yamlFileParser.getStandAloneConfig(ftpConfiguration.getStandAloneConfigPath());
+        ArrayList<String> standAloneConfigPath = ftpConfiguration.getStandAloneConfigPath();
+        StandAloneConfig standAloneConfig = standAloneService.getStandaloneConfig(standAloneConfigPath);
         if (standAloneConfig == null) {
+            logger.info("standAloneConfig is null, Press any key to exit...");
             waitForInput();
             return;
         }
-//        String resource = standAloneConfig.getResource();
-        String path = standAloneConfig.getPath();
-        ArrayList<String> params = standAloneConfig.getParams();
-        switch (path) {
-            case AppConstant.API_update_mysql_table:
-                this.handleApiUpdateMysql(standAloneConfig, params);
-                break;
-            case AppConstant.API_update_excel_data_v2:
-                this.handleApiUpdateExcelDataV2(standAloneConfig, params);
-                break;
-            case AppConstant.API_split_file:
-                this.handleApiSplitFile(standAloneConfig, params);
-                break;
-            default:
-                logger.info("Invalid standAloneConfig: {}", standAloneConfig);
+        ArrayList<ApiDetail> currentApiList = standAloneService.getApiList(standAloneConfig);
+        if (currentApiList == null) {
+            logger.info("apiList is null, Press any key to exit...");
+            waitForInput();
+            return;
+        }
+        for (ApiDetail currentApi: currentApiList) {
+            this.handleApiSequentially(currentApi);
         }
         logger.info("Press any key to exit...");
         waitForInput();
