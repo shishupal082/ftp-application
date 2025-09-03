@@ -158,7 +158,8 @@ public class YamlFileParser {
             excelConfig = objectMapper.readValue(new File(staticPath), ExcelConfig.class);
         } catch (IOException ioe) {
             logger.info("getExcelDataConfigFromPath: IOE: for file: {}", staticPath);
-            throw new AppException(ErrorCodes.CONFIG_ERROR);
+//            throw new AppException(ErrorCodes.CONFIG_ERROR);
+            return null;
         }
         return excelConfig.getExcelDataConfig();
     }
