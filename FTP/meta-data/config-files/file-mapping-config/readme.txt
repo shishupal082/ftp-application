@@ -37,7 +37,8 @@ Sequence of operation
 - validFor: ["gs-csv-test-12-direct"]
 - allowedApi: ["update_excel_data_v2","update_excel_data","get_excel_data"]
 - dateFormat, timeFormat and dateTimeFormat [Only used for excel sheet reading not for google sheet]
-- it will change \n to ; and , to ...
+- formatCellData
+    it will change \n to ; and , to ...
 - replaceCellString
     - It is used before other cell operation, so that if after cell replace empty row is there that can be removed
 - skipRowIndex
@@ -66,7 +67,7 @@ cellData = defaultCellData
 
 mappingData1:
   - col_index: Integer (Row index, -4 to ...)
-    value: String
+    value: String (If String="ValueSameAsColIndexData" value will be replaced with value of col_index)
     range: [String1, String2]
     notInRange: [String1, String2]
     is_empty: Boolean

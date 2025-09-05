@@ -70,8 +70,6 @@ public class AppConstant {
     public static final String FromEnvConfig = "FromEnvConfig";
     public static final String PDF_AUTHOR = "Project Author";
     public static final String PDF_CREATOR = "Project Creator";
-    public static final String EmptyParagraph = " ";
-    public static final String EmptyStr = "";
     public static final String EXPIRED_USER_SESSION = "EXPIRED_USER_SESSION";
     public static final String REQUEST_USER_AGENT = "User-Agent";
     public static final String ORIGIN = "origin";
@@ -124,8 +122,13 @@ public class AppConstant {
     public static final int CMD_LINE_ARG_MIN_SIZE = 4;
 
     public static final int maxLengthLogDisplay = 512;
+
+    public static final String EmptyParagraph = " ";
+    public static final String EmptyStr = "";
     public static final String commaDelimater = ",";
     public static final String colonDelimater = ";";
+    public static final String threeDotDelimater = "...";
+    public static final String ValueSameAsColIndexData = "ValueSameAsColIndexData";
     public static final String NEW_LINE_STRING = "" + CR + LF;
 }
 

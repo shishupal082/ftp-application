@@ -45,14 +45,17 @@ public class ExcelToCsvDataConvertServiceV2 {
         }
         return result;
     }
-    private String applyBasicFormatOnCellData(String cellData) {
+    private String applyBasicFormatOnCellData(String cellData, boolean isOnlyTrim) {
         if (cellData == null) {
             return null;
         }
-        cellData = cellData.replaceAll("\r\n", ";");
-        cellData = cellData.replaceAll("\n", ";");
-        cellData = cellData.replaceAll("\r", "");
-        cellData = cellData.replaceAll(",", "...");
+        if (isOnlyTrim) {
+            return cellData.trim();
+        }
+        cellData = cellData.replaceAll("\r\n", AppConstant.colonDelimater);
+        cellData = cellData.replaceAll("\n", AppConstant.colonDelimater);
+        cellData = cellData.replaceAll("\r", AppConstant.EmptyStr);
+        cellData = cellData.replaceAll(AppConstant.commaDelimater, AppConstant.threeDotDelimater);
         return cellData.trim();
     }
     public ArrayList<ArrayList<String>> formatCellData(ArrayList<ArrayList<String>> sheetData) {
@@ -70,7 +73,7 @@ public class ExcelToCsvDataConvertServiceV2 {
                     for(i=0; i< rowData.size(); i++) {
                         cellData = rowData.get(i);
                         if (cellData != null) {
-                            cellData = applyBasicFormatOnCellData(cellData);
+                            cellData = applyBasicFormatOnCellData(cellData, false);
                             if (!cellData.isEmpty()) {
                                 lastValidIndex = i;
                             }
@@ -513,6 +516,9 @@ public class ExcelToCsvDataConvertServiceV2 {
         ArrayList<Integer> subStringConfig = cellMappingData.getSubStringConfig();
         String dateRegex = cellMappingData.getDateRegex();
         String oldDateText;
+        if (AppConstant.ValueSameAsColIndexData.equals(value)) {
+            value = cellData2;
+        }
         if (range != null && range.contains(cellData2)) {
             cellData = value;
             if (subStringConfig != null) {
@@ -524,6 +530,8 @@ public class ExcelToCsvDataConvertServiceV2 {
                 cellData = this.getSubStringTextFromCellData(subStringConfig, cellData2);
             }
         } else if (isEmpty != null && isEmpty && (cellData2==null || cellData2.isEmpty())) {
+            cellData = value;
+        } else if (isEmpty != null && !isEmpty && cellData2!=null && !cellData2.isEmpty()) {
             cellData = value;
         } else if (regex != null && StaticService.isPatternMatching(cellData2, regex, false)) {
             if (dateRegex != null) {
@@ -690,7 +698,7 @@ public class ExcelToCsvDataConvertServiceV2 {
                 }
                 if (index < rowData.size()) {
                     finalCellData = StaticService.replaceString(rowData.get(index), find, replace);
-                    finalCellData = this.applyBasicFormatOnCellData(finalCellData);
+                    finalCellData = this.applyBasicFormatOnCellData(finalCellData, true);
                     rowData.set(index, finalCellData);
                 }
             }
