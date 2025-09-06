@@ -1,0 +1,7 @@
+excelDataConfig:        
+  yml-config-app-id:      
+    allowedApi:    
+      - "update_excel_data_v2"
+    appendCellDataIndex:    
+      - [0,-1]  
+    removeColumnConfig: [0,1,2]    

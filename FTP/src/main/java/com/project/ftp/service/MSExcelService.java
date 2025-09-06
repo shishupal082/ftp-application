@@ -76,7 +76,7 @@ public class MSExcelService {
         ArrayList<String> csvData = new ArrayList<>();
         for(ArrayList<String> rowData: sheetData) {
             if (rowData != null) {
-                csvData.add(strUtils.joinArrayList(rowData, AppConstant.commaDelimater));
+                csvData.add(strUtils.joinArrayList(rowData, AppConstant.commaDelimiter));
             }
         }
         if (copyOldData) {
@@ -286,7 +286,7 @@ public class MSExcelService {
         ArrayList<String> result = new ArrayList<>();
         if (sheetData != null) {
             for(ArrayList<String> rowData: sheetData) {
-                result.add(strUtils.joinArrayList(rowData, AppConstant.commaDelimater));
+                result.add(strUtils.joinArrayList(rowData, AppConstant.commaDelimiter));
             }
         }
         return strUtils.joinArrayList(result, AppConstant.NEW_LINE_STRING);

@@ -59,7 +59,7 @@ public class AppView extends View {
             }
         }
         if (allowedAuthPagesList != null) {
-            allowedAuthPages = String.join(AppConstant.colonDelimater, allowedAuthPagesList);
+            allowedAuthPages = String.join(AppConstant.colonDelimiter, allowedAuthPagesList);
         } else {
             allowedAuthPages = "";
         }

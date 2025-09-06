@@ -436,7 +436,7 @@ public class ScanDirService {
         }
         sheetData = this.applyCsvConfig(request, sheetData, requestScanDir.getFinalCsvMappingId());
         for(ArrayList<String> rowData: sheetData) {
-            result.add(strUtils.joinArrayList(rowData, AppConstant.commaDelimater));
+            result.add(strUtils.joinArrayList(rowData, AppConstant.commaDelimiter));
         }
         return strUtils.joinArrayList(result, AppConstant.NEW_LINE_STRING);
     }
@@ -471,7 +471,7 @@ public class ScanDirService {
         }
         sheetData = this.applyCsvConfig(request, sheetData, requestScanDir.getFinalCsvMappingId());
         for(ArrayList<String> rowData: sheetData) {
-            result.add(strUtils.joinArrayList(rowData, AppConstant.commaDelimater));
+            result.add(strUtils.joinArrayList(rowData, AppConstant.commaDelimiter));
         }
         return strUtils.joinArrayList(result, AppConstant.NEW_LINE_STRING);
     }

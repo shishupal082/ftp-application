@@ -13,13 +13,10 @@ public class ExcelDataConfig {
     private String dateFormat;
     private String timeFormat;
     private String dateTimeFormat;
+    private String commaReplacer;
     private ArrayList<String> tableMappingIndex;
     private ArrayList<String> validFor;
     private ArrayList<String> allowedApi;
-    private ArrayList<ExcelFileConfig> excelConfig;
-    private ArrayList<ExcelFileConfig> csvConfig;
-    private ArrayList<ExcelFileConfig> gsConfig;
-    private ArrayList<ExcelFileConfig> mysqlConfig;
     private MysqlCsvDataConfig mysqlCsvDataConfig;
     private ArrayList<CellMapping> cellMapping;
     private ArrayList<ReplaceCellDataMapping> replaceCellString;
@@ -30,6 +27,12 @@ public class ExcelDataConfig {
     private ArrayList<MergeColumnConfig> mergeColumnConfig;
     private ArrayList<Integer> removeColumnConfig;
     private ArrayList<Integer> uniqueEntry;
+    //Locally generated
+
+    private ArrayList<ExcelFileConfig> excelConfig;
+    private ArrayList<ExcelFileConfig> csvConfig;
+    private ArrayList<ExcelFileConfig> gsConfig;
+    private ArrayList<ExcelFileConfig> mysqlConfig;
 
     public String getId() {
         return id;
@@ -47,10 +50,7 @@ public class ExcelDataConfig {
         this.copyOldData = copyOldData;
     }
 
-    public Boolean isSkipEmptyRows() {
-        if (skipEmptyRows == null) {
-            return true;
-        }
+    public Boolean getSkipEmptyRows() {
         return skipEmptyRows;
     }
 
@@ -82,6 +82,14 @@ public class ExcelDataConfig {
         this.dateTimeFormat = dateTimeFormat;
     }
 
+    public String getCommaReplacer() {
+        return commaReplacer;
+    }
+
+    public void setCommaReplacer(String commaReplacer) {
+        this.commaReplacer = commaReplacer;
+    }
+
     public ArrayList<String> getTableMappingIndex() {
         return tableMappingIndex;
     }
@@ -104,38 +112,6 @@ public class ExcelDataConfig {
 
     public void setAllowedApi(ArrayList<String> allowedApi) {
         this.allowedApi = allowedApi;
-    }
-
-    public ArrayList<ExcelFileConfig> getExcelConfig() {
-        return excelConfig;
-    }
-
-    public void setExcelConfig(ArrayList<ExcelFileConfig> excelConfig) {
-        this.excelConfig = excelConfig;
-    }
-
-    public ArrayList<ExcelFileConfig> getCsvConfig() {
-        return csvConfig;
-    }
-
-    public void setCsvConfig(ArrayList<ExcelFileConfig> csvConfig) {
-        this.csvConfig = csvConfig;
-    }
-
-    public ArrayList<ExcelFileConfig> getGsConfig() {
-        return gsConfig;
-    }
-
-    public void setGsConfig(ArrayList<ExcelFileConfig> gsConfig) {
-        this.gsConfig = gsConfig;
-    }
-
-    public ArrayList<ExcelFileConfig> getMysqlConfig() {
-        return mysqlConfig;
-    }
-
-    public void setMysqlConfig(ArrayList<ExcelFileConfig> mysqlConfig) {
-        this.mysqlConfig = mysqlConfig;
     }
 
     public MysqlCsvDataConfig getMysqlCsvDataConfig() {
@@ -218,6 +194,38 @@ public class ExcelDataConfig {
         this.uniqueEntry = uniqueEntry;
     }
 
+    public ArrayList<ExcelFileConfig> getExcelConfig() {
+        return excelConfig;
+    }
+
+    public void setExcelConfig(ArrayList<ExcelFileConfig> excelConfig) {
+        this.excelConfig = excelConfig;
+    }
+
+    public ArrayList<ExcelFileConfig> getCsvConfig() {
+        return csvConfig;
+    }
+
+    public void setCsvConfig(ArrayList<ExcelFileConfig> csvConfig) {
+        this.csvConfig = csvConfig;
+    }
+
+    public ArrayList<ExcelFileConfig> getGsConfig() {
+        return gsConfig;
+    }
+
+    public void setGsConfig(ArrayList<ExcelFileConfig> gsConfig) {
+        this.gsConfig = gsConfig;
+    }
+
+    public ArrayList<ExcelFileConfig> getMysqlConfig() {
+        return mysqlConfig;
+    }
+
+    public void setMysqlConfig(ArrayList<ExcelFileConfig> mysqlConfig) {
+        this.mysqlConfig = mysqlConfig;
+    }
+
     @Override
     public String toString() {
         return "ExcelDataConfig{" +
@@ -227,13 +235,10 @@ public class ExcelDataConfig {
                 ", dateFormat='" + dateFormat + '\'' +
                 ", timeFormat='" + timeFormat + '\'' +
                 ", dateTimeFormat='" + dateTimeFormat + '\'' +
+                ", commaReplacer='" + commaReplacer + '\'' +
                 ", tableMappingIndex=" + tableMappingIndex +
                 ", validFor=" + validFor +
                 ", allowedApi=" + allowedApi +
-                ", excelConfig=" + excelConfig +
-                ", csvConfig=" + csvConfig +
-                ", gsConfig=" + gsConfig +
-                ", mysqlConfig=" + mysqlConfig +
                 ", mysqlCsvDataConfig=" + mysqlCsvDataConfig +
                 ", cellMapping=" + cellMapping +
                 ", replaceCellString=" + replaceCellString +
@@ -244,6 +249,10 @@ public class ExcelDataConfig {
                 ", mergeColumnConfig=" + mergeColumnConfig +
                 ", removeColumnConfig=" + removeColumnConfig +
                 ", uniqueEntry=" + uniqueEntry +
+                ", excelConfig=" + excelConfig +
+                ", csvConfig=" + csvConfig +
+                ", gsConfig=" + gsConfig +
+                ", mysqlConfig=" + mysqlConfig +
                 '}';
     }
 }

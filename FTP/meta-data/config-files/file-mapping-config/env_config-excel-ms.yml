@@ -400,3 +400,51 @@ excelDataConfig:
           - col_index: 0
             value: "Cable"
             regex: "24 Fiber optical fiber Cable"
+  csv-test-17:
+    commaReplacer: ","
+    mergeColumnConfig:
+      - finalIndex: 0
+        sourceIndex: [0,1,2,3,4]
+    removeColumnConfig: [1,2,3,4]
+    cellMapping:
+      - defaultCellData: ""
+        col_index: 0
+        rewrite: true
+        mappingData:
+          - col_index: 0
+            value: "  "
+            is_empty: true
+      - defaultCellData: ""
+        col_index: 1
+        rewrite: true
+        mappingData:
+          - col_index: 1
+            value: "  "
+            is_empty: true
+      - defaultCellData: ""
+        col_index: 2
+        rewrite: true
+        mappingData:
+          - col_index: 2
+            value: "  "
+            is_empty: true
+      - defaultCellData: ""
+        col_index: 3
+        rewrite: true
+        mappingData:
+          - col_index: 3
+            value: "  "
+            is_empty: true
+          - col_index: 3
+            value: "- "
+            range: ["-"]
+      - defaultCellData: ""
+        col_index: 4
+        rewrite: true
+        mappingData:
+          - col_index: 4
+            value: "  "
+            is_empty: true
+          - col_index: 4
+            value: "- "
+            range: ["-"]

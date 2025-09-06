@@ -5,3 +5,5 @@ excel-data-id-002-and-004,D:/workspace/project/nodejs/excel/test/test_data.xlsx,
 csv-test-02,D:/workspace/ftp-application/FTP/meta-data/test-data/test-data/01-source-csv.csv,,D:/workspace/ftp-application/FTP/meta-data/test-data/test-data/01-test-02-destination-csv.csv
 csv-test-03,D:/workspace/ftp-application/FTP/meta-data/test-data/test-data/01-source-csv.csv,any-thing,D:/workspace/ftp-application/FTP/meta-data/test-data/test-data/01-test-03-destination-csv.csv
 csv-test-15-06,D:/workspace/ftp-application/FTP/meta-data/test-data/test-data/06-test-source-xlsx.xlsx,Sheet1
+csv-test-17,D:/workspace/ftp-application/FTP/meta-data/test-data/test-data/06-test-source-xlsx.xlsx,yml-data,D:/workspace/ftp-application/FTP/meta-data/test-data/test-data/06-test-17-yml-data.yml
+

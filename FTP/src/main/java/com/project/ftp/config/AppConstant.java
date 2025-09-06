@@ -125,10 +125,11 @@ public class AppConstant {
 
     public static final String EmptyParagraph = " ";
     public static final String EmptyStr = "";
-    public static final String commaDelimater = ",";
-    public static final String colonDelimater = ";";
-    public static final String threeDotDelimater = "...";
+    public static final String commaDelimiter = ",";
+    public static final String colonDelimiter = ";";
+    public static final String threeDotDelimiter = "...";
     public static final String ValueSameAsColIndexData = "ValueSameAsColIndexData";
+    public static final String ValueSameAsColIndexData2 = "ValueSameAsColIndexData2";
     public static final String NEW_LINE_STRING = "" + CR + LF;
 }
 
