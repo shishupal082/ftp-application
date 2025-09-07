@@ -119,7 +119,7 @@ public class TestScanDir {
         Assert.assertEquals(19, pathInfoScanResults.size());
         recursive = "true";
         pathInfoScanResults = scanDirService.readScanDirectory(null, scanDirId, null, null, recursive, null);
-        Assert.assertEquals(56, pathInfoScanResults.size());
+        Assert.assertEquals(57, pathInfoScanResults.size());
         scanDirId = "workspace-ftp-empty-folder";
         recursive = "true";
         pathInfoScanResults = scanDirService.readScanDirectory(null, scanDirId, null, null, recursive, null);
