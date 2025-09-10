@@ -7,6 +7,7 @@ import com.project.ftp.bridge.obj.yamlObj.ExcelDataConfig;
 import com.project.ftp.bridge.obj.yamlObj.FileMappingConfig;
 import com.project.ftp.bridge.service.MSExcelBridgeService;
 import com.project.ftp.common.StrUtils;
+import com.project.ftp.config.ApiIdentifier;
 import com.project.ftp.config.AppConfig;
 import com.project.ftp.config.AppConstant;
 import com.project.ftp.event.EventTracking;
@@ -253,7 +254,7 @@ public class MSExcelService {
     }
     public ArrayList<BridgeResponseSheetData> getMSExcelSheetData(HttpServletRequest request, String requestId) throws AppException {
         ArrayList<ExcelDataConfig> excelDataConfigs = this.getActualMSExcelSheetDataConfig(request, requestId, true);
-        this.isApiAllowed(excelDataConfigs,AppConstant.API_get_excel_data);
+        this.isApiAllowed(excelDataConfigs, ApiIdentifier.GET_EXCEL_DATA.getApiName());
         return this.getActualMSExcelSheetData(request, excelDataConfigs, false);
     }
     public ArrayList<ArrayList<String>> getMSExcelSheetDataArray(HttpServletRequest request, String requestId) throws AppException {
@@ -268,7 +269,7 @@ public class MSExcelService {
     }
     public ArrayList<HashMap<String, String>> getMSExcelSheetDataJson(HttpServletRequest request, String requestId) throws AppException {
         ArrayList<ExcelDataConfig> excelDataConfigs = this.getActualMSExcelSheetDataConfig(request, requestId, true);
-        this.isApiAllowed(excelDataConfigs,AppConstant.API_get_excel_data);
+        this.isApiAllowed(excelDataConfigs, ApiIdentifier.GET_EXCEL_DATA.getApiName());
         ArrayList<BridgeResponseSheetData> bridgeResponseSheetData = this.getActualMSExcelSheetData(request, excelDataConfigs, true);
         ArrayList<HashMap<String, String>> result = new ArrayList<>();
         ArrayList<String> tableIndex;
@@ -301,7 +302,7 @@ public class MSExcelService {
     }
     public ApiResponse updateMSExcelSheetData(HttpServletRequest request, String requestId) throws AppException {
         ArrayList<ExcelDataConfig> excelDataConfigs = this.getActualMSExcelSheetDataConfig(request, requestId, true);
-        this.isApiAllowed(excelDataConfigs,AppConstant.API_update_excel_data);
+        this.isApiAllowed(excelDataConfigs, ApiIdentifier.UPDATE_EXCEL_DATA.getApiName());
         ArrayList<BridgeResponseSheetData> response = this.getActualMSExcelSheetData(request, excelDataConfigs, false);
         ArrayList<String> tempSavedFilePath = new ArrayList<>();
         for (BridgeResponseSheetData bridgeResponseSheetData: response) {
@@ -312,7 +313,7 @@ public class MSExcelService {
     public ApiResponse updateMSExcelSheetDataV2(HttpServletRequest request, String requestId,
                                                 SaveTableParameter saveTableParameter) throws AppException {
         ArrayList<ExcelDataConfig> excelDataConfigs = this.getActualMSExcelSheetDataConfig(request, requestId, true);
-        this.isApiAllowed(excelDataConfigs,AppConstant.API_update_excel_data_v2);
+        this.isApiAllowed(excelDataConfigs, ApiIdentifier.UPDATE_EXCEL_DATA_V2.getApiName());
         this.updateActualMSExcelSheetData(request, excelDataConfigs, saveTableParameter);
         return new ApiResponse(AppConstant.SUCCESS);
     }

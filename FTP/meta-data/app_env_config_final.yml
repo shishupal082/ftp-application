@@ -166,6 +166,117 @@ guestEnable: false
 androidCheckEnable: false
 # Only for development purpose
 
+apiAuthorisationConfig:
+  get_users:
+    - isLogin
+  get_related_users_data:
+    - isLogin
+  get_related_users_data_v2:
+    - isLogin
+  delete_file:
+    - isLogin
+  get_files_info:
+    - isLogin
+  get_files_info_by_filename_pattern:
+    - isLogin
+  get_path_info:
+    - isLogin
+  get_database_files_info:
+    - isLogin
+  get_table_data:
+    - isLogin
+  get_table_data_v2:
+    - isLogin
+  get_current_user_files_info:
+    - isLogin
+  get_app_config:
+    - isLogin
+  get_session_config:
+    - isLogin
+  upload_file:
+    - isLogin
+  add_text:
+    - isLogin
+  add_text_v2:
+    - isLogin
+  delete_text:
+    - isLogin
+  get_uploaded_csv_data:
+    - isLogin
+  get_uploaded_data_by_filename_pattern:
+    - isLogin
+  login_user:
+    - isLogin
+  login_other_user:
+    - isLogin
+  login_social:
+    - isLogin
+  register_user:
+    - isLogin
+  get_login_user_details:
+    - isLogin
+  change_password:
+    - isLogin
+  forgot_password:
+    - isLogin
+  create_password:
+    - isLogin
+  reset_count:
+    - isLogin
+  update_config:
+    - isLogin
+  aes_encrypt:
+    - isLogin
+  aes_decrypt:
+    - isLogin
+  md5_encrypt:
+    - isLogin
+  verify_permission:
+    - isLogin
+  get_roles_config:
+    - isLogin
+  call_tcp:
+    - isLogin
+  get_excel_data_config:
+    - isLogin
+  get_excel_data:
+    - isLogin
+  get_excel_data_json:
+    - isLogin
+  get_excel_data_csv:
+    - isLogin
+  update_excel_data:
+    - isLogin
+  update_excel_data_v2:
+    - isLogin
+  get_scan_dir_config:
+    - isLogin
+  read_scan_dir:
+    - isLogin
+  read_scan_dir_json:
+    - isLogin
+  read_scan_dir_csv:
+    - isLogin
+  update_scan_dir:
+    - isLogin
+  get_scan_dir:
+    - isLogin
+  get_scan_dir_json:
+    - isLogin
+  get_scan_dir_csv:
+    - isLogin
+  get_mysql_table_data:
+    - isLogin
+  update_mysql_table_data_from_csv:
+    - isLogin
+  get_single_thread_status:
+    - isLogin
+  stop_single_thread:
+    - isLogin
+  split_file:
+    - isLogin
+
+
 tempConfig:
   orgUsername: Username
   username: Username

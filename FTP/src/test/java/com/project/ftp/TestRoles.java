@@ -5,11 +5,14 @@ import com.project.ftp.bridge.roles.obj.Roles;
 import com.project.ftp.bridge.roles.service.ExpressionEvaluator;
 import com.project.ftp.bridge.roles.service.RolesFileParser;
 import com.project.ftp.bridge.roles.service.RolesService;
+import com.project.ftp.config.ApiIdentifier;
 import com.project.ftp.service.StaticService;
 import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class TestRoles {
     private final ExpressionEvaluator testRoles = new ExpressionEvaluator();
@@ -140,5 +143,12 @@ public class TestRoles {
         Assert.assertFalse(rolesService.isRoleAuthorised("isAddTextEnableNotFound", "username"));
 
         Assert.assertEquals("((admin|dev)|(admin|dev))", rolesService.getRolesByApiName("isAdminOrDevUser"));
+    }
+
+    @Test
+    public void testAuthorisationV1() {
+        List<ApiIdentifier> list = Arrays.asList(ApiIdentifier.values());
+        ArrayList<ApiIdentifier> apiIdentifiers = new ArrayList<>(list);
+        Assert.assertEquals(54, apiIdentifiers.size());
     }
 }

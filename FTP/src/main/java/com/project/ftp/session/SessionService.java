@@ -26,7 +26,7 @@ public class SessionService {
     final SysUtils sysUtils = new SysUtils();
     public SessionService(final UserService userService, final AppConfig appConfig) {
         this.appConfig = appConfig;
-        this.authService = new AuthService(userService);
+        this.authService = new AuthService(userService, appConfig);
     }
     private SessionData getCurrentSessionData(HttpServletRequest request) {
         String sessionId = getSessionId(request);
@@ -152,7 +152,7 @@ public class SessionService {
     }
     public void loginUser(HttpServletRequest request, String username, String orgUsername) throws AppException {
         if (username == null || username.isEmpty()) {
-            logger.info("userLogin request username is incorrect: {}", username);
+            logger.info("loginUser: userLogin request username is incorrect: {}", username);
             throw new AppException(ErrorCodes.BAD_REQUEST_ERROR);
         }
         if (StaticService.isInValidString((orgUsername))) {
@@ -170,7 +170,7 @@ public class SessionService {
     }
     public void loginOtherUser(HttpServletRequest request, String username) throws AppException {
         if (username == null || username.isEmpty()) {
-            logger.info("userLogin request username is incorrect: {}", username);
+            logger.info("loginOtherUser: userLogin request username is incorrect: {}", username);
             throw new AppException(ErrorCodes.BAD_REQUEST_ERROR);
         }
         HashMap<String, SessionData> sessionData = appConfig.getSessionData();

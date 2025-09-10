@@ -2,6 +2,7 @@ package com.project.ftp.resources;
 
 import com.project.ftp.bridge.mysqlTable.TableService;
 import com.project.ftp.bridge.obj.BridgeResponseSheetData;
+import com.project.ftp.config.ApiIdentifier;
 import com.project.ftp.config.AppConfig;
 import com.project.ftp.config.AppConstant;
 import com.project.ftp.event.EventName;
@@ -66,6 +67,7 @@ public class ApiResource {
     @GET
     @Produces(MediaType.TEXT_HTML)
     public Object defaultMethodApi(@Context HttpServletRequest request) throws AppException {
+
         return requestService.handleDefaultUrl(request);
     }
     @GET
@@ -88,7 +90,7 @@ public class ApiResource {
         logger.info("getAllUsers : In, {}", loginUserDetails);
         ApiResponse response;
         try {
-            authService.isLoginUserAdmin(request);
+            authService.checkApiAuthorisation(request, ApiIdentifier.GET_ALL_USERS);
             Users u = userService.getAllUser(loginUserDetails);
             u = new Users(u.getUserHashMap());
             response = new ApiResponse(u);
@@ -111,7 +113,7 @@ public class ApiResource {
         logger.info("getRelatedUsersData : In, {}", loginUserDetails);
         ApiResponse response;
         try {
-            authService.isControlGroupUser(request);
+            authService.checkApiAuthorisation(request, ApiIdentifier.GET_RELATED_USERS);
             ArrayList<RelatedUserData> relatedUserData = userService.getRelatedUsersData(loginUserDetails);
             response = new ApiResponse(relatedUserData);
             eventTracking.trackSuccessEvent(request, EventName.GET_RELATED_USERS_DATA);
@@ -133,6 +135,7 @@ public class ApiResource {
         logger.info("getRelatedUsersDataV2 : In, {}", loginUserDetails);
         ApiResponse response;
         try {
+            authService.checkApiAuthorisation(request, ApiIdentifier.GET_RELATED_USERS_V2);
             ArrayList<RelatedUserDataV2> relatedUserData = userService.getRelatedUsersDataV2(loginUserDetails);
             response = new ApiResponse(relatedUserData);
 //            eventTracking.trackSuccessEvent(request, EventName.GET_RELATED_USERS_DATA_V2);
@@ -171,7 +174,7 @@ public class ApiResource {
         logger.info("deleteFile In: {}, user: {}", deleteFile, userService.getUserDataForLogging(request));
         ApiResponse apiResponse;
         try {
-            authService.isAuthorised(request, AppConstant.IS_DELETE_FILE_ENABLE);
+            authService.checkApiAuthorisation(request, ApiIdentifier.DELETE_FILE);
             LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
             fileServiceV2.deleteRequestFile(loginUserDetails, deleteFile);
             apiResponse = new ApiResponse();
@@ -194,7 +197,7 @@ public class ApiResource {
         logger.info("getAllV3Data : In, user: {}", userService.getUserDataForLogging(request));
         ApiResponse response;
         try {
-            authService.isLogin(request);
+            authService.checkApiAuthorisation(request, ApiIdentifier.GET_FILES_INFO);
             LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
             response = fileServiceV2.scanUserDirectory(loginUserDetails);
 //            eventTracking.trackSuccessEvent(request, EventName.GET_FILES_INFO);
@@ -219,7 +222,7 @@ public class ApiResource {
                 userService.getUserDataForLogging(request), filename+username);
         ApiResponse response;
         try {
-            authService.isLogin(request);
+            authService.checkApiAuthorisation(request, ApiIdentifier.GET_FILES_INFO_BY_FILENAME_PATTERN);
             LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
             response = fileServiceV2.scanUserDirectoryByPattern(loginUserDetails, filename, username);
 //            eventTracking.trackSuccessEvent(request, EventName.GET_FILES_INFO);
@@ -246,7 +249,7 @@ public class ApiResource {
         PathInfo pathInfo;
         ApiResponse apiResponse;
         try {
-            authService.isLogin(request);
+            authService.checkApiAuthorisation(request, ApiIdentifier.GET_PATH_INFO);
             pathInfo = fileServiceV2.searchRequestedPath(path);
             eventTracking.addSuccessViewFile(request, EventName.GET_PATH_INFO, path, container, uiUsername);
             apiResponse = new ApiResponse(pathInfo);
@@ -271,9 +274,9 @@ public class ApiResource {
                 userService.getUserDataForLogging(request), filenames);
         ApiResponse response;
         try {
-            boolean isAdmin = authService.isLoginUserAdmin(request);
+            authService.checkApiAuthorisation(request, ApiIdentifier.GET_DATABASE_FILES_INFO);
             LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
-            response = fileServiceV2.scanUserDatabaseDirectory(loginUserDetails, filenames, isAdmin);
+            response = fileServiceV2.scanUserDatabaseDirectory(loginUserDetails, filenames);
             eventTracking.trackSuccessEvent(request, EventName.GET_DATABASE_FILES_INFO);
         } catch (AppException ae) {
             logger.info("Error in scanning user database directory: {}", ae.getErrorCode().getErrorString());
@@ -296,7 +299,7 @@ public class ApiResource {
                 userService.getUserDataForLogging(request), filenames + tableNames);
         ApiResponse response;
         try {
-            authService.isLogin(request);
+            authService.checkApiAuthorisation(request, ApiIdentifier.GET_TABLE_DATA);
             LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
             response = fileServiceV2.getTableData(loginUserDetails, filenames, tableNames);
             eventTracking.trackSuccessEvent(request, EventName.GET_DATABASE_TABLE_DATA);
@@ -321,7 +324,7 @@ public class ApiResource {
                 userService.getUserDataForLogging(request), filenames + tableNames);
         ApiResponse response;
         try {
-            authService.isLogin(request);
+            authService.checkApiAuthorisation(request, ApiIdentifier.GET_TABLE_DATA_V2);
             LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
             response = fileServiceV2.getTableDataV2(loginUserDetails, filenames, tableNames);
             eventTracking.trackSuccessEvent(request, EventName.GET_DATABASE_TABLE_DATA);
@@ -343,7 +346,7 @@ public class ApiResource {
         logger.info("getAllV3DataV2 : In, user: {}", userService.getUserDataForLogging(request));
         ApiResponse response;
         try {
-            authService.isLogin(request);
+            authService.checkApiAuthorisation(request, ApiIdentifier.GET_CURRENT_USER_FILES_INFO);
             LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
             response = fileServiceV2.scanCurrentUserDirectory(loginUserDetails);
         } catch (AppException ae) {
@@ -364,7 +367,7 @@ public class ApiResource {
         logger.info("getAppConfig : In, user: {}", userService.getUserDataForLogging(request));
         ApiResponse response;
         try {
-            authService.isLoginUserDev(request);
+            authService.checkApiAuthorisation(request, ApiIdentifier.GET_APP_CONFIG);
             response = new ApiResponse(appConfig.getAppConfigObj());
             eventTracking.trackSuccessEvent(request, EventName.GET_APP_CONFIG);
         } catch (AppException ae) {
@@ -385,7 +388,7 @@ public class ApiResource {
         logger.info("getSessionConfig : In, user: {}", userService.getUserDataForLogging(request));
         ApiResponse response;
         try {
-            authService.isLoginUserDev(request);
+            authService.checkApiAuthorisation(request, ApiIdentifier.GET_SESSION_CONFIG);
             response = new ApiResponse(appConfig.getSessionData());
             eventTracking.trackSuccessEvent(request, EventName.GET_SESSION_DATA);
         } catch (AppException ae) {
@@ -411,7 +414,7 @@ public class ApiResource {
                 fileDetail, userService.getUserDataForLogging(request));
         ApiResponse response;
         try {
-            authService.isAuthorised(request, AppConstant.IS_UPLOAD_FILE_ENABLE);
+            authService.checkApiAuthorisation(request, ApiIdentifier.UPLOAD_FILE);
             LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
             response = fileServiceV2.uploadFileV2(loginUserDetails, uploadedInputStream, fileDetail);
             eventTracking.addSuccessUploadFile(request, fileDetail, uiUsername);
@@ -437,7 +440,7 @@ public class ApiResource {
         }
         ApiResponse response;
         try {
-            authService.isAuthorised(request, AppConstant.IS_ADD_TEXT_ENABLE);
+            authService.checkApiAuthorisation(request, ApiIdentifier.ADD_TEXT);
             LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
             response = fileServiceV2.addText(loginUserDetails, addText);
             eventTracking.trackSuccessEventV2(request, EventName.ADD_TEXT, comment);
@@ -462,7 +465,7 @@ public class ApiResource {
         }
         ApiResponse response;
         try {
-            authService.isAuthorised(request, AppConstant.IS_ADD_TEXT_ENABLE);
+            authService.checkApiAuthorisation(request, ApiIdentifier.ADD_TEXT_V2);
             LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
             response = fileServiceV2.addTextV2(loginUserDetails, addText);
             eventTracking.trackSuccessEventV2(request, EventName.ADD_TEXT_V2, comment);
@@ -487,7 +490,7 @@ public class ApiResource {
         }
         ApiResponse response;
         try {
-            authService.isAuthorised(request, AppConstant.IS_DELETE_TEXT_ENABLE);
+            authService.checkApiAuthorisation(request, ApiIdentifier.DELETE_TEXT);
             LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
             response = fileServiceV2.deleteText(loginUserDetails, deleteText);
             eventTracking.trackSuccessEventV2(request, EventName.DELETE_FILE, comment);
@@ -509,7 +512,7 @@ public class ApiResource {
         logger.info("getUploadedCSVData: in, user: {}", userService.getUserDataForLogging(request));
         PathInfo pathInfo = null;
         try {
-            authService.isLogin(request);
+            authService.checkApiAuthorisation(request, ApiIdentifier.GET_UPLOADED_CSV_DATA);
             LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
             pathInfo = fileServiceV2.getUserCsvData(loginUserDetails);
         } catch (AppException ae) {
@@ -548,7 +551,7 @@ public class ApiResource {
         }
         PathInfo pathInfo = null;
         try {
-            authService.isLogin(request);
+            authService.checkApiAuthorisation(request, ApiIdentifier.GET_UPLOADED_CSV_DATA_BY_FILENAME_PATTERN);
             LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
             pathInfo = fileServiceV2.getUserDataByFilenamePattern(loginUserDetails, filename, username, tempFileName);
         } catch (AppException ae) {
@@ -617,7 +620,7 @@ public class ApiResource {
         ApiResponse response;
         String comment = null;
         try {
-            authService.isLoginOtherUserEnable(request);
+            authService.checkApiAuthorisation(request, ApiIdentifier.LOGIN_OTHER_USER);
             LoginUserDetails loginUserDetails = userService.loginOtherUser(request, userLogin);
             response = new ApiResponse(loginUserDetails);
             comment = loginUserDetails.toString();
@@ -716,6 +719,7 @@ public class ApiResource {
         logger.info("getLoginUserDetails : In");
         ApiResponse response;
         try {
+            authService.checkApiAuthorisation(request, ApiIdentifier.GET_LOGIN_USER_DETAILS);
             LoginUserDetailsV2 result = userService.getLoginUserDetailsV2(request);
             response = new ApiResponse(result);
             eventTracking.trackSuccessEvent(request, EventName.GET_LOGIN_USER_DETAILS);
@@ -739,7 +743,7 @@ public class ApiResource {
                 userService.getUserDataForLogging(request));
         ApiResponse response;
         try {
-            authService.isLogin(request);
+            authService.checkApiAuthorisation(request, ApiIdentifier.CHANGE_PASSWORD);
             LoginUserDetails loginUserDetails = userService.changePassword(request, requestChangePassword);
             response = new ApiResponse(loginUserDetails);
             eventTracking.trackChangePasswordSuccess(request, uiUsername);
@@ -824,7 +828,7 @@ public class ApiResource {
         logger.info("resetCount In: {}", loginUserDetails);
         ApiResponse response;
         try {
-            authService.isControlGroupUser(request);
+            authService.checkApiAuthorisation(request, ApiIdentifier.RESET_COUNT);
             response = userService.resetCount(loginUserDetails, requestResetCount);
             eventTracking.trackSuccessEventV1(loginUserDetails.getUsername(), EventName.RESET_CHANGE_PASSWORD_COUNT);
         } catch (AppException ae) {
@@ -845,7 +849,7 @@ public class ApiResource {
                 userService.getUserDataForLogging(request));
         ApiResponse response;
         try {
-            authService.isLoginUserAdmin(request);
+            authService.checkApiAuthorisation(request, ApiIdentifier.UPDATE_CONFIG);
             userService.updateFtpConfiguration();
             response = new ApiResponse();
             eventTracking.trackSuccessEvent(request, EventName.UPDATE_ROLES_CONFIG);
@@ -868,7 +872,7 @@ public class ApiResource {
                 userService.getUserDataForLogging(request));
         ApiResponse response;
         try {
-            authService.isLoginUserDev(request);
+            authService.checkApiAuthorisation(request, ApiIdentifier.AES_ENCRYPT);
             response = securityService.aesEncrypt(requestSecurity);
             eventTracking.trackSuccessEvent(request, EventName.AES_ENCRYPTION);
         } catch (AppException ae) {
@@ -890,7 +894,7 @@ public class ApiResource {
                 userService.getUserDataForLogging(request));
         ApiResponse response;
         try {
-            authService.isLoginUserDev(request);
+            authService.checkApiAuthorisation(request, ApiIdentifier.AES_DECRYPT);
             response = securityService.aesDecrypt(requestSecurity);
             eventTracking.trackSuccessEvent(request, EventName.AES_DECRYPTION);
         } catch (AppException ae) {
@@ -912,7 +916,7 @@ public class ApiResource {
                 userService.getUserDataForLogging(request));
         ApiResponse response;
         try {
-            authService.isLoginUserDev(request);
+            authService.checkApiAuthorisation(request, ApiIdentifier.MD5_ENCRYPT);
             response = securityService.md5Encrypt(requestSecurity);
             eventTracking.trackSuccessEvent(request, EventName.MD5_ENCRYPTION);
         } catch (AppException ae) {
@@ -958,7 +962,7 @@ public class ApiResource {
         logger.info("getRolesConfig : In, user: {}", userService.getUserDataForLogging(request));
         ApiResponse response;
         try {
-            authService.isLoginUserDev(request);
+            authService.checkApiAuthorisation(request, ApiIdentifier.GET_ROLES_CONFIG);
             response = new ApiResponse(userService.getRolesConfig());// data could be null also
             eventTracking.trackSuccessEvent(request, EventName.GET_ROLES_CONFIG);
         } catch (AppException ae) {
@@ -980,7 +984,7 @@ public class ApiResource {
         logger.info("callTcp: In, user: {}, request: {}", loginUserDetails, requestTcp);
         ApiResponse response;
         try {
-            authService.isLogin(request);
+            authService.checkApiAuthorisation(request, ApiIdentifier.CALL_TCP);
             response = RequestService.callTcp(appConfig, requestTcp);
         } catch (AppException ae) {
             logger.info("Error in callTcp: {}", ae.getErrorCode().getErrorCode());
@@ -1003,7 +1007,7 @@ public class ApiResource {
                 loginUserDetails, requestId, updateGsConfig);
         ApiResponse response;
         try {
-            authService.isLogin(request);
+            authService.checkApiAuthorisation(request, ApiIdentifier.GET_EXCEL_DATA_CONFIG);
             response = msExcelService.getMSExcelSheetDataConfig(request, requestId, updateGsConfig);
         } catch (AppException ae) {
             logger.info("Error in getMSExcelDataConfig: {}", ae.getErrorCode().getErrorCode());
@@ -1025,7 +1029,7 @@ public class ApiResource {
         ApiResponse response;
         ArrayList<BridgeResponseSheetData> result;
         try {
-            authService.isLogin(request);
+            authService.checkApiAuthorisation(request, ApiIdentifier.GET_EXCEL_DATA);
             result = msExcelService.getMSExcelSheetData(request, requestId);
             response = new ApiResponse(result);
         } catch (AppException ae) {
@@ -1048,7 +1052,7 @@ public class ApiResource {
         ApiResponse response;
         ArrayList<HashMap<String, String>> result;
         try {
-            authService.isLogin(request);
+            authService.checkApiAuthorisation(request, ApiIdentifier.GET_EXCEL_DATA_JSON);
             result = msExcelService.getMSExcelSheetDataJson(request, requestId);
             response = new ApiResponse(result);
         } catch (AppException ae) {
@@ -1071,7 +1075,7 @@ public class ApiResource {
         logger.info("getMSExcelDataCsv: In, user: {}, requestId: {}", loginUserDetails, requestId);
         String response = null;
         try {
-            authService.isLogin(request);
+            authService.checkApiAuthorisation(request, ApiIdentifier.GET_EXCEL_DATA_CSV);
             response = msExcelService.getMSExcelSheetDataCsv(request, requestId);
         } catch (AppException ae) {
             logger.info("Error in getMSExcelDataCsv: {}", ae.getErrorCode().getErrorCode());
@@ -1094,7 +1098,7 @@ public class ApiResource {
         logger.info("updateMSExcelData: In, user: {}, requestId: {}", loginUserDetails, requestId);
         ApiResponse response;
         try {
-            authService.isLogin(request);
+            authService.checkApiAuthorisation(request, ApiIdentifier.UPDATE_EXCEL_DATA);
             response = msExcelService.updateMSExcelSheetData(request, requestId);
         } catch (AppException ae) {
             logger.info("Error in updateMSExcelData: {}", ae.getErrorCode().getErrorCode());
@@ -1115,7 +1119,7 @@ public class ApiResource {
         logger.info("updateMSExcelDataV2: In, user: {}, requestId: {}", loginUserDetails, requestId);
         ApiResponse response;
         try {
-            authService.isLogin(request);
+            authService.checkApiAuthorisation(request, ApiIdentifier.UPDATE_EXCEL_DATA_V2);
             response = msExcelService.updateMSExcelSheetDataV2(request, requestId, null);
         } catch (AppException ae) {
             logger.info("Error in updateMSExcelDataV2: {}", ae.getErrorCode().getErrorCode());
@@ -1137,7 +1141,7 @@ public class ApiResource {
         logger.info("getScanDirConfig: In, user: {}, scanDirId: {}, pathname: {}", loginUserDetails, scanDirId, pathName);
         ApiResponse response;
         try {
-            authService.isLogin(request);
+            authService.checkApiAuthorisation(request, ApiIdentifier.GET_SCAN_DIR_CONFIG);
             response = scanDirService.getScanDirectoryConfig(request, scanDirId, pathName);
         } catch (AppException ae) {
             logger.info("Error in getScanDirConfig: {}", ae.getErrorCode().getErrorCode());
@@ -1164,7 +1168,7 @@ public class ApiResource {
         ApiResponse response;
         ArrayList<ArrayList<String>> result;
         try {
-            authService.isLogin(request);
+            authService.checkApiAuthorisation(request, ApiIdentifier.READ_SCAN_DIR);
             result = scanDirService.readScanDirectory(request, scanDirId, pathName, fileType, recursive, csvMappingId);
             response = new ApiResponse(result);
         } catch (AppException ae) {
@@ -1193,7 +1197,7 @@ public class ApiResource {
         ApiResponse response;
         ArrayList<HashMap<String, String>> result;
         try {
-            authService.isLogin(request);
+            authService.checkApiAuthorisation(request, ApiIdentifier.READ_SCAN_DIR_JSON);
             result = scanDirService.readScanDirectoryJson(request, scanDirId, pathName, fileType, recursive, csvMappingId);
             response = new ApiResponse(result);
         } catch (AppException ae) {
@@ -1221,7 +1225,7 @@ public class ApiResource {
                 loginUserDetails, scanDirId, pathName, fileType, recursive, csvMappingId);
         String response = null;
         try {
-            authService.isLogin(request);
+            authService.checkApiAuthorisation(request, ApiIdentifier.READ_SCAN_DIR_CSV);
             response = scanDirService.readScanDirectoryCsv(request, scanDirId, pathName, fileType, recursive, csvMappingId);
         } catch (AppException ae) {
             logger.info("Error in readScanDirCsv: {}", ae.getErrorCode().getErrorCode());
@@ -1245,7 +1249,7 @@ public class ApiResource {
         logger.info("updateScanDir: In, user: {}, scanDirId: {}, recursive: {}", loginUserDetails, scanDirId, recursive);
         ApiResponse response;
         try {
-            authService.isLogin(request);
+            authService.checkApiAuthorisation(request, ApiIdentifier.UPDATE_SCAN_DIR);
             response = scanDirService.updateScanDirectory(request, scanDirId, recursive);
         } catch (AppException ae) {
             logger.info("Error in updateScanDir: {}", ae.getErrorCode().getErrorCode());
@@ -1272,7 +1276,7 @@ public class ApiResource {
         ApiResponse response;
         ArrayList<ArrayList<String>> result;
         try {
-            authService.isLogin(request);
+            authService.checkApiAuthorisation(request, ApiIdentifier.GET_SCAN_DIR);
             result = scanDirService.getScanDirectory(request, scanDirId, pathName, fileType, recursive, csvMappingId);
             response = new ApiResponse(result);
         } catch (AppException ae) {
@@ -1300,7 +1304,7 @@ public class ApiResource {
         ApiResponse response;
         ArrayList<HashMap<String, String>> result;
         try {
-            authService.isLogin(request);
+            authService.checkApiAuthorisation(request, ApiIdentifier.GET_SCAN_DIR_JSON);
             result = scanDirService.getScanDirectoryJson(request, scanDirId, pathName, fileType, recursive, csvMappingId);
             response = new ApiResponse(result);
         } catch (AppException ae) {
@@ -1328,7 +1332,7 @@ public class ApiResource {
                 loginUserDetails, scanDirId, pathName, fileType, recursive, csvMappingId);
         String response = null;
         try {
-            authService.isLogin(request);
+            authService.checkApiAuthorisation(request, ApiIdentifier.GET_SCAN_DIR_CSV);
             response = scanDirService.getScanDirectoryCsv(request, scanDirId, pathName, fileType, recursive, csvMappingId);
         } catch (AppException ae) {
             logger.info("Error in getScanDirCsv: {}", ae.getErrorCode().getErrorCode());
@@ -1368,7 +1372,7 @@ public class ApiResource {
         ApiResponse response;
         ArrayList<HashMap<String, String>> result;
         try {
-            authService.isLogin(request);
+            authService.checkApiAuthorisation(request, ApiIdentifier.GET_MYSQL_TABLE_DATA);
             result = tableService.getTableData(request, tableConfigId, filterRequest, defaultMappingId);
             response = new ApiResponse(result);
         } catch (AppException ae) {
@@ -1392,7 +1396,7 @@ public class ApiResource {
                 loginUserDetails, tableConfigId);
         ApiResponse response;
         try {
-            authService.isLogin(request);
+            authService.checkApiAuthorisation(request, ApiIdentifier.UPDATE_MYSQL_TABLE_DATA_FROM_CSV);
             tableService.updateTableDataFromCsv(request, tableConfigId);
             response = new ApiResponse(AppConstant.SUCCESS);
         } catch (AppException ae) {
@@ -1431,7 +1435,15 @@ public class ApiResource {
         LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
         logger.info("splitFile: In, user: {}, split_file_id: {}",
                 loginUserDetails, splitFileId);
-        ApiResponse response = splitTextFileService.splitTextFile(request, splitFileId);
+        ApiResponse response;
+        try {
+            authService.checkApiAuthorisation(request, ApiIdentifier.SPLIT_FILE);
+            response = splitTextFileService.splitTextFile(request, splitFileId);
+        } catch (AppException ae) {
+            logger.info("splitFile: error: {}", ae.getErrorCode().getErrorCode());
+            eventTracking.trackFailureEvent(request, EventName.SPLIT_FILE, ae.getErrorCode());
+            response = new ApiResponse(ae.getErrorCode());
+        }
         logger.info("splitFile: Out, {}", response);
         this.singleThreadingService.clearSingleThread(request, "api");
         return response;

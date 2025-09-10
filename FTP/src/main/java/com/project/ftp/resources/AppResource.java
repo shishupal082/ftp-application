@@ -80,8 +80,8 @@ public class AppResource {
                            @QueryParam("container") String container,
                            @QueryParam("u") String uiUsername) {
         String filename = username+"/"+filename2;
-        logger.info("Loading viewFile: {}, container: {}", filename, container);
-        logger.info("user: {}", userService.getUserDataForLogging(request));
+        logger.info("Loading viewFile in: {}, container: {}", filename, container);
+        logger.info("viewFile user: {}", userService.getUserDataForLogging(request));
         PathInfo pathInfo = null;
         Response.ResponseBuilder r;
         ApiResponse apiResponse = new ApiResponse();
@@ -91,7 +91,7 @@ public class AppResource {
             pathInfo = fileServiceV2.searchRequestedFileV2(loginUserDetails, filename);
             eventTracking.addSuccessViewFile(request, EventName.VIEW_FILE, filename, container, uiUsername);
         } catch (AppException ae) {
-            logger.info("Error in searching requested file: {}", ae.getErrorCode().getErrorCode());
+            logger.info("viewFile: Error in searching requested file: {}", ae.getErrorCode().getErrorCode());
             eventTracking.trackViewFileFailure(request, EventName.VIEW_FILE, filename, ae.getErrorCode(), container, uiUsername);
             apiResponse = new ApiResponse(ae.getErrorCode());
         }
@@ -102,7 +102,7 @@ public class AppResource {
                 InputStream inputStream = new FileInputStream(file);
                 r = Response.ok(inputStream);
                 if (pathInfo.getMediaType() == null) {
-                    logger.info("MediaType is not found (download now): {}", pathInfo);
+                    logger.info("viewFile: MediaType is not found (download now): {}", pathInfo);
                     String responseHeader = "attachment; filename=" + pathInfo.getFileName();
                     r.header(HttpHeaders.CONTENT_DISPOSITION, responseHeader);
                 } else {
@@ -110,7 +110,7 @@ public class AppResource {
                 }
                 return r.build();
             } catch (Exception e) {
-                logger.info("Error in loading file: {}", pathInfo);
+                logger.info("viewFile: Error in loading file: {}", pathInfo);
             }
         }
         if (AppConstant.IFRAME.equals(container)) {
@@ -127,7 +127,7 @@ public class AppResource {
                              @QueryParam("container") String container,
                              @QueryParam("u") String uiUsername) {
         logger.info("Loading viewAnyFile, filepath: {}, container: {}, u: {}", filepath, container, uiUsername);
-        logger.info("user: {}", userService.getUserDataForLogging(request));
+        logger.info("viewAnyFile: user: {}", userService.getUserDataForLogging(request));
         PathInfo pathInfo = null;
         Response.ResponseBuilder r;
         ApiResponse apiResponse = new ApiResponse();
@@ -136,7 +136,7 @@ public class AppResource {
             pathInfo = fileServiceV2.searchRequestedFileV3(filepath);
             eventTracking.addSuccessViewFile(request, EventName.VIEW_ANY_FILE, filepath, container, uiUsername);
         } catch (AppException ae) {
-            logger.info("Error in searching requested file: {}", ae.getErrorCode().getErrorCode());
+            logger.info("viewAnyFile: Error in searching requested file: {}", ae.getErrorCode().getErrorCode());
             eventTracking.trackViewFileFailure(request, EventName.VIEW_ANY_FILE, filepath, ae.getErrorCode(),
                     container, uiUsername);
             apiResponse = new ApiResponse(ae.getErrorCode());
@@ -147,7 +147,7 @@ public class AppResource {
                 InputStream inputStream = new FileInputStream(file);
                 r = Response.ok(inputStream);
                 if (pathInfo.getMediaType() == null) {
-                    logger.info("MediaType is not found (download now): {}", pathInfo);
+                    logger.info("viewAnyFile: MediaType is not found (download now): {}", pathInfo);
                     String responseHeader = "attachment; filename=" + pathInfo.getFileName();
                     r.header(HttpHeaders.CONTENT_DISPOSITION, responseHeader);
                 } else {
@@ -155,7 +155,7 @@ public class AppResource {
                 }
                 return r.build();
             } catch (Exception e) {
-                logger.info("Error in loading file: {}", pathInfo);
+                logger.info("viewAnyFile: Error in loading file: {}", pathInfo);
             }
         }
         if (AppConstant.IFRAME.equals(container)) {
@@ -172,9 +172,9 @@ public class AppResource {
                                 @QueryParam("container") String container,
                                 @QueryParam("u") String uiUsername) {
         logger.info("Loading viewRedirect, url: {}, container: {}, u: {}", url, container, uiUsername);
-        logger.info("user: {}", userService.getUserDataForLogging(request));
+        logger.info("viewRedirect: user: {}", userService.getUserDataForLogging(request));
         url = StaticService.urlEncode(url);
-        logger.info("viewRedirect : redirect from: /view/redirect to: " + url);
+        logger.info("viewRedirect : redirect from: /view/redirect to: {}", url);
         return Response.ok(new CommonView("page_redirect_url.ftl", appConfig, url)).build();
     }
     @GET
@@ -300,7 +300,7 @@ public class AppResource {
     @Path("{default: .*}")
     @POST
     public Object defaultMethodPostV2(@Context HttpServletRequest request) {
-        logger.info("Post Request received with: Consume APPLICATION_JSON and Produce APPLICATION_JSON");
+        logger.info("defaultMethodPostV2: Post Request received with: Consume APPLICATION_JSON and Produce APPLICATION_JSON");
         return requestService.handleDefaultUrl(request);
     }
     /**
@@ -310,7 +310,7 @@ public class AppResource {
     @POST
     @Produces(MediaType.APPLICATION_JSON)
     public Object defaultMethodPostV3(@Context HttpServletRequest request) {
-        logger.info("Post Request received with: Consume APPLICATION_JSON and Produce APPLICATION_JSON");
+        logger.info("defaultMethodPostV3: Post Request received with: Consume APPLICATION_JSON and Produce APPLICATION_JSON");
         return requestService.handleDefaultUrl(request);
     }
 }

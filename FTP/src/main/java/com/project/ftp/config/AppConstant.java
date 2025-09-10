@@ -89,22 +89,7 @@ public class AppConstant {
     public static final String FTL_VIEW_TYPE = "ftl.view";
     public static final String UNAUTHORISED_JSON_DATA = "unauthorised_json_data";
 
-    public static final String IS_DEV_USER = "isDevUser";
-    public static final String IS_ADMIN_USER = "isAdminUser";
-    public static final String IS_USERS_CONTROL_ENABLE = "isUsersControlEnable";
-    public static final String IS_LOGIN_OTHER_USER_ENABLE = "isLoginOtherUserEnable";
-    public static final String IS_ADD_TEXT_ENABLE = "isAddTextEnable";
-    public static final String IS_INFINITE_TTL_LOGIN_USER = "isInfiniteTTLLoginUser";
-    public static final String IS_DELETE_TEXT_ENABLE = "isDeleteTextEnable";
-    public static final String IS_UPLOAD_FILE_ENABLE = "isUploadFileEnable";
-    public static final String IS_DELETE_FILE_ENABLE = "isDeleteFileEnable";
-    public static final String IS_GET_ALL_USERS_ENABLE = "getAllUsersEnable";
-    public static final String API_get_excel_data = "get_excel_data";
-    public static final String API_update_excel_data = "update_excel_data";
-    public static final String API_update_excel_data_v2 = "update_excel_data_v2";
 
-    public static final String API_split_file = "split_file";
-    public static final String API_update_mysql_table = "update_mysql_table_data_from_csv";
     public static final String EXCEL_UPDATE_FILE = "excel_update_to_file";
     public static final String EXCEL_UPDATE_TABLE = "excel_update_to_table";
 

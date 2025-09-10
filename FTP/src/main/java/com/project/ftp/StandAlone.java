@@ -3,6 +3,7 @@ package com.project.ftp;
 import com.project.ftp.bridge.service.StandAloneService;
 import com.project.ftp.bridge.standalone.obj.ApiDetail;
 import com.project.ftp.bridge.standalone.obj.StandAloneConfig;
+import com.project.ftp.config.ApiIdentifier;
 import com.project.ftp.config.AppConfig;
 import com.project.ftp.config.AppConstant;
 import com.project.ftp.exceptions.AppException;
@@ -71,21 +72,26 @@ public class StandAlone {
         }
         String path = apiDetail.getPath();
         ArrayList<String> params = apiDetail.getParams();
-        switch (path) {
-            case AppConstant.API_update_mysql_table:
-                this.handleApiUpdateMysql(apiDetail, params);
-                this.askConfirmation(apiDetail);
-                break;
-            case AppConstant.API_update_excel_data_v2:
-                this.handleApiUpdateExcelDataV2(apiDetail, params);
-                this.askConfirmation(apiDetail);
-                break;
-            case AppConstant.API_split_file:
-                this.handleApiSplitFile(apiDetail, params);
-                this.askConfirmation(apiDetail);
-                break;
-            default:
-                logger.info("Invalid apiDetail: {}", apiDetail);
+        ApiIdentifier apiIdentifier = ApiIdentifier.get(path);
+        if (apiIdentifier != null) {
+            switch (apiIdentifier) {
+                case UPDATE_MYSQL_TABLE_DATA_FROM_CSV:
+                    this.handleApiUpdateMysql(apiDetail, params);
+                    this.askConfirmation(apiDetail);
+                    break;
+                case UPDATE_EXCEL_DATA_V2:
+                    this.handleApiUpdateExcelDataV2(apiDetail, params);
+                    this.askConfirmation(apiDetail);
+                    break;
+                case SPLIT_FILE:
+                    this.handleApiSplitFile(apiDetail, params);
+                    this.askConfirmation(apiDetail);
+                    break;
+                default:
+                    logger.info("Invalid apiDetail: {}, apiIdentifier: {}", apiDetail, apiIdentifier);
+            }
+        } else {
+            logger.info("Invalid apiDetail: {}, apiIdentifier: null", apiDetail);
         }
     }
     public void handleRequest() {

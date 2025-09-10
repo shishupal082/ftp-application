@@ -44,6 +44,7 @@ public enum EventName {
     SCAN_DIRECTORY("scan_directory"),
     MS_EXCEL_DATA("ms_excel_data"),
     MYSQL_TABLE_DATA("mysql_table_data"),
+    SPLIT_FILE("split_file"),
     GOOGLE_API("google_api"),
     GET_ROLES_CONFIG("get_roles_config"),
     AES_ENCRYPTION("aes_encryption"),

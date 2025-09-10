@@ -1,6 +1,7 @@
 package com.project.ftp.service;
 
 import com.project.ftp.common.InputValidate;
+import com.project.ftp.config.ApiRoleAccess;
 import com.project.ftp.config.AppConfig;
 import com.project.ftp.config.AppConstant;
 import com.project.ftp.config.UserMethod;
@@ -32,7 +33,10 @@ public class UserService {
         this.userInterface = userInterface;
         this.inputValidate = new InputValidate();
     }
-    public boolean isAuthorised(LoginUserDetails loginUserDetails, String roleAccess)  {
+    public boolean isAuthorised(LoginUserDetails loginUserDetails, ApiRoleAccess roleAccess)  {
+        if (roleAccess == null) {
+            return false;
+        }
         String username = null;
         boolean isLogin = false;
         if (loginUserDetails != null) {
@@ -40,10 +44,26 @@ public class UserService {
             isLogin = loginUserDetails.getLogin();
         }
         if (!isLogin) {
-            logger.info("User is not login: {}", loginUserDetails);
+            logger.info("isAuthorised: User is not login: {}", loginUserDetails);
             return false;
         }
-        return appConfig.getAppToBridge().isAuthorisedApi(roleAccess, username);
+        return appConfig.getAppToBridge().isAuthorisedApi(roleAccess.getRoleAccessName(), username);
+    }
+    public boolean isAuthorisedPermission(LoginUserDetails loginUserDetails, String roleAccessName)  {
+        if (roleAccessName == null) {
+            return false;
+        }
+        String username = null;
+        boolean isLogin = false;
+        if (loginUserDetails != null) {
+            username = loginUserDetails.getUsername();
+            isLogin = loginUserDetails.getLogin();
+        }
+        if (!isLogin) {
+            logger.info("isAuthorisedPermission: User is not login: {}", loginUserDetails);
+            return false;
+        }
+        return appConfig.getAppToBridge().isAuthorisedApi(roleAccessName, username);
     }
     public boolean isAuthorisedV2(LoginUserDetailsV2 loginUserDetailsV2, String roleAccess)  {
         String username = null;
@@ -53,7 +73,7 @@ public class UserService {
             isLogin = loginUserDetailsV2.isLogin();
         }
         if (!isLogin) {
-            logger.info("User is not login: {}", loginUserDetailsV2);
+            logger.info("isAuthorisedV2: User is not login: {}", loginUserDetailsV2);
             return false;
         }
         return appConfig.getAppToBridge().isAuthorisedApi(roleAccess, username);
@@ -65,16 +85,7 @@ public class UserService {
         return appConfig.getAppToBridge().isAuthorisedApi(roleAccess, username);
     }
     public boolean isLoginUserAdmin(LoginUserDetails loginUserDetails)  {
-        return this.isAuthorised(loginUserDetails, AppConstant.IS_ADMIN_USER);
-    }
-    public boolean isLoginOtherUserEnable(LoginUserDetails loginUserDetails) {
-        return this.isAuthorised(loginUserDetails, AppConstant.IS_LOGIN_OTHER_USER_ENABLE);
-    }
-    public boolean isControlGroupUser(LoginUserDetails loginUserDetails)  {
-        return this.isAuthorised(loginUserDetails, AppConstant.IS_USERS_CONTROL_ENABLE);
-    }
-    public boolean isLoginUserDev(LoginUserDetails loginUserDetails)  {
-        return this.isAuthorised(loginUserDetails, AppConstant.IS_DEV_USER);
+        return this.isAuthorised(loginUserDetails, ApiRoleAccess.IS_ADMIN_USER);
     }
     public void updateFtpConfiguration() throws AppException {
         ArrayList<String> rolesConfigPath = StaticService.getRolesConfigPath(appConfig.getFtpConfiguration());
@@ -96,15 +107,15 @@ public class UserService {
             logger.info("Invalid user input roleName: null");
             throw new AppException(ErrorCodes.BAD_REQUEST_ERROR);
         }
-        boolean isAuthorised = this.isAuthorised(loginUserDetails, verifyPermission.getRoleName());
+        boolean isAuthorised = this.isAuthorisedPermission(loginUserDetails, verifyPermission.getRoleName());
         if (isAuthorised) {
             return new ApiResponse();
         }
         throw new AppException(ErrorCodes.VERIFY_PERMISSION_ERROR);
     }
     public Users getAllUser(LoginUserDetails loginUserDetails) throws AppException {
-        if (!this.isAuthorised(loginUserDetails, AppConstant.IS_GET_ALL_USERS_ENABLE)) {
-            logger.info(AppConstant.IS_GET_ALL_USERS_ENABLE + " api disabled.");
+        if (!this.isAuthorised(loginUserDetails, ApiRoleAccess.IS_GET_ALL_USERS_ENABLE)) {
+            logger.info("{} api disabled.", ApiRoleAccess.IS_GET_ALL_USERS_ENABLE.getRoleAccessName());
             throw new AppException(ErrorCodes.GET_ALL_USERS_DISABLED);
         }
         Users users = userInterface.getAllUsers();
@@ -232,7 +243,7 @@ public class UserService {
     }
     private boolean register(MysqlUser user) {
         if (user == null) {
-            logger.info("Error in register, user is null");
+            logger.info("register: Error in register, user is null");
             return false;
         }
         user.setChangePasswordCount(0);
@@ -240,17 +251,17 @@ public class UserService {
         user.setCreatePasswordOtp(null);
         return userInterface.saveUser(user);
     }
-    private boolean resetCount(MysqlUser user) {
+    private void resetCount(MysqlUser user) {
         if (user == null) {
             logger.info("Error in resetCount, user is null");
-            return false;
+            return;
         }
         user.setChangePasswordCount(1);
-        return userInterface.saveUser(user);
+        userInterface.saveUser(user);
     }
     private void registerError(MysqlUser user) {
         if (user == null) {
-            logger.info("Error in register, user is null");
+            logger.info("registerError: Error in register, user is null");
             return;
         }
         user.incrementEntryCount();
@@ -279,7 +290,7 @@ public class UserService {
     }
     private void createPassword(MysqlUser user) {
         if (user == null) {
-            logger.info("Error in createPassword, user is null");
+            logger.info("createPassword: Error in createPassword, user is null");
             return;
         }
         user.setChangePasswordCount(0);
@@ -289,7 +300,7 @@ public class UserService {
     }
     private void createPasswordError(MysqlUser user) {
         if (user == null) {
-            logger.info("Error in createPassword, user is null");
+            logger.info("createPasswordError: Error in createPassword, user is null");
             return;
         }
         user.incrementEntryCount();
@@ -436,7 +447,8 @@ public class UserService {
         String value;
         if (fileSaveDirMapping != null && loginUserDetails != null && loginUserDetails.getLogin()) {
             for(Map.Entry<String, String> entry: fileSaveDirMapping.entrySet()) {
-                if (this.isAuthorised(loginUserDetails, entry.getKey())) {
+                // Here key is used defined roleAccessName
+                if (this.isAuthorisedPermission(loginUserDetails, entry.getKey())) {
                     value = entry.getValue();
                     if (value != null && !value.isEmpty()) {
                         fileSaveDir = value;

@@ -256,7 +256,7 @@ public class YamlFileParser {
             if (filename != null) {
                 String roleAccess = page404Entry.getRoleAccess();
                 if (roleAccess != null) {
-                    if (!userService.isAuthorised(userDetails, roleAccess)) {
+                    if (!userService.isAuthorisedPermission(userDetails, roleAccess)) {
                         filename = "null";
                         logger.info("unAuthorised page404Entry: {}", page404Entry);
                     }

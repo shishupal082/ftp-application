@@ -73,9 +73,8 @@ public class FileServiceV2 {
         logger.info("scanUserDirectoryByPattern: final result size: {}", filesInfo.size());
         return new ApiResponse(filesInfo);
     }
-    public ApiResponse scanUserDatabaseDirectory(LoginUserDetails loginUserDetails, String filenamePattern,
-                                                 boolean isAdmin) throws AppException {
-        return csvDbTable.scanUserDatabaseDirectory(loginUserDetails, filenamePattern, isAdmin);
+    public ApiResponse scanUserDatabaseDirectory(LoginUserDetails loginUserDetails, String filenamePattern) throws AppException {
+        return csvDbTable.scanUserDatabaseDirectory(loginUserDetails, filenamePattern, true);
     }
     public ApiResponse getTableData(LoginUserDetails loginUserDetails,
                                     String filenames, String tableNames) throws AppException {
@@ -325,7 +324,7 @@ public class FileServiceV2 {
             page404Entry1 = pageConfig404.getPageMapping404().get(folderPath);
             if (page404Entry1 != null) {
                 rollAccess = page404Entry1.getRoleAccess();
-                if (!userService.isAuthorised(userDetails, rollAccess)) {
+                if (!userService.isAuthorisedPermission(userDetails, rollAccess)) {
                     logger.info("folderPath not authorised: {}, {}", folderPath, page404Entry1);
                     return false;
                 } else {
@@ -434,7 +433,7 @@ public class FileServiceV2 {
             if (page404Entry != null) {
                 String rollAccess = page404Entry.getRoleAccess();
                 if (StaticService.isValidString(rollAccess)) {
-                    if (userService.isAuthorised(userDetails, rollAccess)) {
+                    if (userService.isAuthorisedPermission(userDetails, rollAccess)) {
                         filePath = page404Entry.getFileName();
                     } else {
                         logger.info("unAuthorised page404Entry: {}", page404Entry);

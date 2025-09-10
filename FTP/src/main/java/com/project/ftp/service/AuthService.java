@@ -1,6 +1,9 @@
 package com.project.ftp.service;
 
-import com.project.ftp.config.AppConstant;
+import com.project.ftp.FtpConfiguration;
+import com.project.ftp.config.ApiIdentifier;
+import com.project.ftp.config.ApiRoleAccess;
+import com.project.ftp.config.AppConfig;
 import com.project.ftp.exceptions.AppException;
 import com.project.ftp.exceptions.ErrorCodes;
 import com.project.ftp.obj.LoginUserDetails;
@@ -8,11 +11,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 public class AuthService {
     private final static Logger logger = LoggerFactory.getLogger(AuthService.class);
+    private final AppConfig appConfig;
     private final UserService userService;
-    public AuthService(final UserService userService) {
+    public AuthService(final UserService userService, final AppConfig appConfig) {
+        this.appConfig = appConfig;
         this.userService = userService;
     }
     public void isLogin(final HttpServletRequest request) throws AppException {
@@ -22,62 +29,77 @@ public class AuthService {
             throw new AppException(ErrorCodes.UNAUTHORIZED_USER);
         }
     }
+    private ArrayList<ApiRoleAccess> getApiRoleAccessForApi(ApiIdentifier apiIdentifier) {
+        ArrayList<ApiRoleAccess> roleAccesses = new ArrayList<>();
+        if (apiIdentifier == null) {
+            return null;
+        }
+        if (appConfig == null) {
+            return null;
+        }
+        FtpConfiguration ftpConfiguration = appConfig.getFtpConfiguration();
+        if (ftpConfiguration == null) {
+            return null;
+        }
+        HashMap<String, ArrayList<String>> apiAuthorisationConfig = ftpConfiguration.getApiAuthorisationConfig();
+        ArrayList<String> roleAccess;
+        ApiRoleAccess apiRoleAccess;
+        if (apiAuthorisationConfig != null) {
+            roleAccess = apiAuthorisationConfig.get(apiIdentifier.getApiName());
+            if (roleAccess != null) {
+                for (String roleName: roleAccess) {
+                    apiRoleAccess = ApiRoleAccess.get(roleName);
+                    if (apiRoleAccess != null) {
+                        roleAccesses.add(apiRoleAccess);
+                    }
+                }
+            }
+        }
+        return roleAccesses;
+    }
+    private Boolean checkApiAuthorisationV2(final HttpServletRequest request, ApiIdentifier apiIdentifier) {
+        if (apiIdentifier == null) {
+            return null;
+        }
+        ArrayList<ApiRoleAccess> apiRoleAccess = this.getApiRoleAccessForApi(apiIdentifier);
+        if (apiRoleAccess == null || apiRoleAccess.isEmpty()) {
+            return null;
+        }
+        boolean temp;
+        LoginUserDetails userDetails = userService.getLoginUserDetails(request);
+        for (ApiRoleAccess apiRoleAccess1: apiRoleAccess) {
+            if (apiRoleAccess1 == null) {
+                continue;
+            }
+            if (apiRoleAccess1 == ApiRoleAccess.IS_LOGIN) {
+                if (!userDetails.getLogin()) {
+                    logger.info("checkApiAuthorisationV2: Login required");
+                    return false;
+                }
+                continue;
+            }
+            temp = userService.isAuthorised(userDetails, apiRoleAccess1);
+            if (!temp) {
+                return false;
+            }
+        }
+        return true;
+    }
+    public void checkApiAuthorisation(final HttpServletRequest request, ApiIdentifier apiIdentifier) {
+        Boolean result = this.checkApiAuthorisationV2(request, apiIdentifier);
+        if (result == null) {
+            return;
+        }
+        if (!result) {
+            logger.info("checkApiAuthorisation: result: {}", result);
+            throw new AppException(ErrorCodes.UNAUTHORIZED_USER);
+        }
+    }
     public boolean isLoginV2(final HttpServletRequest request) {
         LoginUserDetails userDetails = userService.getLoginUserDetails(request);
         return userDetails.getLogin();
     }
-    public void isAuthorised(final HttpServletRequest request, String roleAccess) throws AppException {
-        LoginUserDetails userDetails = userService.getLoginUserDetails(request);
-        if (!userDetails.getLogin()) {
-            logger.info("isAuthorised: Login required");
-            throw new AppException(ErrorCodes.UNAUTHORIZED_USER);
-        }
-        boolean isAuthorised = userService.isAuthorised(userDetails, roleAccess);
-        if (!isAuthorised) {
-            logger.info("Unauthorised role access: {}, {}", userDetails, roleAccess);
-            ErrorCodes errorCodes = ErrorCodes.UNAUTHORIZED_ROLE_ACCESS;
-            errorCodes.setErrorString("UnAuthorized Role Access: " + roleAccess);
-            throw new AppException(errorCodes);
-        }
-    }
-    public void isLoginOtherUserEnable(HttpServletRequest request) throws AppException {
-        LoginUserDetails userDetails = userService.getLoginUserDetails(request);
-        if (!userService.isLoginOtherUserEnable(userDetails)) {
-            logger.info("UnAuthorised user trying to login other user: {}", userDetails);
-            throw new AppException(ErrorCodes.UNAUTHORIZED_USER);
-        }
-    }
-    public boolean isLoginUserAdmin(HttpServletRequest request) throws AppException {
-        LoginUserDetails userDetails = userService.getLoginUserDetails(request);
-        if (!userService.isLoginUserAdmin(userDetails)) {
-            logger.info("UnAuthorised user trying to access admin data: {}", userDetails);
-            throw new AppException(ErrorCodes.UNAUTHORIZED_USER);
-        }
-        return true;
-    }
-    public void isControlGroupUser(HttpServletRequest request) throws AppException {
-        LoginUserDetails userDetails = userService.getLoginUserDetails(request);
-        if (!userService.isControlGroupUser(userDetails)) {
-            logger.info("UnAuthorised user trying to access control group user data: {}", userDetails);
-            throw new AppException(ErrorCodes.UNAUTHORIZED_USER);
-        }
-    }
-    /* used for
-     * get_app_config
-     * get_session_config
-     * get_roles_config
-     * aes_encrypt
-     * aes_decrypt
-     * md5_encrypt
-    * */
-    public void isLoginUserDev(HttpServletRequest request) throws AppException {
-        LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
-        if (!userService.isLoginUserDev(loginUserDetails)) {
-            logger.info("UnAuthorised user: not dev user, {}", loginUserDetails);
-            throw new AppException(ErrorCodes.UNAUTHORIZED_USER);
-        }
-    }
     public boolean isInfiniteTTLUser(String username) {
-        return userService.isAuthorisedV3(username, AppConstant.IS_INFINITE_TTL_LOGIN_USER);
+        return userService.isAuthorisedV3(username, ApiRoleAccess.IS_INFINITE_TTL_LOGIN_USER.getRoleAccessName());
     }
 }

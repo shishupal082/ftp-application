@@ -52,7 +52,7 @@ public class RequestFilter implements ContainerRequestFilter {
 //                throw new AppException(ErrorCodes.CONFIG_ERROR);
             }
         }
-        if (cookieData == null || cookieData.equals("")) {
+        if (cookieData == null || cookieData.isEmpty()) {
             newCookieData = StaticService.createUUIDNumber();
             logger.info("Invalid session cookieData : {}, Created new : {}", cookieData, newCookieData);
             cookieData = newCookieData;

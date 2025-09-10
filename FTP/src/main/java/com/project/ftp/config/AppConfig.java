@@ -31,6 +31,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 public class AppConfig {
     private final static Logger logger = LoggerFactory.getLogger(AppConfig.class);
@@ -207,15 +208,52 @@ public class AppConfig {
     public void setPageConfig404(PageConfig404 pageConfig404) {
         this.pageConfig404 = pageConfig404;
     }
-
+    private void updateApiRoleAccess(final FtpConfiguration ftpConfiguration) {
+        if (ftpConfiguration == null) {
+            return;
+        }
+        HashMap<String, ArrayList<String>> staticApiRolesMapping = ApiRolesMapping.getPreDefinedApiRoleMapping();
+        HashMap<String, ArrayList<String>> configApiRolesMapping = ftpConfiguration.getApiAuthorisationConfig();
+        String key;
+        ArrayList<String> values, staticValues;
+        if (configApiRolesMapping != null) {
+            for (Map.Entry<String, ArrayList<String>> entry: configApiRolesMapping.entrySet()) {
+                if (entry == null) {
+                    continue;
+                }
+                key = entry.getKey();
+                values = entry.getValue();
+                if (key != null && values != null) {
+                    staticValues = staticApiRolesMapping.get(key);
+                    if (staticValues == null) {
+                        staticValues = values;
+                    } else {
+                        for (String str: values) {
+                            if (str != null && !str.isEmpty()) {
+                                if (staticValues.contains(str)) {
+                                    logger.info("{} role already exist for api: {}", str, key);
+                                    continue;
+                                }
+                                staticValues.add(str);
+                            }
+                        }
+                    }
+                    staticApiRolesMapping.put(key, staticValues);
+                }
+            }
+        }
+        ftpConfiguration.setApiAuthorisationConfig(staticApiRolesMapping);
+    }
     public void updateFinalFtpConfiguration(final FtpConfiguration ftpConfiguration) {
         ftpConfiguration.setMysqlEnable(StaticService.isMysqlEnable(cmdArguments));
         if (cmdArguments == null) {
+            this.updateApiRoleAccess(ftpConfiguration);
             this.setFtpConfiguration(ftpConfiguration);
             logger.info("FTP configuration generate complete 1: {}", ftpConfiguration);
             return;
         }
         if (cmdArguments.size() <= AppConstant.CMD_LINE_ARG_MIN_SIZE) {
+            this.updateApiRoleAccess(ftpConfiguration);
             this.setFtpConfiguration(ftpConfiguration);
             logger.info("FTP configuration generate complete 2: {}", ftpConfiguration);
             return;
@@ -229,6 +267,7 @@ public class AppConfig {
                     cmdArguments.get(i));
             ftpConfiguration.updateFtpConfig(temp);
         }
+        this.updateApiRoleAccess(ftpConfiguration);
         this.setFtpConfiguration(ftpConfiguration);
         logger.info("FTP configuration generate complete: {}", ftpConfiguration);
     }
@@ -401,7 +440,7 @@ public class AppConfig {
         EventTracking eventTracking = new EventTracking(appConfig, userService, eventInterface);
         appConfig.setEventTracking(eventTracking);
         appConfig.setMsExcelService(new MSExcelService(appConfig, eventTracking, userService));
-        AuthService authService = new AuthService(userService);
+        AuthService authService = new AuthService(userService, appConfig);
         appConfig.setAuthService(authService);
         ScanDirService scanDirService = new ScanDirService(appConfig, filepathInterface);
         appConfig.setScanDirService(scanDirService);

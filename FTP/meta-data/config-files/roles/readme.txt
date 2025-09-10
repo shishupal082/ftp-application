@@ -31,3 +31,33 @@ Here, g1: [g1], is same as coRelatedUsers: [g1]
       U1: [roleName1, roleName2]
 
 - internally generated
+
+preDefinedRoleAccess:
+API uses this access:
+
+apiName,roleAccess
+
+/api/get_app_config,isDevUser
+/api/get_session_config,isDevUser
+/api/aes_encrypt,isDevUser
+/api/aes_decrypt,isDevUser
+/api/md5_encrypt,isDevUser
+/api/get_roles_config,isDevUser
+
+
+/api/get_users,isAdminUser
+/api/get_database_files_info,isAdminUser
+/api/update_config,isAdminUser
+
+/api/reset_count,isUserControlEnable
+
+/api/get_related_users_data,isUserControlEnable
+
+/api/login_other_user,isLoginOtherUserEnable
+
+,isAddTextEnable
+,isInfiniteTTLLoginUser
+,isDeleteTextEnable
+,isUploadFileEnable
+,isDeleteFileEnable
+/api/get_users,getAllUsersEnable

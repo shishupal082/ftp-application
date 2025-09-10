@@ -69,6 +69,7 @@ public class FtpConfiguration extends Configuration {
     private CommunicationConfig communicationConfig;
     private SocialLoginConfig socialLoginConfig;
     private GoogleOAuthClientConfig googleOAuthClientConfig;
+    private HashMap<String, ArrayList<String>> apiAuthorisationConfig;
     @JsonProperty("database")
     private DataSourceFactory dataSourceFactory = new DataSourceFactory();
     private HashMap<String, OracleDatabaseConfig> oracleDatabaseConfigs;
@@ -434,6 +435,14 @@ public class FtpConfiguration extends Configuration {
         this.googleOAuthClientConfig = googleOAuthClientConfig;
     }
 
+    public HashMap<String, ArrayList<String>> getApiAuthorisationConfig() {
+        return apiAuthorisationConfig;
+    }
+
+    public void setApiAuthorisationConfig(HashMap<String, ArrayList<String>> apiAuthorisationConfig) {
+        this.apiAuthorisationConfig = apiAuthorisationConfig;
+    }
+
     public DataSourceFactory getDataSourceFactory() {
         return dataSourceFactory;
     }
@@ -639,6 +648,10 @@ public class FtpConfiguration extends Configuration {
         if (googleOAuthClientConfig != null) {
             this.googleOAuthClientConfig = googleOAuthClientConfig;
         }
+        HashMap<String, ArrayList<String>> apiAuthorisationConfig = tempFtpConfiguration.getApiAuthorisationConfig();
+        if (apiAuthorisationConfig != null) {
+            this.apiAuthorisationConfig = apiAuthorisationConfig;
+        }
         HashMap<String, OracleDatabaseConfig> tempOracleDatabaseConfigs = tempFtpConfiguration.getOracleDatabaseConfigs();
         if (tempOracleDatabaseConfigs != null) {
             this.oracleDatabaseConfigs = tempOracleDatabaseConfigs;
@@ -697,6 +710,7 @@ public class FtpConfiguration extends Configuration {
                 ", communicationConfig=" + communicationConfig +
                 ", socialLoginConfig=" + socialLoginConfig +
                 ", googleOAuthClientConfig=" + googleOAuthClientConfig +
+                ", apiAuthorisationConfig=" + apiAuthorisationConfig +
                 ", oracleDatabaseConfigs=" + "*****" +
                 ", mysqlDatabaseConfigs=" + "*****" +
                 ", dataSourceFactory=" + "*****" +
