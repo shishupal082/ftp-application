@@ -2,6 +2,7 @@ package com.project.ftp.obj;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.project.ftp.config.AppConstant;
 import com.project.ftp.service.StaticService;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -101,7 +102,7 @@ public class RequestUserRegister {
         return "RequestUserRegister{" +
                 "username='" + username + '\'' +
                 ", passcode='" + passcode + '\'' +
-                ", password='" + "*****" + '\'' +
+                ", password='" + AppConstant.MaskDataString + '\'' +
                 ", display_name='" + display_name + '\'' +
                 ", mobile='" + mobile + '\'' +
                 ", email='" + email + '\'' +

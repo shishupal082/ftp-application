@@ -12,8 +12,7 @@ public enum ApiRoleAccess {
     IS_INFINITE_TTL_LOGIN_USER("isInfiniteTTLLoginUser"),
     IS_DELETE_TEXT_ENABLE("isDeleteTextEnable"),
     IS_UPLOAD_FILE_ENABLE("isUploadFileEnable"),
-    IS_DELETE_FILE_ENABLE("isDeleteFileEnable"),
-    IS_GET_ALL_USERS_ENABLE("getAllUsersEnable");
+    IS_DELETE_FILE_ENABLE("isDeleteFileEnable");
 
     private final String roleAccessName;
     ApiRoleAccess(String name) {

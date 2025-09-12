@@ -2,6 +2,7 @@ package com.project.ftp.mysql;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.project.ftp.config.AppConstant;
 import com.project.ftp.config.UserMethod;
 import com.project.ftp.service.StaticService;
 
@@ -93,7 +94,7 @@ public class MysqlUser implements Serializable {
     }
     public MysqlUser(ArrayList<String> arrayList) {
         if (arrayList != null) {
-            if (arrayList.size() >= 1) {
+            if (!arrayList.isEmpty()) {
                 username = arrayList.get(0);
             }
             if (arrayList.size() >= 2) {
@@ -129,7 +130,7 @@ public class MysqlUser implements Serializable {
                 timestamp = arrayList.get(9);
             }
             if (arrayList.size() >= 11) {
-                deleted = "true".equals(arrayList.get(10));
+                deleted = AppConstant.TRUE.equals(arrayList.get(10));
             }
         }
     }
@@ -267,7 +268,7 @@ public class MysqlUser implements Serializable {
         return "MysqlUser{" +
                 "id=" + id +
                 ", username='" + username + '\'' +
-                ", password='" + "*****" + '\'' +
+                ", password='" + AppConstant.MaskDataString + '\'' +
                 ", mobile='" + mobile + '\'' +
                 ", email='" + email + '\'' +
                 ", name='" + name + '\'' +

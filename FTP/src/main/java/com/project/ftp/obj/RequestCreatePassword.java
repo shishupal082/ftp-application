@@ -1,6 +1,7 @@
 package com.project.ftp.obj;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.project.ftp.config.AppConstant;
 import com.project.ftp.service.StaticService;
 
 public class RequestCreatePassword {
@@ -72,8 +73,8 @@ public class RequestCreatePassword {
         return "RequestCreatePassword{" +
                 "username='" + username + '\'' +
                 ", createPasswordOtp='" + createPasswordOtp + '\'' +
-                ", newPassword='" + "*****" + '\'' +
-                ", confirmPassword='" + "*****" + '\'' +
+                ", newPassword='" + AppConstant.MaskDataString + '\'' +
+                ", confirmPassword='" + AppConstant.MaskDataString + '\'' +
                 ", userAgent='" + userAgent + '\'' +
                 '}';
     }

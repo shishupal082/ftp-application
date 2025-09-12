@@ -8,6 +8,7 @@ import com.project.ftp.bridge.config.EmailConfig;
 import com.project.ftp.bridge.config.GoogleOAuthClientConfig;
 import com.project.ftp.bridge.config.SocialLoginConfig;
 import com.project.ftp.bridge.obj.yamlObj.CommunicationConfig;
+import com.project.ftp.config.AppConstant;
 import com.project.ftp.obj.yamlObj.EventConfig;
 import com.project.ftp.obj.yamlObj.FtlConfig;
 import com.project.ftp.obj.yamlObj.OracleDatabaseConfig;
@@ -684,7 +685,7 @@ public class FtpConfiguration extends Configuration {
                 ", loadRoleStatusOnPageLoad='" + loadRoleStatusOnPageLoad + '\'' +
                 ", staticDataFilename='" + staticDataFilename + '\'' +
                 ", userDataFilename='" + userDataFilename + '\'' +
-                ", aesEncryptionPassword='" + "*****" + '\'' +
+                ", aesEncryptionPassword='" + AppConstant.MaskDataString + '\'' +
                 ", createReadmePdf=" + createReadmePdf +
                 ", forgotPasswordEnable=" + forgotPasswordEnable +
                 ", guestEnable=" + guestEnable +
@@ -711,9 +712,9 @@ public class FtpConfiguration extends Configuration {
                 ", socialLoginConfig=" + socialLoginConfig +
                 ", googleOAuthClientConfig=" + googleOAuthClientConfig +
                 ", apiAuthorisationConfig=" + apiAuthorisationConfig +
-                ", oracleDatabaseConfigs=" + "*****" +
-                ", mysqlDatabaseConfigs=" + "*****" +
-                ", dataSourceFactory=" + "*****" +
+                ", oracleDatabaseConfigs=" + AppConstant.MaskDataString +
+                ", mysqlDatabaseConfigs=" + AppConstant.MaskDataString +
+                ", dataSourceFactory=" + AppConstant.MaskDataString +
                 '}';
     }
 }

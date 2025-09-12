@@ -1,27 +1,15 @@
 package com.project.ftp.obj;
 
-import com.project.ftp.mysql.MysqlUser;
-
 public class RelatedUserDataV2 {
     private String username;
     private boolean isValid;
-//    private String name;
-//    private String email;
-//    private String mobile;
 
-    public RelatedUserDataV2(String username, boolean isValid) {
-        this.username = username;
-        this.isValid = isValid;
-    }
-    public RelatedUserDataV2(MysqlUser mysqlUser) {
-        if (mysqlUser == null) {
+    public RelatedUserDataV2(RelatedUserData relatedUserData) {
+        if (relatedUserData == null) {
             return;
         }
-        this.username = mysqlUser.getUsername();
-        this.isValid = true;
-//        this.name = mysqlUser.getName();
-//        this.email = mysqlUser.getEmail();
-//        this.mobile = mysqlUser.getMobile();
+        this.username = relatedUserData.getUsername();
+        this.isValid = relatedUserData.isValid();
     }
     public String getUsername() {
         return username;
@@ -39,33 +27,9 @@ public class RelatedUserDataV2 {
         isValid = valid;
     }
 
-//    public String getName() {
-//        return name;
-//    }
-//
-//    public void setName(String name) {
-//        this.name = name;
-//    }
-//
-//    public String getEmail() {
-//        return email;
-//    }
-//
-//    public void setEmail(String email) {
-//        this.email = email;
-//    }
-//
-//    public String getMobile() {
-//        return mobile;
-//    }
-//
-//    public void setMobile(String mobile) {
-//        this.mobile = mobile;
-//    }
-
     @Override
     public String toString() {
-        return "RelatedUserData{" +
+        return "RelatedUserDataV2{" +
                 "username='" + username + '\'' +
                 ", isValid=" + isValid +
                 '}';

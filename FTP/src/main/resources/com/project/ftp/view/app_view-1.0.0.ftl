@@ -74,7 +74,7 @@ GLOBAL.createPasswordOtpInstruction = document.getElementById("createPasswordOtp
 window.GLOBAL = GLOBAL;
 </script>
 
-<script type="text/javascript" src="/assets/static/dist-react-base-1.0.0/script1.js?v=${appVersion}"></script>
+<script type="text/javascript" src="/assets/static/dist-auth-app/script1.js?v=${appVersion}"></script>
 <script type="text/javascript" src="/assets/static/dist-auth-app/script2.js?v=${appVersion}"></script>
 <script type="text/javascript" src="/assets/static/dist-auth-app/script3.js?v=${appVersion}"></script>
 </body>

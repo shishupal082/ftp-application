@@ -26,22 +26,14 @@ public class ApiRolesMapping {
         result.get(ApiIdentifier.GET_ROLES_CONFIG.getApiName()).add(ApiRoleAccess.IS_DEV_USER.getRoleAccessName());
 
         result.put(ApiIdentifier.UPDATE_CONFIG.getApiName(), new ArrayList<>());
-        result.get(ApiIdentifier.UPDATE_CONFIG.getApiName()).add(ApiRoleAccess.IS_ADMIN_USER.getRoleAccessName());
+        result.get(ApiIdentifier.UPDATE_CONFIG.getApiName()).add(ApiRoleAccess.IS_DEV_USER.getRoleAccessName());
 
         result.put(ApiIdentifier.GET_DATABASE_FILES_INFO.getApiName(), new ArrayList<>());
-        result.get(ApiIdentifier.GET_DATABASE_FILES_INFO.getApiName()).add(ApiRoleAccess.IS_ADMIN_USER.getRoleAccessName());
+        result.get(ApiIdentifier.GET_DATABASE_FILES_INFO.getApiName()).add(ApiRoleAccess.IS_DEV_USER.getRoleAccessName());
 
-        result.put(ApiIdentifier.GET_ALL_USERS.getApiName(), new ArrayList<>());
-        result.get(ApiIdentifier.GET_ALL_USERS.getApiName()).add(ApiRoleAccess.IS_ADMIN_USER.getRoleAccessName());
 
         result.put(ApiIdentifier.LOGIN_OTHER_USER.getApiName(), new ArrayList<>());
         result.get(ApiIdentifier.LOGIN_OTHER_USER.getApiName()).add(ApiRoleAccess.IS_LOGIN_OTHER_USER_ENABLE.getRoleAccessName());
-
-        result.put(ApiIdentifier.GET_RELATED_USERS.getApiName(), new ArrayList<>());
-        result.get(ApiIdentifier.GET_RELATED_USERS.getApiName()).add(ApiRoleAccess.IS_USERS_CONTROL_ENABLE.getRoleAccessName());
-
-        result.put(ApiIdentifier.GET_RELATED_USERS_V2.getApiName(), new ArrayList<>());
-        result.get(ApiIdentifier.GET_RELATED_USERS_V2.getApiName()).add(ApiRoleAccess.IS_LOGIN.getRoleAccessName());
 
         result.put(ApiIdentifier.RESET_COUNT.getApiName(), new ArrayList<>());
         result.get(ApiIdentifier.RESET_COUNT.getApiName()).add(ApiRoleAccess.IS_USERS_CONTROL_ENABLE.getRoleAccessName());
@@ -61,6 +53,12 @@ public class ApiRolesMapping {
         result.put(ApiIdentifier.DELETE_TEXT.getApiName(), new ArrayList<>());
         result.get(ApiIdentifier.DELETE_TEXT.getApiName()).add(ApiRoleAccess.IS_DELETE_TEXT_ENABLE.getRoleAccessName());
 
+        result.put(ApiIdentifier.GET_ALL_USERS.getApiName(), new ArrayList<>());
+        result.get(ApiIdentifier.GET_ALL_USERS.getApiName()).add(ApiRoleAccess.IS_LOGIN.getRoleAccessName());
+        result.put(ApiIdentifier.GET_RELATED_USERS.getApiName(), new ArrayList<>());
+        result.get(ApiIdentifier.GET_RELATED_USERS.getApiName()).add(ApiRoleAccess.IS_LOGIN.getRoleAccessName());
+        result.put(ApiIdentifier.GET_RELATED_USERS_V2.getApiName(), new ArrayList<>());
+        result.get(ApiIdentifier.GET_RELATED_USERS_V2.getApiName()).add(ApiRoleAccess.IS_LOGIN.getRoleAccessName());
         result.put(ApiIdentifier.GET_FILES_INFO.getApiName(), new ArrayList<>());
         result.get(ApiIdentifier.GET_FILES_INFO.getApiName()).add(ApiRoleAccess.IS_LOGIN.getRoleAccessName());
         result.put(ApiIdentifier.GET_FILES_INFO_BY_FILENAME_PATTERN.getApiName(), new ArrayList<>());

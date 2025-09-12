@@ -2,6 +2,7 @@ package com.project.ftp.obj;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.project.ftp.config.AppConstant;
 import com.project.ftp.service.StaticService;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -49,7 +50,7 @@ public class RequestUserLogin {
     public String toString() {
         return "RequestUserLogin{" +
                 "username='" + username + '\'' +
-                ", password='" + "*****" + '\'' +
+                ", password='" + AppConstant.MaskDataString + '\'' +
                 ", user_agent='" + user_agent + '\'' +
                 '}';
     }

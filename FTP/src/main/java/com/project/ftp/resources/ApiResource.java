@@ -91,9 +91,8 @@ public class ApiResource {
         ApiResponse response;
         try {
             authService.checkApiAuthorisation(request, ApiIdentifier.GET_ALL_USERS);
-            Users u = userService.getAllUser(loginUserDetails);
-            u = new Users(u.getUserHashMap());
-            response = new ApiResponse(u);
+            ArrayList<RelatedUserData> relatedUserData = userService.getAllUser(loginUserDetails);
+            response = new ApiResponse(relatedUserData);
             eventTracking.trackSuccessEvent(request, EventName.GET_USERS);
         } catch (AppException ae) {
             logger.info("Error in get_users: {}", ae.getErrorCode().getErrorCode());

@@ -1,40 +1,36 @@
 package com.project.ftp.obj;
 
+import com.project.ftp.config.AppConstant;
 import com.project.ftp.mysql.MysqlUser;
 
 public class RelatedUserData {
-    private String username;
     private boolean isValid;
-    private String name;
-    private String email;
+    private String username;
     private String mobile;
-    private String method;
+    private String email;
+    private String name;
+    private String passcode;
     private String createPasswordOtp;
     private int methodRequestCount;
+    private String method;
 
-    public RelatedUserData(String username, boolean isValid) {
+    public RelatedUserData(String username) {
+        this.isValid = false;
         this.username = username;
-        this.isValid = isValid;
     }
     public RelatedUserData(MysqlUser mysqlUser) {
         if (mysqlUser == null) {
             return;
         }
-        this.username = mysqlUser.getUsername();
         this.isValid = true;
-        this.name = mysqlUser.getName();
-        this.email = mysqlUser.getEmail();
+        this.username = mysqlUser.getUsername();
         this.mobile = mysqlUser.getMobile();
-        this.method = mysqlUser.getMethod();
+        this.email = mysqlUser.getEmail();
+        this.name = mysqlUser.getName();
+        this.passcode = AppConstant.MaskDataString;//mysqlUser.getPasscode();
         this.createPasswordOtp = mysqlUser.getCreatePasswordOtp();
         this.methodRequestCount = mysqlUser.getChangePasswordCount();
-    }
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
+        this.method = mysqlUser.getMethod();
     }
 
     public boolean isValid() {
@@ -45,20 +41,12 @@ public class RelatedUserData {
         isValid = valid;
     }
 
-    public String getName() {
-        return name;
+    public String getUsername() {
+        return username;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public String getMobile() {
@@ -69,12 +57,28 @@ public class RelatedUserData {
         this.mobile = mobile;
     }
 
-    public String getMethod() {
-        return method;
+    public String getEmail() {
+        return email;
     }
 
-    public void setMethod(String method) {
-        this.method = method;
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getPasscode() {
+        return passcode;
+    }
+
+    public void setPasscode(String passcode) {
+        this.passcode = passcode;
     }
 
     public String getCreatePasswordOtp() {
@@ -93,17 +97,26 @@ public class RelatedUserData {
         this.methodRequestCount = methodRequestCount;
     }
 
+    public String getMethod() {
+        return method;
+    }
+
+    public void setMethod(String method) {
+        this.method = method;
+    }
+
     @Override
     public String toString() {
         return "RelatedUserData{" +
-                "username='" + username + '\'' +
-                ", isValid=" + isValid +
-                ", name='" + name + '\'' +
-                ", email='" + email + '\'' +
+                "isValid=" + isValid +
+                ", username='" + username + '\'' +
                 ", mobile='" + mobile + '\'' +
-                ", method='" + method + '\'' +
-                ", createPasswordOtp='" + createPasswordOtp + '\'' +
+                ", email='" + email + '\'' +
+                ", name='" + name + '\'' +
+                ", passcode='" + AppConstant.MaskDataString + '\'' +
+                ", createPasswordOtp='" + AppConstant.MaskDataString + '\'' +
                 ", methodRequestCount=" + methodRequestCount +
+                ", method='" + method + '\'' +
                 '}';
     }
 }

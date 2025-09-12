@@ -113,42 +113,34 @@ public class UserService {
         }
         throw new AppException(ErrorCodes.VERIFY_PERMISSION_ERROR);
     }
-    public Users getAllUser(LoginUserDetails loginUserDetails) throws AppException {
-        if (!this.isAuthorised(loginUserDetails, ApiRoleAccess.IS_GET_ALL_USERS_ENABLE)) {
-            logger.info("{} api disabled.", ApiRoleAccess.IS_GET_ALL_USERS_ENABLE.getRoleAccessName());
-            throw new AppException(ErrorCodes.GET_ALL_USERS_DISABLED);
-        }
-        Users users = userInterface.getAllUsers();
-        if (users == null) {
-            logger.info("Error in getting all usersData");
-            throw new AppException(ErrorCodes.RUNTIME_ERROR);
-        }
-        return users;
-    }
-    public ArrayList<RelatedUserData> getRelatedUsersData(LoginUserDetails loginUserDetails) {
-        ArrayList<RelatedUserData> result = new ArrayList<>();
-        boolean isAdmin = this.isLoginUserAdmin(loginUserDetails);
-        ArrayList<String> relatedUsers;
-        if (isAdmin) {
-            relatedUsers = this.getAllRelatedUsersName(loginUserDetails.getUsername());
+    private HashMap<String, RelatedUserData> getRelatedUserAsPerRoleConfig(LoginUserDetails loginUserDetails) {
+        ArrayList<String> relatedUserNames;
+        if (this.isAuthorised(loginUserDetails, ApiRoleAccess.IS_DEV_USER)) {
+            relatedUserNames = this.getAllRelatedUsersName(loginUserDetails.getUsername());
         } else {
-            relatedUsers = this.getRelatedUsers(loginUserDetails.getUsername());
+            relatedUserNames = this.getRelatedUsers(loginUserDetails.getUsername());
         }
-        if (relatedUsers == null) {
-            return result;
+        if (relatedUserNames == null) {
+            return null;
         }
         HashMap<String, RelatedUserData> tempResult = new HashMap<>();
         RelatedUserData userData;
-        for(String uName: relatedUsers) {
-            userData = new RelatedUserData(uName, false);
+        for(String uName: relatedUserNames) {
+            userData = new RelatedUserData(uName);
             tempResult.put(uName, userData);
         }
-        Users users = userInterface.getAllUsers();
+        return tempResult;
+    }
+    private HashMap<String, RelatedUserData> getRelatedUserDataHash(LoginUserDetails loginUserDetails, Users users) {
+        HashMap<String, RelatedUserData> tempResult = this.getRelatedUserAsPerRoleConfig(loginUserDetails);
+        if (tempResult == null) {
+            return null;
+        }
+        MysqlUser mysqlUser;
+        String username;
         if (users != null) {
             HashMap<String, MysqlUser> userHashMap = users.getUserHashMap();
             if (userHashMap != null) {
-                MysqlUser mysqlUser;
-                String username;
                 for(Map.Entry<String, RelatedUserData> data: tempResult.entrySet()) {
                     username = data.getKey();
                     mysqlUser = userHashMap.get(username);
@@ -156,15 +148,34 @@ public class UserService {
                         tempResult.put(username, new RelatedUserData(mysqlUser));
                     }
                 }
-                if (isAdmin) {
-                    for(Map.Entry<String, MysqlUser> data: userHashMap.entrySet()) {
-                        username = data.getKey();
-                        mysqlUser = data.getValue();
-                        if (mysqlUser != null) {
-                            tempResult.put(username, new RelatedUserData(mysqlUser));
-                        }
-                    }
-                }
+            }
+        }
+        return tempResult;
+    }
+    public ArrayList<RelatedUserData> getAllUser(LoginUserDetails loginUserDetails) throws AppException {
+        if (!this.isAuthorised(loginUserDetails, ApiRoleAccess.IS_DEV_USER)) {
+            return this.getRelatedUsersData(loginUserDetails);
+        }
+        Users users = userInterface.getAllUsers();
+        HashMap<String, RelatedUserData> tempResult = this.getRelatedUserDataHash(loginUserDetails, users);
+        if (tempResult == null) {
+            return null;
+        }
+        ArrayList<RelatedUserData> result = new ArrayList<>();
+        if (users == null) {
+            for(Map.Entry<String, RelatedUserData> data: tempResult.entrySet()) {
+                result.add(data.getValue());
+            }
+            return result;
+        }
+        HashMap<String, MysqlUser> userHashMap = users.getUserHashMap();
+        MysqlUser mysqlUser;
+        String username;
+        for(Map.Entry<String, MysqlUser> data: userHashMap.entrySet()) {
+            username = data.getKey();
+            mysqlUser = data.getValue();
+            if (mysqlUser != null) {
+                tempResult.put(username, new RelatedUserData(mysqlUser));
             }
         }
         for(Map.Entry<String, RelatedUserData> data: tempResult.entrySet()) {
@@ -172,50 +183,26 @@ public class UserService {
         }
         return result;
     }
-    public ArrayList<RelatedUserDataV2> getRelatedUsersDataV2(LoginUserDetails loginUserDetails) {
-        ArrayList<RelatedUserDataV2> result = new ArrayList<>();
-        boolean isAdmin = this.isLoginUserAdmin(loginUserDetails);
-        ArrayList<String> relatedUsers;
-        if (isAdmin) {
-            relatedUsers = this.getAllRelatedUsersName(loginUserDetails.getUsername());
-        } else {
-            relatedUsers = this.getRelatedUsers(loginUserDetails.getUsername());
-        }
-        if (relatedUsers == null) {
-            return result;
-        }
-        HashMap<String, RelatedUserDataV2> tempResult = new HashMap<>();
-        RelatedUserDataV2 userData;
-        for(String uName: relatedUsers) {
-            userData = new RelatedUserDataV2(uName, false);
-            tempResult.put(uName, userData);
-        }
+    public ArrayList<RelatedUserData> getRelatedUsersData(LoginUserDetails loginUserDetails) {
+        ArrayList<RelatedUserData> result = new ArrayList<>();
         Users users = userInterface.getAllUsers();
-        if (users != null) {
-            HashMap<String, MysqlUser> userHashMap = users.getUserHashMap();
-            if (userHashMap != null) {
-                MysqlUser mysqlUser;
-                String username;
-                for(Map.Entry<String, RelatedUserDataV2> data: tempResult.entrySet()) {
-                    username = data.getKey();
-                    mysqlUser = userHashMap.get(username);
-                    if (mysqlUser != null) {
-                        tempResult.put(username, new RelatedUserDataV2(mysqlUser));
-                    }
-                }
-                if (isAdmin) {
-                    for(Map.Entry<String, MysqlUser> data: userHashMap.entrySet()) {
-                        username = data.getKey();
-                        mysqlUser = data.getValue();
-                        if (mysqlUser != null) {
-                            tempResult.put(username, new RelatedUserDataV2(mysqlUser));
-                        }
-                    }
-                }
-            }
+        HashMap<String, RelatedUserData> tempResult = this.getRelatedUserDataHash(loginUserDetails, users);
+        if (tempResult == null) {
+            return null;
         }
-        for(Map.Entry<String, RelatedUserDataV2> data: tempResult.entrySet()) {
+        for(Map.Entry<String, RelatedUserData> data: tempResult.entrySet()) {
             result.add(data.getValue());
+        }
+        return result;
+    }
+    public ArrayList<RelatedUserDataV2> getRelatedUsersDataV2(LoginUserDetails loginUserDetails) {
+        ArrayList<RelatedUserData> tempResult = this.getRelatedUsersData(loginUserDetails);
+        if (tempResult == null) {
+            return null;
+        }
+        ArrayList<RelatedUserDataV2> result = new ArrayList<>();
+        for(RelatedUserData relatedUserData: tempResult) {
+            result.add(new RelatedUserDataV2(relatedUserData));
         }
         return result;
     }
@@ -538,14 +525,13 @@ public class UserService {
         return relatedUsers;
     }
     private ArrayList<String> getRelatedUserName(LoginUserDetails loginUserDetails) {
-        boolean isAdmin = this.isLoginUserAdmin(loginUserDetails);
         ArrayList<String> relatedUsers;
-        if (isAdmin) {
+        if (this.isAuthorised(loginUserDetails, ApiRoleAccess.IS_DEV_USER)) {
             relatedUsers = this.getAllRelatedUsersName(loginUserDetails.getUsername());
         } else {
             relatedUsers = this.getRelatedUsers(loginUserDetails.getUsername());
         }
-        logger.info("RelatedUsers for username:{}, {}", loginUserDetails.getUsername(), relatedUsers);
+        logger.info("getRelatedUserName: RelatedUsers for username:{}, {}", loginUserDetails.getUsername(), relatedUsers);
         return relatedUsers;
     }
     public Object getRolesConfig() {

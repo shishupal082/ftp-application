@@ -2,6 +2,7 @@ package com.project.ftp.obj;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.project.ftp.config.AppConstant;
 import com.project.ftp.service.StaticService;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -50,9 +51,9 @@ public class RequestChangePassword {
     @Override
     public String toString() {
         return "RequestChangePassword{" +
-                "old_password='" + "*****" + '\'' +
-                ", new_password='" + "*****" + '\'' +
-                ", confirm_password='" + "*****" + '\'' +
+                "old_password='" + AppConstant.MaskDataString + '\'' +
+                ", new_password='" + AppConstant.MaskDataString + '\'' +
+                ", confirm_password='" + AppConstant.MaskDataString + '\'' +
                 '}';
     }
 }
