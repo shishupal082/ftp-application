@@ -400,6 +400,27 @@ public class ApiResource {
         this.singleThreadingService.clearSingleThread(request, "api");
         return response;
     }
+    @GET
+    @Path("/get_api_role_mapping")
+    @UnitOfWork
+    public ApiResponse getApiRoleMappingConfig(@Context HttpServletRequest request) throws AppException {
+        this.singleThreadingService.checkSingleThreadStatus(request, "api");
+        logger.info("getApiRoleMappingConfig : In, user: {}", userService.getUserDataForLogging(request));
+        ApiResponse response;
+        try {
+            authService.checkApiAuthorisation(request, ApiIdentifier.GET_API_ROLE_MAPPING);
+            response = new ApiResponse(appConfig.getApiRoleMappingList());
+            eventTracking.trackSuccessEvent(request, EventName.GET_API_ROLE_MAPPING);
+        } catch (AppException ae) {
+            logger.info("Unauthorised username: {}, trying to access api role mapping config.",
+                    userService.getLoginUserName(request));
+            response = new ApiResponse(ae.getErrorCode());
+            eventTracking.trackFailureEvent(request, EventName.GET_API_ROLE_MAPPING, ae.getErrorCode());
+        }
+        logger.info("getApiRoleMappingConfig : Out: {}", response);
+        this.singleThreadingService.clearSingleThread(request, "api");
+        return response;
+    }
     @POST
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     @Path("/upload_file")

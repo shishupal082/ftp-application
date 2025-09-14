@@ -31,6 +31,7 @@ public enum EventName {
     GET_OTHER_USER_RELATED_DATA("get_other_user_related_data"),
     GET_APP_CONFIG("get_app_config"),
     GET_SESSION_DATA("get_session_data"),
+    GET_API_ROLE_MAPPING("get_api_role_mapping"),
     GET_FILES_INFO("get_files_info"),
     GET_PATH_INFO("get_path_info"),
     GET_DATABASE_FILES_INFO("get_database_files_info"),

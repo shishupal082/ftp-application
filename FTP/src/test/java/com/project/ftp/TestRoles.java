@@ -149,6 +149,6 @@ public class TestRoles {
     public void testAuthorisationV1() {
         List<ApiIdentifier> list = Arrays.asList(ApiIdentifier.values());
         ArrayList<ApiIdentifier> apiIdentifiers = new ArrayList<>(list);
-        Assert.assertEquals(54, apiIdentifiers.size());
+        Assert.assertEquals(55, apiIdentifiers.size());
     }
 }

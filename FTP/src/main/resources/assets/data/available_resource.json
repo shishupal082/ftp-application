@@ -12,6 +12,10 @@
     "View Resource"
   ],
   [
+    "/api_role_mapping",
+    "Api Role Mapping View"
+  ],
+  [
     "/users_control",
     "Users Control View"
   ],
@@ -106,6 +110,10 @@
   [
     "/api/get_session_config",
     "Get session config data [GET]"
+  ],
+  [
+    "/api/get_api_role_mapping",
+    "Get api role mapping data [GET]"
   ],
   [
     "/api/get_users",

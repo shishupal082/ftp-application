@@ -31,7 +31,6 @@ import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
 
 public class AppConfig {
     private final static Logger logger = LoggerFactory.getLogger(AppConfig.class);
@@ -56,6 +55,7 @@ public class AppConfig {
     private ScanDirService scanDirService;
     private TableService tableService;
     private SingleThreadingService singleThreadingService;
+    private HashMap<String, ArrayList<ApiRoleMappingData>> apiRoleMappingList;
     public AppConfig() {
         this.configDate = StaticService.getDateStrFromPattern(AppConstant.DATE_FORMAT);
     }
@@ -150,6 +150,14 @@ public class AppConfig {
         this.logFiles = logFiles;
     }
 
+    public HashMap<String, ArrayList<ApiRoleMappingData>> getApiRoleMappingList() {
+        return apiRoleMappingList;
+    }
+
+    public void setApiRoleMappingList(HashMap<String, ArrayList<ApiRoleMappingData>> apiRoleMappingList) {
+        this.apiRoleMappingList = apiRoleMappingList;
+    }
+
     public String getCookieName() {
         String cookieName = ftpConfiguration.getCookieName();
         if (StaticService.isInValidString(cookieName)) {
@@ -208,52 +216,15 @@ public class AppConfig {
     public void setPageConfig404(PageConfig404 pageConfig404) {
         this.pageConfig404 = pageConfig404;
     }
-    private void updateApiRoleAccess(final FtpConfiguration ftpConfiguration) {
-        if (ftpConfiguration == null) {
-            return;
-        }
-        HashMap<String, ArrayList<String>> staticApiRolesMapping = ApiRolesMapping.getPreDefinedApiRoleMapping();
-        HashMap<String, ArrayList<String>> configApiRolesMapping = ftpConfiguration.getApiAuthorisationConfig();
-        String key;
-        ArrayList<String> values, staticValues;
-        if (configApiRolesMapping != null) {
-            for (Map.Entry<String, ArrayList<String>> entry: configApiRolesMapping.entrySet()) {
-                if (entry == null) {
-                    continue;
-                }
-                key = entry.getKey();
-                values = entry.getValue();
-                if (key != null && values != null) {
-                    staticValues = staticApiRolesMapping.get(key);
-                    if (staticValues == null) {
-                        staticValues = values;
-                    } else {
-                        for (String str: values) {
-                            if (str != null && !str.isEmpty()) {
-                                if (staticValues.contains(str)) {
-                                    logger.info("{} role already exist for api: {}", str, key);
-                                    continue;
-                                }
-                                staticValues.add(str);
-                            }
-                        }
-                    }
-                    staticApiRolesMapping.put(key, staticValues);
-                }
-            }
-        }
-        ftpConfiguration.setApiAuthorisationConfig(staticApiRolesMapping);
-    }
+
     public void updateFinalFtpConfiguration(final FtpConfiguration ftpConfiguration) {
         ftpConfiguration.setMysqlEnable(StaticService.isMysqlEnable(cmdArguments));
         if (cmdArguments == null) {
-            this.updateApiRoleAccess(ftpConfiguration);
             this.setFtpConfiguration(ftpConfiguration);
             logger.info("FTP configuration generate complete 1: {}", ftpConfiguration);
             return;
         }
         if (cmdArguments.size() <= AppConstant.CMD_LINE_ARG_MIN_SIZE) {
-            this.updateApiRoleAccess(ftpConfiguration);
             this.setFtpConfiguration(ftpConfiguration);
             logger.info("FTP configuration generate complete 2: {}", ftpConfiguration);
             return;
@@ -267,7 +238,6 @@ public class AppConfig {
                     cmdArguments.get(i));
             ftpConfiguration.updateFtpConfig(temp);
         }
-        this.updateApiRoleAccess(ftpConfiguration);
         this.setFtpConfiguration(ftpConfiguration);
         logger.info("FTP configuration generate complete: {}", ftpConfiguration);
     }
@@ -278,7 +248,8 @@ public class AppConfig {
     }
     public AppConfigObj getAppConfigObj() {
         return new AppConfigObj(publicDir, configDate, appVersion, cmdArguments,
-                logFilePath, requestCount, sessionData, ftpConfiguration, pageConfig404);
+                logFilePath, requestCount, sessionData, ftpConfiguration, pageConfig404,
+                apiRoleMappingList);
     }
 
     public EventTracking getEventTracking() {
@@ -374,6 +345,7 @@ public class AppConfig {
         String configPath = args.get(AppConstant.CMD_LINE_ARG_MIN_SIZE-1);
         appConfig.setCmdArguments(args);
         appConfig.updateFinalFtpConfiguration(ftpConfiguration);
+        appConfig.setApiRoleMappingList(ApiRolesMapping.getFinalApiRoleMapping(ftpConfiguration.getApiAuthorisationConfig()));
 //        ShutdownTask shutdownTask = new ShutdownTask(appConfig);
 //        appConfig.setShutdownTask(shutdownTask);
 //        appConfig.setFtpConfiguration(ftpConfiguration);

@@ -17,6 +17,7 @@ public enum ApiIdentifier {
     GET_CURRENT_USER_FILES_INFO("get_current_user_files_info"),
     GET_APP_CONFIG("get_app_config"),
     GET_SESSION_CONFIG("get_session_config"),
+    GET_API_ROLE_MAPPING("get_api_role_mapping"),
     UPLOAD_FILE("upload_file"),
     ADD_TEXT("add_text"),
     ADD_TEXT_V2("add_text_v2"),

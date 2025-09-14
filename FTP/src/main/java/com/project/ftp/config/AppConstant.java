@@ -97,6 +97,8 @@ public class AppConstant {
     public static final String MS_EXCEL = "msExcel";
     public static final String CSV = "csv";
     public static final String MYSQL = "mysql";
+    public static final String roleAccessTypeDirect = "direct";
+    public static final String roleAccessTypeConfig = "config";
 
     /**
      * 0: server/standalone

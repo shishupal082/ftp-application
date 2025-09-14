@@ -1,10 +1,7 @@
 package com.project.ftp.service;
 
 import com.project.ftp.common.InputValidate;
-import com.project.ftp.config.ApiRoleAccess;
-import com.project.ftp.config.AppConfig;
-import com.project.ftp.config.AppConstant;
-import com.project.ftp.config.UserMethod;
+import com.project.ftp.config.*;
 import com.project.ftp.exceptions.AppException;
 import com.project.ftp.exceptions.ErrorCodes;
 import com.project.ftp.intreface.UserInterface;
@@ -92,6 +89,8 @@ public class UserService {
         boolean rolesUpdateStatus = appConfig.getAppToBridge().updateUserRoles(rolesConfigPath);
         appConfig.updatePageConfig404();
         appConfig.updateFinalFtpConfiguration(appConfig.getFtpConfiguration());
+        appConfig.setApiRoleMappingList(ApiRolesMapping.getFinalApiRoleMapping(
+                appConfig.getFtpConfiguration().getApiAuthorisationConfig()));
         if (!rolesUpdateStatus) {
             logger.info("Error in updating user roles.");
         }

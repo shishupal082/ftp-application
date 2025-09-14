@@ -3,6 +3,7 @@ package com.project.ftp.service;
 import com.project.ftp.FtpConfiguration;
 import com.project.ftp.config.ApiIdentifier;
 import com.project.ftp.config.ApiRoleAccess;
+import com.project.ftp.config.ApiRoleMappingData;
 import com.project.ftp.config.AppConfig;
 import com.project.ftp.exceptions.AppException;
 import com.project.ftp.exceptions.ErrorCodes;
@@ -29,56 +30,52 @@ public class AuthService {
             throw new AppException(ErrorCodes.UNAUTHORIZED_USER);
         }
     }
-    private ArrayList<ApiRoleAccess> getApiRoleAccessForApi(ApiIdentifier apiIdentifier) {
-        ArrayList<ApiRoleAccess> roleAccesses = new ArrayList<>();
+    private ArrayList<String> getApiRoleAccessForApi(ApiIdentifier apiIdentifier) {
+        ArrayList<String> result = new ArrayList<>();
         if (apiIdentifier == null) {
             return null;
         }
         if (appConfig == null) {
             return null;
         }
-        FtpConfiguration ftpConfiguration = appConfig.getFtpConfiguration();
-        if (ftpConfiguration == null) {
-            return null;
-        }
-        HashMap<String, ArrayList<String>> apiAuthorisationConfig = ftpConfiguration.getApiAuthorisationConfig();
-        ArrayList<String> roleAccess;
-        ApiRoleAccess apiRoleAccess;
+        HashMap<String, ArrayList<ApiRoleMappingData>> apiAuthorisationConfig = appConfig.getApiRoleMappingList();
+        ArrayList<ApiRoleMappingData> roleAccess;
         if (apiAuthorisationConfig != null) {
             roleAccess = apiAuthorisationConfig.get(apiIdentifier.getApiName());
             if (roleAccess != null) {
-                for (String roleName: roleAccess) {
-                    apiRoleAccess = ApiRoleAccess.get(roleName);
-                    if (apiRoleAccess != null) {
-                        roleAccesses.add(apiRoleAccess);
+                for (ApiRoleMappingData apiRoleMappingData: roleAccess) {
+                    if (apiRoleMappingData != null) {
+                        if (apiRoleMappingData.getRole() != null) {
+                            result.add(apiRoleMappingData.getRole());
+                        }
                     }
                 }
             }
         }
-        return roleAccesses;
+        return result;
     }
     private Boolean checkApiAuthorisationV2(final HttpServletRequest request, ApiIdentifier apiIdentifier) {
         if (apiIdentifier == null) {
             return null;
         }
-        ArrayList<ApiRoleAccess> apiRoleAccess = this.getApiRoleAccessForApi(apiIdentifier);
+        ArrayList<String> apiRoleAccess = this.getApiRoleAccessForApi(apiIdentifier);
         if (apiRoleAccess == null || apiRoleAccess.isEmpty()) {
             return null;
         }
         boolean temp;
         LoginUserDetails userDetails = userService.getLoginUserDetails(request);
-        for (ApiRoleAccess apiRoleAccess1: apiRoleAccess) {
+        for (String apiRoleAccess1: apiRoleAccess) {
             if (apiRoleAccess1 == null) {
                 continue;
             }
-            if (apiRoleAccess1 == ApiRoleAccess.IS_LOGIN) {
+            if (apiRoleAccess1.equals(ApiRoleAccess.IS_LOGIN.getRoleAccessName())) {
                 if (!userDetails.getLogin()) {
                     logger.info("checkApiAuthorisationV2: Login required");
                     return false;
                 }
                 continue;
             }
-            temp = userService.isAuthorised(userDetails, apiRoleAccess1);
+            temp = userService.isAuthorisedPermission(userDetails, apiRoleAccess1);
             if (!temp) {
                 return false;
             }
@@ -88,10 +85,11 @@ public class AuthService {
     public void checkApiAuthorisation(final HttpServletRequest request, ApiIdentifier apiIdentifier) {
         Boolean result = this.checkApiAuthorisationV2(request, apiIdentifier);
         if (result == null) {
+            logger.info("checkApiAuthorisation, result: null");
             return;
         }
         if (!result) {
-            logger.info("checkApiAuthorisation: result: {}", result);
+            logger.info("checkApiAuthorisation, result: {}", false);
             throw new AppException(ErrorCodes.UNAUTHORIZED_USER);
         }
     }

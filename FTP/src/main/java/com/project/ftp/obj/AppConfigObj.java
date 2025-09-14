@@ -1,6 +1,7 @@
 package com.project.ftp.obj;
 
 import com.project.ftp.FtpConfiguration;
+import com.project.ftp.config.ApiRoleMappingData;
 import com.project.ftp.obj.yamlObj.PageConfig404;
 import com.project.ftp.session.SessionData;
 
@@ -18,10 +19,12 @@ public class AppConfigObj {
     private final HashMap<String, SessionData> sessionData;
     private final FtpConfiguration ftpConfiguration;
     private final PageConfig404 pageConfig404;
+    private HashMap<String, ArrayList<ApiRoleMappingData>> apiRoleMappingList;
     public AppConfigObj(String publicDir, String configDate, String appVersion,
                         ArrayList<String> cmdArguments, String logFilePath, int requestCount,
                         HashMap<String, SessionData> sessionData,
-                        FtpConfiguration ftpConfiguration, PageConfig404 pageConfig404) {
+                        FtpConfiguration ftpConfiguration, PageConfig404 pageConfig404,
+                        HashMap<String, ArrayList<ApiRoleMappingData>> apiRoleMappingList) {
         this.publicDir = publicDir;
         this.configDate = configDate;
         this.appVersion = appVersion;
@@ -32,6 +35,7 @@ public class AppConfigObj {
         this.sessionData = sessionData;
         this.ftpConfiguration = ftpConfiguration;
         this.pageConfig404 = pageConfig404;
+        this.apiRoleMappingList = apiRoleMappingList;
     }
 
     public String getPublicDir() {
@@ -74,6 +78,14 @@ public class AppConfigObj {
         return pageConfig404;
     }
 
+    public HashMap<String, ArrayList<ApiRoleMappingData>> getApiRoleMappingList() {
+        return apiRoleMappingList;
+    }
+
+    public void setApiRoleMappingList(HashMap<String, ArrayList<ApiRoleMappingData>> apiRoleMappingList) {
+        this.apiRoleMappingList = apiRoleMappingList;
+    }
+
     @Override
     public String toString() {
         return "AppConfigObj{" +
@@ -87,6 +99,7 @@ public class AppConfigObj {
                 ", sessionData=" + sessionData +
                 ", ftpConfiguration=" + ftpConfiguration +
                 ", pageConfig404=" + pageConfig404 +
+                ", apiRoleMappingList=" + apiRoleMappingList +
                 '}';
     }
 }

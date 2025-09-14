@@ -29,18 +29,8 @@ public class TestMSExcelService {
         return new EventTracking(appConfig, userService, eventInterface);
     }
     public AppConfig getAppConfig(boolean isMysqlEnable) {
-        ArrayList<String> arguments = new ArrayList<>();
-        arguments.add(AppConstant.SERVER);
-        if (isMysqlEnable) {
-            arguments.add(AppConstant.TRUE);
-        } else {
-            arguments.add(AppConstant.FALSE);
-        }
-        arguments.add(AppConstant.FALSE);
-        arguments.add("meta-data/app_env_config_mysql_db.yml");
-        arguments.add("meta-data/app_env_config_2.yml");
-        arguments.add("meta-data/app_env_config_4.yml");
-        return AppConfig.getAppConfigFromCmdArgs(arguments, AppConstant.SOURCE_TEST);
+        TestAppConfig testAppConfig = new TestAppConfig();
+        return testAppConfig.getAppConfig(isMysqlEnable);
     }
     public AppConfig getAppConfigProd(boolean isMysqlEnable) {
         ArrayList<String> arguments = new ArrayList<>();

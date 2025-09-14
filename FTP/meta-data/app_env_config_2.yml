@@ -152,6 +152,7 @@ apiAuthorisationConfig:
     - isLogin
   get_related_users_data:
     - isLogin
+    - isAdminExternalConfig
   get_related_users_data_v2:
     - isLogin
   delete_file:
@@ -256,6 +257,9 @@ apiAuthorisationConfig:
     - isLogin
   split_file:
     - isLogin
+  404_file_path_check:
+    - isLogin
+    - externalCheck
 
 
 tempConfig:

@@ -213,6 +213,11 @@ public class AppResource {
         return new CommonView("page_not_found_404.ftl", appConfig, AppConstant.AppVersion);
     }
     @GET
+    @Path("/api_role_mapping")
+    public AppView apiRoleMapping(@Context HttpServletRequest request) {
+        return new AppView(request, appViewFtlFileName, "api_role_mapping", userService, appConfig);
+    }
+    @GET
     @Path("/users_control")
     public AppView usersControl(@Context HttpServletRequest request) {
         return new AppView(request, appViewFtlFileName, "users_control", userService, appConfig);
