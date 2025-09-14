@@ -78,17 +78,17 @@ public class InputValidate {
     }
     public void validateLoginRequest(RequestUserLogin userLogin) throws AppException {
         if (userLogin == null) {
-            logger.info("loginUser request is null.");
+            logger.info("validateLoginRequest request is null.");
             throw new AppException(ErrorCodes.BAD_REQUEST_ERROR);
         }
         String username = userLogin.getUsername();
         if (StaticService.isInValidString(username)) {
-            logger.info("loginUser request invalid username: {}", username);
+            logger.info("validateLoginRequest request invalid username: {}", username);
             throw new AppException(ErrorCodes.USER_NAME_REQUIRED);
         }
         String password = userLogin.getPassword();
         if (StaticService.isInValidString(password)) {
-            logger.info("loginUser request invalid password: null");
+            logger.info("validateLoginRequest request invalid password: null");
             throw new AppException(ErrorCodes.PASSWORD_REQUIRED);
         }
     }
@@ -217,7 +217,7 @@ public class InputValidate {
         }
         String newPassword = userRegister.getPassword();
         if (StaticService.isInValidString(newPassword)) {
-            logger.info("createPassword request invalid newPassword: null");
+            logger.info("userRegister request invalid newPassword: null");
             throw new AppException(ErrorCodes.NEW_PASSWORD_REQUIRED);
         }
         String name = userRegister.getDisplay_name();
