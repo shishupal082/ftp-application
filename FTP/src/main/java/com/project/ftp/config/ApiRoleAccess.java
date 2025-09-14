@@ -6,6 +6,7 @@ public enum ApiRoleAccess {
     IS_LOGIN("isLogin"),
     IS_DEV_USER("isDevUser"),
     IS_ADMIN_USER("isAdminUser"),
+    IS_RELATED_USER_RESPONSE_AS_ALL_USER("isRelatedUserResponseAsAllUser"),
     IS_USERS_CONTROL_ENABLE("isUsersControlEnable"),
     IS_LOGIN_OTHER_USER_ENABLE("isLoginOtherUserEnable"),
     IS_ADD_TEXT_ENABLE("isAddTextEnable"),

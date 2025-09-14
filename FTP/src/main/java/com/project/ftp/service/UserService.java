@@ -182,7 +182,7 @@ public class UserService {
         }
         return result;
     }
-    public ArrayList<RelatedUserData> getRelatedUsersData(LoginUserDetails loginUserDetails) {
+    private ArrayList<RelatedUserData> getRelatedUsersData(LoginUserDetails loginUserDetails) {
         ArrayList<RelatedUserData> result = new ArrayList<>();
         Users users = userInterface.getAllUsers();
         HashMap<String, RelatedUserData> tempResult = this.getRelatedUserDataHash(loginUserDetails, users);
@@ -194,8 +194,15 @@ public class UserService {
         }
         return result;
     }
+    public ArrayList<RelatedUserData> getRelatedUsersDataV1(LoginUserDetails loginUserDetails) {
+        if (this.isAuthorised(loginUserDetails, ApiRoleAccess.IS_RELATED_USER_RESPONSE_AS_ALL_USER)) {
+            return this.getAllUser(loginUserDetails);
+        } else {
+            return this.getRelatedUsersData(loginUserDetails);
+        }
+    }
     public ArrayList<RelatedUserDataV2> getRelatedUsersDataV2(LoginUserDetails loginUserDetails) {
-        ArrayList<RelatedUserData> tempResult = this.getRelatedUsersData(loginUserDetails);
+        ArrayList<RelatedUserData> tempResult = this.getRelatedUsersDataV1(loginUserDetails);
         if (tempResult == null) {
             return null;
         }

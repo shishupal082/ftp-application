@@ -113,7 +113,7 @@ public class ApiResource {
         ApiResponse response;
         try {
             authService.checkApiAuthorisation(request, ApiIdentifier.GET_RELATED_USERS);
-            ArrayList<RelatedUserData> relatedUserData = userService.getRelatedUsersData(loginUserDetails);
+            ArrayList<RelatedUserData> relatedUserData = userService.getRelatedUsersDataV1(loginUserDetails);
             response = new ApiResponse(relatedUserData);
             eventTracking.trackSuccessEvent(request, EventName.GET_RELATED_USERS_DATA);
         } catch (AppException ae) {
