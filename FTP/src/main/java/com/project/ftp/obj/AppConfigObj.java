@@ -2,6 +2,7 @@ package com.project.ftp.obj;
 
 import com.project.ftp.FtpConfiguration;
 import com.project.ftp.config.ApiRoleMappingData;
+import com.project.ftp.config.FtpConfigItems;
 import com.project.ftp.obj.yamlObj.PageConfig404;
 import com.project.ftp.session.SessionData;
 
@@ -20,11 +21,13 @@ public class AppConfigObj {
     private final FtpConfiguration ftpConfiguration;
     private final PageConfig404 pageConfig404;
     private HashMap<String, ArrayList<ApiRoleMappingData>> apiRoleMappingList;
+    private ArrayList<FtpConfigItems> firstPageConfigItems;
     public AppConfigObj(String publicDir, String configDate, String appVersion,
                         ArrayList<String> cmdArguments, String logFilePath, int requestCount,
                         HashMap<String, SessionData> sessionData,
                         FtpConfiguration ftpConfiguration, PageConfig404 pageConfig404,
-                        HashMap<String, ArrayList<ApiRoleMappingData>> apiRoleMappingList) {
+                        HashMap<String, ArrayList<ApiRoleMappingData>> apiRoleMappingList,
+                        ArrayList<FtpConfigItems> firstPageConfigItems) {
         this.publicDir = publicDir;
         this.configDate = configDate;
         this.appVersion = appVersion;
@@ -36,8 +39,365 @@ public class AppConfigObj {
         this.ftpConfiguration = ftpConfiguration;
         this.pageConfig404 = pageConfig404;
         this.apiRoleMappingList = apiRoleMappingList;
+        this.firstPageConfigItems = firstPageConfigItems;
     }
-
+    public static boolean checkOrClearFtpConfiguration(final FtpConfiguration ftpConfiguration,
+                                                       final FtpConfigItems ftpConfigItems, boolean clear) {
+        if (ftpConfiguration == null) {
+            return false;
+        }
+        if (ftpConfigItems == null) {
+            return false;
+        }
+        switch (ftpConfigItems) {
+            case indexPageReRoute:
+                if (clear) {
+                    ftpConfiguration.setIndexPageReRoute(null);
+                } else {
+                    return ftpConfiguration.getIndexPageReRoute() != null;
+                }
+                break;
+            case configDataFilePath:
+                if (clear) {
+                    ftpConfiguration.setConfigDataFilePath(null);
+                } else {
+                    return ftpConfiguration.getConfigDataFilePath() != null;
+                }
+                break;
+            case fileSaveDir:
+                if (clear) {
+                    ftpConfiguration.setFileSaveDir(null);
+                } else {
+                    return ftpConfiguration.getFileSaveDir() != null;
+                }
+                break;
+            case publicDir:
+                if (clear) {
+                    ftpConfiguration.setPublicDir(null);
+                } else {
+                    return ftpConfiguration.getPublicDir() != null;
+                }
+                break;
+            case publicPostDir:
+                if (clear) {
+                    ftpConfiguration.setPublicPostDir(null);
+                } else {
+                    return ftpConfiguration.getPublicPostDir() != null;
+                }
+                break;
+            case assetsDir:
+                if (clear) {
+                    ftpConfiguration.setAssetsDir(null);
+                } else {
+                    return ftpConfiguration.getAssetsDir() != null;
+                }
+                break;
+            case fileMappingConfigFilePath:
+                if (clear) {
+                    ftpConfiguration.setFileMappingConfigFilePath(null);
+                } else {
+                    return ftpConfiguration.getFileMappingConfigFilePath() != null;
+                }
+                break;
+            case splitTextFileConfigPath:
+                if (clear) {
+                    ftpConfiguration.setSplitTextFileConfigPath(null);
+                } else {
+                    return ftpConfiguration.getSplitTextFileConfigPath() != null;
+                }
+                break;
+            case scanDirConfigFilePath:
+                if (clear) {
+                    ftpConfiguration.setScanDirConfigFilePath(null);
+                } else {
+                    return ftpConfiguration.getScanDirConfigFilePath() != null;
+                }
+                break;
+            case standAloneConfigPath:
+                if (clear) {
+                    ftpConfiguration.setStandAloneConfigPath(null);
+                } else {
+                    return ftpConfiguration.getStandAloneConfigPath() != null;
+                }
+                break;
+            case tableDbConfigFilePath:
+                if (clear) {
+                    ftpConfiguration.setTableDbConfigFilePath(null);
+                } else {
+                    return ftpConfiguration.getTableDbConfigFilePath() != null;
+                }
+                break;
+            case filenameFormat:
+                if (clear) {
+                    ftpConfiguration.setFilenameFormat(null);
+                } else {
+                    return ftpConfiguration.getFilenameFormat() != null;
+                }
+                break;
+            case instance:
+                if (clear) {
+                    ftpConfiguration.setInstance(null);
+                } else {
+                    return ftpConfiguration.getInstance() != null;
+                }
+                break;
+            case appRestartCommand:
+                if (clear) {
+                    ftpConfiguration.setAppRestartCommand(null);
+                } else {
+                    return ftpConfiguration.getAppRestartCommand() != null;
+                }
+                break;
+            case cookieName:
+                if (clear) {
+                    ftpConfiguration.setCookieName(null);
+                } else {
+                    return ftpConfiguration.getCookieName() != null;
+                }
+                break;
+            case forgotPasswordMessage:
+                if (clear) {
+                    ftpConfiguration.setForgotPasswordMessage(null);
+                } else {
+                    return ftpConfiguration.getForgotPasswordMessage() != null;
+                }
+                break;
+            case loadRoleStatusOnPageLoad:
+                if (clear) {
+                    ftpConfiguration.setLoadRoleStatusOnPageLoad(null);
+                } else {
+                    return ftpConfiguration.getLoadRoleStatusOnPageLoad() != null;
+                }
+                break;
+            case staticDataFilename:
+                if (clear) {
+                    ftpConfiguration.setStaticDataFilename(null);
+                } else {
+                    return ftpConfiguration.getStaticDataFilename() != null;
+                }
+                break;
+            case userDataFilename:
+                if (clear) {
+                    ftpConfiguration.setUserDataFilename(null);
+                } else {
+                    return ftpConfiguration.getUserDataFilename() != null;
+                }
+                break;
+            case aesEncryptionPassword:
+                if (clear) {
+                    ftpConfiguration.setAesEncryptionPassword(null);
+                } else {
+                    return ftpConfiguration.getAesEncryptionPassword() != null;
+                }
+                break;
+            case createReadmePdf:
+                if (clear) {
+                    ftpConfiguration.setCreateReadmePdf(null);
+                } else {
+                    return ftpConfiguration.getCreateReadmePdf() != null;
+                }
+                break;
+            case forgotPasswordEnable:
+                if (clear) {
+                    ftpConfiguration.setForgotPasswordEnable(null);
+                } else {
+                    return ftpConfiguration.getForgotPasswordEnable() != null;
+                }
+                break;
+            case guestEnable:
+                if (clear) {
+                    ftpConfiguration.setGuestEnable(null);
+                } else {
+                    return ftpConfiguration.getGuestEnable() != null;
+                }
+                break;
+            case androidCheckEnable:
+                if (clear) {
+                    ftpConfiguration.setAndroidCheckEnable(null);
+                } else {
+                    return ftpConfiguration.getAndroidCheckEnable() != null;
+                }
+                break;
+            case singleThreadingEnable:
+                if (clear) {
+                    ftpConfiguration.setSingleThreadingEnable(null);
+                } else {
+                    return ftpConfiguration.getSingleThreadingEnable() != null;
+                }
+                break;
+            case mysqlEnable:
+                if (clear) {
+                    ftpConfiguration.setMysqlEnable(false);
+                } else {
+                    return ftpConfiguration.isMysqlEnable();
+                }
+                break;
+            case maxFileSize:
+                if (clear) {
+                    ftpConfiguration.setMaxFileSize(0);
+                } else {
+                    return ftpConfiguration.getMaxFileSize() > 0;
+                }
+                break;
+            case rateLimitThreshold:
+                if (clear) {
+                    ftpConfiguration.setRateLimitThreshold(0);
+                } else {
+                    return ftpConfiguration.getRateLimitThreshold() > 0;
+                }
+                break;
+            case allowedOrigin:
+                if (clear) {
+                    ftpConfiguration.setAllowedOrigin(null);
+                } else {
+                    return ftpConfiguration.getAllowedOrigin() != null;
+                }
+                break;
+            case supportedFileType:
+                if (clear) {
+                    ftpConfiguration.setSupportedFileType(null);
+                } else {
+                    return ftpConfiguration.getSupportedFileType() != null;
+                }
+                break;
+            case enableMysqlTableName:
+                if (clear) {
+                    ftpConfiguration.setEnableMysqlTableName(null);
+                } else {
+                    return ftpConfiguration.getEnableMysqlTableName() != null;
+                }
+                break;
+            case fileNotFoundMapping:
+                if (clear) {
+                    ftpConfiguration.setFileNotFoundMapping(null);
+                } else {
+                    return ftpConfiguration.getFileNotFoundMapping() != null;
+                }
+                break;
+            case rolesFileName:
+                if (clear) {
+                    ftpConfiguration.setRolesFileName(null);
+                } else {
+                    return ftpConfiguration.getRolesFileName() != null;
+                }
+                break;
+            case allowedTableFilename:
+                if (clear) {
+                    ftpConfiguration.setAllowedTableFilename(null);
+                } else {
+                    return ftpConfiguration.getAllowedTableFilename() != null;
+                }
+                break;
+            case enabledAuthPages:
+                if (clear) {
+                    ftpConfiguration.setEnabledAuthPages(null);
+                } else {
+                    return ftpConfiguration.getEnabledAuthPages() != null;
+                }
+                break;
+            case loginRedirectMapping:
+                if (clear) {
+                    ftpConfiguration.setLoginRedirectMapping(null);
+                } else {
+                    return ftpConfiguration.getLoginRedirectMapping() != null;
+                }
+                break;
+            case fileSaveDirMapping:
+                if (clear) {
+                    ftpConfiguration.setFileSaveDirMapping(null);
+                } else {
+                    return ftpConfiguration.getFileSaveDirMapping() != null;
+                }
+                break;
+            case tempConfig:
+                if (clear) {
+                    ftpConfiguration.setTempConfig(null);
+                } else {
+                    return ftpConfiguration.getTempConfig() != null;
+                }
+                break;
+            case emailConfig:
+                if (clear) {
+                    ftpConfiguration.setEmailConfig(null);
+                } else {
+                    return ftpConfiguration.getEmailConfig() != null;
+                }
+                break;
+            case createPasswordEmailConfig:
+                if (clear) {
+                    ftpConfiguration.setCreatePasswordEmailConfig(null);
+                } else {
+                    return ftpConfiguration.getCreatePasswordEmailConfig() != null;
+                }
+                break;
+            case ftlConfig:
+                if (clear) {
+                    ftpConfiguration.setFtlConfig(null);
+                } else {
+                    return ftpConfiguration.getFtlConfig() != null;
+                }
+                break;
+            case eventConfig:
+                if (clear) {
+                    ftpConfiguration.setEventConfig(null);
+                } else {
+                    return ftpConfiguration.getEventConfig() != null;
+                }
+                break;
+            case communicationConfig:
+                if (clear) {
+                    ftpConfiguration.setCommunicationConfig(null);
+                } else {
+                    return ftpConfiguration.getCommunicationConfig() != null;
+                }
+                break;
+            case socialLoginConfig:
+                if (clear) {
+                    ftpConfiguration.setSocialLoginConfig(null);
+                } else {
+                    return ftpConfiguration.getSocialLoginConfig() != null;
+                }
+                break;
+            case googleOAuthClientConfig:
+                if (clear) {
+                    ftpConfiguration.setGoogleOAuthClientConfig(null);
+                } else {
+                    return ftpConfiguration.getGoogleOAuthClientConfig() != null;
+                }
+                break;
+            case apiAuthorisationConfig:
+                if (clear) {
+                    ftpConfiguration.setApiAuthorisationConfig(null);
+                } else {
+                    return ftpConfiguration.getApiAuthorisationConfig() != null;
+                }
+                break;
+            case dataSourceFactory:
+                if (clear) {
+                    ftpConfiguration.setDataSourceFactory(null);
+                } else {
+                    return ftpConfiguration.getDataSourceFactory() != null;
+                }
+                break;
+            case oracleDatabaseConfigs:
+                if (clear) {
+                    ftpConfiguration.setOracleDatabaseConfigs(null);
+                } else {
+                    return ftpConfiguration.getOracleDatabaseConfigs() != null;
+                }
+                break;
+            case mysqlDatabaseConfigs:
+                if (clear) {
+                    ftpConfiguration.setMysqlDatabaseConfigs(null);
+                } else {
+                    return ftpConfiguration.getMysqlDatabaseConfigs() != null;
+                }
+                break;
+            default:
+                break;
+        }
+        return false;
+    }
     public String getPublicDir() {
         return publicDir;
     }
@@ -86,6 +446,14 @@ public class AppConfigObj {
         this.apiRoleMappingList = apiRoleMappingList;
     }
 
+    public ArrayList<FtpConfigItems> getFirstPageConfigItems() {
+        return firstPageConfigItems;
+    }
+
+    public void setFirstPageConfigItems(ArrayList<FtpConfigItems> firstPageConfigItems) {
+        this.firstPageConfigItems = firstPageConfigItems;
+    }
+
     @Override
     public String toString() {
         return "AppConfigObj{" +
@@ -100,6 +468,7 @@ public class AppConfigObj {
                 ", ftpConfiguration=" + ftpConfiguration +
                 ", pageConfig404=" + pageConfig404 +
                 ", apiRoleMappingList=" + apiRoleMappingList +
+                ", firstPageConfigItems=" + firstPageConfigItems +
                 '}';
     }
 }

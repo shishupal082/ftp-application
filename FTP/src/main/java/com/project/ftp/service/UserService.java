@@ -85,10 +85,10 @@ public class UserService {
         return this.isAuthorised(loginUserDetails, ApiRoleAccess.IS_ADMIN_USER);
     }
     public void updateFtpConfiguration() throws AppException {
+        appConfig.updateFinalFtpConfiguration(appConfig.getFtpConfiguration(), appConfig.getFirstPageConfigItems(), true);
         ArrayList<String> rolesConfigPath = StaticService.getRolesConfigPath(appConfig.getFtpConfiguration());
         boolean rolesUpdateStatus = appConfig.getAppToBridge().updateUserRoles(rolesConfigPath);
         appConfig.updatePageConfig404();
-        appConfig.updateFinalFtpConfiguration(appConfig.getFtpConfiguration());
         appConfig.setApiRoleMappingList(ApiRolesMapping.getFinalApiRoleMapping(
                 appConfig.getFtpConfiguration().getApiAuthorisationConfig()));
         if (!rolesUpdateStatus) {

@@ -2,6 +2,7 @@ package com.project.ftp;
 
 import com.project.ftp.config.AppConfig;
 import com.project.ftp.config.AppConstant;
+import com.project.ftp.config.FtpConfigItems;
 import com.project.ftp.event.EventTracking;
 import com.project.ftp.exceptions.AppExceptionMapper;
 import com.project.ftp.filters.LogFilter;
@@ -53,8 +54,9 @@ public class FtpApplication extends Application<FtpConfiguration> {
     @Override
     public void run(FtpConfiguration ftpConfiguration, Environment environment) {
         logger.info("commandLineArguments: {}", arguments.toString());
+        ArrayList<FtpConfigItems> firstPageConfigItems = AppConfig.getFirstPageConfigItems(ftpConfiguration);
         AppConfig appConfig = AppConfig.getAppConfig(hibernateBundle,  ftpConfiguration,
-                arguments, AppConstant.SOURCE_RUNTIME);
+                arguments, firstPageConfigItems, AppConstant.SOURCE_RUNTIME);
         if (appConfig == null) {
             logger.info("Error in generating appConfig");
             return;

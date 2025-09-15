@@ -9,6 +9,7 @@ import com.project.ftp.bridge.config.GoogleOAuthClientConfig;
 import com.project.ftp.bridge.config.SocialLoginConfig;
 import com.project.ftp.bridge.obj.yamlObj.CommunicationConfig;
 import com.project.ftp.config.AppConstant;
+import com.project.ftp.config.FtpConfigItems;
 import com.project.ftp.obj.yamlObj.EventConfig;
 import com.project.ftp.obj.yamlObj.FtlConfig;
 import com.project.ftp.obj.yamlObj.OracleDatabaseConfig;
@@ -468,198 +469,295 @@ public class FtpConfiguration extends Configuration {
         this.mysqlDatabaseConfigs = mysqlDatabaseConfigs;
     }
 
-    public void updateFtpConfig(final FtpConfiguration tempFtpConfiguration) {
+    public void updateFtpConfig(final FtpConfiguration tempFtpConfiguration,
+                                ArrayList<FtpConfigItems> firstPageConfigItems) {
         if (tempFtpConfiguration == null) {
             return;
         }
-        String indexPageReRoute = tempFtpConfiguration.getIndexPageReRoute();
-        if (indexPageReRoute != null) {
-            this.indexPageReRoute = indexPageReRoute;
+        if (firstPageConfigItems == null) {
+            firstPageConfigItems = new ArrayList<>();
         }
-        String configDataFilePath = tempFtpConfiguration.getConfigDataFilePath();
-        if (configDataFilePath != null) {
-            this.configDataFilePath = configDataFilePath;
+        if (!firstPageConfigItems.contains(FtpConfigItems.indexPageReRoute)) {
+            String indexPageReRoute = tempFtpConfiguration.getIndexPageReRoute();
+            if (indexPageReRoute != null) {
+                this.indexPageReRoute = indexPageReRoute;
+            }
         }
-        String fileSaveDir = tempFtpConfiguration.getFileSaveDir();
-        if (fileSaveDir != null) {
-            this.fileSaveDir = fileSaveDir;
+        if (!firstPageConfigItems.contains(FtpConfigItems.configDataFilePath)) {
+            String configDataFilePath = tempFtpConfiguration.getConfigDataFilePath();
+            if (configDataFilePath != null) {
+                this.configDataFilePath = configDataFilePath;
+            }
         }
-        String publicDir = tempFtpConfiguration.getPublicDir();
-        if (publicDir != null) {
-            this.publicDir = publicDir;
+        if (!firstPageConfigItems.contains(FtpConfigItems.fileSaveDir)) {
+            String fileSaveDir = tempFtpConfiguration.getFileSaveDir();
+            if (fileSaveDir != null) {
+                this.fileSaveDir = fileSaveDir;
+            }
         }
-        String publicPostDir = tempFtpConfiguration.getPublicPostDir();
-        if (publicPostDir != null) {
-            this.publicPostDir = publicPostDir;
+        if (!firstPageConfigItems.contains(FtpConfigItems.publicDir)) {
+            String publicDir = tempFtpConfiguration.getPublicDir();
+            if (publicDir != null) {
+                this.publicDir = publicDir;
+            }
         }
-        String assetsDir = tempFtpConfiguration.getAssetsDir();
-        if (assetsDir != null) {
-            this.assetsDir = assetsDir;
+        if (!firstPageConfigItems.contains(FtpConfigItems.publicPostDir)) {
+            String publicPostDir = tempFtpConfiguration.getPublicPostDir();
+            if (publicPostDir != null) {
+                this.publicPostDir = publicPostDir;
+            }
         }
-        String fileMappingConfigFilePath = tempFtpConfiguration.getFileMappingConfigFilePath();
-        if (fileMappingConfigFilePath != null) {
-            this.fileMappingConfigFilePath = fileMappingConfigFilePath;
+        if (!firstPageConfigItems.contains(FtpConfigItems.assetsDir)) {
+            String assetsDir = tempFtpConfiguration.getAssetsDir();
+            if (assetsDir != null) {
+                this.assetsDir = assetsDir;
+            }
         }
-
-        String splitTextFileConfigPath = tempFtpConfiguration.getSplitTextFileConfigPath();
-        if (splitTextFileConfigPath != null) {
-            this.splitTextFileConfigPath = splitTextFileConfigPath;
+        if (!firstPageConfigItems.contains(FtpConfigItems.fileMappingConfigFilePath)) {
+            String fileMappingConfigFilePath = tempFtpConfiguration.getFileMappingConfigFilePath();
+            if (fileMappingConfigFilePath != null) {
+                this.fileMappingConfigFilePath = fileMappingConfigFilePath;
+            }
         }
-        ArrayList<String> standAloneConfigPath = tempFtpConfiguration.getStandAloneConfigPath();
-        if (standAloneConfigPath != null) {
-            this.standAloneConfigPath = standAloneConfigPath;
+        if (!firstPageConfigItems.contains(FtpConfigItems.splitTextFileConfigPath)) {
+            String splitTextFileConfigPath = tempFtpConfiguration.getSplitTextFileConfigPath();
+            if (splitTextFileConfigPath != null) {
+                this.splitTextFileConfigPath = splitTextFileConfigPath;
+            }
         }
-        String scanDirConfigFilePath = tempFtpConfiguration.getScanDirConfigFilePath();
-        if (scanDirConfigFilePath != null) {
-            this.scanDirConfigFilePath = scanDirConfigFilePath;
+        if (!firstPageConfigItems.contains(FtpConfigItems.standAloneConfigPath)) {
+            ArrayList<String> standAloneConfigPath = tempFtpConfiguration.getStandAloneConfigPath();
+            if (standAloneConfigPath != null) {
+                this.standAloneConfigPath = standAloneConfigPath;
+            }
         }
-        ArrayList<String> tableDbConfigFilePath = tempFtpConfiguration.getTableDbConfigFilePath();
-        if (tableDbConfigFilePath != null) {
-            this.tableDbConfigFilePath = tableDbConfigFilePath;
+        if (!firstPageConfigItems.contains(FtpConfigItems.scanDirConfigFilePath)) {
+            String scanDirConfigFilePath = tempFtpConfiguration.getScanDirConfigFilePath();
+            if (scanDirConfigFilePath != null) {
+                this.scanDirConfigFilePath = scanDirConfigFilePath;
+            }
         }
-        String filenameFormat = tempFtpConfiguration.getFilenameFormat();
-        if (filenameFormat != null) {
-            this.filenameFormat = filenameFormat;
+        if (!firstPageConfigItems.contains(FtpConfigItems.tableDbConfigFilePath)) {
+            ArrayList<String> tableDbConfigFilePath = tempFtpConfiguration.getTableDbConfigFilePath();
+            if (tableDbConfigFilePath != null) {
+                this.tableDbConfigFilePath = tableDbConfigFilePath;
+            }
         }
-        String instance = tempFtpConfiguration.getInstance();
-        if (instance != null) {
-            this.instance = instance;
+        if (!firstPageConfigItems.contains(FtpConfigItems.filenameFormat)) {
+            String filenameFormat = tempFtpConfiguration.getFilenameFormat();
+            if (filenameFormat != null) {
+                this.filenameFormat = filenameFormat;
+            }
         }
-        String appRestartCommand = tempFtpConfiguration.getAppRestartCommand();
-        if (appRestartCommand != null) {
-            this.appRestartCommand = appRestartCommand;
+        if (!firstPageConfigItems.contains(FtpConfigItems.instance)) {
+            String instance = tempFtpConfiguration.getInstance();
+            if (instance != null) {
+                this.instance = instance;
+            }
         }
-        String cookieName = tempFtpConfiguration.getCookieName();
-        if (cookieName != null) {
-            this.cookieName = cookieName;
+        if (!firstPageConfigItems.contains(FtpConfigItems.appRestartCommand)) {
+            String appRestartCommand = tempFtpConfiguration.getAppRestartCommand();
+            if (appRestartCommand != null) {
+                this.appRestartCommand = appRestartCommand;
+            }
         }
-        String forgotPasswordMessage = tempFtpConfiguration.getForgotPasswordMessage();
-        if (forgotPasswordMessage != null) {
-            this.forgotPasswordMessage = forgotPasswordMessage;
+        if (!firstPageConfigItems.contains(FtpConfigItems.cookieName)) {
+            String cookieName = tempFtpConfiguration.getCookieName();
+            if (cookieName != null) {
+                this.cookieName = cookieName;
+            }
         }
-        String loadRoleStatusOnPageLoad = tempFtpConfiguration.getLoadRoleStatusOnPageLoad();
-        if (loadRoleStatusOnPageLoad != null) {
-            this.loadRoleStatusOnPageLoad = loadRoleStatusOnPageLoad;
+        if (!firstPageConfigItems.contains(FtpConfigItems.forgotPasswordMessage)) {
+            String forgotPasswordMessage = tempFtpConfiguration.getForgotPasswordMessage();
+            if (forgotPasswordMessage != null) {
+                this.forgotPasswordMessage = forgotPasswordMessage;
+            }
         }
-        String staticDataFilename = tempFtpConfiguration.getStaticDataFilename();
-        if (staticDataFilename != null) {
-            this.staticDataFilename = staticDataFilename;
+        if (!firstPageConfigItems.contains(FtpConfigItems.loadRoleStatusOnPageLoad)) {
+            String loadRoleStatusOnPageLoad = tempFtpConfiguration.getLoadRoleStatusOnPageLoad();
+            if (loadRoleStatusOnPageLoad != null) {
+                this.loadRoleStatusOnPageLoad = loadRoleStatusOnPageLoad;
+            }
         }
-        String userDataFilename = tempFtpConfiguration.getUserDataFilename();
-        if (userDataFilename != null) {
-            this.userDataFilename = userDataFilename;
+        if (!firstPageConfigItems.contains(FtpConfigItems.staticDataFilename)) {
+            String staticDataFilename = tempFtpConfiguration.getStaticDataFilename();
+            if (staticDataFilename != null) {
+                this.staticDataFilename = staticDataFilename;
+            }
         }
-        String aesEncryptionPassword = tempFtpConfiguration.getAesEncryptionPassword();
-        if (aesEncryptionPassword != null) {
-            this.aesEncryptionPassword = aesEncryptionPassword;
+        if (!firstPageConfigItems.contains(FtpConfigItems.userDataFilename)) {
+            String userDataFilename = tempFtpConfiguration.getUserDataFilename();
+            if (userDataFilename != null) {
+                this.userDataFilename = userDataFilename;
+            }
         }
-        Boolean createReadmePdf = tempFtpConfiguration.getCreateReadmePdf();
-        if (createReadmePdf != null) {
-            this.createReadmePdf = createReadmePdf;
+        if (!firstPageConfigItems.contains(FtpConfigItems.aesEncryptionPassword)) {
+            String aesEncryptionPassword = tempFtpConfiguration.getAesEncryptionPassword();
+            if (aesEncryptionPassword != null) {
+                this.aesEncryptionPassword = aesEncryptionPassword;
+            }
         }
-        Boolean forgotPasswordEnable = tempFtpConfiguration.getForgotPasswordEnable();
-        if (forgotPasswordEnable != null) {
-            this.forgotPasswordEnable = forgotPasswordEnable;
+        if (!firstPageConfigItems.contains(FtpConfigItems.createReadmePdf)) {
+            Boolean createReadmePdf = tempFtpConfiguration.getCreateReadmePdf();
+            if (createReadmePdf != null) {
+                this.createReadmePdf = createReadmePdf;
+            }
         }
-        Boolean guestEnable = tempFtpConfiguration.getGuestEnable();
-        if (guestEnable != null) {
-            this.guestEnable = guestEnable;
+        if (!firstPageConfigItems.contains(FtpConfigItems.forgotPasswordEnable)) {
+            Boolean forgotPasswordEnable = tempFtpConfiguration.getForgotPasswordEnable();
+            if (forgotPasswordEnable != null) {
+                this.forgotPasswordEnable = forgotPasswordEnable;
+            }
         }
-        Boolean androidCheckEnable = tempFtpConfiguration.getAndroidCheckEnable();
-        if (androidCheckEnable != null) {
-            this.androidCheckEnable = androidCheckEnable;
+        if (!firstPageConfigItems.contains(FtpConfigItems.guestEnable)) {
+            Boolean guestEnable = tempFtpConfiguration.getGuestEnable();
+            if (guestEnable != null) {
+                this.guestEnable = guestEnable;
+            }
         }
-        Boolean singleThreadingEnable = tempFtpConfiguration.getSingleThreadingEnable();
-        if (singleThreadingEnable != null) {
-            this.singleThreadingEnable = singleThreadingEnable;
+        if (!firstPageConfigItems.contains(FtpConfigItems.androidCheckEnable)) {
+            Boolean androidCheckEnable = tempFtpConfiguration.getAndroidCheckEnable();
+            if (androidCheckEnable != null) {
+                this.androidCheckEnable = androidCheckEnable;
+            }
         }
-        int maxFileSize = tempFtpConfiguration.getMaxFileSize();
-        if (maxFileSize > 0) {
-            this.maxFileSize = maxFileSize;
+        if (!firstPageConfigItems.contains(FtpConfigItems.singleThreadingEnable)) {
+            Boolean singleThreadingEnable = tempFtpConfiguration.getSingleThreadingEnable();
+            if (singleThreadingEnable != null) {
+                this.singleThreadingEnable = singleThreadingEnable;
+            }
         }
-        int rateLimitThreshold = tempFtpConfiguration.getRateLimitThreshold();
-        if (rateLimitThreshold > 0) {
-            this.rateLimitThreshold = rateLimitThreshold;
+        if (!firstPageConfigItems.contains(FtpConfigItems.maxFileSize)) {
+            int maxFileSize = tempFtpConfiguration.getMaxFileSize();
+            if (maxFileSize > 0) {
+                this.maxFileSize = maxFileSize;
+            }
         }
-        ArrayList<String> allowedOrigin = tempFtpConfiguration.getAllowedOrigin();
-        if (allowedOrigin != null && !allowedOrigin.isEmpty()) {
-            this.allowedOrigin = allowedOrigin;
+        if (!firstPageConfigItems.contains(FtpConfigItems.rateLimitThreshold)) {
+            int rateLimitThreshold = tempFtpConfiguration.getRateLimitThreshold();
+            if (rateLimitThreshold > 0) {
+                this.rateLimitThreshold = rateLimitThreshold;
+            }
         }
-        ArrayList<String> supportedFileType = tempFtpConfiguration.getSupportedFileType();
-        if (supportedFileType != null && !supportedFileType.isEmpty()) {
-            this.supportedFileType = supportedFileType;
+        if (!firstPageConfigItems.contains(FtpConfigItems.allowedOrigin)) {
+            ArrayList<String> allowedOrigin = tempFtpConfiguration.getAllowedOrigin();
+            if (allowedOrigin != null && !allowedOrigin.isEmpty()) {
+                this.allowedOrigin = allowedOrigin;
+            }
         }
-        ArrayList<String> enableMysqlTableName = tempFtpConfiguration.getEnableMysqlTableName();
-        if (enableMysqlTableName != null && !enableMysqlTableName.isEmpty()) {
-            this.enableMysqlTableName = enableMysqlTableName;
+        if (!firstPageConfigItems.contains(FtpConfigItems.supportedFileType)) {
+            ArrayList<String> supportedFileType = tempFtpConfiguration.getSupportedFileType();
+            if (supportedFileType != null && !supportedFileType.isEmpty()) {
+                this.supportedFileType = supportedFileType;
+            }
         }
-        ArrayList<String> fileNotFoundMapping = tempFtpConfiguration.getFileNotFoundMapping();
-        if (fileNotFoundMapping != null && !fileNotFoundMapping.isEmpty()) {
-            this.fileNotFoundMapping = fileNotFoundMapping;
+        if (!firstPageConfigItems.contains(FtpConfigItems.enableMysqlTableName)) {
+            ArrayList<String> enableMysqlTableName = tempFtpConfiguration.getEnableMysqlTableName();
+            if (enableMysqlTableName != null && !enableMysqlTableName.isEmpty()) {
+                this.enableMysqlTableName = enableMysqlTableName;
+            }
         }
-        ArrayList<String> rolesFileName = tempFtpConfiguration.getRolesFileName();
-        if (rolesFileName != null && !rolesFileName.isEmpty()) {
-            this.rolesFileName = rolesFileName;
+        if (!firstPageConfigItems.contains(FtpConfigItems.fileNotFoundMapping)) {
+            ArrayList<String> fileNotFoundMapping = tempFtpConfiguration.getFileNotFoundMapping();
+            if (fileNotFoundMapping != null && !fileNotFoundMapping.isEmpty()) {
+                this.fileNotFoundMapping = fileNotFoundMapping;
+            }
         }
-        ArrayList<String> allowedTableFilename = tempFtpConfiguration.getAllowedTableFilename();
-        if (allowedTableFilename != null && !allowedTableFilename.isEmpty()) {
-            this.allowedTableFilename = allowedTableFilename;
+        if (!firstPageConfigItems.contains(FtpConfigItems.rolesFileName)) {
+            ArrayList<String> rolesFileName = tempFtpConfiguration.getRolesFileName();
+            if (rolesFileName != null && !rolesFileName.isEmpty()) {
+                this.rolesFileName = rolesFileName;
+            }
         }
-        ArrayList<String> enabledAuthPages = tempFtpConfiguration.getEnabledAuthPages();
-        if (enabledAuthPages != null && !enabledAuthPages.isEmpty()) {
-            this.enabledAuthPages = enabledAuthPages;
+        if (!firstPageConfigItems.contains(FtpConfigItems.allowedTableFilename)) {
+            ArrayList<String> allowedTableFilename = tempFtpConfiguration.getAllowedTableFilename();
+            if (allowedTableFilename != null && !allowedTableFilename.isEmpty()) {
+                this.allowedTableFilename = allowedTableFilename;
+            }
         }
-        HashMap<String, String> loginRedirectMapping = tempFtpConfiguration.getLoginRedirectMapping();
-        if (loginRedirectMapping != null) {
-            this.loginRedirectMapping = loginRedirectMapping;
+        if (!firstPageConfigItems.contains(FtpConfigItems.enabledAuthPages)) {
+            ArrayList<String> enabledAuthPages = tempFtpConfiguration.getEnabledAuthPages();
+            if (enabledAuthPages != null && !enabledAuthPages.isEmpty()) {
+                this.enabledAuthPages = enabledAuthPages;
+            }
         }
-        HashMap<String, String> fileSaveDirMapping = tempFtpConfiguration.getFileSaveDirMapping();
-        if (fileSaveDirMapping != null) {
-            this.fileSaveDirMapping = fileSaveDirMapping;
+        if (!firstPageConfigItems.contains(FtpConfigItems.loginRedirectMapping)) {
+            HashMap<String, String> loginRedirectMapping = tempFtpConfiguration.getLoginRedirectMapping();
+            if (loginRedirectMapping != null) {
+                this.loginRedirectMapping = loginRedirectMapping;
+            }
         }
-        HashMap<String, String> tempConfig = tempFtpConfiguration.getTempConfig();
-        if (tempConfig != null) {
-            this.tempConfig = tempConfig;
+        if (!firstPageConfigItems.contains(FtpConfigItems.fileSaveDirMapping)) {
+            HashMap<String, String> fileSaveDirMapping = tempFtpConfiguration.getFileSaveDirMapping();
+            if (fileSaveDirMapping != null) {
+                this.fileSaveDirMapping = fileSaveDirMapping;
+            }
         }
-        EmailConfig emailConfig = tempFtpConfiguration.getEmailConfig();
-        if (emailConfig != null) {
-            this.emailConfig = emailConfig;
+        if (!firstPageConfigItems.contains(FtpConfigItems.tempConfig)) {
+            HashMap<String, String> tempConfig = tempFtpConfiguration.getTempConfig();
+            if (tempConfig != null) {
+                this.tempConfig = tempConfig;
+            }
         }
-        CreatePasswordEmailConfig createPasswordEmailConfig = tempFtpConfiguration.getCreatePasswordEmailConfig();
-        if (createPasswordEmailConfig != null) {
-            this.createPasswordEmailConfig = createPasswordEmailConfig;
+        if (!firstPageConfigItems.contains(FtpConfigItems.emailConfig)) {
+            EmailConfig emailConfig = tempFtpConfiguration.getEmailConfig();
+            if (emailConfig != null) {
+                this.emailConfig = emailConfig;
+            }
         }
-        FtlConfig ftlConfig = tempFtpConfiguration.getFtlConfig();
-        if (ftlConfig != null) {
-            this.ftlConfig = ftlConfig;
+        if (!firstPageConfigItems.contains(FtpConfigItems.createPasswordEmailConfig)) {
+            CreatePasswordEmailConfig createPasswordEmailConfig = tempFtpConfiguration.getCreatePasswordEmailConfig();
+            if (createPasswordEmailConfig != null) {
+                this.createPasswordEmailConfig = createPasswordEmailConfig;
+            }
         }
-        EventConfig eventConfig = tempFtpConfiguration.getEventConfig();
-        if (eventConfig != null) {
-            this.eventConfig = eventConfig;
+        if (!firstPageConfigItems.contains(FtpConfigItems.ftlConfig)) {
+            FtlConfig ftlConfig = tempFtpConfiguration.getFtlConfig();
+            if (ftlConfig != null) {
+                this.ftlConfig = ftlConfig;
+            }
         }
-        CommunicationConfig communicationConfig = tempFtpConfiguration.getCommunicationConfig();
-        if (communicationConfig != null) {
-            this.communicationConfig = communicationConfig;
+        if (!firstPageConfigItems.contains(FtpConfigItems.eventConfig)) {
+            EventConfig eventConfig = tempFtpConfiguration.getEventConfig();
+            if (eventConfig != null) {
+                this.eventConfig = eventConfig;
+            }
         }
-        SocialLoginConfig socialLoginConfig = tempFtpConfiguration.getSocialLoginConfig();
-        if (socialLoginConfig != null) {
-            this.socialLoginConfig = socialLoginConfig;
+        if (!firstPageConfigItems.contains(FtpConfigItems.communicationConfig)) {
+            CommunicationConfig communicationConfig = tempFtpConfiguration.getCommunicationConfig();
+            if (communicationConfig != null) {
+                this.communicationConfig = communicationConfig;
+            }
         }
-        GoogleOAuthClientConfig googleOAuthClientConfig = tempFtpConfiguration.getGoogleOAuthClientConfig();
-        if (googleOAuthClientConfig != null) {
-            this.googleOAuthClientConfig = googleOAuthClientConfig;
+        if (!firstPageConfigItems.contains(FtpConfigItems.socialLoginConfig)) {
+            SocialLoginConfig socialLoginConfig = tempFtpConfiguration.getSocialLoginConfig();
+            if (socialLoginConfig != null) {
+                this.socialLoginConfig = socialLoginConfig;
+            }
         }
-        HashMap<String, ArrayList<String>> apiAuthorisationConfig = tempFtpConfiguration.getApiAuthorisationConfig();
-        if (apiAuthorisationConfig != null) {
-            this.apiAuthorisationConfig = apiAuthorisationConfig;
+        if (!firstPageConfigItems.contains(FtpConfigItems.googleOAuthClientConfig)) {
+            GoogleOAuthClientConfig googleOAuthClientConfig = tempFtpConfiguration.getGoogleOAuthClientConfig();
+            if (googleOAuthClientConfig != null) {
+                this.googleOAuthClientConfig = googleOAuthClientConfig;
+            }
         }
-        HashMap<String, OracleDatabaseConfig> tempOracleDatabaseConfigs = tempFtpConfiguration.getOracleDatabaseConfigs();
-        if (tempOracleDatabaseConfigs != null) {
-            this.oracleDatabaseConfigs = tempOracleDatabaseConfigs;
+        if (!firstPageConfigItems.contains(FtpConfigItems.apiAuthorisationConfig)) {
+            HashMap<String, ArrayList<String>> apiAuthorisationConfig = tempFtpConfiguration.getApiAuthorisationConfig();
+            if (apiAuthorisationConfig != null) {
+                this.apiAuthorisationConfig = apiAuthorisationConfig;
+            }
         }
-        OracleDatabaseConfig tempMysqlDatabaseConfigs = tempFtpConfiguration.getMysqlDatabaseConfigs();
-        if (mysqlDatabaseConfigs != null) {
-            this.mysqlDatabaseConfigs = tempMysqlDatabaseConfigs;
+        if (!firstPageConfigItems.contains(FtpConfigItems.oracleDatabaseConfigs)) {
+            HashMap<String, OracleDatabaseConfig> tempOracleDatabaseConfigs = tempFtpConfiguration.getOracleDatabaseConfigs();
+            if (tempOracleDatabaseConfigs != null) {
+                this.oracleDatabaseConfigs = tempOracleDatabaseConfigs;
+            }
+        }
+        if (!firstPageConfigItems.contains(FtpConfigItems.mysqlDatabaseConfigs)) {
+            OracleDatabaseConfig tempMysqlDatabaseConfigs = tempFtpConfiguration.getMysqlDatabaseConfigs();
+            if (mysqlDatabaseConfigs != null) {
+                this.mysqlDatabaseConfigs = tempMysqlDatabaseConfigs;
+            }
         }
     }
 

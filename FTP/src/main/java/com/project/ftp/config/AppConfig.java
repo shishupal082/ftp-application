@@ -56,6 +56,7 @@ public class AppConfig {
     private TableService tableService;
     private SingleThreadingService singleThreadingService;
     private HashMap<String, ArrayList<ApiRoleMappingData>> apiRoleMappingList;
+    private ArrayList<FtpConfigItems> firstPageConfigItems;
     public AppConfig() {
         this.configDate = StaticService.getDateStrFromPattern(AppConstant.DATE_FORMAT);
     }
@@ -158,6 +159,14 @@ public class AppConfig {
         this.apiRoleMappingList = apiRoleMappingList;
     }
 
+    public ArrayList<FtpConfigItems> getFirstPageConfigItems() {
+        return firstPageConfigItems;
+    }
+
+    public void setFirstPageConfigItems(ArrayList<FtpConfigItems> firstPageConfigItems) {
+        this.firstPageConfigItems = firstPageConfigItems;
+    }
+
     public String getCookieName() {
         String cookieName = ftpConfiguration.getCookieName();
         if (StaticService.isInValidString(cookieName)) {
@@ -217,7 +226,20 @@ public class AppConfig {
         this.pageConfig404 = pageConfig404;
     }
 
-    public void updateFinalFtpConfiguration(final FtpConfiguration ftpConfiguration) {
+    public void updateFinalFtpConfiguration(final FtpConfiguration ftpConfiguration,
+                                            ArrayList<FtpConfigItems> firstPageConfigItems, boolean clear) {
+        if (ftpConfiguration == null) {
+            return;
+        }
+        if (firstPageConfigItems != null && clear) {
+            ArrayList<FtpConfigItems> allFtpConfigItems = FtpConfigItems.getAllFtpConfigItems();
+            for(FtpConfigItems ftpConfigItems: allFtpConfigItems) {
+                if (firstPageConfigItems.contains(ftpConfigItems)) {
+                    continue;
+                }
+                AppConfigObj.checkOrClearFtpConfiguration(ftpConfiguration,ftpConfigItems,true);
+            }
+        }
         ftpConfiguration.setMysqlEnable(StaticService.isMysqlEnable(cmdArguments));
         if (cmdArguments == null) {
             this.setFtpConfiguration(ftpConfiguration);
@@ -236,7 +258,7 @@ public class AppConfig {
             temp = yamlFileParser.getFtpConfigurationFromPath(
                     cmdArguments.get(AppConstant.CMD_LINE_ARG_MIN_SIZE-2),
                     cmdArguments.get(i));
-            ftpConfiguration.updateFtpConfig(temp);
+            ftpConfiguration.updateFtpConfig(temp, firstPageConfigItems);
         }
         this.setFtpConfiguration(ftpConfiguration);
         logger.info("FTP configuration generate complete: {}", ftpConfiguration);
@@ -249,7 +271,7 @@ public class AppConfig {
     public AppConfigObj getAppConfigObj() {
         return new AppConfigObj(publicDir, configDate, appVersion, cmdArguments,
                 logFilePath, requestCount, sessionData, ftpConfiguration, pageConfig404,
-                apiRoleMappingList);
+                apiRoleMappingList, firstPageConfigItems);
     }
 
     public EventTracking getEventTracking() {
@@ -331,12 +353,29 @@ public class AppConfig {
         }
         return null;
     }
-    public static AppConfig getAppConfig(final HibernateBundle<FtpConfiguration> hibernateBundle, final FtpConfiguration ftpConfiguration, ArrayList<String> args, String source) {
+    public static ArrayList<FtpConfigItems> getFirstPageConfigItems(FtpConfiguration ftpConfiguration) {
+        if (ftpConfiguration == null) {
+            return null;
+        }
+        ArrayList<FtpConfigItems> result = new ArrayList<>();
+        ArrayList<FtpConfigItems> allFtpConfigItemList = FtpConfigItems.getAllFtpConfigItems();
+        boolean isNotNull;
+        for (FtpConfigItems items: allFtpConfigItemList) {
+            isNotNull = AppConfigObj.checkOrClearFtpConfiguration(ftpConfiguration, items, false);
+            if (isNotNull) {
+                result.add(items);
+            }
+        }
+        logger.info("FirstPageConfigItems: {}", result);
+        return result;
+    }
+    public static AppConfig getAppConfig(final HibernateBundle<FtpConfiguration> hibernateBundle, final FtpConfiguration ftpConfiguration, ArrayList<String> args, ArrayList<FtpConfigItems> firstPageConfigItems, String source) {
         if (ftpConfiguration == null) {
             logger.info("getAppConfig: Invalid first FtpConfiguration");
             return null;
         }
         AppConfig appConfig = new AppConfig();
+        appConfig.setFirstPageConfigItems(firstPageConfigItems);
         if (args.size() < AppConstant.CMD_LINE_ARG_MIN_SIZE) {
             logger.info("getAppConfig: minimum required command line argument is: {}", AppConstant.CMD_LINE_ARG_MIN_SIZE);
             return null;
@@ -344,7 +383,7 @@ public class AppConfig {
         String isStaticPath = args.get(AppConstant.CMD_LINE_ARG_MIN_SIZE-2);
         String configPath = args.get(AppConstant.CMD_LINE_ARG_MIN_SIZE-1);
         appConfig.setCmdArguments(args);
-        appConfig.updateFinalFtpConfiguration(ftpConfiguration);
+        appConfig.updateFinalFtpConfiguration(ftpConfiguration, firstPageConfigItems, false);
         appConfig.setApiRoleMappingList(ApiRolesMapping.getFinalApiRoleMapping(ftpConfiguration.getApiAuthorisationConfig()));
 //        ShutdownTask shutdownTask = new ShutdownTask(appConfig);
 //        appConfig.setShutdownTask(shutdownTask);
@@ -434,7 +473,8 @@ public class AppConfig {
         String isStaticPath = cmdArgument.get(AppConstant.CMD_LINE_ARG_MIN_SIZE-2);
         String firstConfigPath = cmdArgument.get(AppConstant.CMD_LINE_ARG_MIN_SIZE-1);
         FtpConfiguration ftpConfiguration = getFirstFtpConfiguration(isStaticPath, firstConfigPath);
-        return getAppConfig(null,ftpConfiguration,cmdArgument,source);
+        ArrayList<FtpConfigItems> firstPageFtpConfigItems = AppConfig.getFirstPageConfigItems(ftpConfiguration);
+        return getAppConfig(null,ftpConfiguration,cmdArgument,firstPageFtpConfigItems,source);
     }
 
     private static FtpConfiguration getFirstFtpConfiguration(String isStaticPath, String firstConfigPath) {
