@@ -45,9 +45,10 @@ public class AppConfig {
     private HashMap<String, SessionData> sessionData;
     private FtpConfiguration ftpConfiguration;
     private PageConfig404 pageConfig404;
+    private HashMap<String, ArrayList<ApiRoleMappingData>> apiRoleMappingList;
+    private ArrayList<FtpConfigItems> firstPageConfigItems;
 
     private EventTracking eventTracking;
-
     private AppToBridge appToBridge;
     private AuthService authService;
     private UserService userService;
@@ -55,8 +56,6 @@ public class AppConfig {
     private ScanDirService scanDirService;
     private TableService tableService;
     private SingleThreadingService singleThreadingService;
-    private HashMap<String, ArrayList<ApiRoleMappingData>> apiRoleMappingList;
-    private ArrayList<FtpConfigItems> firstPageConfigItems;
     public AppConfig() {
         this.configDate = StaticService.getDateStrFromPattern(AppConstant.DATE_FORMAT);
     }
