@@ -119,7 +119,7 @@ public class TestScanDir {
         Assert.assertEquals(19, pathInfoScanResults.size());
         recursive = "true";
         pathInfoScanResults = scanDirService.readScanDirectory(null, scanDirId, null, null, recursive, null);
-        Assert.assertEquals(57, pathInfoScanResults.size());
+        Assert.assertEquals(58, pathInfoScanResults.size());
         scanDirId = "workspace-ftp-empty-folder";
         recursive = "true";
         pathInfoScanResults = scanDirService.readScanDirectory(null, scanDirId, null, null, recursive, null);
@@ -147,7 +147,7 @@ public class TestScanDir {
         pathInfoScanResults = scanDirService.readScanDirectory(null, scanDirId, path, null, recursive, null);
         Assert.assertEquals(1, pathInfoScanResults.size());
         csvData = scanDirService.readScanDirectoryCsv(null, scanDirId, path, null, recursive, "invalid-csv-mapping-id");
-        Assert.assertEquals(26, csvData.split(",").length);
+        Assert.assertEquals(28, csvData.split(",").length);
 
         scanDirId = "scan-dir-test-folder";
         recursive = "true";
@@ -159,16 +159,16 @@ public class TestScanDir {
         Assert.assertEquals(1, pathInfoScanResults.size());
 
         csvData = scanDirService.readScanDirectoryCsv(null, scanDirId, path, null, recursive, null);
-        Assert.assertEquals(25, csvData.split(",").length);
+        Assert.assertEquals(27, csvData.split(",").length);
 
         csvData = scanDirService.readScanDirectoryCsv(null, scanDirId, path, null, recursive, "api-scan-dir");
         Assert.assertEquals(11, csvData.split(",").length);
-        Assert.assertEquals("txt", csvData.split(",")[10]);
+        Assert.assertEquals("readme.txt", csvData.split(",")[10]);
 
 
         csvData = scanDirService.readScanDirectoryCsv(null, scanDirId, path, null, recursive, "invalid-csv-mapping-id");
-        Assert.assertEquals(26, csvData.split(",").length);
-        Assert.assertEquals("txt", csvData.split(",")[20]);
+        Assert.assertEquals(28, csvData.split(",").length);
+        Assert.assertEquals("txt", csvData.split(",")[22]);
     }
     @Test
     public void testReadScanDir3() {
@@ -189,39 +189,40 @@ public class TestScanDir {
         result = scanDirService.readScanDirectory(null, scanDirId, null, null, recursive, "test-4|test-5-csv-mapping-id");
         Assert.assertEquals(3, result.size());
 
-        Assert.assertEquals("test-4|test-5-csv-mapping-id", result.get(1).get(25));//reqCsvMappingId
-        Assert.assertEquals("true-ok", result.get(1).get(24));//reqRecursive
-        Assert.assertNull(result.get(1).get(23));//reqFileType
-        Assert.assertNull(result.get(1).get(22));//reqPathName
-        Assert.assertEquals("test-4|test-5", result.get(1).get(21));//reqScanDirId
+        Assert.assertEquals("test-4|test-5-csv-mapping-id", result.get(1).get(27));//reqCsvMappingId
+        Assert.assertEquals("true-ok", result.get(1).get(26));//reqRecursive
+        Assert.assertNull(result.get(1).get(25));//reqFileType
+        Assert.assertNull(result.get(1).get(24));//reqPathName
+        Assert.assertEquals("test-4|test-5", result.get(1).get(23));//reqScanDirId
 
-        Assert.assertEquals("txt", result.get(1).get(20));//file extension
-        Assert.assertEquals("readme.txt", result.get(1).get(19));//file name
+        Assert.assertEquals("txt", result.get(1).get(22));//file extension
+        Assert.assertEquals("readme.txt", result.get(1).get(20));//file name
         Assert.assertEquals(AppConstant.TABLE_FILE_PATH, result.get(1).get(4));//table name
         Assert.assertEquals("dev-laptop-4", result.get(1).get(7));//device name
         Assert.assertEquals("test-4", result.get(1).get(8));//scan_dir_mapping_id
         Assert.assertEquals(AppConstant.FILE, result.get(1).get(9));//type
-        Assert.assertEquals("D:/workspace/ftp-application/FTP/meta-data/scan-dir-test-folder/single-file-folder", result.get(1).get(17));//parent path
-        Assert.assertEquals("D:/workspace/ftp-application/FTP/meta-data/scan-dir-test-folder/single-file-folder/readme.txt", result.get(1).get(18));//path name
+        Assert.assertEquals("D:/workspace/ftp-application/FTP/meta-data/scan-dir-test-folder/single-file-folder", result.get(1).get(18));//parent path
+        Assert.assertEquals("D:/workspace/ftp-application/FTP/meta-data/scan-dir-test-folder/single-file-folder/readme.txt", result.get(1).get(19));//path name
 
         scanDirId = "invalid-1|test-5";
         result = scanDirService.readScanDirectory(null, scanDirId, null, "txt|ok", null, null);
         Assert.assertEquals(1, result.size());
 
-        Assert.assertNull(result.get(0).get(25));//reqCsvMappingId
-        Assert.assertNull(result.get(0).get(24));//reqRecursive
-        Assert.assertEquals("txt|ok", result.get(0).get(23));//reqFileType
-        Assert.assertNull(result.get(0).get(22));//reqPathName
-        Assert.assertEquals("invalid-1|test-5", result.get(0).get(21));//reqScanDirId
+        Assert.assertNull(result.get(0).get(27));//reqCsvMappingId
+        Assert.assertNull(result.get(0).get(26));//reqRecursive
+        Assert.assertEquals("txt|ok", result.get(0).get(25));//reqFileType
+        Assert.assertNull(result.get(0).get(24));//reqPathName
+        Assert.assertEquals("invalid-1|test-5", result.get(0).get(23));//reqScanDirId
 
-        Assert.assertEquals("txt", result.get(0).get(20));//file extension
-        Assert.assertEquals("readme.txt", result.get(0).get(19));//file name
+        Assert.assertEquals("txt", result.get(0).get(22));//file extension
+        Assert.assertEquals("readme", result.get(0).get(21));//filename without extension
+        Assert.assertEquals("readme.txt", result.get(0).get(20));//file name
         Assert.assertEquals(AppConstant.TABLE_FILE_PATH, result.get(0).get(4));//table name
         Assert.assertEquals("dev-laptop-5", result.get(0).get(7));//device name
         Assert.assertEquals("test-5", result.get(0).get(8));//scan_dir_mapping_id
         Assert.assertEquals(AppConstant.FILE, result.get(0).get(9));//type
-        Assert.assertEquals("D:/workspace/ftp-application/FTP/meta-data/scan-dir-test-folder/single-file-folder", result.get(0).get(17));//parent path
-        Assert.assertEquals("D:/workspace/ftp-application/FTP/meta-data/scan-dir-test-folder/single-file-folder/readme.txt", result.get(0).get(18));//path name
+        Assert.assertEquals("D:/workspace/ftp-application/FTP/meta-data/scan-dir-test-folder/single-file-folder", result.get(0).get(18));//parent path
+        Assert.assertEquals("D:/workspace/ftp-application/FTP/meta-data/scan-dir-test-folder/single-file-folder/readme.txt", result.get(0).get(19));//path name
 
     }
 
@@ -304,11 +305,11 @@ public class TestScanDir {
 
         result = scanDirService.getScanDirectory(null, scanDirId, path, null, AppConstant.TRUE, null);
         Assert.assertEquals(1, result.size());
-        Assert.assertEquals(26, result.get(0).size());
+        Assert.assertEquals(27, result.get(0).size());
 
         result = scanDirService.getScanDirectory(null, scanDirId, path, null, AppConstant.TRUE, "invalid-csv-mapping-id");
         Assert.assertEquals(1, result.size());
-        Assert.assertEquals(26, result.get(0).size());
+        Assert.assertEquals(27, result.get(0).size());
 
         result = scanDirService.getScanDirectory(null, scanDirId, path, null, AppConstant.TRUE, "api-scan-dir");
         Assert.assertEquals(1, result.size());
@@ -316,7 +317,7 @@ public class TestScanDir {
 
         result = scanDirService.getScanDirectory(null, scanDirId, path, "txt", AppConstant.TRUE, null);
         Assert.assertEquals(1, result.size());
-        Assert.assertEquals(26, result.get(0).size());
+        Assert.assertEquals(28, result.get(0).size());
 
         result = scanDirService.getScanDirectory(null, scanDirId, path,"pdf", AppConstant.TRUE, null);
         Assert.assertNull(result);
@@ -327,11 +328,11 @@ public class TestScanDir {
 
         result = scanDirService.getScanDirectory(null, scanDirId, path, "yml", AppConstant.TRUE, null);
         Assert.assertEquals(4, result.size());
-        Assert.assertEquals(26, result.get(0).size());
+        Assert.assertEquals(28, result.get(0).size());
 
         result = scanDirService.getScanDirectory(null, scanDirId, path, "txt", AppConstant.TRUE, null);
         Assert.assertEquals(1, result.size());
-        Assert.assertEquals(26, result.get(0).size());
+        Assert.assertEquals(27, result.get(0).size());
 
         result = scanDirService.getScanDirectory(null, scanDirId, path, "yml", AppConstant.TRUE, "api-scan-dir");
         Assert.assertEquals(4, result.size());
@@ -343,7 +344,7 @@ public class TestScanDir {
 
         result = scanDirService.getScanDirectory(null, scanDirId, path, "txt", AppConstant.TRUE, "invalid-csv-mapping-id");
         Assert.assertEquals(1, result.size());
-        Assert.assertEquals(26, result.get(0).size());
+        Assert.assertEquals(27, result.get(0).size());
     }
     @Test
     public void testReadScanDirV2() {
@@ -364,10 +365,40 @@ public class TestScanDir {
 
         path = "D:/workspace/ftp-application/FTP/meta-data/smms-data/";
         result = scanDirService.readScanDirectory(null, scanDirId, path, null, null, null);
-        Assert.assertEquals(26, result.get(0).size());
+        Assert.assertEquals(28, result.get(0).size());
 
         path = "D:/workspace/ftp-application/FTP/meta-data/test-data/";
         result = scanDirService.readScanDirectory(null, scanDirId, path, null, AppConstant.FALSE, null);
-        Assert.assertEquals(26, result.get(0).size());
+        Assert.assertEquals(28, result.get(0).size());
+    }
+    @Test
+    public void testReadScanDirV3() {
+        TestAppConfig testAppConfig = new TestAppConfig();
+        AppConfig appConfig = testAppConfig.getAppConfigV2();
+        ScanDirService scanDirService = appConfig.getScanDirService();
+        String scanDirId, path;
+        ArrayList<ArrayList<String>> result;
+        scanDirId = "test-data-md5-dir";
+        result = scanDirService.readScanDirectory(null, scanDirId, null, null, null, null);
+        Assert.assertEquals(10, result.size());
+        Assert.assertEquals(28, result.get(0).size());
+        Assert.assertEquals("1.bmp", result.get(1).get(20));
+        Assert.assertEquals("258a5aab652db23fa8de7c2649ff9220", result.get(1).get(12));
+        Assert.assertEquals("1.docx", result.get(2).get(20));
+        Assert.assertEquals("81f8e9334be195ffc7186288627d620d", result.get(2).get(12));
+        Assert.assertEquals("1.txt", result.get(3).get(20));
+        Assert.assertEquals("c4ca4238a0b923820dcc509a6f75849b", result.get(3).get(12));
+        Assert.assertEquals("1.xlsx", result.get(4).get(20));
+        Assert.assertEquals("f2bf6ff199fbe3400d50a41a01b3d380", result.get(4).get(12));
+        Assert.assertEquals("2.bmp", result.get(5).get(20));
+        Assert.assertEquals("37834f4cd8abd5963e8d13cffb45229c", result.get(5).get(12));
+        Assert.assertEquals("2.docx", result.get(6).get(20));
+        Assert.assertEquals("5dd625e7ef7e3a4d254934816a7b7b68", result.get(6).get(12));
+        Assert.assertEquals("2.txt", result.get(7).get(20));
+        Assert.assertEquals("c4ca4238a0b923820dcc509a6f75849b", result.get(7).get(12));
+        Assert.assertEquals("2.xlsx", result.get(8).get(20));
+        Assert.assertEquals("8e0c33cb67bff268445ab73aa43b788e", result.get(8).get(12));
+        Assert.assertEquals("readme.txt", result.get(9).get(20));
+        Assert.assertEquals("198b90c503ef2936e5d22bcaf116c357", result.get(9).get(12));
     }
 }

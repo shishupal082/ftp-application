@@ -9,6 +9,7 @@ public class ScanResult {
     private String pathName;
     private PathType pathType;
     private String staticFolderPath;
+    private String md5Hash;
     private ArrayList<ScanResult> scanResults;
     public ScanResult(String staticFolderPath, String pathName){
         this.staticFolderPath = staticFolderPath;
@@ -52,6 +53,14 @@ public class ScanResult {
         this.staticFolderPath = staticFolderPath;
     }
 
+    public String getMd5Hash() {
+        return md5Hash;
+    }
+
+    public void setMd5Hash(String md5Hash) {
+        this.md5Hash = md5Hash;
+    }
+
     public ArrayList<ScanResult> getScanResults() {
         return scanResults;
     }
@@ -67,6 +76,7 @@ public class ScanResult {
                 ", pathName='" + pathName + '\'' +
                 ", pathType=" + pathType +
                 ", staticFolderPath='" + staticFolderPath + '\'' +
+                ", md5Hash='" + md5Hash + '\'' +
                 ", scanResults=" + scanResults +
                 '}';
     }

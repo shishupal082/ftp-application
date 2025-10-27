@@ -1,9 +1,9 @@
 package com.project.ftp;
 
+import com.project.ftp.bridge.config.StandAloneApiIdentifier;
 import com.project.ftp.bridge.service.StandAloneService;
 import com.project.ftp.bridge.standalone.obj.ApiDetail;
 import com.project.ftp.bridge.standalone.obj.StandAloneConfig;
-import com.project.ftp.config.ApiIdentifier;
 import com.project.ftp.config.AppConfig;
 import com.project.ftp.config.AppConstant;
 import com.project.ftp.exceptions.AppException;
@@ -37,6 +37,13 @@ public class StandAlone {
             return;
         }
         apiResource.updateMySqlTableDataFromCsv(null, params.get(0));
+    }
+    private void handleApiUpdateExcelData(ApiDetail apiDetail, ArrayList<String> params) {
+        if (params == null || params.isEmpty()) {
+            logger.info("handleApiUpdateExcelData: Invalid config: {}", apiDetail);
+            return;
+        }
+        apiResource.updateMSExcelData(null, params.get(0));
     }
     private void handleApiUpdateExcelDataV2(ApiDetail apiDetail, ArrayList<String> params) {
         if (params == null || params.isEmpty()) {
@@ -72,11 +79,15 @@ public class StandAlone {
         }
         String path = apiDetail.getPath();
         ArrayList<String> params = apiDetail.getParams();
-        ApiIdentifier apiIdentifier = ApiIdentifier.get(path);
+        StandAloneApiIdentifier apiIdentifier = StandAloneApiIdentifier.get(path);
         if (apiIdentifier != null) {
             switch (apiIdentifier) {
                 case UPDATE_MYSQL_TABLE_DATA_FROM_CSV:
                     this.handleApiUpdateMysql(apiDetail, params);
+                    this.askConfirmation(apiDetail);
+                    break;
+                case UPDATE_EXCEL_DATA:
+                    this.handleApiUpdateExcelData(apiDetail, params);
                     this.askConfirmation(apiDetail);
                     break;
                 case UPDATE_EXCEL_DATA_V2:

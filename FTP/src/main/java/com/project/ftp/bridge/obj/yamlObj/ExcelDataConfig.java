@@ -14,6 +14,7 @@ public class ExcelDataConfig {
     private String timeFormat;
     private String dateTimeFormat;
     private String commaReplacer;
+    private String sourceApiName;
     private ArrayList<String> tableMappingIndex;
     private ArrayList<String> validFor;
     private ArrayList<String> allowedApi;
@@ -32,7 +33,7 @@ public class ExcelDataConfig {
     private ArrayList<ExcelFileConfig> excelConfig;
     private ArrayList<ExcelFileConfig> csvConfig;
     private ArrayList<ExcelFileConfig> gsConfig;
-    private ArrayList<ExcelFileConfig> mysqlConfig;
+    private ArrayList<ExcelFileConfig> apiConfig;
 
     public String getId() {
         return id;
@@ -88,6 +89,14 @@ public class ExcelDataConfig {
 
     public void setCommaReplacer(String commaReplacer) {
         this.commaReplacer = commaReplacer;
+    }
+
+    public String getSourceApiName() {
+        return sourceApiName;
+    }
+
+    public void setSourceApiName(String sourceApiName) {
+        this.sourceApiName = sourceApiName;
     }
 
     public ArrayList<String> getTableMappingIndex() {
@@ -218,12 +227,12 @@ public class ExcelDataConfig {
         this.gsConfig = gsConfig;
     }
 
-    public ArrayList<ExcelFileConfig> getMysqlConfig() {
-        return mysqlConfig;
+    public ArrayList<ExcelFileConfig> getApiConfig() {
+        return apiConfig;
     }
 
-    public void setMysqlConfig(ArrayList<ExcelFileConfig> mysqlConfig) {
-        this.mysqlConfig = mysqlConfig;
+    public void setApiConfig(ArrayList<ExcelFileConfig> apiConfig) {
+        this.apiConfig = apiConfig;
     }
 
     @Override
@@ -236,6 +245,7 @@ public class ExcelDataConfig {
                 ", timeFormat='" + timeFormat + '\'' +
                 ", dateTimeFormat='" + dateTimeFormat + '\'' +
                 ", commaReplacer='" + commaReplacer + '\'' +
+                ", sourceApiName='" + sourceApiName + '\'' +
                 ", tableMappingIndex=" + tableMappingIndex +
                 ", validFor=" + validFor +
                 ", allowedApi=" + allowedApi +
@@ -252,7 +262,7 @@ public class ExcelDataConfig {
                 ", excelConfig=" + excelConfig +
                 ", csvConfig=" + csvConfig +
                 ", gsConfig=" + gsConfig +
-                ", mysqlConfig=" + mysqlConfig +
+                ", apiConfig=" + apiConfig +
                 '}';
     }
 }

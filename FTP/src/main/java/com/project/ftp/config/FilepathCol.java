@@ -16,6 +16,7 @@ public enum FilepathCol {
     type("type"),
     sizeInKb("size_in_kb"),
     size("size"),
+    md5Hash("md5_hash"),
     scannedDate("scanned_date"),
     detectedAt("detected_at"),
     editedAt("edited_at"),

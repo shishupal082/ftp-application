@@ -47,6 +47,7 @@ public class FilepathDb extends FilepathInterface {
                 dbParameters.setType(rs.getString(FilepathCol.type.getColumnName()));
                 dbParameters.setSizeInKb(rs.getDouble(FilepathCol.sizeInKb.getColumnName()));
                 dbParameters.setSize(rs.getString(FilepathCol.size.getColumnName()));
+                dbParameters.setMd5Hash(rs.getString(FilepathCol.md5Hash.getColumnName()));
 
                 dbParameters.setScannedDate(rs.getString(FilepathCol.scannedDate.getColumnName()));
                 dbParameters.setDetectedAt(rs.getString(FilepathCol.detectedAt.getColumnName()));
@@ -211,6 +212,7 @@ public class FilepathDb extends FilepathInterface {
         parameters.add(dbParameters.getTypeV2());
         parameters.add(String.valueOf(dbParameters.getSizeInKbV2()));
         parameters.add(dbParameters.getSizeV2());
+        parameters.add(dbParameters.getMd5HashV2());
 
         parameters.add(dbParameters.getScannedDateV2());
         parameters.add(dbParameters.getDetectedAtV2());
@@ -226,10 +228,10 @@ public class FilepathDb extends FilepathInterface {
     private JdbcQueryStatus addEntry(FilepathDBParameters dbParameters) {
         String query = "INSERT INTO " + tableName + " (org_username,entry_time,login_username," +
                 "table_name,table_unique_id,ui_entry_time," +
-                "device_name,scan_dir_mapping_id,type,size_in_kb,size," +
+                "device_name,scan_dir_mapping_id,type,size_in_kb,size,md5_hash," +
                 "scanned_date,detected_at,edited_at,deleted_at," +
                 "remark,parent_path,pathname,filename)" +
-                " VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+                " VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
         try {
             return mysqlConnection.updateQueryV2(query, this.getDbTableParameter(dbParameters));
         } catch (Exception e) {
@@ -244,7 +246,7 @@ public class FilepathDb extends FilepathInterface {
         String query = "UPDATE " + tableName + " SET " +
                 "org_username=?,entry_time=?,login_username=?," +
                 "table_name=?,table_unique_id=?,ui_entry_time=?," +
-                "device_name=?,scan_dir_mapping_id=?,type=?,size_in_kb=?,size=?," +
+                "device_name=?,scan_dir_mapping_id=?,type=?,size_in_kb=?,size=?,md5_hash=?," +
                 "scanned_date=?,detected_at=?,edited_at=?,deleted_at=?," +
                 "remark=?,parent_path=?,pathname=?,filename=?" +
                 " WHERE id="+dbParameters.getId();

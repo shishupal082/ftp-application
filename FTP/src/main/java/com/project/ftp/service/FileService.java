@@ -267,7 +267,7 @@ public class FileService {
                 }
             }
         } catch (Exception e) {
-            logger.info("Error fetching folder from: {}, {}", folderPath, e);
+            logger.info("Error fetching folder from: {}, {}", folderPath, e.toString());
         }
 //        logger.info("Scan folder result for folder: {}, {}", folderPath, finalFileScanResult);
 //        logger.info("Scan complete for folder: {}", folderPath);
@@ -277,7 +277,7 @@ public class FileService {
         ArrayList<String> availableFiles = new ArrayList<>();
         ScanResult scanResult = this.scanDirectory(directory, directory, false, false);
         ArrayList<ScanResult> scanResults = scanResult.getScanResults();
-        if (scanResults != null && scanResults.size() > 0) {
+        if (scanResults != null && !scanResults.isEmpty()) {
             for (ScanResult scanResult1 : scanResults) {
                 availableFiles.add(StaticService.replaceBackSlashToSlash(scanResult1.getPathName()));
             }

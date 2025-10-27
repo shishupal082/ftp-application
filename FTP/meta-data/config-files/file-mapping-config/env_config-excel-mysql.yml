@@ -60,9 +60,11 @@ excelDataConfig:
         col_index: -1
 
   oracle-to-csv-smms-assets-list-2:
+    sourceApiName: "get_mysql_table_data"
     mysqlCsvDataConfig:
       defaultFilterMappingId: "asset_unique"
   oracle-to-csv-smms-assets-list:
+    sourceApiName: "get_mysql_table_data"
     appendCellDataIndex:
       - [0,-1]
     mysqlCsvDataConfig:

@@ -69,7 +69,7 @@ public class YamlFileParser {
         try {
             ftpConfiguration = objectMapper.readValue(new File(pathname), FtpConfiguration.class);
         } catch (IOException ioe) {
-            StaticService.printLog("IOE: for file: " + pathname);
+            StaticService.printLog("IOE: for file: " + pathname + ", " + ioe.getMessage());
         }
         return ftpConfiguration;
     }

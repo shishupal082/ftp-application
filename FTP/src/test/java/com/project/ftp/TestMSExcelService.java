@@ -12,7 +12,6 @@ import com.project.ftp.obj.ApiResponse;
 import com.project.ftp.resources.ApiResource;
 import com.project.ftp.service.MSExcelService;
 import com.project.ftp.service.UserService;
-import io.dropwizard.db.DataSourceFactory;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -67,7 +66,7 @@ public class TestMSExcelService {
         AppConfig appConfig = this.getAppConfig(true);
         return new ApiResource(appConfig);
     }
-    private MSExcelService getMSExcelService() {
+    public MSExcelService getMSExcelService() {
         AppConfig appConfig = this.getAppConfig(false);
         UserInterface userInterface = new UserFile(appConfig);
         UserService userService = new UserService(appConfig, userInterface);
@@ -263,8 +262,8 @@ public class TestMSExcelService {
         requestId = "oracle-to-csv-smms-assets-list";
         ArrayList<ExcelDataConfig> excelDataConfigs =  msExcelService.getActualMSExcelSheetDataConfig(request, requestId, false);
         Assert.assertEquals(requestId, excelDataConfigs.get(0).getId());
-        Assert.assertEquals("get-oracle-smms-assets-list", excelDataConfigs.get(0).getMysqlConfig().get(0).getSource());
-        Assert.assertEquals("empty-mysql-sheet-name", excelDataConfigs.get(0).getMysqlConfig().get(0).getSheetName());
+        Assert.assertEquals("get-oracle-smms-assets-list", excelDataConfigs.get(0).getApiConfig().get(0).getSource());
+        Assert.assertEquals("empty-mysql-sheet-name", excelDataConfigs.get(0).getApiConfig().get(0).getSheetName());
         Assert.assertEquals(2, excelDataConfigs.get(0).getMysqlCsvDataConfig().getFilterValues().size());
     }
     @Test

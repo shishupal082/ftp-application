@@ -21,3 +21,7 @@ csv-smms-assets-ser,D:/workspace/ftp-application/FTP/meta-data/smms-data/mis-ass
 oracle-to-csv-smms-assets-list,get-oracle-smms-assets-list,empty-mysql-sheet-name,D:/workspace/ftp-application/FTP/meta-data/smms-data/mysql-mis-smms-assets-list-report.csv
 oracle-to-csv-smms-assets-list-2,get-oracle-smms-assets-list
 csv-test-16,D:/workspace/ftp-application/FTP/meta-data/test-data/test-data/07-source-csv.csv,sheet-name-empty,D:/workspace/ftp-application/FTP/meta-data/test-data/test-data/07-test-16-d1.csv
+
+
+
+csv-scan-dir-md5-test-data,test-data-md5-dir,,D:/workspace/ftp-application/FTP/meta-data/test-data/test-data/08-test-01-destination-csv.csv

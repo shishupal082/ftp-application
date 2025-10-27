@@ -7,6 +7,11 @@ version change to be updated at following places (09-12-2023)
 4) app_run.bat
 5) run.bat
 
+For debug set following config parameter
+-----------------------------------------
+>> run --> Edit Configuration
+standalone false false meta-data/app_env_config_mysql_db.yml meta-data/app_env_config_4.yml meta-data/app_env_config_user_login.yml meta-data/config-files/standalone/standalone_42.yml
+
 1.0.0 (2020-07-20)
 ---------------------
 /view/file?name=filename

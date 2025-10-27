@@ -1,8 +1,28 @@
-Config
-------------
+ScanDirConfig
+--------------
+private ArrayList<ScanDirMapping> scanDirConfig;
+
+ScanDirMapping
+---------------
+private String device_name;
+private String id;
+private String filetype;
+private String recursive;
+private String enableMd5Hash;
+private String csv_mapping_id;
+private ArrayList<String> pathIndex;
+
+Example
+---------
 scanDirMapping:
-    - id: id1
+    - id: id1 //| can be used for or operation
+      device_name: dev-laptop
+      filetype: String
+      recursive: String // true
+      enableMd5Hash: String // true
+      csv_mapping_id: String
       pathIndex: ArrayList<String>
+
 
 
 scanDirMapping-v2:
@@ -171,20 +191,22 @@ Index for scan-dir-data
 9: type
 10: Double.toString(sizeInKb)
 11: size
-12: scannedDate
-13: detectedAt
-14: editedAt
-15: deletedAt
-16: remark
-17: parentPath
-18: pathName
-19: fileName
-20: extension
-21: reqScanDirId
-22: reqPathName
-23: reqFileType
-24: reqRecursive
-25: reqCsvMappingId
+12: md5Hash
+13: scannedDate
+14: detectedAt
+15: editedAt
+16: deletedAt
+17: remark
+18: parentPath
+19: pathName
+20: fileName
+21: fileNameWithoutExtension
+22: extension
+23: reqScanDirId
+24: reqPathName
+25: reqFileType
+26: reqRecursive
+27: reqCsvMappingId
 
 UI side
 ---------

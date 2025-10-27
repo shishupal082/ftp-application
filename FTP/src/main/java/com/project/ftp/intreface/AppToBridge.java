@@ -140,7 +140,8 @@ public class AppToBridge implements AppToBridgeInterface {
         ArrayList<FileConfigMapping> fileConfigMappingsExcel = fileMappingConfig.getExcelConfig();
         ArrayList<FileConfigMapping> fileConfigMappingsCsv = fileMappingConfig.getCsvConfig();
 
-        MSExcelBridgeService msExcelBridgeService = new MSExcelBridgeService(request, eventTracking, null, null);
+        MSExcelBridgeService msExcelBridgeService = new MSExcelBridgeService(request, eventTracking,
+                null, null, null);
         //ExcelDataConfig excelDataConfigById =  excelConfig.get(requestId)
         ExcelDataConfig excelDataConfigById = msExcelBridgeService.getExcelDataConfigByIdV1(requestId,
                 excelConfigHashMap);
@@ -181,7 +182,7 @@ public class AppToBridge implements AppToBridgeInterface {
             throw new AppException(ErrorCodes.CONFIG_ERROR);
         }
         MSExcelBridgeService msExcelBridgeService = new MSExcelBridgeService(request, eventTracking,
-                ftpConfiguration.getGoogleOAuthClientConfig(), appConfig.getTableService());
+                ftpConfiguration.getGoogleOAuthClientConfig(), appConfig.getTableService(), appConfig.getScanDirService());
         ArrayList<BridgeResponseSheetData> result = msExcelBridgeService.readExcelSheetData(excelDataConfigById);
         if (result != null) {
             logger.info("excelSheetDataRead completed for excelDataConfigById.id: {}", excelDataConfigById.getId());
@@ -198,7 +199,7 @@ public class AppToBridge implements AppToBridgeInterface {
             throw new AppException(ErrorCodes.CONFIG_ERROR);
         }
         MSExcelBridgeService msExcelBridgeService = new MSExcelBridgeService(request, eventTracking,
-                ftpConfiguration.getGoogleOAuthClientConfig(), appConfig.getTableService());
+                ftpConfiguration.getGoogleOAuthClientConfig(), appConfig.getTableService(), appConfig.getScanDirService());
         boolean result = msExcelBridgeService.readAndWriteExcelSheetData(excelDataConfigById, saveTableParameter);
         if (result) {
             logger.info("updateExcelData completed for excelDataConfigById.id: {}", excelDataConfigById.getId());
@@ -215,7 +216,7 @@ public class AppToBridge implements AppToBridgeInterface {
                                                                         ArrayList<HashMap<String, String>> tableData,
                                                                         TableConfiguration tableConfiguration) throws AppException {
         MSExcelBridgeService msExcelBridgeService = new MSExcelBridgeService(request, eventTracking,
-                null, null);
+                null, null, null);
         return msExcelBridgeService.applyCsvConfigOnTableData(requestTableConfigId, requestDefaultFilterMappingId,
                                     tableData, tableConfiguration);
     }

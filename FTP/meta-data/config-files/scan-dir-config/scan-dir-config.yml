@@ -66,3 +66,8 @@ scanDirConfig:
   - id: "e-app-data-v2.1-saved-files-shishupal2"
     pathIndex:
       - "E:/app-data-v2.1/project-tracking/saved-files/Shishupal2/"
+  - id: "test-data-md5-dir"
+    device_name: "dev-laptop"
+    enableMd5Hash: "true"
+    pathIndex:
+      - "D:/workspace/ftp-application/FTP/meta-data/test-data/md5-data/"

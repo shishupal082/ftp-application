@@ -1,5 +1,6 @@
 package com.project.ftp.service;
 
+import com.project.ftp.bridge.service.Md5Calculator;
 import com.project.ftp.common.StrUtils;
 import com.project.ftp.config.AppConfig;
 import com.project.ftp.config.AppConstant;
@@ -59,6 +60,24 @@ public class ScanDirService {
             scanResult.setPathSize(folderSize);
         }
     }
+    private void updateMd5Hash(ScanResult scanResult) {
+        if (scanResult == null) {
+            return;
+        }
+        if (scanResult.getPathType() == PathType.FOLDER) {
+            ArrayList<ScanResult> childScanResult = scanResult.getScanResults();
+            if (childScanResult != null) {
+                for(ScanResult result: childScanResult) {
+                    if (result == null) {
+                        continue;
+                    }
+                    this.updateMd5Hash(result);
+                }
+            }
+        } else if (scanResult.getPathType() == PathType.FILE) {
+            scanResult.setMd5Hash(Md5Calculator.getMd5Hash(scanResult.getPathName()));
+        }
+    }
     private void updatePathInfoDetails(ArrayList<FilepathDBParameters> pathInfoScanResults,
                                        ScanResult scanResult, String scanDirMappingId, final RequestScanDir requestScanDir) {
 
@@ -71,6 +90,8 @@ public class ScanDirService {
             pathInfo = fileService.getPathInfo(scanResult.getPathName());
             filepathDBParameters = new FilepathDBParameters(pathInfo);
             filepathDBParameters.setScanDirMappingId(scanDirMappingId);
+            // For entry type File
+            filepathDBParameters.setMd5Hash(scanResult.getMd5Hash());
             // For each entry
             filepathDBParameters.setReqScanDirId(requestScanDir.getReqScanDirId());
             filepathDBParameters.setReqPathName(requestScanDir.getReqPathName());
@@ -100,19 +121,26 @@ public class ScanDirService {
             }
         }
     }
-    private ArrayList<FilepathDBParameters> getPathInfoScanResult(String scanMappingDirId, String pathName, final RequestScanDir requestScanDir) throws AppException {
+    private ArrayList<FilepathDBParameters> getPathInfoScanResult(ScanDirMapping scanDirMapping, String pathName, final RequestScanDir requestScanDir) throws AppException {
         ArrayList<FilepathDBParameters> pathInfoScanResults = new ArrayList<>();
+        if (scanDirMapping == null) {
+            logger.info("getPathInfoScanResult-1: scanDirMapping: null for requestScanDir: {}", requestScanDir);
+            return null;
+        }
         if (StaticService.isInValidString(pathName)) {
-            logger.info("getPathInfoScanResult-1: scanResult: null for pathName: {}", pathName);
+            logger.info("getPathInfoScanResult-2: scanResult: null for pathName: {}", pathName);
             return null;
         }
         ScanResult scanResult = fileService.scanDirectory(pathName, pathName, requestScanDir.getFinalRecursive(), false);
         if (scanResult == null || scanResult.getPathType() == null) {
-            logger.info("getPathInfoScanResult-2: scanResult: {} for pathName: {}", scanResult, pathName);
+            logger.info("getPathInfoScanResult-3: scanResult: {} for pathName: {}", scanResult, pathName);
             return null;
         }
+        String scanMappingDirId = scanDirMapping.getId();
         this.updateFolderSize(scanResult);
-
+        if (AppConstant.TRUE.equals(scanDirMapping.getEnableMd5Hash())) {
+            this.updateMd5Hash(scanResult);
+        }
         this.updatePathInfoDetails(pathInfoScanResults, scanResult, scanMappingDirId, requestScanDir);
         ArrayList<FilepathDBParameters> pathInfoScanFinalResults = new ArrayList<>();
         ArrayList<String> fileTypeList = requestScanDir.getFinalFiletypeList();
@@ -152,7 +180,7 @@ public class ScanDirService {
                     }
                     path = requestPathName;
                 }
-                tempPathInfoScanResults = this.getPathInfoScanResult(dirMapping.getId(), path, requestScanDir);
+                tempPathInfoScanResults = this.getPathInfoScanResult(dirMapping, path, requestScanDir);
                 if (tempPathInfoScanResults != null) {
                     if (pathInfoScanResults == null) {
                         pathInfoScanResults = new ArrayList<>();
@@ -194,6 +222,9 @@ public class ScanDirService {
         if (scanResult.getDeviceName() != null) {
             return !scanResult.getDeviceName().equals(dbResult.getTableName());
         }
+        if (scanResult.getMd5Hash() != null) {
+            return !scanResult.getMd5Hash().equals(dbResult.getMd5Hash());
+        }
         return false;
     }
     private void updateFilepath(FilePathDAO filePathDAO, FilepathDBParameters filepathDBParameters) {
@@ -216,6 +247,7 @@ public class ScanDirService {
             filepathDBParameters1.setEditedAt(currentTime);
             filepathDBParameters1.setSizeInKb(filepathDBParameters.getSizeInKb());
             filepathDBParameters1.setSize(filepathDBParameters.getSize());
+            filepathDBParameters1.setMd5Hash(filepathDBParameters.getMd5Hash());
             filepathDBParameters1.setScannedDate(currentTime);
             filepathDBParameters1.setDeviceName(filepathDBParameters.getDeviceName());
             filePathDAO.updateById(filepathDBParameters1);
@@ -225,6 +257,7 @@ public class ScanDirService {
             filepathDBParameters1.setEditedAt(currentTime);
             filepathDBParameters1.setSizeInKb(filepathDBParameters.getSizeInKb());
             filepathDBParameters1.setSize(filepathDBParameters.getSize());
+            filepathDBParameters1.setMd5Hash(filepathDBParameters.getMd5Hash());
             filepathDBParameters1.setScannedDate(currentTime);
             filepathDBParameters1.setDeviceName(filepathDBParameters.getDeviceName());
             filePathDAO.updateById(filepathDBParameters1);

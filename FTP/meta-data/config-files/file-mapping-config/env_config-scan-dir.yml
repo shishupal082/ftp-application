@@ -1,0 +1,24 @@
+excelDataConfig:
+  csv-scan-dir-md5-test-data:
+    sourceApiName: "read_scan_dir"
+    appendCellDataIndex2:
+      - [ 0,-1 ]
+    cellMapping:
+      - col_index: 18
+        info: "parent_path"
+      - col_index: 19
+        info: "file_path"
+      - col_index: 20
+        info: "filename"
+      - col_index: 21
+        info: "filename_without_extension"
+      - col_index: 22
+        info: "extension"
+      - col_index: 12
+        info: "md5_hash"
+      - col_index: 9
+        info: "path_type"
+      - col_index: 10
+        info: "size_in_kb"
+      - col_index: 11
+        info: "size"

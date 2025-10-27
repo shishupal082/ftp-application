@@ -21,6 +21,7 @@ public class FilepathDBParameters {
     private String type;
     private Double sizeInKb;
     private String size;
+    private String md5Hash;
     private String scannedDate;
     private String detectedAt;
     private String editedAt;
@@ -29,6 +30,7 @@ public class FilepathDBParameters {
     private String parentPath;
     private String pathName;
     private String fileName;
+    private String fileNameWithoutExtension;
     private String extension;
     private PathInfo pathInfo;
     private String filePathDetails;
@@ -49,6 +51,7 @@ public class FilepathDBParameters {
     private final int typeMaxLength = 31;
     private final int minSizeInKb = 0;
     private final int sizeMaxLength = 31;
+    private final int md5HashMaxLength = 32;
     private final int scannedDateMaxLength = 31;
     private final int detectedAtMaxLength = 31;
     private final int editedAtMaxLength = 31;
@@ -71,6 +74,7 @@ public class FilepathDBParameters {
         this.parentPath = pathInfo.getParentFolder();
         this.fileName = pathInfo.getFileName();
         this.extension = pathInfo.getExtension();
+        this.fileNameWithoutExtension = pathInfo.getFilenameWithoutExt();
         this.size = pathInfo.getSize();
         this.sizeInKb = pathInfo.getSizeInKb();
     }
@@ -211,6 +215,18 @@ public class FilepathDBParameters {
         this.size = size;
     }
 
+    public String getMd5Hash() {
+        return md5Hash;
+    }
+    public String getMd5HashV2() {
+        return StaticService.truncateString(md5Hash, md5HashMaxLength);
+    }
+
+    public void setMd5Hash(String md5Hash) {
+        this.md5Hash = md5Hash;
+    }
+
+
     public String getScannedDate() {
         return scannedDate;
     }
@@ -299,6 +315,14 @@ public class FilepathDBParameters {
 
     public void setFileName(String fileName) {
         this.fileName = fileName;
+    }
+
+    public String getFileNameWithoutExtension() {
+        return fileNameWithoutExtension;
+    }
+
+    public void setFileNameWithoutExtension(String fileNameWithoutExtension) {
+        this.fileNameWithoutExtension = fileNameWithoutExtension;
     }
 
     public String getExtension() {
@@ -398,6 +422,9 @@ public class FilepathDBParameters {
         if (StaticService.isValidString(size)) {
             result.put(FilepathCol.size.getColumnName(), size);
         }
+        if (StaticService.isValidString(md5Hash)) {
+            result.put(FilepathCol.md5Hash.getColumnName(), md5Hash);
+        }
         if (StaticService.isValidString(scannedDate)) {
             result.put(FilepathCol.scannedDate.getColumnName(), scannedDate);
         }
@@ -421,6 +448,9 @@ public class FilepathDBParameters {
         }
         if (StaticService.isValidString(fileName)) {
             result.put(FilepathCol.colFilename.getColumnName(), fileName);
+        }
+        if (StaticService.isValidString(fileNameWithoutExtension)) {
+            result.put("filename_without_extension", fileNameWithoutExtension);
         }
         if (StaticService.isValidString(extension)) {
             result.put("extension", extension);
@@ -456,6 +486,7 @@ public class FilepathDBParameters {
         result.add(type);
         result.add(Double.toString(sizeInKb));
         result.add(size);
+        result.add(md5Hash);
         result.add(scannedDate);
         result.add(detectedAt);
         result.add(editedAt);
@@ -464,6 +495,7 @@ public class FilepathDBParameters {
         result.add(parentPath);
         result.add(pathName);
         result.add(fileName);
+        result.add(fileNameWithoutExtension);
         result.add(extension);
         result.add(reqScanDirId);
         result.add(reqPathName);
@@ -486,6 +518,7 @@ public class FilepathDBParameters {
         result.add(type == null? "" : type);
         result.add(sizeInKb == null? "" : Double.toString(sizeInKb));
         result.add(size == null? "" : size);
+        result.add(md5Hash == null? "" : md5Hash);
         result.add(scannedDate == null? "" : scannedDate);
         result.add(detectedAt == null? "" : detectedAt);
         result.add(editedAt == null? "" : editedAt);
@@ -494,6 +527,7 @@ public class FilepathDBParameters {
         result.add(parentPath == null? "" : parentPath);
         result.add(pathName == null? "" : pathName);
         result.add(fileName == null? "" : fileName);
+        result.add(fileNameWithoutExtension == null? "" : fileNameWithoutExtension);
         result.add(extension == null? "" : extension);
         result.add(reqScanDirId == null? "": reqScanDirId);
         result.add(reqPathName == null? "": reqPathName);
@@ -519,6 +553,7 @@ public class FilepathDBParameters {
                 ", type='" + type + '\'' +
                 ", sizeInKb=" + sizeInKb +
                 ", size='" + size + '\'' +
+                ", md5Hash='" + md5Hash + '\'' +
                 ", scannedDate='" + scannedDate + '\'' +
                 ", detectedAt='" + detectedAt + '\'' +
                 ", editedAt='" + editedAt + '\'' +
@@ -527,6 +562,7 @@ public class FilepathDBParameters {
                 ", parentPath='" + parentPath + '\'' +
                 ", pathName='" + pathName + '\'' +
                 ", fileName='" + fileName + '\'' +
+                ", fileNameWithoutExtension='" + fileNameWithoutExtension + '\'' +
                 ", extension='" + extension + '\'' +
                 ", pathInfo=" + pathInfo +
                 ", filePathDetails='" + filePathDetails + '\'' +

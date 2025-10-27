@@ -11,6 +11,7 @@ public class ScanDirMapping {
     private String id;
     private String filetype;
     private String recursive;
+    private String enableMd5Hash;
     private String csv_mapping_id;
     private ArrayList<String> pathIndex;
 
@@ -46,6 +47,14 @@ public class ScanDirMapping {
         this.recursive = recursive;
     }
 
+    public String getEnableMd5Hash() {
+        return enableMd5Hash;
+    }
+
+    public void setEnableMd5Hash(String enableMd5Hash) {
+        this.enableMd5Hash = enableMd5Hash;
+    }
+
     public String getCsv_mapping_id() {
         return csv_mapping_id;
     }
@@ -69,6 +78,7 @@ public class ScanDirMapping {
                 ", id='" + id + '\'' +
                 ", filetype='" + filetype + '\'' +
                 ", recursive='" + recursive + '\'' +
+                ", enableMd5Hash='" + enableMd5Hash + '\'' +
                 ", csv_mapping_id='" + csv_mapping_id + '\'' +
                 ", pathIndex=" + pathIndex +
                 '}';

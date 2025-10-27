@@ -7,7 +7,7 @@ env_config-excel-gs.yml: detail about each excelDataConfigId
 
 requiredColIndex: [8,6,3,4]
 0thIndex: (8) excelConfigId
-1stIndex: (6) Source
+1stIndex: (6) Source (csv_file_path, excel_file_path, mysqlTableConfigId, scanDirConfigId, googleSheetId)
 2ndIndex: (3) sheetName
 3rdIndex: (4) Destination
 
@@ -36,6 +36,7 @@ Sequence of operation
 *********************
 - validFor: ["gs-csv-test-12-direct"]
 - allowedApi: ["update_excel_data_v2","update_excel_data","get_excel_data"]
+- sourceApiName: String // get_mysql_table_data, read_scan_dir
 - dateFormat, timeFormat and dateTimeFormat [Only used for excel sheet reading not for google sheet]
 - commaReplacer: String
 - formatCellData

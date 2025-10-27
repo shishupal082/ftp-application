@@ -26,6 +26,14 @@ public class TestAppConfig {
         arguments.add("meta-data/app_env_config_4.yml");
         return AppConfig.getAppConfigFromCmdArgs(arguments, AppConstant.SOURCE_TEST);
     }
+    public AppConfig getAppConfigV2() {
+        //isMysqlEnable = false
+        return this.getAppConfig(false);
+    }
+    public AppConfig getAppConfigV3() {
+        //isMysqlEnable = true
+        return this.getAppConfig(true);
+    }
     @Test
     public void testAppConfigApiRoleMapping() {
         AppConfig appConfig = this.getAppConfig(false);
