@@ -240,7 +240,7 @@ public class MSExcelBridgeService {
             logger.info("Source csv filepath: {} does not exist, {}", srcFilepath, excelDataConfigById);
             throw new AppException(ErrorCodes.FILE_NOT_FOUND);
         }
-        int externalIndex = 0;
+        int externalIndex = -1;
         ArrayList<ArrayList<String>> sheetData = this.readCsvData(srcFilepath);
         sheetData = excelToCsvDataConvertService.formatCellData(sheetData, excelDataConfigById);
         excelToCsvDataConvertService.applyReplaceCellString(sheetData, excelDataConfigById);
@@ -260,7 +260,7 @@ public class MSExcelBridgeService {
         if (sheetName == null || sheetName.isEmpty()) {
             return this.readCsvFilePath(srcFilepath, sheetName, excelDataConfigById, uniqueStrings);
         }
-        int externalIndex = 0;
+        int externalIndex = -1;
         MSExcelSheetParser msExcelSheetParser = new MSExcelSheetParser();
         ArrayList<ArrayList<String>> sheetData = msExcelSheetParser.readExcelSheetData(srcFilepath,
                 sheetName, excelDataConfigById);
@@ -279,7 +279,7 @@ public class MSExcelBridgeService {
     private ArrayList<ArrayList<String>> readGoogleSheetData(String spreadSheetId, String sheetName,
                                                              ExcelDataConfig excelDataConfigById,
                                                              ArrayList<String> uniqueStrings) throws AppException{
-        int externalIndex = 0;
+        int externalIndex = -1;
         GoogleSheetsOAuthApi googleSheetsOAuthApi = new GoogleSheetsOAuthApi(eventTracking, googleOAuthClientConfig);
         ArrayList<ArrayList<String>> sheetData = googleSheetsOAuthApi.readSheetData(request, spreadSheetId, sheetName);
         sheetData = excelToCsvDataConvertService.formatCellData(sheetData, excelDataConfigById);
@@ -305,7 +305,7 @@ public class MSExcelBridgeService {
             logger.info("readMysqlData: excelDataConfigById is null for mysqlTableConfigId: {}", mysqlTableConfigId);
             throw new AppException(ErrorCodes.CONFIG_ERROR);
         }
-        int externalIndex = 0;
+        int externalIndex = -1;
         MysqlCsvDataConfig mysqlCsvDataConfig = excelDataConfigById.getMysqlCsvDataConfig();
         ArrayList<String> filterValues = null;
         String defaultFilterMappingId = null;
@@ -337,7 +337,7 @@ public class MSExcelBridgeService {
             logger.info("readScanDir: excelDataConfigById is null for scanDirConfigId: {}", scanDirConfigId);
             throw new AppException(ErrorCodes.CONFIG_ERROR);
         }
-        int externalIndex = 0;
+        int externalIndex = -1;
         ArrayList<ArrayList<String>> sheetData = scanDirService.readScanDirectory(request, scanDirConfigId, null, null, null, null);
         sheetData = excelToCsvDataConvertService.formatCellData(sheetData, excelDataConfigById);
         excelToCsvDataConvertService.applyReplaceCellString(sheetData, excelDataConfigById);

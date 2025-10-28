@@ -119,7 +119,7 @@ if col_index (in cellMapping or mappingData) == -4
     - -4 and -3 are related
 
 if col_index (in cellMapping or mappingData) == -5
-    - It will be replaced with sheetDataIndex (starting from 1)
+    - It will be replaced with sheetDataIndex or lineIndex (starting from 0)
 
 case-I
 

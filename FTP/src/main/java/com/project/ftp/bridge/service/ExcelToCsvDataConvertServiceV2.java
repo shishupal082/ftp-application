@@ -488,7 +488,7 @@ public class ExcelToCsvDataConvertServiceV2 {
         } else if (colIndex == -4) {
             cellData = srcFilepath;
         } else if (colIndex == -5) {
-            if (externalIndex > 0) {
+            if (externalIndex >= 0) {
                 cellData = Integer.toString(externalIndex);
             } else {
                 cellData = Integer.toString(sheetDataIndex);
@@ -626,7 +626,7 @@ public class ExcelToCsvDataConvertServiceV2 {
         CellMapping cellMapping;
         ArrayList<CellMappingData> cellsMappingData;
         Integer colIndex, colIndex2;
-        int sheetDataIndex = 0;
+        int sheetDataIndex = -1;
         String defaultCellData, cellData, cellData2, dateRegex;
         ArrayList<String> rowDataFinal;
         Boolean rewrite;
