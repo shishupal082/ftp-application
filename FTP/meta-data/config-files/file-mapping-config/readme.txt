@@ -118,6 +118,8 @@ if col_index (in cellMapping or mappingData) == -4
     - then it will treated as: srcFilePath (csv and excel) or googleSheetId or mysqlConfigId
     - -4 and -3 are related
 
+if col_index (in cellMapping or mappingData) == -5
+    - It will be replaced with sheetDataIndex (starting from 1)
 
 case-I
 
