@@ -41,6 +41,7 @@ public enum ApiIdentifier {
     CALL_TCP("call_tcp"),
     GET_EXCEL_DATA_CONFIG("get_excel_data_config"),
     GET_EXCEL_DATA("get_excel_data"),
+    GET_EXCEL_DATA_ARRAY("get_excel_data_json_array"),
     GET_EXCEL_DATA_JSON("get_excel_data_json"),
     GET_EXCEL_DATA_CSV("get_excel_data_csv"),
     UPDATE_EXCEL_DATA("update_excel_data"),

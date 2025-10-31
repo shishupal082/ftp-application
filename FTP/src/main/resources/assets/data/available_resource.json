@@ -233,27 +233,31 @@
   ],
   [
     "/api/update_excel_data?requestId=gs-excel-id",
-    "Call Update GS/CSV/MS_Excel_sheet_Data [GET]"
+    "Call Update GS/CSV/API/MS_Excel_sheet_Data [GET]"
   ],
   [
     "/api/update_excel_data_v2?requestId=gs-excel-id",
-    "Call Update CSV Data v2 [GET]"
+    "Call Update CSV/MS_Excel_sheet_Data Data v2 [GET]"
   ],
   [
     "/api/get_excel_data?requestId=gs-excel-id",
-    "Call get GS/CSV/MS_Excel_sheet_Data as Array [GET]"
+    "Call get GS/CSV/API/MS_Excel_sheet_Data as Object [GET]"
+  ],
+  [
+    "/api/get_excel_data_array?requestId=gs-excel-id",
+    "Call get GS/CSV/API/MS_Excel_sheet_Data as Array [GET]"
   ],
   [
     "/api/get_excel_data_json?requestId=gs-excel-id",
-    "Call get GS/CSV/MS_Excel_sheet_Data as JSON [GET]"
+    "Call get GS/CSV/API/MS_Excel_sheet_Data as JSON [GET]"
   ],
   [
     "/api/get_excel_data_csv?requestId=gs-excel-id",
-    "Call get GS/CSV/MS_Excel_sheet_Data as CSV [GET]"
+    "Call get GS/CSV/API/MS_Excel_sheet_Data as CSV [GET]"
   ],
   [
     "/api/get_excel_data_config?requestId=gs-excel-id&update_gs_config=true",
-    "Call get GS/CSV/MS_Excel Data config [GET]"
+    "Call get GS/CSV/API/MS_Excel Data config [GET]"
   ],
   [
     "/api/split_file?split_file_id=split-csv-file",

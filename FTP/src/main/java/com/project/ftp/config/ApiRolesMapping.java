@@ -154,12 +154,23 @@ public class ApiRolesMapping {
         result.put(ApiIdentifier.UPDATE_EXCEL_DATA.getApiName(), new ArrayList<>());
         result.get(ApiIdentifier.UPDATE_EXCEL_DATA.getApiName()).add(new ApiRoleMappingData(
                 ApiRoleAccess.IS_LOGIN.getRoleAccessName(),AppConstant.roleAccessTypeDirect));
+
+        result.put(ApiIdentifier.GET_EXCEL_DATA.getApiName(), new ArrayList<>());
+        result.get(ApiIdentifier.GET_EXCEL_DATA.getApiName()).add(new ApiRoleMappingData(
+                ApiRoleAccess.IS_LOGIN.getRoleAccessName(),AppConstant.roleAccessTypeDirect));
+
+        result.put(ApiIdentifier.GET_EXCEL_DATA_ARRAY.getApiName(), new ArrayList<>());
+        result.get(ApiIdentifier.GET_EXCEL_DATA_ARRAY.getApiName()).add(new ApiRoleMappingData(
+                ApiRoleAccess.IS_LOGIN.getRoleAccessName(),AppConstant.roleAccessTypeDirect));
+
         result.put(ApiIdentifier.GET_EXCEL_DATA_JSON.getApiName(), new ArrayList<>());
         result.get(ApiIdentifier.GET_EXCEL_DATA_JSON.getApiName()).add(new ApiRoleMappingData(
                 ApiRoleAccess.IS_LOGIN.getRoleAccessName(),AppConstant.roleAccessTypeDirect));
+
         result.put(ApiIdentifier.GET_EXCEL_DATA_CSV.getApiName(), new ArrayList<>());
         result.get(ApiIdentifier.GET_EXCEL_DATA_CSV.getApiName()).add(new ApiRoleMappingData(
                 ApiRoleAccess.IS_LOGIN.getRoleAccessName(),AppConstant.roleAccessTypeDirect));
+
         result.put(ApiIdentifier.SPLIT_FILE.getApiName(), new ArrayList<>());
         result.get(ApiIdentifier.SPLIT_FILE.getApiName()).add(new ApiRoleMappingData(
                 ApiRoleAccess.IS_LOGIN.getRoleAccessName(),AppConstant.roleAccessTypeDirect));

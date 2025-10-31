@@ -1062,6 +1062,29 @@ public class ApiResource {
         return response;
     }
     @GET
+    @Path("/get_excel_data_array")
+    @UnitOfWork
+    public ApiResponse getMSExcelDataArray(@Context HttpServletRequest request,
+                                      @QueryParam("requestId") String requestId) throws AppException {
+        this.singleThreadingService.checkSingleThreadStatus(request, "api");
+        LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
+        logger.info("getMSExcelDataArray: In, user: {}, requestId: {}", loginUserDetails, requestId);
+        ApiResponse response;
+        ArrayList<ArrayList<String>> result;
+        try {
+            authService.checkApiAuthorisation(request, ApiIdentifier.GET_EXCEL_DATA_ARRAY);
+            result = msExcelService.getMSExcelSheetDataArray(request, requestId);
+            response = new ApiResponse(result);
+        } catch (AppException ae) {
+            logger.info("Error in getMSExcelDataArray: {}", ae.getErrorCode().getErrorCode());
+            eventTracking.trackFailureEvent(request, EventName.MS_EXCEL_DATA, ae.getErrorCode());
+            response = new ApiResponse(ae.getErrorCode());
+        }
+        logger.info("getMSExcelDataArray: Out, {}", response.toStringV2());
+        this.singleThreadingService.clearSingleThread(request, "api");
+        return response;
+    }
+    @GET
     @Path("/get_excel_data_json")
     @UnitOfWork
     public ApiResponse getMSExcelDataJson(@Context HttpServletRequest request,

@@ -258,6 +258,7 @@ public class MSExcelService {
         return this.getActualMSExcelSheetData(request, excelDataConfigs, false);
     }
     public ArrayList<ArrayList<String>> getMSExcelSheetDataArray(HttpServletRequest request, String requestId) throws AppException {
+        //Api allowed check inbuilt available in below api getMSExcelSheetData
         ArrayList<BridgeResponseSheetData> response = this.getMSExcelSheetData(request, requestId);
         ArrayList<ArrayList<String>> sheetData = new ArrayList<>();
         for (BridgeResponseSheetData bridgeResponseSheetData : response) {
@@ -283,6 +284,7 @@ public class MSExcelService {
         return result;
     }
     public String getMSExcelSheetDataCsv(HttpServletRequest request, String requestId) throws AppException {
+        //Api allowed check inbuilt available in below api getMSExcelSheetDataArray
         ArrayList<ArrayList<String>> sheetData = this.getMSExcelSheetDataArray(request, requestId);
         ArrayList<String> result = new ArrayList<>();
         if (sheetData != null) {

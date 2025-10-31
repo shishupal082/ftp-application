@@ -39,7 +39,7 @@ public class TestAppConfig {
         AppConfig appConfig = this.getAppConfig(false);
         Assert.assertEquals(AppConstant.AppVersion, appConfig.getAppVersion());
         Assert.assertEquals(55, appConfig.getFtpConfiguration().getApiAuthorisationConfig().size());
-        Assert.assertEquals(56, appConfig.getApiRoleMappingList().size());
+        Assert.assertEquals(57, appConfig.getApiRoleMappingList().size());
         Assert.assertEquals(2, appConfig.getApiRoleMappingList().get(ApiIdentifier.ADD_TEXT.getApiName()).size());
         Assert.assertEquals(ApiRoleAccess.IS_ADD_TEXT_ENABLE.getRoleAccessName(),
                 appConfig.getApiRoleMappingList().get(ApiIdentifier.ADD_TEXT.getApiName()).get(0).getRole());
