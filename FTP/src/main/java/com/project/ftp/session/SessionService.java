@@ -67,8 +67,10 @@ public class SessionService {
             logger.info("sessionId change from: null to {}", newSessionId);
             LogFilter.addSessionIdInLog(newSessionId);
         }
-        HttpSession httpSession = request.getSession();
-        httpSession.setAttribute(AppConstant.SESSION_COOKIE_DATA, newSessionId);
+        if (request != null) {
+            HttpSession httpSession = request.getSession();
+            httpSession.setAttribute(AppConstant.SESSION_COOKIE_DATA, newSessionId);
+        }
     }
 
     private SessionData getNewSession(String sessionId) {
