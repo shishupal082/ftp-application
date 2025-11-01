@@ -19,6 +19,8 @@ public class RequestAddText {
     private String tableName;
     @JsonProperty("uiEntryTime")
     private String uiEntryTime;
+    @JsonProperty("role_id")
+    private String roleId;
 
     public String[] getText() {
         return text;
@@ -49,6 +51,14 @@ public class RequestAddText {
 
     public void setUiEntryTime(String uiEntryTime) {
         this.uiEntryTime = uiEntryTime;
+    }
+
+    public String getRoleId() {
+        return roleId;
+    }
+
+    public void setRoleId(String roleId) {
+        this.roleId = roleId;
     }
 
     public ArrayList<String> generateAddTextResponse(String orgUsername, String loginUsername, String currentTimeStamp) {
@@ -99,6 +109,7 @@ public class RequestAddText {
                 ", filename='" + filename + '\'' +
                 ", tableName='" + tableName + '\'' +
                 ", uiEntryTime='" + uiEntryTime + '\'' +
+                ", roleId='" + roleId + '\'' +
                 '}';
     }
 }

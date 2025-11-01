@@ -9,6 +9,8 @@ import com.project.ftp.service.StaticService;
 public class RequestDeleteFile {
     @JsonProperty("filename")
     private String filename;
+    @JsonProperty("role_id")
+    private String roleId;
 
     public String getFilename() {
         if (StaticService.isInValidString(filename)) {
@@ -21,10 +23,19 @@ public class RequestDeleteFile {
         this.filename = filename;
     }
 
+    public String getRoleId() {
+        return roleId;
+    }
+
+    public void setRoleId(String roleId) {
+        this.roleId = roleId;
+    }
+
     @Override
     public String toString() {
         return "RequestDeleteFile{" +
                 "filename='" + filename + '\'' +
+                ", roleId='" + roleId + '\'' +
                 '}';
     }
 }

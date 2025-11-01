@@ -295,9 +295,7 @@ public class YamlFileParser {
         }
         return pageConfig404;
     }
-    public PageConfig404 getPageConfig404(AppConfig appConfig) {
-        FtpConfiguration ftpConfiguration = appConfig.getFtpConfiguration();
-        String configDataFilePath = ftpConfiguration.getConfigDataFilePath();
+    public PageConfig404 getPageConfig404(String configDataFilePath, AppConfig appConfig) {
         if (StaticService.isInValidString(configDataFilePath)) {
             return null;
         }

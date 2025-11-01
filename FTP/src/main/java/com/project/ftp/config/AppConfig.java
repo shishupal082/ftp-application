@@ -9,6 +9,7 @@ import com.project.ftp.FtpConfiguration;
 import com.project.ftp.bridge.mysqlTable.TableDb;
 import com.project.ftp.bridge.mysqlTable.TableMysqlDb;
 import com.project.ftp.bridge.mysqlTable.TableService;
+import com.project.ftp.common.SysUtils;
 import com.project.ftp.event.EventTracking;
 import com.project.ftp.exceptions.AppException;
 import com.project.ftp.exceptions.ErrorCodes;
@@ -29,12 +30,12 @@ import io.dropwizard.hibernate.HibernateBundle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.HashMap;
 
 public class AppConfig {
     private final static Logger logger = LoggerFactory.getLogger(AppConfig.class);
-    private String publicDir;
     private String configDate;
     private final String appVersion = AppConstant.AppVersion;
 //    private ShutdownTask shutdownTask;
@@ -55,6 +56,7 @@ public class AppConfig {
     private MSExcelService msExcelService;
     private ScanDirService scanDirService;
     private TableService tableService;
+    private DirectoryService directoryService;
     private SingleThreadingService singleThreadingService;
     public AppConfig() {
         this.configDate = StaticService.getDateStrFromPattern(AppConstant.DATE_FORMAT);
@@ -68,12 +70,24 @@ public class AppConfig {
         this.appToBridge = appToBridge;
     }
 
-    public String getPublicDir() {
-        return publicDir;
-    }
-
-    public void setPublicDir(String publicDir) {
-        this.publicDir = publicDir;
+    public String getPublicDir(LoginUserDetails loginUserDetails, String roleId) {
+        SysUtils sysUtils = new SysUtils();
+        String systemDir = sysUtils.getProjectWorkingDir();
+        ArrayList<String> cmdArgument = this.getCmdArguments();
+        String configPublicDir = directoryService.getDirConfigParamFromUser(FtpConfigItemsV2.publicDir, roleId, loginUserDetails);
+        String configPublicPostDir = directoryService.getDirConfigParamFromUser(FtpConfigItemsV2.publicPostDir, roleId, loginUserDetails);
+        String setPublicDir = configPublicPostDir;
+        if(!AppConstant.TRUE.equals(cmdArgument.get(AppConstant.CMD_LINE_ARG_MIN_SIZE-2))) {
+            setPublicDir = StaticService.getValidPublicDir(systemDir, configPublicDir, configPublicPostDir);
+        }
+        PathInfo publicDirPathInfo = StaticService.getPathInfo(setPublicDir);
+        if (!AppConstant.FOLDER.equals(publicDirPathInfo.getType())) {
+            logger.info("calculated publicDir is not a folder: {}", setPublicDir);
+        }
+        if (AppConstant.FOLDER.equals(publicDirPathInfo.getType())) {
+            return setPublicDir;
+        }
+        return null;
     }
 
     public HashMap<String, SessionData> getSessionData() {
@@ -181,31 +195,11 @@ public class AppConfig {
         ftlConfig.setTempGaEnable(null);
         return ftlConfig;
     }
-    private String getFileSaveDir(LoginUserDetails loginUserDetails) {
-        String fileSaveDir = ftpConfiguration.getFileSaveDir();
-        String finalSaveDir = fileSaveDir;
-        if (userService != null) {
-            finalSaveDir = userService.getFileSaveDirMapping(loginUserDetails, fileSaveDir);
+    public String getFileSaveDirV2(LoginUserDetails loginUserDetails, String roleId) throws AppException {
+        if (directoryService == null) {
+            return null;
         }
-        PathInfo saveDirPathInfo = StaticService.getPathInfo(finalSaveDir);
-        if (!AppConstant.FOLDER.equals(saveDirPathInfo.getType())) {
-            logger.info("File save directory is not a folder: {}", finalSaveDir);
-            if (fileSaveDir != null && !fileSaveDir.equals(finalSaveDir)) {
-                saveDirPathInfo = StaticService.getPathInfo(fileSaveDir);
-                if (!AppConstant.FOLDER.equals(saveDirPathInfo.getType())) {
-                    logger.info("File save directory original is not a folder: {}", fileSaveDir);
-                    finalSaveDir = null;
-                } else {
-                    finalSaveDir = fileSaveDir;
-                }
-            } else {
-                finalSaveDir = null;
-            }
-        }
-        return finalSaveDir;
-    }
-    public String getFileSaveDirV2(LoginUserDetails loginUserDetails) throws AppException {
-        String saveDir = this.getFileSaveDir(loginUserDetails);
+        String saveDir = directoryService.getDirConfigParamFromUser(FtpConfigItemsV2.fileSaveDir, roleId, loginUserDetails);
         if (saveDir == null) {
             logger.info("fileSaveDir is: null");
             throw new AppException(ErrorCodes.CONFIG_ERROR);
@@ -262,13 +256,14 @@ public class AppConfig {
         this.setFtpConfiguration(ftpConfiguration);
         logger.info("FTP configuration generate complete: {}", ftpConfiguration);
     }
-    public void updatePageConfig404() {
+    public void updatePageConfig404(HttpServletRequest request, String roleId) {
         YamlFileParser yamlFileParser = new YamlFileParser();
-        pageConfig404 = yamlFileParser.getPageConfig404(this);
+        String configDataFilePath = this.directoryService.getConfigPathFromRequest(request, roleId);
+        pageConfig404 = yamlFileParser.getPageConfig404(configDataFilePath, this);
         logger.info("PageConfig404 update complete: {}", pageConfig404);
     }
     public AppConfigObj getAppConfigObj() {
-        return new AppConfigObj(publicDir, configDate, appVersion, cmdArguments,
+        return new AppConfigObj(configDate, appVersion, cmdArguments,
                 logFilePath, requestCount, sessionData, ftpConfiguration, pageConfig404,
                 apiRoleMappingList, firstPageConfigItems);
     }
@@ -319,6 +314,14 @@ public class AppConfig {
 
     public void setTableService(TableService tableService) {
         this.tableService = tableService;
+    }
+
+    public DirectoryService getDirectoryService() {
+        return directoryService;
+    }
+
+    public void setDirectoryService(DirectoryService directoryService) {
+        this.directoryService = directoryService;
     }
 
     public SingleThreadingService getSingleThreadingService() {
@@ -390,7 +393,6 @@ public class AppConfig {
         // For log config setup
         StaticService.initApplication(appConfig, isStaticPath, configPath);
 
-        appConfig.updatePageConfig404();
         logger.info("appConfig: {}", appConfig);
         EventInterface eventInterface = null;
         UserInterface userInterface = null;
@@ -447,6 +449,8 @@ public class AppConfig {
                 ftpConfiguration.getOracleDatabaseConfigs());
         UserService userService = new UserService(appConfig, userInterface);
         appConfig.setUserService(userService);
+        DirectoryService directoryService1 = new DirectoryService(appConfig.getFtpConfiguration(), userService);
+        appConfig.setDirectoryService(directoryService1);
         EventTracking eventTracking = new EventTracking(appConfig, userService, eventInterface);
         appConfig.setEventTracking(eventTracking);
         appConfig.setMsExcelService(new MSExcelService(appConfig, eventTracking, userService));
@@ -455,8 +459,10 @@ public class AppConfig {
         ScanDirService scanDirService = new ScanDirService(appConfig, filepathInterface);
         appConfig.setScanDirService(scanDirService);
         appConfig.setAppToBridge(new AppToBridge(appConfig, ftpConfiguration, eventTracking));
-        TableService tableService = new TableService(appConfig.getFtpConfiguration(), appConfig.getSingleThreadingService(),
+        TableService tableService = new TableService(appConfig, appConfig.getFtpConfiguration(), appConfig.getSingleThreadingService(),
                 appConfig.getMsExcelService(), tableMysqlDb);
+
+        appConfig.updatePageConfig404(null, null);
         appConfig.setTableService(tableService);
         return appConfig;
     }

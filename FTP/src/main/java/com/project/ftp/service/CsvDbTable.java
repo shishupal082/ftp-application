@@ -91,9 +91,9 @@ public class CsvDbTable {
         return finalResponses;
     }
     public ApiResponse getTableData(LoginUserDetails loginUserDetails, String filenames,
-                                                    String tableNames) throws AppException {
+                                                    String tableNames, String roleId) throws AppException {
         boolean isAdmin = userService.isLoginUserAdmin(loginUserDetails);
-        String saveDir = appConfig.getFileSaveDirV2(loginUserDetails);// throw error when invalid
+        String saveDir = appConfig.getFileSaveDirV2(loginUserDetails, roleId);// throw error when invalid
         ArrayList<TableRowResponse> rowResponses =
                 this.getTableRowResponses(loginUserDetails, saveDir, isAdmin, filenames, tableNames);
         HashMap<String, ArrayList<TableRowResponse>> finalResponse = new HashMap<>();
@@ -118,9 +118,9 @@ public class CsvDbTable {
         return new ApiResponse(finalResponse);
     }
     public ApiResponse getTableDataV2(LoginUserDetails loginUserDetails, String filenames,
-                                    String tableNames) throws AppException {
+                                    String tableNames, String roleId) throws AppException {
         boolean isAdmin = userService.isLoginUserAdmin(loginUserDetails);
-        String saveDir = appConfig.getFileSaveDirV2(loginUserDetails);// throw error when invalid
+        String saveDir = appConfig.getFileSaveDirV2(loginUserDetails, roleId);// throw error when invalid
         ArrayList<TableRowResponse> rowResponses =
                 this.getTableRowResponses(loginUserDetails, saveDir, isAdmin, filenames, tableNames);
         if (rowResponses == null) {
@@ -133,8 +133,8 @@ public class CsvDbTable {
         return new ApiResponse(finalResponse);
     }
     public ApiResponse scanUserDatabaseDirectory(LoginUserDetails loginUserDetails,
-                                                 String filenames, boolean isAdmin) throws AppException {
-        String saveDir = appConfig.getFileSaveDirV2(loginUserDetails);
+                                                 String filenames, boolean isAdmin, String roleId) throws AppException {
+        String saveDir = appConfig.getFileSaveDirV2(loginUserDetails, roleId);
         ArrayList<String> response = fileServiceV3.getUsersFilePath(loginUserDetails, saveDir, true, isAdmin);
         ArrayList<ResponseFilesInfo> filesInfo =
                 fileServiceV3.generateFileInfoResponse(response, loginUserDetails, true);
@@ -144,7 +144,11 @@ public class CsvDbTable {
         return new ApiResponse(filesInfo);
     }
     public ApiResponse addText(LoginUserDetails userDetails, RequestAddText addText) throws AppException {
-        String saveDir = appConfig.getFileSaveDirV2(userDetails);
+        String roleId = null;
+        if (addText != null) {
+            roleId = addText.getRoleId();
+        }
+        String saveDir = appConfig.getFileSaveDirV2(userDetails, roleId);
         fileServiceV3.verifyAddTextRequestV2(saveDir, userDetails, addText);
         boolean textAdded = fileServiceV3.saveAddText(saveDir, userDetails, addText);
         if (textAdded) {
@@ -178,7 +182,7 @@ public class CsvDbTable {
             logger.info("Invalid request deleteId: {}", deleteId);
             throw new AppException(ErrorCodes.BAD_REQUEST_ERROR);
         }
-        String saveDir = appConfig.getFileSaveDirV2(loginUserDetails);
+        String saveDir = appConfig.getFileSaveDirV2(loginUserDetails, deleteText.getRole_id());
         // Check whether it is already deleted by this user or any other user
         ArrayList<String> deletedIds = this.getDeletedIds(saveDir, loginUserDetails, AppConstant.ADMIN_TRUE);
         if (deletedIds != null && deletedIds.contains(deleteId)) {

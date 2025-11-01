@@ -12,6 +12,8 @@ public class RequestForgotPassword {
     private String email;
     @JsonProperty("user_agent")
     private String userAgent;
+    @JsonProperty("role_id")
+    private String roleId;
 
     public String getUsername() {
         if (StaticService.isInValidString(username)) {
@@ -54,6 +56,14 @@ public class RequestForgotPassword {
         this.userAgent = userAgent;
     }
 
+    public String getRoleId() {
+        return roleId;
+    }
+
+    public void setRoleId(String roleId) {
+        this.roleId = roleId;
+    }
+
     @Override
     public String toString() {
         return "RequestForgotPassword{" +
@@ -61,6 +71,7 @@ public class RequestForgotPassword {
                 ", mobile='" + mobile + '\'' +
                 ", email='" + email + '\'' +
                 ", userAgent='" + userAgent + '\'' +
+                ", roleId='" + roleId + '\'' +
                 '}';
     }
 }

@@ -1,6 +1,5 @@
 package com.project.ftp;
 
-
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.project.ftp.bridge.config.CreatePasswordEmailConfig;
@@ -10,6 +9,7 @@ import com.project.ftp.bridge.config.SocialLoginConfig;
 import com.project.ftp.bridge.obj.yamlObj.CommunicationConfig;
 import com.project.ftp.config.AppConstant;
 import com.project.ftp.config.FtpConfigItems;
+import com.project.ftp.obj.yamlObj.DirConfigParam;
 import com.project.ftp.obj.yamlObj.EventConfig;
 import com.project.ftp.obj.yamlObj.FtlConfig;
 import com.project.ftp.obj.yamlObj.OracleDatabaseConfig;
@@ -22,17 +22,8 @@ import java.util.HashMap;
 @JsonIgnoreProperties(ignoreUnknown = true)
 
 public class FtpConfiguration extends Configuration {
+    private HashMap<String, DirConfigParam> dirConfigParam;
     private String indexPageReRoute;
-    private String configDataFilePath;
-    private String fileSaveDir;
-    private String publicDir;
-    private String publicPostDir;
-    private String assetsDir;
-    private String fileMappingConfigFilePath;
-    private String splitTextFileConfigPath;
-    private String scanDirConfigFilePath;
-    private ArrayList<String> standAloneConfigPath;
-    private ArrayList<String> tableDbConfigFilePath;
     private String filenameFormat;
     private String instance;
     private String appRestartCommand;
@@ -40,10 +31,8 @@ public class FtpConfiguration extends Configuration {
 
     private String forgotPasswordMessage;
     private String loadRoleStatusOnPageLoad;
-    private String staticDataFilename;
     private String userDataFilename;
     private String aesEncryptionPassword;
-
     // Defined as Boolean but not as boolean
     // Because while updating if not found shall not assume false
     private Boolean createReadmePdf;
@@ -62,7 +51,6 @@ public class FtpConfiguration extends Configuration {
     private ArrayList<String> allowedTableFilename;
     private ArrayList<String> enabledAuthPages;
     private HashMap<String, String> loginRedirectMapping;
-    private HashMap<String, String> fileSaveDirMapping;
     private HashMap<String, String> tempConfig;
     private EmailConfig emailConfig;
     private CreatePasswordEmailConfig createPasswordEmailConfig;
@@ -77,92 +65,20 @@ public class FtpConfiguration extends Configuration {
     private HashMap<String, OracleDatabaseConfig> oracleDatabaseConfigs;
     private OracleDatabaseConfig mysqlDatabaseConfigs;
 
+    public HashMap<String, DirConfigParam> getDirConfigParam() {
+        return dirConfigParam;
+    }
+
+    public void setDirConfigParam(HashMap<String, DirConfigParam> dirConfigParam) {
+        this.dirConfigParam = dirConfigParam;
+    }
+
     public String getIndexPageReRoute() {
         return indexPageReRoute;
     }
 
     public void setIndexPageReRoute(String indexPageReRoute) {
         this.indexPageReRoute = indexPageReRoute;
-    }
-
-    public String getConfigDataFilePath() {
-        return configDataFilePath;
-    }
-
-    public void setConfigDataFilePath(String configDataFilePath) {
-        this.configDataFilePath = configDataFilePath;
-    }
-
-    public String getFileSaveDir() {
-        return fileSaveDir;
-    }
-
-    public void setFileSaveDir(String fileSaveDir) {
-        this.fileSaveDir = fileSaveDir;
-    }
-
-    public String getPublicDir() {
-        return publicDir;
-    }
-
-    public void setPublicDir(String publicDir) {
-        this.publicDir = publicDir;
-    }
-
-    public String getPublicPostDir() {
-        return publicPostDir;
-    }
-
-    public void setPublicPostDir(String publicPostDir) {
-        this.publicPostDir = publicPostDir;
-    }
-
-    public String getAssetsDir() {
-        return assetsDir;
-    }
-
-    public void setAssetsDir(String assetsDir) {
-        this.assetsDir = assetsDir;
-    }
-
-    public String getFileMappingConfigFilePath() {
-        return fileMappingConfigFilePath;
-    }
-
-    public void setFileMappingConfigFilePath(String fileMappingConfigFilePath) {
-        this.fileMappingConfigFilePath = fileMappingConfigFilePath;
-    }
-
-    public String getSplitTextFileConfigPath() {
-        return splitTextFileConfigPath;
-    }
-
-    public void setSplitTextFileConfigPath(String splitTextFileConfigPath) {
-        this.splitTextFileConfigPath = splitTextFileConfigPath;
-    }
-
-    public ArrayList<String> getStandAloneConfigPath() {
-        return standAloneConfigPath;
-    }
-
-    public void setStandAloneConfigPath(ArrayList<String> standAloneConfigPath) {
-        this.standAloneConfigPath = standAloneConfigPath;
-    }
-
-    public String getScanDirConfigFilePath() {
-        return scanDirConfigFilePath;
-    }
-
-    public void setScanDirConfigFilePath(String scanDirConfigFilePath) {
-        this.scanDirConfigFilePath = scanDirConfigFilePath;
-    }
-
-    public ArrayList<String> getTableDbConfigFilePath() {
-        return tableDbConfigFilePath;
-    }
-
-    public void setTableDbConfigFilePath(ArrayList<String> tableDbConfigFilePath) {
-        this.tableDbConfigFilePath = tableDbConfigFilePath;
     }
 
     public String getFilenameFormat() {
@@ -211,14 +127,6 @@ public class FtpConfiguration extends Configuration {
 
     public void setLoadRoleStatusOnPageLoad(String loadRoleStatusOnPageLoad) {
         this.loadRoleStatusOnPageLoad = loadRoleStatusOnPageLoad;
-    }
-
-    public String getStaticDataFilename() {
-        return staticDataFilename;
-    }
-
-    public void setStaticDataFilename(String staticDataFilename) {
-        this.staticDataFilename = staticDataFilename;
     }
 
     public String getUserDataFilename() {
@@ -365,14 +273,6 @@ public class FtpConfiguration extends Configuration {
         this.loginRedirectMapping = loginRedirectMapping;
     }
 
-    public HashMap<String, String> getFileSaveDirMapping() {
-        return fileSaveDirMapping;
-    }
-
-    public void setFileSaveDirMapping(HashMap<String, String> fileSaveDirMapping) {
-        this.fileSaveDirMapping = fileSaveDirMapping;
-    }
-
     public HashMap<String, String> getTempConfig() {
         return tempConfig;
     }
@@ -477,70 +377,16 @@ public class FtpConfiguration extends Configuration {
         if (firstPageConfigItems == null) {
             firstPageConfigItems = new ArrayList<>();
         }
+        if (!firstPageConfigItems.contains(FtpConfigItems.dirConfigParam)) {
+            HashMap<String, DirConfigParam> dirConfigParam1 = tempFtpConfiguration.getDirConfigParam();
+            if (dirConfigParam1 != null) {
+                this.dirConfigParam = dirConfigParam1;
+            }
+        }
         if (!firstPageConfigItems.contains(FtpConfigItems.indexPageReRoute)) {
             String indexPageReRoute = tempFtpConfiguration.getIndexPageReRoute();
             if (indexPageReRoute != null) {
                 this.indexPageReRoute = indexPageReRoute;
-            }
-        }
-        if (!firstPageConfigItems.contains(FtpConfigItems.configDataFilePath)) {
-            String configDataFilePath = tempFtpConfiguration.getConfigDataFilePath();
-            if (configDataFilePath != null) {
-                this.configDataFilePath = configDataFilePath;
-            }
-        }
-        if (!firstPageConfigItems.contains(FtpConfigItems.fileSaveDir)) {
-            String fileSaveDir = tempFtpConfiguration.getFileSaveDir();
-            if (fileSaveDir != null) {
-                this.fileSaveDir = fileSaveDir;
-            }
-        }
-        if (!firstPageConfigItems.contains(FtpConfigItems.publicDir)) {
-            String publicDir = tempFtpConfiguration.getPublicDir();
-            if (publicDir != null) {
-                this.publicDir = publicDir;
-            }
-        }
-        if (!firstPageConfigItems.contains(FtpConfigItems.publicPostDir)) {
-            String publicPostDir = tempFtpConfiguration.getPublicPostDir();
-            if (publicPostDir != null) {
-                this.publicPostDir = publicPostDir;
-            }
-        }
-        if (!firstPageConfigItems.contains(FtpConfigItems.assetsDir)) {
-            String assetsDir = tempFtpConfiguration.getAssetsDir();
-            if (assetsDir != null) {
-                this.assetsDir = assetsDir;
-            }
-        }
-        if (!firstPageConfigItems.contains(FtpConfigItems.fileMappingConfigFilePath)) {
-            String fileMappingConfigFilePath = tempFtpConfiguration.getFileMappingConfigFilePath();
-            if (fileMappingConfigFilePath != null) {
-                this.fileMappingConfigFilePath = fileMappingConfigFilePath;
-            }
-        }
-        if (!firstPageConfigItems.contains(FtpConfigItems.splitTextFileConfigPath)) {
-            String splitTextFileConfigPath = tempFtpConfiguration.getSplitTextFileConfigPath();
-            if (splitTextFileConfigPath != null) {
-                this.splitTextFileConfigPath = splitTextFileConfigPath;
-            }
-        }
-        if (!firstPageConfigItems.contains(FtpConfigItems.standAloneConfigPath)) {
-            ArrayList<String> standAloneConfigPath = tempFtpConfiguration.getStandAloneConfigPath();
-            if (standAloneConfigPath != null) {
-                this.standAloneConfigPath = standAloneConfigPath;
-            }
-        }
-        if (!firstPageConfigItems.contains(FtpConfigItems.scanDirConfigFilePath)) {
-            String scanDirConfigFilePath = tempFtpConfiguration.getScanDirConfigFilePath();
-            if (scanDirConfigFilePath != null) {
-                this.scanDirConfigFilePath = scanDirConfigFilePath;
-            }
-        }
-        if (!firstPageConfigItems.contains(FtpConfigItems.tableDbConfigFilePath)) {
-            ArrayList<String> tableDbConfigFilePath = tempFtpConfiguration.getTableDbConfigFilePath();
-            if (tableDbConfigFilePath != null) {
-                this.tableDbConfigFilePath = tableDbConfigFilePath;
             }
         }
         if (!firstPageConfigItems.contains(FtpConfigItems.filenameFormat)) {
@@ -577,12 +423,6 @@ public class FtpConfiguration extends Configuration {
             String loadRoleStatusOnPageLoad = tempFtpConfiguration.getLoadRoleStatusOnPageLoad();
             if (loadRoleStatusOnPageLoad != null) {
                 this.loadRoleStatusOnPageLoad = loadRoleStatusOnPageLoad;
-            }
-        }
-        if (!firstPageConfigItems.contains(FtpConfigItems.staticDataFilename)) {
-            String staticDataFilename = tempFtpConfiguration.getStaticDataFilename();
-            if (staticDataFilename != null) {
-                this.staticDataFilename = staticDataFilename;
             }
         }
         if (!firstPageConfigItems.contains(FtpConfigItems.userDataFilename)) {
@@ -687,12 +527,6 @@ public class FtpConfiguration extends Configuration {
                 this.loginRedirectMapping = loginRedirectMapping;
             }
         }
-        if (!firstPageConfigItems.contains(FtpConfigItems.fileSaveDirMapping)) {
-            HashMap<String, String> fileSaveDirMapping = tempFtpConfiguration.getFileSaveDirMapping();
-            if (fileSaveDirMapping != null) {
-                this.fileSaveDirMapping = fileSaveDirMapping;
-            }
-        }
         if (!firstPageConfigItems.contains(FtpConfigItems.tempConfig)) {
             HashMap<String, String> tempConfig = tempFtpConfiguration.getTempConfig();
             if (tempConfig != null) {
@@ -764,24 +598,14 @@ public class FtpConfiguration extends Configuration {
     @Override
     public String toString() {
         return "FtpConfiguration{" +
-                "indexPageReRoute='" + indexPageReRoute + '\'' +
-                ", configDataFilePath='" + configDataFilePath + '\'' +
-                ", fileSaveDir='" + fileSaveDir + '\'' +
-                ", publicDir='" + publicDir + '\'' +
-                ", publicPostDir='" + publicPostDir + '\'' +
-                ", assetsDir='" + assetsDir + '\'' +
-                ", fileMappingConfigFilePath='" + fileMappingConfigFilePath + '\'' +
-                ", splitTextFileConfigPath='" + splitTextFileConfigPath + '\'' +
-                ", scanDirConfigFilePath='" + scanDirConfigFilePath + '\'' +
-                ", standAloneConfigPath='" + standAloneConfigPath +
-                ", tableDbConfigFilePath=" + tableDbConfigFilePath +
+                "dirConfigParam=" + dirConfigParam +
+                ", indexPageReRoute='" + indexPageReRoute + '\'' +
                 ", filenameFormat='" + filenameFormat + '\'' +
                 ", instance='" + instance + '\'' +
                 ", appRestartCommand='" + appRestartCommand + '\'' +
                 ", cookieName='" + cookieName + '\'' +
                 ", forgotPasswordMessage='" + forgotPasswordMessage + '\'' +
                 ", loadRoleStatusOnPageLoad='" + loadRoleStatusOnPageLoad + '\'' +
-                ", staticDataFilename='" + staticDataFilename + '\'' +
                 ", userDataFilename='" + userDataFilename + '\'' +
                 ", aesEncryptionPassword='" + AppConstant.MaskDataString + '\'' +
                 ", createReadmePdf=" + createReadmePdf +
@@ -800,7 +624,6 @@ public class FtpConfiguration extends Configuration {
                 ", allowedTableFilename=" + allowedTableFilename +
                 ", enabledAuthPages=" + enabledAuthPages +
                 ", loginRedirectMapping=" + loginRedirectMapping +
-                ", fileSaveDirMapping=" + fileSaveDirMapping +
                 ", tempConfig=" + tempConfig +
                 ", emailConfig=" + emailConfig +
                 ", createPasswordEmailConfig=" + createPasswordEmailConfig +

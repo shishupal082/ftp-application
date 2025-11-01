@@ -83,7 +83,7 @@ public class TestMSExcelService {
         String requestId;
         MSExcelService msExcelService = this.getMSExcelService();
         requestId = "gs-csv-test-13";
-        ArrayList<ExcelDataConfig> excelDataConfigs =  msExcelService.getActualMSExcelSheetDataConfig(request, requestId, false);
+        ArrayList<ExcelDataConfig> excelDataConfigs =  msExcelService.getActualMSExcelSheetDataConfig(request, requestId, false, null);
         Assert.assertEquals(requestId, excelDataConfigs.get(0).getId());
     }
     @Test
@@ -93,7 +93,7 @@ public class TestMSExcelService {
         MSExcelService msExcelService = this.getMSExcelService();
         String result;
         requestId = "csv-test-01";
-        result =  msExcelService.getMSExcelSheetDataCsv(request, requestId);
+        result =  msExcelService.getMSExcelSheetDataCsv(request, requestId, null);
         Assert.assertEquals(66, result.length());
     }
     @Test
@@ -102,7 +102,7 @@ public class TestMSExcelService {
         String requestId;
         MSExcelService msExcelService = this.getMSExcelService();
         requestId = "excel-data-id-001";
-        msExcelService.updateMSExcelSheetDataV2(request, requestId, null);
+        msExcelService.updateMSExcelSheetDataV2(request, requestId, null, null);
     }
     @Test
     public void testTestMSExcelServiceV1() {
@@ -111,16 +111,16 @@ public class TestMSExcelService {
         ApiResponse apiResponse;
         ApiResource apiResource = this.getApiResource();
         requestId = null;
-        apiResponse =  apiResource.getMSExcelData(request, requestId);
+        apiResponse =  apiResource.getMSExcelData(request, requestId, null);
         Assert.assertEquals("FAILURE", apiResponse.getStatus());
         requestId = "csv-test-01";
-        apiResponse =  apiResource.updateMSExcelData(request, requestId);
+        apiResponse =  apiResource.updateMSExcelData(request, requestId, null);
         Assert.assertEquals("SUCCESS", apiResponse.getStatus());
         requestId = "csv-test-02";
-        apiResponse =  apiResource.updateMSExcelData(request, requestId);
+        apiResponse =  apiResource.updateMSExcelData(request, requestId, null);
         Assert.assertEquals("SUCCESS", apiResponse.getStatus());
         requestId = "csv-test-03";
-        apiResponse =  apiResource.getMSExcelData(request, requestId);
+        apiResponse =  apiResource.getMSExcelData(request, requestId, null);
         Assert.assertEquals("FAILURE", apiResponse.getStatus());
     }
     @Test
@@ -130,16 +130,16 @@ public class TestMSExcelService {
         ApiResponse apiResponse;
         ApiResource apiResource = this.getApiResource();
         requestId = "csv-test-04";
-        apiResponse =  apiResource.updateMSExcelData(request, requestId);
+        apiResponse =  apiResource.updateMSExcelData(request, requestId, null);
         Assert.assertEquals("SUCCESS", apiResponse.getStatus());
         requestId = "csv-test-05";
-        apiResponse =  apiResource.getMSExcelData(request, requestId);
+        apiResponse =  apiResource.getMSExcelData(request, requestId, null);
         Assert.assertEquals("SUCCESS", apiResponse.getStatus());
         requestId = "csv-test-06";
-        apiResponse =  apiResource.updateMSExcelData(request, requestId);
+        apiResponse =  apiResource.updateMSExcelData(request, requestId, null);
         Assert.assertEquals("SUCCESS", apiResponse.getStatus());
         requestId = "csv-test-07";
-        apiResponse =  apiResource.updateMSExcelData(request, requestId);
+        apiResponse =  apiResource.updateMSExcelData(request, requestId, null);
         Assert.assertEquals("SUCCESS", apiResponse.getStatus());
     }
     @Test
@@ -149,16 +149,16 @@ public class TestMSExcelService {
         ApiResponse apiResponse;
         ApiResource apiResource = this.getApiResource();
         requestId = "csv-test-08-09";
-        apiResponse =  apiResource.updateMSExcelData(request, requestId);
+        apiResponse =  apiResource.updateMSExcelData(request, requestId, null);
         Assert.assertEquals(AppConstant.SUCCESS , apiResponse.getStatus());
         requestId = "csv-test-id-not-found-in-csv-config";
-        apiResponse =  apiResource.getMSExcelData(request, requestId);
+        apiResponse =  apiResource.getMSExcelData(request, requestId, null);
         Assert.assertEquals("CONFIG_ERROR", apiResponse.getFailureCode());
         requestId = "csv-test-id-not-found-error";
-        apiResponse =  apiResource.getMSExcelData(request, requestId);
+        apiResponse =  apiResource.getMSExcelData(request, requestId, null);
         Assert.assertEquals("BAD_REQUEST_ERROR", apiResponse.getFailureCode());
         requestId = "gs-csv-test-12-direct-invalid";
-        apiResponse =  apiResource.getMSExcelData(request, requestId);
+        apiResponse =  apiResource.getMSExcelData(request, requestId, null);
         Assert.assertEquals("BAD_REQUEST_ERROR", apiResponse.getFailureCode());
     }
     @Test
@@ -167,7 +167,7 @@ public class TestMSExcelService {
         MSExcelService msExcelService = appConfig.getMsExcelService();
         String requestId = "csv-test-08";
         ArrayList<HashMap<String, String>> result;
-        result = msExcelService.getMSExcelSheetDataJson(null, requestId);
+        result = msExcelService.getMSExcelSheetDataJson(null, requestId, null);
         Assert.assertEquals(15, result.size());
         Assert.assertEquals("test-00", result.get(0).get("col_8"));
         Assert.assertEquals(5, result.get(0).size());
@@ -180,7 +180,7 @@ public class TestMSExcelService {
         ApiResponse apiResponse;
         ApiResource apiResource = this.getApiResource();
         requestId = "csv-test-09";
-        apiResponse = apiResource.updateMSExcelData(request, requestId);
+        apiResponse = apiResource.updateMSExcelData(request, requestId, null);
         Assert.assertEquals("SUCCESS", apiResponse.getStatus());
     }
     @Test
@@ -190,10 +190,10 @@ public class TestMSExcelService {
         ApiResponse apiResponse;
         ApiResource apiResource = this.getApiResource();
         requestId = "csv-test-10";
-        apiResponse =  apiResource.updateMSExcelData(request, requestId);
+        apiResponse =  apiResource.updateMSExcelData(request, requestId, null);
         Assert.assertEquals(AppConstant.SUCCESS, apiResponse.getStatus());
         requestId = "csv-test-10-2";
-        apiResponse =  apiResource.getMSExcelDataJson(request, requestId);
+        apiResponse =  apiResource.getMSExcelDataJson(request, requestId, null);
         ArrayList<HashMap<String, String>> result = (ArrayList<HashMap<String, String>>) apiResponse.getData();
         Assert.assertEquals(4, result.size());
     }
@@ -204,7 +204,7 @@ public class TestMSExcelService {
         ApiResponse apiResponse;
         ApiResource apiResource = this.getApiResource();
         requestId = "csv-test-11";
-        apiResponse =  apiResource.updateMSExcelData(request, requestId);
+        apiResponse =  apiResource.updateMSExcelData(request, requestId, null);
         Assert.assertEquals(AppConstant.SUCCESS, apiResponse.getStatus());
     }
     @Test
@@ -214,11 +214,11 @@ public class TestMSExcelService {
         ApiResponse apiResponse;
         ApiResource apiResource = this.getApiResource();
         requestId = "gs-csv-test-12";
-        apiResponse =  apiResource.updateMSExcelData(request, requestId);
+        apiResponse =  apiResource.updateMSExcelData(request, requestId, null);
         Assert.assertNotNull(apiResponse.getStatus());
 //        Assert.assertEquals(AppConstant.SUCCESS, apiResponse.getStatus());
         requestId = "csv-gs-csv-test-12";
-        apiResponse =  apiResource.updateMSExcelData(request, requestId);
+        apiResponse =  apiResource.updateMSExcelData(request, requestId, null);
         Assert.assertNotNull(apiResponse.getStatus());
     }
     @Test
@@ -227,27 +227,27 @@ public class TestMSExcelService {
         String requestId;
         MSExcelService msExcelService = this.getMSExcelService();
         requestId = "gs-csv-test-12";
-        ArrayList<ExcelDataConfig> excelDataConfigs =  msExcelService.getActualMSExcelSheetDataConfig(request, requestId, false);
+        ArrayList<ExcelDataConfig> excelDataConfigs =  msExcelService.getActualMSExcelSheetDataConfig(request, requestId, false, null);
         Assert.assertEquals(requestId, excelDataConfigs.get(0).getId());
         Assert.assertNotNull(excelDataConfigs.get(0).getValidFor());
         Assert.assertEquals("google", excelDataConfigs.get(0).getGsConfig().get(0).getFileConfigMapping().getFileDataSource());
 
         requestId = "gs-csv-test-12-direct";
         //config for gs-csv-test-12 and gs-csv-test-12-direct should be same
-        excelDataConfigs =  msExcelService.getActualMSExcelSheetDataConfig(request, requestId, false);
+        excelDataConfigs =  msExcelService.getActualMSExcelSheetDataConfig(request, requestId, false, null);
         Assert.assertEquals(requestId, excelDataConfigs.get(0).getId());
         Assert.assertNotNull(excelDataConfigs.get(0).getValidFor());
         Assert.assertEquals("google", excelDataConfigs.get(0).getGsConfig().get(0).getFileConfigMapping().getFileDataSource());
 
         requestId = "csv-test-01";
-        excelDataConfigs =  msExcelService.getActualMSExcelSheetDataConfig(request, requestId, false);
+        excelDataConfigs =  msExcelService.getActualMSExcelSheetDataConfig(request, requestId, false, null);
         Assert.assertEquals(requestId, excelDataConfigs.get(0).getId());
         Assert.assertNull(excelDataConfigs.get(0).getValidFor());
         Assert.assertEquals(1, excelDataConfigs.get(0).getCsvConfig().size());
         Assert.assertEquals("csv", excelDataConfigs.get(0).getCsvConfig().get(0).getFileConfigMapping().getFileDataSource());
 
         requestId = "csv-test-08-09";
-        excelDataConfigs =  msExcelService.getActualMSExcelSheetDataConfig(request, requestId, false);
+        excelDataConfigs =  msExcelService.getActualMSExcelSheetDataConfig(request, requestId, false, null);
         Assert.assertEquals("csv-test-08", excelDataConfigs.get(0).getId());
         Assert.assertEquals("csv-test-09", excelDataConfigs.get(1).getId());
         Assert.assertEquals(1, excelDataConfigs.get(0).getCsvConfig().size());
@@ -260,7 +260,7 @@ public class TestMSExcelService {
         MSExcelService msExcelService = this.getMSExcelService();
 
         requestId = "oracle-to-csv-smms-assets-list";
-        ArrayList<ExcelDataConfig> excelDataConfigs =  msExcelService.getActualMSExcelSheetDataConfig(request, requestId, false);
+        ArrayList<ExcelDataConfig> excelDataConfigs =  msExcelService.getActualMSExcelSheetDataConfig(request, requestId, false, null);
         Assert.assertEquals(requestId, excelDataConfigs.get(0).getId());
         Assert.assertEquals("get-oracle-smms-assets-list", excelDataConfigs.get(0).getApiConfig().get(0).getSource());
         Assert.assertEquals("empty-mysql-sheet-name", excelDataConfigs.get(0).getApiConfig().get(0).getSheetName());
@@ -290,7 +290,7 @@ public class TestMSExcelService {
         ApiResponse apiResponse;
         ApiResource apiResource = this.getApiResource();
         requestId = "csv-test-15-06";
-        apiResponse =  apiResource.getMSExcelDataJson(request, requestId);
+        apiResponse =  apiResource.getMSExcelDataJson(request, requestId, null);
         ArrayList<HashMap<String, String>> result = (ArrayList<HashMap<String, String>>) apiResponse.getData();
         Assert.assertEquals(2, result.size());
         Assert.assertEquals("567900138024", result.get(1).get("col_7"));
@@ -302,7 +302,7 @@ public class TestMSExcelService {
         ApiResponse apiResponse;
         ApiResource apiResource = this.getApiResource();
         requestId = "csv-test-16";
-        apiResponse =  apiResource.updateMSExcelDataV2(request, requestId);
+        apiResponse =  apiResource.updateMSExcelDataV2(request, requestId, null);
         Assert.assertEquals(AppConstant.SUCCESS, apiResponse.getStatus());
     }
     @Test
@@ -312,7 +312,7 @@ public class TestMSExcelService {
         ApiResponse apiResponse;
         ApiResource apiResource = this.getApiResource();
         requestId = "csv-test-17";
-        apiResponse =  apiResource.updateMSExcelDataV2(request, requestId);
+        apiResponse =  apiResource.updateMSExcelDataV2(request, requestId, null);
         Assert.assertEquals(AppConstant.SUCCESS, apiResponse.getStatus());
     }
 }

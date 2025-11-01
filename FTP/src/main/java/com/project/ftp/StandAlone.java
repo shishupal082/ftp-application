@@ -6,6 +6,7 @@ import com.project.ftp.bridge.standalone.obj.ApiDetail;
 import com.project.ftp.bridge.standalone.obj.StandAloneConfig;
 import com.project.ftp.config.AppConfig;
 import com.project.ftp.config.AppConstant;
+import com.project.ftp.config.FtpConfigItemsV2;
 import com.project.ftp.exceptions.AppException;
 import com.project.ftp.resources.ApiResource;
 import org.slf4j.Logger;
@@ -36,28 +37,28 @@ public class StandAlone {
             logger.info("handleApiUpdateMysql: Invalid config: {}", apiDetail);
             return;
         }
-        apiResource.updateMySqlTableDataFromCsv(null, params.get(0));
+        apiResource.updateMySqlTableDataFromCsv(null, params.get(0), null);
     }
     private void handleApiUpdateExcelData(ApiDetail apiDetail, ArrayList<String> params) {
         if (params == null || params.isEmpty()) {
             logger.info("handleApiUpdateExcelData: Invalid config: {}", apiDetail);
             return;
         }
-        apiResource.updateMSExcelData(null, params.get(0));
+        apiResource.updateMSExcelData(null, params.get(0), null);
     }
     private void handleApiUpdateExcelDataV2(ApiDetail apiDetail, ArrayList<String> params) {
         if (params == null || params.isEmpty()) {
             logger.info("handleApiUpdateExcelDataV2: Invalid config: {}", apiDetail);
             return;
         }
-        apiResource.updateMSExcelDataV2(null, params.get(0));
+        apiResource.updateMSExcelDataV2(null, params.get(0), null);
     }
     private void handleApiSplitFile(ApiDetail apiDetail, ArrayList<String> params) {
         if (params == null || params.isEmpty()) {
             logger.info("handleApiSplitFile: Invalid config: {}", apiDetail);
             return;
         }
-        apiResource.splitFile(null, params.get(0));
+        apiResource.splitFile(null, params.get(0), null);
     }
     private void askConfirmation(ApiDetail apiDetail) {
         if (apiDetail == null) {
@@ -112,7 +113,7 @@ public class StandAlone {
             return;
         }
         FtpConfiguration ftpConfiguration = appConfig.getFtpConfiguration();
-        ArrayList<String> standAloneConfigPath = ftpConfiguration.getStandAloneConfigPath();
+        ArrayList<String> standAloneConfigPath = appConfig.getDirectoryService().getDirConfigParamFromRequestV2(null, FtpConfigItemsV2.standAloneConfigPath, null);
         StandAloneConfig standAloneConfig = standAloneService.getStandaloneConfig(standAloneConfigPath);
         if (standAloneConfig == null) {
             logger.info("standAloneConfig is null, Press any key to exit...");

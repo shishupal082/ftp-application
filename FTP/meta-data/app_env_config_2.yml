@@ -1,8 +1,3 @@
-fileSaveDir: "D:/workspace/project/ftp-app/saved-files/"
-configDataFilePath: "D:/workspace/ftp-application/FTP/meta-data/config-files/"
-publicDir: "../.."
-publicPostDir: "/project"
-assetsDir: "D:/workspace/project/"
 eventConfig:
   enabled: true
   staticDir: false
@@ -33,7 +28,7 @@ rolesFileName:
 fileNotFoundMapping:
 #  - "file_not_found_config.yml"
   - "file_not_found_config/file_not_found_config_v2.yml"
-staticDataFilename: "app_static_data.json"
+
 rateLimitThreshold: 2
 enableMysqlTableName:
   - users
@@ -96,9 +91,6 @@ loginRedirectMapping:
   isAdminUser: "/view/resource"
   isDevUser: "/dashboard"
   isLoginOtherUserEnable: "/login_other_user"
-
-fileSaveDirMapping:
-  localSystemUser: "D:/workspace/project/ftp-app/saved-files/"
 
 ftlConfig:
   description: "FTP Application description"

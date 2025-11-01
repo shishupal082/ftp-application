@@ -15,6 +15,8 @@ public class RequestUserLogin {
     private String password;
     @JsonProperty("user_agent")
     private String user_agent;
+    @JsonProperty("role_id")
+    private String roleId;
 
     public String getUsername() {
         if (StaticService.isInValidString(username)) {
@@ -46,12 +48,21 @@ public class RequestUserLogin {
         this.user_agent = user_agent;
     }
 
+    public String getRoleId() {
+        return roleId;
+    }
+
+    public void setRoleId(String roleId) {
+        this.roleId = roleId;
+    }
+
     @Override
     public String toString() {
         return "RequestUserLogin{" +
                 "username='" + username + '\'' +
                 ", password='" + AppConstant.MaskDataString + '\'' +
                 ", user_agent='" + user_agent + '\'' +
+                ", roleId='" + roleId + '\'' +
                 '}';
     }
 }

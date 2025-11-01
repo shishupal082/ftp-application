@@ -1,6 +1,5 @@
 package com.project.ftp.service;
 
-import com.project.ftp.FtpConfiguration;
 import com.project.ftp.config.ApiIdentifier;
 import com.project.ftp.config.ApiRoleAccess;
 import com.project.ftp.config.ApiRoleMappingData;

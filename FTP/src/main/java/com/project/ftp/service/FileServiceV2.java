@@ -3,6 +3,7 @@ package com.project.ftp.service;
 import com.project.ftp.bridge.config.SocialLoginConfig;
 import com.project.ftp.config.AppConfig;
 import com.project.ftp.config.AppConstant;
+import com.project.ftp.config.FtpConfigItemsV2;
 import com.project.ftp.exceptions.AppException;
 import com.project.ftp.exceptions.ErrorCodes;
 import com.project.ftp.obj.*;
@@ -15,6 +16,7 @@ import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -41,8 +43,8 @@ public class FileServiceV2 {
                                                           LoginUserDetails loginUserDetails, boolean addDatabasePath) {
         return fileServiceV3.generateFileInfoResponse(res, loginUserDetails, addDatabasePath);
     }
-    public ApiResponse scanCurrentUserDirectory(LoginUserDetails loginUserDetails) throws AppException {
-        String saveDir = appConfig.getFileSaveDirV2(loginUserDetails);
+    public ApiResponse scanCurrentUserDirectory(LoginUserDetails loginUserDetails, String roleId) throws AppException {
+        String saveDir = appConfig.getFileSaveDirV2(loginUserDetails, roleId);
         ArrayList<String> response =
                 fileServiceV3.getCurrentUsersFilePath(loginUserDetails, saveDir, false);
         if (response == null) {
@@ -54,8 +56,8 @@ public class FileServiceV2 {
         logger.info("scanCurrentUserDirectory: final result size: {}", filesInfo.size());
         return new ApiResponse(filesInfo);
     }
-    public ApiResponse scanUserDirectory(LoginUserDetails loginUserDetails) throws AppException {
-        String saveDir = appConfig.getFileSaveDirV2(loginUserDetails);
+    public ApiResponse scanUserDirectory(LoginUserDetails loginUserDetails, String roleId) throws AppException {
+        String saveDir = appConfig.getFileSaveDirV2(loginUserDetails, roleId);
         ArrayList<String> response = this.getUsersFilePath(loginUserDetails, saveDir, false);
         ArrayList<ResponseFilesInfo> filesInfo =
                 this.generateFileInfoResponse(response, loginUserDetails, false);
@@ -63,9 +65,9 @@ public class FileServiceV2 {
         return new ApiResponse(filesInfo);
     }
     public ApiResponse scanUserDirectoryByPattern(LoginUserDetails loginUserDetails,
-                                                  String filenamePattern, String usernamePattern)
+                                                  String filenamePattern, String usernamePattern, String roleId)
             throws AppException {
-        String saveDir = appConfig.getFileSaveDirV2(loginUserDetails);
+        String saveDir = appConfig.getFileSaveDirV2(loginUserDetails, roleId);
         ArrayList<String> responseFilenames = this.getUsersFilePath(loginUserDetails, saveDir, false);
         ArrayList<String> filterFileName = this.filterFilename(responseFilenames, filenamePattern, usernamePattern);
         ArrayList<ResponseFilesInfo> filesInfo =
@@ -73,19 +75,19 @@ public class FileServiceV2 {
         logger.info("scanUserDirectoryByPattern: final result size: {}", filesInfo.size());
         return new ApiResponse(filesInfo);
     }
-    public ApiResponse scanUserDatabaseDirectory(LoginUserDetails loginUserDetails, String filenamePattern) throws AppException {
-        return csvDbTable.scanUserDatabaseDirectory(loginUserDetails, filenamePattern, true);
+    public ApiResponse scanUserDatabaseDirectory(LoginUserDetails loginUserDetails, String filenamePattern, String roleId) throws AppException {
+        return csvDbTable.scanUserDatabaseDirectory(loginUserDetails, filenamePattern, true, roleId);
     }
     public ApiResponse getTableData(LoginUserDetails loginUserDetails,
-                                    String filenames, String tableNames) throws AppException {
-        return csvDbTable.getTableData(loginUserDetails, filenames, tableNames);
+                                    String filenames, String tableNames, String roleId) throws AppException {
+        return csvDbTable.getTableData(loginUserDetails, filenames, tableNames, roleId);
     }
     public ApiResponse getTableDataV2(LoginUserDetails loginUserDetails,
-                                    String filenames, String tableNames) throws AppException {
-        return csvDbTable.getTableDataV2(loginUserDetails, filenames, tableNames);
+                                    String filenames, String tableNames, String roleId) throws AppException {
+        return csvDbTable.getTableDataV2(loginUserDetails, filenames, tableNames, roleId);
     }
-    public PathInfo getUserCsvData(LoginUserDetails loginUserDetails) throws AppException {
-        String saveDir = appConfig.getFileSaveDirV2(loginUserDetails);
+    public PathInfo getUserCsvData(LoginUserDetails loginUserDetails, String roleId) throws AppException {
+        String saveDir = appConfig.getFileSaveDirV2(loginUserDetails, roleId);
         ArrayList<String> responseFilenames = this.getUsersFilePath(loginUserDetails, saveDir, false);
         ArrayList<String> filterFilenames =
                 this.filterFilename(responseFilenames, AppConstant.CSV_FILENAME_REGEX, AppConstant.ALL_STRING_REGEX);
@@ -159,9 +161,9 @@ public class FileServiceV2 {
     }
     public PathInfo getUserDataByFilenamePattern(LoginUserDetails loginUserDetails,
                                                  String filenamePattern, String usernamePattern,
-                                                 String tempFileName)
+                                                 String tempFileName, String roleId)
             throws AppException {
-        String saveDir = appConfig.getFileSaveDirV2(loginUserDetails);
+        String saveDir = appConfig.getFileSaveDirV2(loginUserDetails, roleId);
         ArrayList<String> responseFilenames = this.getUsersFilePath(loginUserDetails, saveDir, false);
         ArrayList<String> filterFileName = this.filterFilename(responseFilenames, filenamePattern, usernamePattern);
         return this.getFinalPathInfo(loginUserDetails, filterFileName, saveDir, tempFileName);
@@ -171,12 +173,12 @@ public class FileServiceV2 {
         return fileServiceV3.parseRequestedFileStr(filename, containsDatabaseDir);
     }
     public PathInfo searchRequestedFileV2(LoginUserDetails loginUserDetails,
-                                          String filename) throws AppException {
+                                          String filename, String roleId) throws AppException {
         if (filename == null) {
             logger.info("searchRequestedFileV2: filename can not be null");
             throw new AppException(ErrorCodes.INVALID_QUERY_PARAMS);
         }
-        String filePath = appConfig.getFileSaveDirV2(loginUserDetails);
+        String filePath = appConfig.getFileSaveDirV2(loginUserDetails, roleId);
         HashMap<String, String> parsedFileStr = this.parseRequestedFileStr(filename, false);
         String loginUserName = loginUserDetails.getUsername();
         PathInfo pathInfo;
@@ -286,7 +288,7 @@ public class FileServiceV2 {
         // Throw error if invalid request
         HashMap<String, String> parsedFileStr = this.verifyDeleteRequestParameters(deleteFile);
         String deleteFileReq = deleteFile.getFilename();
-        String saveDir = appConfig.getFileSaveDirV2(loginUserDetails);
+        String saveDir = appConfig.getFileSaveDirV2(loginUserDetails, deleteFile.getRoleId());
         String filepath = saveDir + deleteFileReq;
         // file not found
         if (!fileService.isFile(filepath)) {
@@ -303,8 +305,8 @@ public class FileServiceV2 {
     }
     // By default folder is authorised
     private boolean isFolderAuthorised(LoginUserDetails userDetails,
-                                       PageConfig404 pageConfig404, String fileParentFolder) {
-        String publicDir = appConfig.getPublicDir();
+                                       PageConfig404 pageConfig404, String fileParentFolder, String roleId) {
+        String publicDir = appConfig.getPublicDir(userDetails, roleId);
         if (publicDir == null) {
             return  true;
         }
@@ -351,8 +353,8 @@ public class FileServiceV2 {
         }
         return page404Entry;
     }
-    private Page404Entry getFileNotFoundMapping(PageConfig404 pageConfig404, String requestPath) {
-        String publicDir = appConfig.getPublicDir();
+    private Page404Entry getFileNotFoundMapping(PageConfig404 pageConfig404, String requestPath, LoginUserDetails userDetails, String roleId) {
+        String publicDir = appConfig.getPublicDir(userDetails, roleId);
         Page404Entry page404Entry;
         if (pageConfig404 != null) {
             HashMap<String, Page404Entry> pageMapping = pageConfig404.getPageMapping404();
@@ -375,8 +377,8 @@ public class FileServiceV2 {
         return null;
     }
     private PathInfo getFileFromPublicFolder(String filePath, LoginUserDetails userDetails,
-                                             PageConfig404 pageConfig404) {
-        String publicDir = appConfig.getPublicDir();
+                                             PageConfig404 pageConfig404, String roleId) {
+        String publicDir = appConfig.getPublicDir(userDetails, roleId);
         if (publicDir == null) {
             return null;
         }
@@ -393,7 +395,7 @@ public class FileServiceV2 {
         }
         if (pathInfo == null || !AppConstant.FILE.equals(pathInfo.getType())) {
             logger.info("pathInfo is not found for '{}': searching default404 page.", filePath);
-            page404Entry = this.getFileNotFoundMapping(pageConfig404, AppConstant.DEFAULT);
+            page404Entry = this.getFileNotFoundMapping(pageConfig404, AppConstant.DEFAULT, userDetails, roleId);
             if (page404Entry != null) {
                 if (AppConstant.FTL_VIEW_TYPE.equals(page404Entry.getViewType())) {
                     pathInfo = new PathInfo();
@@ -404,8 +406,8 @@ public class FileServiceV2 {
                 }
             }
             return pathInfo;
-        } else if (!this.isFolderAuthorised(userDetails, pageConfig404, pathInfo.getParentFolder())) {
-            page404Entry = this.getFileNotFoundMapping(pageConfig404, AppConstant.UN_AUTHORISED);
+        } else if (!this.isFolderAuthorised(userDetails, pageConfig404, pathInfo.getParentFolder(), roleId)) {
+            page404Entry = this.getFileNotFoundMapping(pageConfig404, AppConstant.UN_AUTHORISED, userDetails, roleId);
             if (page404Entry != null) {
                 if (AppConstant.FTL_VIEW_TYPE.equals(page404Entry.getViewType())) {
                     pathInfo = new PathInfo();
@@ -421,7 +423,7 @@ public class FileServiceV2 {
         }
         return pathInfo;
     }
-    public PathInfo getFileResponse(String filePath, LoginUserDetails userDetails) {
+    public PathInfo getFileResponse(String filePath, LoginUserDetails userDetails, String roleId) {
         if (filePath == null) {
             return null;
         }
@@ -429,7 +431,7 @@ public class FileServiceV2 {
         Page404Entry page404Entry = null;
         boolean isFilePathAuthorised = true;
         if (pageConfig404 != null) {
-            page404Entry = this.getFileNotFoundMapping(pageConfig404, filePath);
+            page404Entry = this.getFileNotFoundMapping(pageConfig404, filePath, userDetails, roleId);
             if (page404Entry != null) {
                 String rollAccess = page404Entry.getRoleAccess();
                 if (StaticService.isValidString(rollAccess)) {
@@ -437,7 +439,7 @@ public class FileServiceV2 {
                         filePath = page404Entry.getFileName();
                     } else {
                         logger.info("unAuthorised page404Entry: {}", page404Entry);
-                        page404Entry = this.getFileNotFoundMapping(pageConfig404, AppConstant.UN_AUTHORISED);
+                        page404Entry = this.getFileNotFoundMapping(pageConfig404, AppConstant.UN_AUTHORISED, userDetails, roleId);
                         if (page404Entry != null) {
                             filePath = page404Entry.getFileName();
                         } else {
@@ -453,7 +455,7 @@ public class FileServiceV2 {
         PathInfo pathInfo;
         if (page404Entry == null) {
             if (isFilePathAuthorised) {
-                pathInfo = this.getFileFromPublicFolder(filePath, userDetails, pageConfig404);
+                pathInfo = this.getFileFromPublicFolder(filePath, userDetails, pageConfig404, roleId);
             } else {
                 pathInfo = new PathInfo();
                 pathInfo.setType(AppConstant.UNAUTHORISED_JSON_DATA);
@@ -464,14 +466,14 @@ public class FileServiceV2 {
                 pathInfo.setType(AppConstant.FTL_VIEW_TYPE);
                 pathInfo.setFileName(page404Entry.getFileName());
             } else {
-                pathInfo = this.getFileFromPublicFolder(filePath, userDetails, pageConfig404);
+                pathInfo = this.getFileFromPublicFolder(filePath, userDetails, pageConfig404, roleId);
             }
         }
-        logger.info("final pathInfo: {}", pathInfo);
+        logger.info("getFileResponse: final pathInfo: {}", pathInfo);
         return pathInfo;
     }
-    public PathInfo getFileResponseV2(String filePath) {
-        String assetsDir = appConfig.getFtpConfiguration().getAssetsDir();
+    public PathInfo getFileResponseV2(String filePath, LoginUserDetails loginUserDetails, String roleId) {
+        String assetsDir = appConfig.getDirectoryService().getDirConfigParamFromUser(FtpConfigItemsV2.assetsDir, roleId, loginUserDetails);
         if (assetsDir == null) {
             return null;
         }
@@ -489,7 +491,7 @@ public class FileServiceV2 {
                 pathInfo = null;
             }
         }
-        logger.info("final pathInfo: {}", pathInfo);
+        logger.info("getFileResponseV2: final pathInfo: {}", pathInfo);
         return pathInfo;
     }
     public PathInfo doUpload(String fileSaveDir, InputStream uploadedInputStream,
@@ -524,8 +526,8 @@ public class FileServiceV2 {
         return csvDbTable.addText(loginUserDetails, addText);
     }
     public ApiResponse addTextV2(LoginUserDetails loginUserDetails, RequestAddText addText) throws AppException {
-        String saveDir = appConfig.getFileSaveDirV2(loginUserDetails);
         fileServiceV3.verifyAddTextRequest(addText);
+        String saveDir = appConfig.getFileSaveDirV2(loginUserDetails, addText.getRoleId());
         String username = loginUserDetails.getUsername();
         boolean textAdded = fileServiceV3.saveAddTextV2(saveDir, username, addText);
         if (textAdded) {
@@ -582,8 +584,9 @@ public class FileServiceV2 {
         return pathInfo;
     }
     public ApiResponse uploadFileV2(LoginUserDetails loginUserDetails,
-                                  InputStream uploadedInputStream, FormDataContentDisposition fileDetails) throws AppException {
-        String saveDir = appConfig.getFileSaveDirV2(loginUserDetails);
+                                  InputStream uploadedInputStream, FormDataContentDisposition fileDetails,
+                                    String roleId) throws AppException {
+        String saveDir = appConfig.getFileSaveDirV2(loginUserDetails, roleId);
         if (fileDetails == null) {
             logger.info("fileDetails is: null");
             throw new AppException(ErrorCodes.BAD_REQUEST_ERROR);
@@ -597,11 +600,11 @@ public class FileServiceV2 {
         PathInfo pathInfo = this.uploadFile(loginUserDetails, saveDir, uploadedInputStream, fileName);
         return new ApiResponse(pathInfo);
     }
-    public ApiResponse getStaticData() {
+    public ApiResponse getStaticData(HttpServletRequest request, String roleId) {
         JsonFileParser jsonFileParser = new JsonFileParser(appConfig);
         AppStaticData appStaticData = new AppStaticData();
         try {
-            appStaticData.setJsonFileData(jsonFileParser.getJsonObject());
+            appStaticData.setJsonFileData(jsonFileParser.getJsonObject(request, roleId));
         } catch (AppException ae) {
             logger.info("Error in reading app static file: {}", ae.getErrorCode().getErrorCode());
         }

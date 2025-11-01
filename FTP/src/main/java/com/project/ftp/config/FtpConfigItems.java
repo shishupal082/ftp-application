@@ -4,17 +4,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 public enum FtpConfigItems {
+    dirConfigParam,
     indexPageReRoute,
-    configDataFilePath,
-    fileSaveDir,
-    publicDir,
-    publicPostDir,
-    assetsDir,
-    fileMappingConfigFilePath,
-    splitTextFileConfigPath,
-    scanDirConfigFilePath,
-    standAloneConfigPath,
-    tableDbConfigFilePath,
     filenameFormat,
     instance,
     appRestartCommand,
@@ -40,7 +31,6 @@ public enum FtpConfigItems {
     allowedTableFilename,
     enabledAuthPages,
     loginRedirectMapping,
-    fileSaveDirMapping,
     tempConfig,
     emailConfig,
     createPasswordEmailConfig,

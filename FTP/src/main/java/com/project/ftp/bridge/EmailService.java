@@ -105,7 +105,8 @@ public class EmailService {
             throw new BridgeException(errorCode);
         }
     }
-    public void sendCreatePasswordOtpEmail(BridgeRequestSendCreatePasswordOtp request) throws BridgeException {
+    public void sendCreatePasswordOtpEmail(BridgeRequestSendCreatePasswordOtp request,
+                                           String configDataFilePath) throws BridgeException {
         if (emailConfig == null || !emailConfig.isEnable()) {
             logger.info("EmailConfig is not enable: {}", emailConfig);
             return;
@@ -127,12 +128,12 @@ public class EmailService {
                     try {
                         Transport.send(message);
                         logger.info("Thread end for sending email:SUCCESS: {}", str);
-                        bridgeTracking.trackSuccessSendEmail(request);
+                        bridgeTracking.trackSuccessSendEmail(request, configDataFilePath);
                     } catch (Exception e) {
                         logger.info("Thread end for sending email:FAILURE: {}", str);
                         BridgeErrorCode errorCode = BridgeErrorCode.GMAIL_SMTP_ERROR;
                         errorCode.setErrorString(e.getMessage());
-                        bridgeTracking.trackFailureSendEmail(errorCode, request);
+                        bridgeTracking.trackFailureSendEmail(errorCode, request, configDataFilePath);
                     }
                 }
             }).start();

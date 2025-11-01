@@ -78,7 +78,8 @@ public class AppResource {
                            @PathParam("username") String username,
                            @PathParam("filename2") String filename2,
                            @QueryParam("container") String container,
-                           @QueryParam("u") String uiUsername) {
+                           @QueryParam("u") String uiUsername,
+                           @QueryParam("role_id") String roleId) {
         String filename = username+"/"+filename2;
         logger.info("Loading viewFile in: {}, container: {}", filename, container);
         logger.info("viewFile user: {}", userService.getUserDataForLogging(request));
@@ -88,7 +89,7 @@ public class AppResource {
         try {
             authService.isLogin(request);
             LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
-            pathInfo = fileServiceV2.searchRequestedFileV2(loginUserDetails, filename);
+            pathInfo = fileServiceV2.searchRequestedFileV2(loginUserDetails, filename, roleId);
             eventTracking.addSuccessViewFile(request, EventName.VIEW_FILE, filename, container, uiUsername);
         } catch (AppException ae) {
             logger.info("viewFile: Error in searching requested file: {}", ae.getErrorCode().getErrorCode());
@@ -183,20 +184,21 @@ public class AppResource {
     public Object downloadFile(@Context HttpServletRequest request,
                                @PathParam("username") String username,
                                @PathParam("filename2") String filename2,
-                               @QueryParam("u") String uiUsername) {
+                               @QueryParam("u") String uiUsername,
+                               @QueryParam("role_id") String roleId) {
         String filename = username+"/"+filename2;
-        logger.info("Loading downloadFile: {}, user: {}",
-                filename, userService.getUserDataForLogging(request));
+        logger.info("Loading downloadFile: {}, user: {}, roleId: {}",
+                filename, userService.getUserDataForLogging(request), roleId);
         PathInfo pathInfo = null;
         Response.ResponseBuilder r;
         try {
             authService.isLogin(request);
             LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
-            pathInfo = fileServiceV2.searchRequestedFileV2(loginUserDetails, filename);
+            pathInfo = fileServiceV2.searchRequestedFileV2(loginUserDetails, filename, roleId);
             eventTracking.addSuccessDownloadFile(request, filename, uiUsername);
         } catch (AppException ae) {
             logger.info("Error in searching requested file: {}", ae.getErrorCode().getErrorCode());
-            eventTracking.trackDownloadFileFailure(request, filename, ae.getErrorCode(), uiUsername);
+            eventTracking.trackDownloadFileFailure(request, filename, ae.getErrorCode(), uiUsername, roleId);
         }
         if (pathInfo != null) {
             File file = new File(pathInfo.getPath());
@@ -288,8 +290,9 @@ public class AppResource {
      */
     @Path("/assets-dir/{default: .*}")
     @GET
-    public Object assetsDir(@Context HttpServletRequest request) {
-        return requestService.getAssets(request);
+    public Object assetsDir(@Context HttpServletRequest request,
+                            @QueryParam("role_id") String roleId) {
+        return requestService.getAssets(request, roleId);
     }
     /**
      * Used when accessing from browser

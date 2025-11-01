@@ -10,7 +10,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class AppConfigObj {
-    private final String publicDir;
     private final String configDate;
     private final String appVersion;
     private final ArrayList<String> cmdArguments;
@@ -22,13 +21,12 @@ public class AppConfigObj {
     private final PageConfig404 pageConfig404;
     private HashMap<String, ArrayList<ApiRoleMappingData>> apiRoleMappingList;
     private ArrayList<FtpConfigItems> firstPageConfigItems;
-    public AppConfigObj(String publicDir, String configDate, String appVersion,
+    public AppConfigObj(String configDate, String appVersion,
                         ArrayList<String> cmdArguments, String logFilePath, int requestCount,
                         HashMap<String, SessionData> sessionData,
                         FtpConfiguration ftpConfiguration, PageConfig404 pageConfig404,
                         HashMap<String, ArrayList<ApiRoleMappingData>> apiRoleMappingList,
                         ArrayList<FtpConfigItems> firstPageConfigItems) {
-        this.publicDir = publicDir;
         this.configDate = configDate;
         this.appVersion = appVersion;
         this.cmdArguments = cmdArguments;
@@ -50,81 +48,18 @@ public class AppConfigObj {
             return false;
         }
         switch (ftpConfigItems) {
+            case dirConfigParam:
+                if (clear) {
+                    ftpConfiguration.setDirConfigParam(null);
+                } else {
+                    return ftpConfiguration.getDirConfigParam() != null;
+                }
+                break;
             case indexPageReRoute:
                 if (clear) {
                     ftpConfiguration.setIndexPageReRoute(null);
                 } else {
                     return ftpConfiguration.getIndexPageReRoute() != null;
-                }
-                break;
-            case configDataFilePath:
-                if (clear) {
-                    ftpConfiguration.setConfigDataFilePath(null);
-                } else {
-                    return ftpConfiguration.getConfigDataFilePath() != null;
-                }
-                break;
-            case fileSaveDir:
-                if (clear) {
-                    ftpConfiguration.setFileSaveDir(null);
-                } else {
-                    return ftpConfiguration.getFileSaveDir() != null;
-                }
-                break;
-            case publicDir:
-                if (clear) {
-                    ftpConfiguration.setPublicDir(null);
-                } else {
-                    return ftpConfiguration.getPublicDir() != null;
-                }
-                break;
-            case publicPostDir:
-                if (clear) {
-                    ftpConfiguration.setPublicPostDir(null);
-                } else {
-                    return ftpConfiguration.getPublicPostDir() != null;
-                }
-                break;
-            case assetsDir:
-                if (clear) {
-                    ftpConfiguration.setAssetsDir(null);
-                } else {
-                    return ftpConfiguration.getAssetsDir() != null;
-                }
-                break;
-            case fileMappingConfigFilePath:
-                if (clear) {
-                    ftpConfiguration.setFileMappingConfigFilePath(null);
-                } else {
-                    return ftpConfiguration.getFileMappingConfigFilePath() != null;
-                }
-                break;
-            case splitTextFileConfigPath:
-                if (clear) {
-                    ftpConfiguration.setSplitTextFileConfigPath(null);
-                } else {
-                    return ftpConfiguration.getSplitTextFileConfigPath() != null;
-                }
-                break;
-            case scanDirConfigFilePath:
-                if (clear) {
-                    ftpConfiguration.setScanDirConfigFilePath(null);
-                } else {
-                    return ftpConfiguration.getScanDirConfigFilePath() != null;
-                }
-                break;
-            case standAloneConfigPath:
-                if (clear) {
-                    ftpConfiguration.setStandAloneConfigPath(null);
-                } else {
-                    return ftpConfiguration.getStandAloneConfigPath() != null;
-                }
-                break;
-            case tableDbConfigFilePath:
-                if (clear) {
-                    ftpConfiguration.setTableDbConfigFilePath(null);
-                } else {
-                    return ftpConfiguration.getTableDbConfigFilePath() != null;
                 }
                 break;
             case filenameFormat:
@@ -167,13 +102,6 @@ public class AppConfigObj {
                     ftpConfiguration.setLoadRoleStatusOnPageLoad(null);
                 } else {
                     return ftpConfiguration.getLoadRoleStatusOnPageLoad() != null;
-                }
-                break;
-            case staticDataFilename:
-                if (clear) {
-                    ftpConfiguration.setStaticDataFilename(null);
-                } else {
-                    return ftpConfiguration.getStaticDataFilename() != null;
                 }
                 break;
             case userDataFilename:
@@ -302,13 +230,6 @@ public class AppConfigObj {
                     return ftpConfiguration.getLoginRedirectMapping() != null;
                 }
                 break;
-            case fileSaveDirMapping:
-                if (clear) {
-                    ftpConfiguration.setFileSaveDirMapping(null);
-                } else {
-                    return ftpConfiguration.getFileSaveDirMapping() != null;
-                }
-                break;
             case tempConfig:
                 if (clear) {
                     ftpConfiguration.setTempConfig(null);
@@ -398,9 +319,6 @@ public class AppConfigObj {
         }
         return false;
     }
-    public String getPublicDir() {
-        return publicDir;
-    }
 
     public String getConfigDate() {
         return configDate;
@@ -457,8 +375,7 @@ public class AppConfigObj {
     @Override
     public String toString() {
         return "AppConfigObj{" +
-                "publicDir='" + publicDir + '\'' +
-                ", configDate='" + configDate + '\'' +
+                "configDate='" + configDate + '\'' +
                 ", appVersion='" + appVersion + '\'' +
                 ", cmdArguments=" + cmdArguments +
                 ", logFilePath='" + logFilePath + '\'' +

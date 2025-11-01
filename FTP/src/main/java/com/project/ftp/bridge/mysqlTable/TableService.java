@@ -2,7 +2,9 @@ package com.project.ftp.bridge.mysqlTable;
 
 import com.project.ftp.FtpConfiguration;
 import com.project.ftp.common.DateUtilities;
+import com.project.ftp.config.AppConfig;
 import com.project.ftp.config.AppConstant;
+import com.project.ftp.config.FtpConfigItemsV2;
 import com.project.ftp.exceptions.AppException;
 import com.project.ftp.exceptions.ErrorCodes;
 import com.project.ftp.jdbc.JdbcQueryStatus;
@@ -24,14 +26,17 @@ import java.util.Objects;
 
 public class TableService {
     final static Logger logger = LoggerFactory.getLogger(TableService.class);
+    private final AppConfig appConfig;
     private final FtpConfiguration ftpConfiguration;
     private final MSExcelService msExcelService;
     private final TableDb tableMysqlDb;
     private final SingleThreadingService singleThreadingService;
-    public TableService(final FtpConfiguration ftpConfiguration,
+    public TableService(final AppConfig appConfig,
+                        final FtpConfiguration ftpConfiguration,
                         final SingleThreadingService singleThreadingService,
                         final MSExcelService msExcelService,
                         final TableDb tableMysqlDb) {
+        this.appConfig = appConfig;
         this.ftpConfiguration = ftpConfiguration;
         this.msExcelService = msExcelService;
         this.tableMysqlDb = tableMysqlDb;
@@ -51,12 +56,13 @@ public class TableService {
         }
         return true;
     }
-    private TableConfiguration getTableConfiguration(String tableConfigId) throws AppException {
+    private TableConfiguration getTableConfiguration(String tableConfigId,
+                                                     HttpServletRequest request, String roleId) throws AppException {
         if (ftpConfiguration == null) {
             logger.info("ftpConfiguration is null");
             throw new AppException(ErrorCodes.CONFIG_ERROR);
         }
-        ArrayList<String> tableDbConfigs = ftpConfiguration.getTableDbConfigFilePath();
+        ArrayList<String> tableDbConfigs = appConfig.getDirectoryService().getDirConfigParamFromRequestV2(request, FtpConfigItemsV2.tableDbConfigFilePath, roleId);
         YamlFileParser yamlFileParser = new YamlFileParser();
         TableFileConfiguration tableFileConfiguration;
         ArrayList<TableConfiguration> tableConfigurations;
@@ -189,8 +195,9 @@ public class TableService {
     public ArrayList<HashMap<String, String>> getTableData(HttpServletRequest request,
                                                            String tableConfigId,
                                                            ArrayList<String> filterRequest,
-                                                           String defaultFilterMappingId) throws AppException {
-        TableConfiguration tableConfiguration = this.getTableConfiguration(tableConfigId);
+                                                           String defaultFilterMappingId,
+                                                           String roleId) throws AppException {
+        TableConfiguration tableConfiguration = this.getTableConfiguration(tableConfigId, request, roleId);
         if (tableConfiguration == null) {
             logger.info("getTableData: tableConfiguration is null for tableConfigId: {}", tableConfigId);
             throw new AppException(ErrorCodes.BAD_REQUEST_ERROR);
@@ -201,8 +208,9 @@ public class TableService {
     public ArrayList<ArrayList<String>> getTableDataArray(HttpServletRequest request,
                                                            String tableConfigId,
                                                            ArrayList<String> filterRequest,
-                                                          String defaultFilterMappingId) throws AppException {
-        TableConfiguration tableConfiguration = this.getTableConfiguration(tableConfigId);
+                                                          String defaultFilterMappingId,
+                                                          String roleId) throws AppException {
+        TableConfiguration tableConfiguration = this.getTableConfiguration(tableConfigId, request, roleId);
         if (tableConfiguration == null) {
             logger.info("getTableDataArray: tableConfiguration is null for tableConfigId: {}", tableConfigId);
             throw new AppException(ErrorCodes.BAD_REQUEST_ERROR);
@@ -557,11 +565,11 @@ public class TableService {
         return true;
     }
     public void updateTableDataFromCsv(HttpServletRequest request,
-                                       String tableConfigId) throws AppException {
+                                       String tableConfigId, String roleId) throws AppException {
         if (this.singleThreadingService != null) {
             this.singleThreadingService.setSingleThreadStatus(null);
         }
-        TableConfiguration tableConfiguration = this.getTableConfiguration(tableConfigId);
+        TableConfiguration tableConfiguration = this.getTableConfiguration(tableConfigId, request, roleId);
         if (tableConfiguration == null) {
             logger.info("updateTableDataFromCsv: tableConfiguration is null for tableConfigId: {}", tableConfigId);
             throw new AppException(ErrorCodes.BAD_REQUEST_ERROR);
@@ -577,7 +585,7 @@ public class TableService {
         DateUtilities dateUtilities = new DateUtilities();
         String startedTime = dateUtilities.getDateStrFromPattern(AppConstant.DateTimeFormat6, "");
         saveTableParameter.setStartedTime(startedTime);
-        msExcelService.updateMSExcelSheetDataV2(request, excelConfigId, saveTableParameter);
+        msExcelService.updateMSExcelSheetDataV2(request, excelConfigId, saveTableParameter, roleId);
         logger.info("Final update summary: {}", saveTableParameter.getFinalUpdateSummary());
     }
 }

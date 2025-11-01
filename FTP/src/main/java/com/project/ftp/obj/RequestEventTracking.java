@@ -9,6 +9,7 @@ public class RequestEventTracking {
     private String status;
     private String reason;
     private String comment;
+    private String role_id;
 
     public String getEvent() {
         return event;
@@ -42,6 +43,14 @@ public class RequestEventTracking {
         this.comment = comment;
     }
 
+    public String getRole_id() {
+        return role_id;
+    }
+
+    public void setRole_id(String role_id) {
+        this.role_id = role_id;
+    }
+
     @Override
     public String toString() {
         return "RequestEventTracking{" +
@@ -49,6 +58,7 @@ public class RequestEventTracking {
                 ", status='" + status + '\'' +
                 ", reason='" + reason + '\'' +
                 ", comment='" + comment + '\'' +
+                ", role_id='" + role_id + '\'' +
                 '}';
     }
 }

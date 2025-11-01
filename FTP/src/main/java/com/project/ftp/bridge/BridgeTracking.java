@@ -14,14 +14,15 @@ public class BridgeTracking {
     public BridgeTracking(BridgeToAppInterface bridgeToAppInterface) {
         this.bridgeToAppInterface = bridgeToAppInterface;
     }
-    public void trackFailureSendEmail(BridgeErrorCode bridgeErrorCode, BridgeRequestSendCreatePasswordOtp request) {
+    public void trackFailureSendEmail(BridgeErrorCode bridgeErrorCode, BridgeRequestSendCreatePasswordOtp request,
+                                      String configDataFilePath) {
         String comment = bridgeErrorCode.getErrorString();
         comment += ","+request.createTrackingComment();
-        bridgeToAppInterface.trackEvent(request.getUsername(), BridgeConstant.SEND_EMAIL,
+        bridgeToAppInterface.trackEvent(configDataFilePath, request.getUsername(), BridgeConstant.SEND_EMAIL,
                 BridgeConstant.FAILURE, bridgeErrorCode.getErrorCode(), comment);
     }
-    public void trackSuccessSendEmail(BridgeRequestSendCreatePasswordOtp request) {
-        bridgeToAppInterface.trackEvent(request.getUsername(), BridgeConstant.SEND_EMAIL,
+    public void trackSuccessSendEmail(BridgeRequestSendCreatePasswordOtp request, String configDataFilePath) {
+        bridgeToAppInterface.trackEvent(configDataFilePath, request.getUsername(), BridgeConstant.SEND_EMAIL,
                 BridgeConstant.SUCCESS, null, request.createTrackingComment());
     }
     public void trackAllRelatedUsers(HashMap<String, ArrayList<String>> allRelatedUsers) {

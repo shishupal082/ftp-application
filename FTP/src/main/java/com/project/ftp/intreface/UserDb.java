@@ -17,7 +17,7 @@ public class UserDb implements UserInterface {
         this.dbDAO = dbDAO;
     }
     @Override
-    public Users getAllUsers() {
+    public Users getAllUsers(String configDataFilePath) {
         List<MysqlUser> mysqlUsers = dbDAO.findAll();
         if (mysqlUsers == null) {
             return null;
@@ -27,7 +27,7 @@ public class UserDb implements UserInterface {
         return users;
     }
     @Override
-    public MysqlUser getUserByName(String username) {
+    public MysqlUser getUserByName(String username, String configDataFilePath) {
         List<MysqlUser> users = dbDAO.findUserByName(username);
         if (users == null) {
             logger.info("users response for username: {}, is: {}", username, null);
@@ -48,7 +48,7 @@ public class UserDb implements UserInterface {
         return mysqlUser1;
     }
     @Override
-    public MysqlUser getUserByEmail(String email) {
+    public MysqlUser getUserByEmail(String email, String configDataFilePath) {
         if (email == null) {
             logger.info("Search parameter email is null");
             return null;
@@ -77,7 +77,7 @@ public class UserDb implements UserInterface {
         return mysqlUser1;
     }
     @Override
-    public boolean saveUser(MysqlUser user) {
+    public boolean saveUser(MysqlUser user, String configDataFilePath) {
         user.setTimestamp(StaticService.getDateStrFromPattern(AppConstant.DateTimeFormat6));
         user.truncateString();
         return true;

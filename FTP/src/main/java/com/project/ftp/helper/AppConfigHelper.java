@@ -2,18 +2,20 @@ package com.project.ftp.helper;
 
 import com.project.ftp.config.AppConfig;
 import com.project.ftp.config.AppConstant;
+import com.project.ftp.config.FtpConfigItemsV2;
 import com.project.ftp.service.StaticService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 
 public class AppConfigHelper {
     private final static Logger logger = LoggerFactory.getLogger(AppConfigHelper.class);
-    public static String getStaticDataFilename(final AppConfig appConfig) {
+    public static String getStaticDataFilename(final AppConfig appConfig, HttpServletRequest request, String roleId) {
         String resultFilename = null;
         boolean isValidFilename = false;
-        resultFilename = appConfig.getFtpConfiguration().getStaticDataFilename();
+        resultFilename = appConfig.getDirectoryService().getDirConfigParamFromRequest(request, FtpConfigItemsV2.staticDataFilename, roleId);
         isValidFilename = StaticService.isValidString(resultFilename);
         if (isValidFilename) {
             return resultFilename;

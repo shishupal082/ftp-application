@@ -3,7 +3,6 @@ package com.project.ftp;
 import com.project.ftp.bridge.roles.service.BinaryTree;
 import com.project.ftp.bridge.roles.service.ExpressionEvaluator;
 import com.project.ftp.bridge.roles.service.Stack;
-import com.project.ftp.service.ConfigService;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -105,62 +104,5 @@ public class TestStack {
         binaryTree = BinaryTree.createBinaryTree(strings);
         post = binaryTree.getPostOrder(binaryTree);
         Assert.assertEquals(72, post.size());
-    }
-    @Test
-    public void testConfigService() {
-        ConfigService configService = new ConfigService(null);
-        String sys = "F:/ftp-app/ftp-app-6.0.0-stable";
-        String pub = "../../..";
-        String pubPost = "D:/workspace/project";
-        String calculatedStr = configService.getValidPublicDir(sys, pub, pubPost);
-        Assert.assertEquals("D:/workspace/project", calculatedStr);
-
-        calculatedStr = configService.getValidPublicDir(null, null, null);
-        Assert.assertEquals("", calculatedStr);
-
-        sys = "D:\\workspace\\ftp-application\\FTP";
-        pub = "../..";
-        pubPost = "/project";
-        calculatedStr = configService.getValidPublicDir(sys, pub, pubPost);
-        Assert.assertEquals("D:/workspace/project", calculatedStr);
-
-        sys = "/D:/workspace/ftp-application/FTP";
-        pub = "../..";
-        pubPost = "/project";
-        calculatedStr = configService.getValidPublicDir(sys, pub, pubPost);
-        Assert.assertEquals("/D:/workspace/project", calculatedStr);
-
-        sys = "///D:/workspace/ftp-application/FTP";
-        pub = "../..";
-        pubPost = "/project";
-        calculatedStr = configService.getValidPublicDir(sys, pub, pubPost);
-        Assert.assertEquals("/D:/workspace/project", calculatedStr);
-
-        sys = "D:////workspace/ftp-application/FTP";
-        pub = "../..";
-        pubPost = "/project";
-        calculatedStr = configService.getValidPublicDir(sys, pub, pubPost);
-        Assert.assertEquals("D:/workspace/project", calculatedStr);
-
-        sys = "D:/workspace//ftp-application/FTP//";
-        pub = "../..";
-        pubPost = "/project";
-        calculatedStr = configService.getValidPublicDir(sys, pub, pubPost);
-        Assert.assertEquals("D:/workspace/ftp-application/FTP/project", calculatedStr);
-
-        sys = "D:/workspace/ftp-application/FTP";
-        pubPost = "/project";
-
-        pub = "../../";
-        calculatedStr = configService.getValidPublicDir(sys, pub, pubPost);
-        Assert.assertEquals("D:/workspace/project", calculatedStr);
-
-        pub = "../../../..";
-        calculatedStr = configService.getValidPublicDir(sys, pub, pubPost);
-        Assert.assertEquals("/project", calculatedStr);
-
-        pub = "../../../../../";
-        calculatedStr = configService.getValidPublicDir(sys, pub, pubPost);
-        Assert.assertEquals("/project", calculatedStr);
     }
 }

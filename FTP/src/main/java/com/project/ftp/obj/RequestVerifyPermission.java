@@ -9,6 +9,9 @@ import com.project.ftp.service.StaticService;
 public class RequestVerifyPermission {
     @JsonProperty("roleName")
     private String roleName;
+    @JsonProperty("role_id")
+    private String roleId;
+
 
     public String getRoleName() {
         if (StaticService.isInValidString(roleName)) {
@@ -21,10 +24,19 @@ public class RequestVerifyPermission {
         this.roleName = roleName;
     }
 
+    public String getRoleId() {
+        return roleId;
+    }
+
+    public void setRoleId(String roleId) {
+        this.roleId = roleId;
+    }
+
     @Override
     public String toString() {
         return "RequestVerifyPermission{" +
                 "roleName='" + roleName + '\'' +
+                ", roleId='" + roleId + '\'' +
                 '}';
     }
 }

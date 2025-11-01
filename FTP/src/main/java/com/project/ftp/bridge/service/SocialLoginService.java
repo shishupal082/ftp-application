@@ -5,6 +5,7 @@ import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.gson.GsonFactory;
 import com.project.ftp.bridge.config.SocialLoginConfig;
+import com.project.ftp.config.AppConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -12,12 +13,13 @@ import java.util.Collections;
 
 public class SocialLoginService {
     final static Logger logger = LoggerFactory.getLogger(SocialLoginService.class);
-    private final SocialLoginConfig socialLoginConfig;
-    public SocialLoginService(SocialLoginConfig socialLoginConfig) {
-        this.socialLoginConfig = socialLoginConfig;
+    private final AppConfig appConfig;
+    public SocialLoginService(final AppConfig appConfig) {
+        this.appConfig = appConfig;
     }
     public String getEmailFromGoogleIdToken(String googleIdToken) {
         String email = null;
+        SocialLoginConfig socialLoginConfig = appConfig.getFtpConfiguration().getSocialLoginConfig();
         if (socialLoginConfig == null) {
             logger.info("Invalid config parameter, socialLoginConfig: null");
             return null;

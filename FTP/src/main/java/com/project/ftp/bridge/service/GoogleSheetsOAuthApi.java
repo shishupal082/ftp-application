@@ -100,13 +100,14 @@ public class GoogleSheetsOAuthApi {
             throw new AppException(ErrorCodes.CONFIG_ERROR);
         }
     }
-    public ArrayList<ArrayList<String>> readSheetData(HttpServletRequest request, String spreadSheetId, String sheetName) throws AppException {
+    public ArrayList<ArrayList<String>> readSheetData(HttpServletRequest request, String spreadSheetId,
+                                                      String sheetName, String roleId) throws AppException {
         // Build a new authorized API client service.
         if (spreadSheetId == null || sheetName == null) {
             logger.info("Invalid spreadSheetId or sheetName: {},{}", spreadSheetId, sheetName);
             ErrorCodes errorCodes = ErrorCodes.CONFIG_ERROR;
             errorCodes.setErrorString("Invalid spreadSheetId or sheetName.");
-            eventTracking.trackFailureEventV2(request, EventName.GOOGLE_API, errorCodes, "Invalid spreadSheetId or sheetName: {}" + spreadSheetId+"-"+sheetName);
+            eventTracking.trackFailureEventV2(request, EventName.GOOGLE_API, errorCodes, "Invalid spreadSheetId or sheetName: {}" + spreadSheetId+"-"+sheetName, roleId);
             throw new AppException(errorCodes);
         }
         this.isValidGoogleOAuthConfig();
@@ -127,7 +128,7 @@ public class GoogleSheetsOAuthApi {
                     spreadSheetId, sheetName, e.getMessage());
             ErrorCodes errorCodes = ErrorCodes.GOOGLE_ERROR;
             errorCodes.setErrorString(e.getMessage());
-            eventTracking.trackFailureEventV2(request, EventName.GOOGLE_API, errorCodes, spreadSheetId+"-"+sheetName);
+            eventTracking.trackFailureEventV2(request, EventName.GOOGLE_API, errorCodes, spreadSheetId+"-"+sheetName, roleId);
             throw new AppException(errorCodes);
         }
         ArrayList<ArrayList<String>> result = this.getArrayLists(values);

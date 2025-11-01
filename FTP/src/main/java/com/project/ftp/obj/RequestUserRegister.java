@@ -22,6 +22,8 @@ public class RequestUserRegister {
     private String email;
     @JsonProperty("user_agent")
     private String user_agent;
+    @JsonProperty("role_id")
+    private String roleId;
 
     public String getUsername() {
         if (StaticService.isInValidString(username)) {
@@ -97,6 +99,14 @@ public class RequestUserRegister {
         this.user_agent = user_agent;
     }
 
+    public String getRoleId() {
+        return roleId;
+    }
+
+    public void setRoleId(String roleId) {
+        this.roleId = roleId;
+    }
+
     @Override
     public String toString() {
         return "RequestUserRegister{" +
@@ -107,6 +117,7 @@ public class RequestUserRegister {
                 ", mobile='" + mobile + '\'' +
                 ", email='" + email + '\'' +
                 ", user_agent='" + user_agent + '\'' +
+                ", roleId='" + roleId + '\'' +
                 '}';
     }
 }

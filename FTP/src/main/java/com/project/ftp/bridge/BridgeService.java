@@ -12,7 +12,8 @@ public class BridgeService {
         this.emailService = new EmailService(bridgeTracking, bridgeConfig.getEmailConfig(),
                 bridgeConfig.getCreatePasswordEmailConfig());
     }
-    public void sendCreatePasswordOtpEmail(BridgeRequestSendCreatePasswordOtp request) throws BridgeException {
-        emailService.sendCreatePasswordOtpEmail(request);
+    public void sendCreatePasswordOtpEmail(BridgeRequestSendCreatePasswordOtp request,
+                                           String configDataFilePath) throws BridgeException {
+        emailService.sendCreatePasswordOtpEmail(request, configDataFilePath);
     }
 }

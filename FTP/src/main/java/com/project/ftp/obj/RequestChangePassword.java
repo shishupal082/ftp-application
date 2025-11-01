@@ -14,6 +14,8 @@ public class RequestChangePassword {
     private String new_password;
     @JsonProperty("confirm_password")
     private String confirm_password;
+    @JsonProperty("role_id")
+    private String roleId;
 
     public String getOld_password() {
         if (StaticService.isInValidString(old_password)) {
@@ -48,12 +50,21 @@ public class RequestChangePassword {
         this.confirm_password = confirm_password;
     }
 
+    public String getRoleId() {
+        return roleId;
+    }
+
+    public void setRoleId(String roleId) {
+        this.roleId = roleId;
+    }
+
     @Override
     public String toString() {
         return "RequestChangePassword{" +
                 "old_password='" + AppConstant.MaskDataString + '\'' +
                 ", new_password='" + AppConstant.MaskDataString + '\'' +
                 ", confirm_password='" + AppConstant.MaskDataString + '\'' +
+                ", roleId='" + roleId + '\'' +
                 '}';
     }
 }

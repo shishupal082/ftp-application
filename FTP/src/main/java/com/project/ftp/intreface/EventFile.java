@@ -3,12 +3,15 @@ package com.project.ftp.intreface;
 import com.project.ftp.common.DateUtilities;
 import com.project.ftp.config.AppConfig;
 import com.project.ftp.config.AppConstant;
+import com.project.ftp.config.FtpConfigItemsV2;
 import com.project.ftp.obj.yamlObj.EventConfig;
 import com.project.ftp.parser.TextFileParser;
 import com.project.ftp.service.FileService;
 import com.project.ftp.service.StaticService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.servlet.http.HttpServletRequest;
 
 public class EventFile implements EventInterface {
     private final static Logger logger = LoggerFactory.getLogger(EventFile.class);
@@ -19,8 +22,7 @@ public class EventFile implements EventInterface {
         this.appConfig = appConfig;
         this.fileService = new FileService();
     }
-    private String getEventDataFileName() {
-        String configPath = appConfig.getFtpConfiguration().getConfigDataFilePath();
+    private String getEventDataFileName(String configPath) {
         EventConfig eventConfig = appConfig.getFtpConfiguration().getEventConfig();
         String filename = AppConstant.EVENT_DATA_FILENAME;
         String format = null;
@@ -37,7 +39,8 @@ public class EventFile implements EventInterface {
         }
         return configPath + filename;
     }
-    public void addText(String username, String event, String status, String reason, String comment) {
+    @Override
+    public void addText(String configDataFilePath, String username, String event, String status, String reason, String comment) {
         String timestamp = StaticService.getDateStrFromPattern(AppConstant.DateTimeFormat6);
         if (StaticService.isInValidString(username)) {
             username = null;
@@ -61,14 +64,14 @@ public class EventFile implements EventInterface {
         eventLog += "," + timestamp;
         eventLog += "," + StaticService.encodeComma(reason);
         eventLog += "," + StaticService.encodeComma(comment);
-        String eventDataFilepath = this.getEventDataFileName();
+        String eventDataFilepath = this.getEventDataFileName(configDataFilePath);
         fileService.createNewFile(eventDataFilepath);
         TextFileParser textFileParser = new TextFileParser();
         textFileParser.writeTextData(eventDataFilepath, eventLog, false);
         logger.info("Event added: {}", eventLog);
     }
-
-    public void addTextV2(String username, String event, String status, String reason, String comment) {
-        this.addText(username, event, status, reason, comment);
+    @Override
+    public void addTextV2(String configDataFilePath, String username, String event, String status, String reason, String comment) {
+        this.addText(configDataFilePath, username, event, status, reason, comment);
     }
 }

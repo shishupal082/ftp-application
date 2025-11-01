@@ -5,11 +5,13 @@ import com.project.ftp.config.ApiRoleAccess;
 import com.project.ftp.config.AppConfig;
 import com.project.ftp.config.AppConstant;
 import com.project.ftp.obj.ApiResponse;
+import com.project.ftp.obj.yamlObj.DirConfigParam;
 import com.project.ftp.resources.ApiResource;
 import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class TestAppConfig {
     public AppConfig getAppConfig(boolean isMysqlEnable) {
@@ -70,5 +72,13 @@ public class TestAppConfig {
                 appConfig.getApiRoleMappingList().get("404_file_path_check").get(1).getRole());
         Assert.assertEquals(AppConstant.roleAccessTypeConfig,
                 appConfig.getApiRoleMappingList().get("404_file_path_check").get(1).getSource());
+    }
+    @Test
+    public void testAppDirectoryConfig() {
+        AppConfig appConfig = this.getAppConfig(false);
+        FtpConfiguration ftpConfiguration = appConfig.getFtpConfiguration();
+        HashMap<String, DirConfigParam> dirConfigParamHashMap = ftpConfiguration.getDirConfigParam();
+        DirConfigParam dirConfigParam = dirConfigParamHashMap.get(AppConstant.DEFAULT_ROLE_ID);
+        Assert.assertEquals("app_static_data.json", dirConfigParam.getStaticDataFilename());
     }
 }

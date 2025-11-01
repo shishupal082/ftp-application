@@ -6,6 +6,7 @@ import com.project.ftp.bridge.obj.splitTextFile.SplitFileConfig1;
 import com.project.ftp.bridge.obj.splitTextFile.SplitTextFileConfig;
 import com.project.ftp.config.AppConfig;
 import com.project.ftp.config.AppConstant;
+import com.project.ftp.config.FtpConfigItemsV2;
 import com.project.ftp.event.EventTracking;
 import com.project.ftp.exceptions.AppException;
 import com.project.ftp.exceptions.ErrorCodes;
@@ -33,14 +34,14 @@ public class SplitTextFileService {
         this.textFileParser = new TextFileParser();
     }
 
-    public SplitTextFileConfig getSplitTextFileConfig(HttpServletRequest request, String requestId)
+    public SplitTextFileConfig getSplitTextFileConfig(HttpServletRequest request, String requestId, String roleId)
             throws AppException {
         if (requestId == null || requestId.isEmpty()) {
             logger.info("getSplitTextFileConfig requestId required: {}", requestId);
             throw new AppException(ErrorCodes.BAD_REQUEST_ERROR);
         }
         YamlFileParser yamlFileParser = new YamlFileParser();
-        String splitTextConfigPath = ftpConfiguration.getSplitTextFileConfigPath();
+        String splitTextConfigPath = appConfig.getDirectoryService().getDirConfigParamFromRequest(request, FtpConfigItemsV2.splitTextFileConfigPath, roleId);
         SplitFileConfig1 splitFileConfig1 =
                 yamlFileParser.getSplitFileConfigFromPath(splitTextConfigPath);
         if (splitFileConfig1 == null || splitFileConfig1.getSplitTextFileConfigPath() == null) {
@@ -56,10 +57,10 @@ public class SplitTextFileService {
         return splitTextFileConfig;
     }
 
-    public SplitTextFileConfig getSplitTextFileConfigV2(HttpServletRequest request, String requestId) {
+    public SplitTextFileConfig getSplitTextFileConfigV2(HttpServletRequest request, String requestId, String roleId) {
         SplitTextFileConfig splitTextFileConfig;
         try {
-            splitTextFileConfig = this.getSplitTextFileConfig(request, requestId);
+            splitTextFileConfig = this.getSplitTextFileConfig(request, requestId, roleId);
         } catch (Exception e) {
             splitTextFileConfig = null;
         }
@@ -139,8 +140,8 @@ public class SplitTextFileService {
         }
         return new ApiResponse(AppConstant.SUCCESS);
     }
-    public ApiResponse splitTextFile(HttpServletRequest request, String requestId) {
-        SplitTextFileConfig splitTextFileConfig = this.getSplitTextFileConfigV2(request, requestId);
+    public ApiResponse splitTextFile(HttpServletRequest request, String requestId, String roleId) {
+        SplitTextFileConfig splitTextFileConfig = this.getSplitTextFileConfigV2(request, requestId, roleId);
         ApiResponse apiResponse;
         if (splitTextFileConfig == null) {
             apiResponse = new ApiResponse(ErrorCodes.CONFIG_ERROR);

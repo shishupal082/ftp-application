@@ -12,7 +12,7 @@ public class BridgeToApp implements BridgeToAppInterface {
         this.eventTracking = eventTracking;
     }
     @Override
-    public void trackEvent(String username, String eventName, String status, String reason, String comment) {
-        eventTracking.trackEventV2(username, eventName, status, reason, comment);
+    public void trackEvent(String configFilePath, String username, String eventName, String status, String reason, String comment) {
+        eventTracking.trackEventV2(configFilePath, username, eventName, status, reason, comment);
     }
 }

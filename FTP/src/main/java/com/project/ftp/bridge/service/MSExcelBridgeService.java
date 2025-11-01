@@ -278,10 +278,11 @@ public class MSExcelBridgeService {
     }
     private ArrayList<ArrayList<String>> readGoogleSheetData(String spreadSheetId, String sheetName,
                                                              ExcelDataConfig excelDataConfigById,
-                                                             ArrayList<String> uniqueStrings) throws AppException{
+                                                             ArrayList<String> uniqueStrings,
+                                                             HttpServletRequest request, String roleId) throws AppException{
         int externalIndex = -1;
         GoogleSheetsOAuthApi googleSheetsOAuthApi = new GoogleSheetsOAuthApi(eventTracking, googleOAuthClientConfig);
-        ArrayList<ArrayList<String>> sheetData = googleSheetsOAuthApi.readSheetData(request, spreadSheetId, sheetName);
+        ArrayList<ArrayList<String>> sheetData = googleSheetsOAuthApi.readSheetData(request, spreadSheetId, sheetName, roleId);
         sheetData = excelToCsvDataConvertService.formatCellData(sheetData, excelDataConfigById);
         excelToCsvDataConvertService.applyReplaceCellString(sheetData, excelDataConfigById);
         sheetData = excelToCsvDataConvertService.applySkipRowEntry(-1,sheetData, excelDataConfigById);
@@ -296,7 +297,8 @@ public class MSExcelBridgeService {
     }
     private ArrayList<ArrayList<String>> readMysqlData(String mysqlTableConfigId, String sheetName,
                                                              ExcelDataConfig excelDataConfigById,
-                                                             ArrayList<String> uniqueStrings) throws AppException{
+                                                             ArrayList<String> uniqueStrings,
+                                                       String roleId) throws AppException{
         if (tableService == null) {
             logger.info("readMysqlData: tableService is not defined: {}, {}", mysqlTableConfigId, excelDataConfigById);
             throw new AppException(ErrorCodes.CONFIG_ERROR);
@@ -313,7 +315,7 @@ public class MSExcelBridgeService {
             filterValues = mysqlCsvDataConfig.getFilterValues();
             defaultFilterMappingId = mysqlCsvDataConfig.getDefaultFilterMappingId();
         }
-        ArrayList<ArrayList<String>> sheetData = tableService.getTableDataArray(request, mysqlTableConfigId, filterValues, defaultFilterMappingId);
+        ArrayList<ArrayList<String>> sheetData = tableService.getTableDataArray(request, mysqlTableConfigId, filterValues, defaultFilterMappingId, roleId);
         sheetData = excelToCsvDataConvertService.formatCellData(sheetData, excelDataConfigById);
         excelToCsvDataConvertService.applyReplaceCellString(sheetData, excelDataConfigById);
         sheetData = excelToCsvDataConvertService.applySkipRowEntry(-1,sheetData, excelDataConfigById);
@@ -328,7 +330,7 @@ public class MSExcelBridgeService {
     }
     private ArrayList<ArrayList<String>> readScanDir(String scanDirConfigId, String sheetName,
                                                        ExcelDataConfig excelDataConfigById,
-                                                       ArrayList<String> uniqueStrings) throws AppException{
+                                                       ArrayList<String> uniqueStrings, String roleId) throws AppException{
         if (scanDirService == null) {
             logger.info("readScanDir: scanDirService is not defined: {}, {}", scanDirConfigId, excelDataConfigById);
             throw new AppException(ErrorCodes.CONFIG_ERROR);
@@ -338,7 +340,7 @@ public class MSExcelBridgeService {
             throw new AppException(ErrorCodes.CONFIG_ERROR);
         }
         int externalIndex = -1;
-        ArrayList<ArrayList<String>> sheetData = scanDirService.readScanDirectory(request, scanDirConfigId, null, null, null, null);
+        ArrayList<ArrayList<String>> sheetData = scanDirService.readScanDirectory(request, scanDirConfigId, null, null, null, null, roleId);
         sheetData = excelToCsvDataConvertService.formatCellData(sheetData, excelDataConfigById);
         excelToCsvDataConvertService.applyReplaceCellString(sheetData, excelDataConfigById);
         sheetData = excelToCsvDataConvertService.applySkipRowEntry(-1,sheetData, excelDataConfigById);
@@ -504,7 +506,8 @@ public class MSExcelBridgeService {
         }
         return excelDataConfigById;
     }
-    private ArrayList<ExcelFileConfig> getGsConfigEntry(String id, ExcelFileConfig excelFileConfig) {
+    private ArrayList<ExcelFileConfig> getGsConfigEntry(String id, ExcelFileConfig excelFileConfig,
+                                                        HttpServletRequest request, String roleId) {
         FileConfigMapping fileConfigMapping;
         ArrayList<String> fileConfig;
         ArrayList<ExcelFileConfig> gsConfig2 = new ArrayList<>();
@@ -528,13 +531,14 @@ public class MSExcelBridgeService {
         ArrayList<String> uniqueStrings = new ArrayList<>();
         String srcFilepath = fileConfig.get(0);
         String sheetName = fileConfig.get(1);
-        ArrayList<ArrayList<String>> sheetData = this.readGoogleSheetData(srcFilepath, sheetName, null, uniqueStrings);
+        ArrayList<ArrayList<String>> sheetData = this.readGoogleSheetData(srcFilepath, sheetName, null, uniqueStrings, request, roleId);
         if (sheetData != null) {
             gsConfig2 = this.getFileConfigByRequestId(id, fileConfigMapping, sheetData);
         }
         return gsConfig2;
     }
-    public ExcelDataConfig updateExcelDataConfigFromGoogle(ExcelDataConfig excelDataConfigById) {
+    public ExcelDataConfig updateExcelDataConfigFromGoogle(ExcelDataConfig excelDataConfigById,
+                                                           HttpServletRequest request, String roleId) {
         if (excelDataConfigById == null) {
             return null;
         }
@@ -552,7 +556,7 @@ public class MSExcelBridgeService {
         FileConfigMapping fileConfigMapping = null;
         for(ExcelFileConfig excelFileConfig: gsConfig) {
             fileConfigMapping = excelFileConfig.getFileConfigMapping();
-            gsConfigTemp = this.getGsConfigEntry(id, excelFileConfig);
+            gsConfigTemp = this.getGsConfigEntry(id, excelFileConfig, request, roleId);
             if (gsConfigTemp != null) {
                 gsConfig2.addAll(gsConfigTemp);
             }
@@ -692,7 +696,7 @@ public class MSExcelBridgeService {
         }
         return false;
     }
-    public ArrayList<BridgeResponseSheetData> readExcelSheetData(ExcelDataConfig excelDataConfigById) throws AppException {
+    public ArrayList<BridgeResponseSheetData> readExcelSheetData(ExcelDataConfig excelDataConfigById, String roleId) throws AppException {
         if (excelDataConfigById == null) {
             throw new AppException(ErrorCodes.BAD_REQUEST_ERROR);
         }
@@ -740,7 +744,7 @@ public class MSExcelBridgeService {
                 sheetName = fileConfig.getSheetName();
                 destination = fileConfig.getDestination();
                 copyDestination = fileConfig.getCopyDestination();
-                sheetData = this.readGoogleSheetData(srcFilepath, sheetName, excelDataConfigById, uniqueStrings);
+                sheetData = this.readGoogleSheetData(srcFilepath, sheetName, excelDataConfigById, uniqueStrings, request, roleId);
                 bridgeResponseSheetsData.add(new BridgeResponseSheetData(copyOldData,
                         destination, copyDestination, sheetData));
             }
@@ -755,9 +759,9 @@ public class MSExcelBridgeService {
                 copyDestination = fileConfig.getCopyDestination();
                 sourceApiName = excelDataConfigById.getSourceApiName();
                 if (ExcelDataApiIdentifier.GET_MYSQL_TABLE_DATA.getApiName().equals(sourceApiName)) {
-                    sheetData = this.readMysqlData(srcFilepath, sheetName, excelDataConfigById, uniqueStrings);
+                    sheetData = this.readMysqlData(srcFilepath, sheetName, excelDataConfigById, uniqueStrings, roleId);
                 } else if (ExcelDataApiIdentifier.READ_SCAN_DIR.getApiName().equals(sourceApiName)) {
-                    sheetData = this.readScanDir(srcFilepath, sheetName, excelDataConfigById, uniqueStrings);
+                    sheetData = this.readScanDir(srcFilepath, sheetName, excelDataConfigById, uniqueStrings, roleId);
                 } else {
                     sheetData = null;
                 }

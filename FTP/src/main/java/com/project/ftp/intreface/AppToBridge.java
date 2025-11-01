@@ -2,17 +2,12 @@ package com.project.ftp.intreface;
 
 import com.project.ftp.FtpConfiguration;
 import com.project.ftp.bridge.BridgeResource;
-import com.project.ftp.bridge.BridgeToAppInterface;
-import com.project.ftp.bridge.BridgeTracking;
-import com.project.ftp.bridge.config.BridgeConfig;
 import com.project.ftp.bridge.config.EmailConfig;
-import com.project.ftp.bridge.config.SocialLoginConfig;
 import com.project.ftp.bridge.mysqlTable.SaveTableParameter;
 import com.project.ftp.bridge.obj.BridgeRequestSendCreatePasswordOtp;
 import com.project.ftp.bridge.obj.BridgeResponseSheetData;
 import com.project.ftp.bridge.obj.yamlObj.*;
 import com.project.ftp.bridge.roles.resource.RolesResource;
-import com.project.ftp.bridge.roles.service.RolesService;
 import com.project.ftp.bridge.service.MSExcelBridgeService;
 import com.project.ftp.bridge.service.SocialLoginService;
 import com.project.ftp.bridge.tcp.TcpClient;
@@ -23,7 +18,6 @@ import com.project.ftp.exceptions.AppException;
 import com.project.ftp.exceptions.ErrorCodes;
 import com.project.ftp.mysql.MysqlUser;
 import com.project.ftp.obj.yamlObj.TableConfiguration;
-import com.project.ftp.service.StaticService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,24 +41,16 @@ public class AppToBridge implements AppToBridgeInterface {
         this.eventTracking = eventTracking;
         this.emailConfig = ftpConfiguration.getEmailConfig();
         this.communicationConfig = ftpConfiguration.getCommunicationConfig();
-        SocialLoginConfig socialLoginConfig = ftpConfiguration.getSocialLoginConfig();
-        ArrayList<String> rolesConfigPath = StaticService.getRolesConfigPath(ftpConfiguration);
-        BridgeConfig bridgeConfig = new BridgeConfig(emailConfig, ftpConfiguration.getCreatePasswordEmailConfig());
-        BridgeToAppInterface bridgeToAppInterface = new BridgeToApp(eventTracking);
-        BridgeTracking bridgeTracking = new BridgeTracking(bridgeToAppInterface);
-        RolesService rolesService = new RolesService(bridgeConfig, rolesConfigPath);
-        this.socialLoginService = new SocialLoginService(socialLoginConfig);
-        this.bridgeResource = new BridgeResource(bridgeConfig, bridgeToAppInterface, bridgeTracking);
-        this.rolesResource = new RolesResource(rolesService, bridgeTracking);
-        this.rolesResource.trackRelatedUser();
-
+        this.socialLoginService = new SocialLoginService(appConfig);
+        this.bridgeResource = new BridgeResource(appConfig, eventTracking);
+        this.rolesResource = new RolesResource(appConfig, eventTracking);
     }
     @Override
     public boolean updateUserRoles(ArrayList<String> rolesConfigPath) {
         return rolesResource.updateRoles(rolesConfigPath);
     }
     @Override
-    public void sendCreatePasswordOtpEmail(MysqlUser user) {
+    public void sendCreatePasswordOtpEmail(MysqlUser user, String configDataFilePath) {
         if (user == null) {
             logger.info("Error in sendCreatePasswordOtpEmail: user is null");
             return;
@@ -82,7 +68,7 @@ public class AppToBridge implements AppToBridgeInterface {
             }
             BridgeRequestSendCreatePasswordOtp request;
             request = new BridgeRequestSendCreatePasswordOtp(username, email, name, otp);
-            bridgeResource.sendCreatePasswordOtpEmail(request);
+            bridgeResource.sendCreatePasswordOtpEmail(request, configDataFilePath);
         }
     }
     @Override
@@ -176,14 +162,15 @@ public class AppToBridge implements AppToBridgeInterface {
         return excelDataConfigById;
     }
     @Override
-    public ArrayList<BridgeResponseSheetData> getExcelData(HttpServletRequest request, ExcelDataConfig excelDataConfigById) throws AppException {
+    public ArrayList<BridgeResponseSheetData> getExcelData(HttpServletRequest request,
+                                                           ExcelDataConfig excelDataConfigById, String roleId) throws AppException {
         if (excelDataConfigById == null) {
             logger.info("excelDataConfig error: excelDataConfig is null.");
             throw new AppException(ErrorCodes.CONFIG_ERROR);
         }
         MSExcelBridgeService msExcelBridgeService = new MSExcelBridgeService(request, eventTracking,
                 ftpConfiguration.getGoogleOAuthClientConfig(), appConfig.getTableService(), appConfig.getScanDirService());
-        ArrayList<BridgeResponseSheetData> result = msExcelBridgeService.readExcelSheetData(excelDataConfigById);
+        ArrayList<BridgeResponseSheetData> result = msExcelBridgeService.readExcelSheetData(excelDataConfigById, roleId);
         if (result != null) {
             logger.info("excelSheetDataRead completed for excelDataConfigById.id: {}", excelDataConfigById.getId());
         } else {

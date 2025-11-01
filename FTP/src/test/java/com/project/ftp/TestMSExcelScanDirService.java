@@ -27,7 +27,7 @@ public class TestMSExcelScanDirService {
         String requestId;
         MSExcelService msExcelService = testMSExcelService.getMSExcelService();
         requestId = "csv-scan-dir-md5-test-data";
-        ArrayList<ExcelDataConfig> excelDataConfigs =  msExcelService.getActualMSExcelSheetDataConfig(request, requestId, false);
+        ArrayList<ExcelDataConfig> excelDataConfigs =  msExcelService.getActualMSExcelSheetDataConfig(request, requestId, false, null);
         Assert.assertEquals(requestId, excelDataConfigs.get(0).getId());
         Assert.assertEquals("test-data-md5-dir", excelDataConfigs.get(0).getApiConfig().get(0).getSource());
         Assert.assertEquals("", excelDataConfigs.get(0).getApiConfig().get(0).getSheetName());
@@ -39,7 +39,7 @@ public class TestMSExcelScanDirService {
         String requestId;
         MSExcelService msExcelService = testMSExcelService.getMSExcelService();
         requestId = "csv-scan-dir-md5-test-data";
-        ArrayList<ArrayList<String>> sheetData =  msExcelService.getMSExcelSheetDataArray(request, requestId);
+        ArrayList<ArrayList<String>> sheetData =  msExcelService.getMSExcelSheetDataArray(request, requestId, null);
         Assert.assertEquals(10, sheetData.size());
         Assert.assertEquals("1.bmp", sheetData.get(1).get(2));
         Assert.assertEquals("258a5aab652db23fa8de7c2649ff9220", sheetData.get(1).get(5));
@@ -51,7 +51,7 @@ public class TestMSExcelScanDirService {
         HttpServletRequest request = testMSExcelService.getHttpServletRequest();
         String requestId;
         requestId = "csv-scan-dir-md5-test-data";
-        ApiResponse apiResponse =  apiResource.updateMSExcelData(request, requestId);
+        ApiResponse apiResponse =  apiResource.updateMSExcelData(request, requestId, null);
         Assert.assertEquals(AppConstant.SUCCESS, apiResponse.getStatus());
     }
 }

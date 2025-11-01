@@ -15,6 +15,8 @@ public class RequestCreatePassword {
     private String confirmPassword;
     @JsonProperty("user_agent")
     private String userAgent;
+    @JsonProperty("role_id")
+    private String roleId;
 
     public String getUsername() {
         if (StaticService.isInValidString(username)) {
@@ -68,6 +70,14 @@ public class RequestCreatePassword {
         this.userAgent = userAgent;
     }
 
+    public String getRoleId() {
+        return roleId;
+    }
+
+    public void setRoleId(String roleId) {
+        this.roleId = roleId;
+    }
+
     @Override
     public String toString() {
         return "RequestCreatePassword{" +
@@ -76,6 +86,7 @@ public class RequestCreatePassword {
                 ", newPassword='" + AppConstant.MaskDataString + '\'' +
                 ", confirmPassword='" + AppConstant.MaskDataString + '\'' +
                 ", userAgent='" + userAgent + '\'' +
+                ", roleId='" + roleId + '\'' +
                 '}';
     }
 }

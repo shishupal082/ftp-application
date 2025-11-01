@@ -8,6 +8,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class RequestResetCount {
     @JsonProperty("username")
     private String username;
+    @JsonProperty("role_id")
+    private String roleId;
 
     public String getUsername() {
         return username;
@@ -17,10 +19,19 @@ public class RequestResetCount {
         this.username = username;
     }
 
+    public String getRoleId() {
+        return roleId;
+    }
+
+    public void setRoleId(String roleId) {
+        this.roleId = roleId;
+    }
+
     @Override
     public String toString() {
         return "RequestResetCount{" +
                 "username='" + username + '\'' +
+                ", roleId='" + roleId + '\'' +
                 '}';
     }
 }

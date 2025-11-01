@@ -76,8 +76,8 @@ public class UserFile implements UserInterface {
         return text;
     }
     @Override
-    public Users getAllUsers() {
-        String filepath = appConfig.getFtpConfiguration().getConfigDataFilePath()
+    public Users getAllUsers(String configDataFilePath) {
+        String filepath = configDataFilePath
                 + AppConfigHelper.getUserDataFilename(appConfig);
         TextFileParser textFileParser = new TextFileParser(filepath);
         ArrayList<ArrayList<String>> fileData = textFileParser.readCsvData();
@@ -86,11 +86,11 @@ public class UserFile implements UserInterface {
         return users;
     }
     @Override
-    public MysqlUser getUserByName(String username) {
+    public MysqlUser getUserByName(String username, String configDataFilePath) {
         if (username == null || username.isEmpty()) {
             return null;
         }
-        Users users = this.getAllUsers();
+        Users users = this.getAllUsers(configDataFilePath);
         if (users != null) {
             MysqlUser user = users.searchUserByName(username);
             logger.info("User data for username: {}, is: {}", username, user);
@@ -99,11 +99,11 @@ public class UserFile implements UserInterface {
         return null;
     }
     @Override
-    public MysqlUser getUserByEmail(String email) {
+    public MysqlUser getUserByEmail(String email, String configDataFilePath) {
         if (email == null || email.isEmpty()) {
             return null;
         }
-        Users users = this.getAllUsers();
+        Users users = this.getAllUsers(configDataFilePath);
         if (users != null) {
             MysqlUser user = users.searchUserByEmail(email);
             logger.info("User data for email: {}, is: {}", email, user);
@@ -112,8 +112,8 @@ public class UserFile implements UserInterface {
         return null;
     }
     @Override
-    public boolean saveUser(MysqlUser user) {
-        String filepath = appConfig.getFtpConfiguration().getConfigDataFilePath()
+    public boolean saveUser(MysqlUser user, String configDataFilePath) {
+        String filepath = configDataFilePath
                 + AppConfigHelper.getUserDataFilename(appConfig);
         TextFileParser textFileParser = new TextFileParser(filepath);
         String text = this.getAddTextResponse(user);

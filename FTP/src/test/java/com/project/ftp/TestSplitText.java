@@ -34,15 +34,15 @@ public class TestSplitText {
         SplitTextFileService splitTextFileService = this.getSplitTextFileService();
 
         requestId = null;
-        splitTextFileConfig =  splitTextFileService.getSplitTextFileConfigV2(request, requestId);
+        splitTextFileConfig =  splitTextFileService.getSplitTextFileConfigV2(request, requestId, null);
         Assert.assertNull(splitTextFileConfig);
 
         requestId = "invalid-id";
-        splitTextFileConfig =  splitTextFileService.getSplitTextFileConfigV2(request, requestId);
+        splitTextFileConfig =  splitTextFileService.getSplitTextFileConfigV2(request, requestId, null);
         Assert.assertNull(splitTextFileConfig);
 
         requestId = "split-csv-file";
-        splitTextFileConfig =  splitTextFileService.getSplitTextFileConfigV2(request, requestId);
+        splitTextFileConfig =  splitTextFileService.getSplitTextFileConfigV2(request, requestId, null);
         Assert.assertEquals(requestId, splitTextFileConfig.getId());
     }
     @Test
@@ -53,12 +53,12 @@ public class TestSplitText {
         SplitTextFileService splitTextFileService = this.getSplitTextFileService();
 
         requestId = "invalid-id";
-        apiResponse =  splitTextFileService.splitTextFile(request, requestId);
+        apiResponse =  splitTextFileService.splitTextFile(request, requestId, null);
         Assert.assertEquals(AppConstant.FAILURE, apiResponse.getStatus());
 
         requestId = "split-csv-file";
 //        requestId = "split-csv-file-v3";
-        apiResponse =  splitTextFileService.splitTextFile(request, requestId);
+        apiResponse =  splitTextFileService.splitTextFile(request, requestId, null);
         Assert.assertEquals(AppConstant.SUCCESS, apiResponse.getStatus());
     }
 }

@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public interface AppToBridgeInterface {
-    void sendCreatePasswordOtpEmail(MysqlUser user);
+    void sendCreatePasswordOtpEmail(MysqlUser user, String configDataFilePath);
     boolean isAuthorisedApi(String apiName, String userName);
     boolean updateUserRoles(ArrayList<String> rolesConfigPath);
     ArrayList<String> getActiveRoleIdByUserName(String username);
@@ -20,7 +20,7 @@ public interface AppToBridgeInterface {
     ArrayList<String> getAllUsersName();
     Object getRolesConfig();
     String getTcpResponse(String tcpId, String data);
-    ArrayList<BridgeResponseSheetData> getExcelData(HttpServletRequest request, ExcelDataConfig excelDataConfig);
+    ArrayList<BridgeResponseSheetData> getExcelData(HttpServletRequest request, ExcelDataConfig excelDataConfig, String roleId);
     boolean updateExcelData(HttpServletRequest request, ExcelDataConfig excelDataConfig,
                             SaveTableParameter saveTableParameter);
     ArrayList<HashMap<String, String>> applyCsvConfigOnTableData(HttpServletRequest request,

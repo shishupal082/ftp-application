@@ -57,11 +57,12 @@ public class RequestService {
         }
         return path;
     }
-    public Object getAssets(HttpServletRequest request) {
+    public Object getAssets(HttpServletRequest request, String roleId) {
         String requestedPath = RequestService.getPathUrl(request);
+        LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
         logger.info("Loading getAssets: {}, user: {}",
                 requestedPath, userService.getUserDataForLogging(request));
-        PathInfo pathInfo = fileServiceV2.getFileResponseV2(requestedPath);
+        PathInfo pathInfo = fileServiceV2.getFileResponseV2(requestedPath, loginUserDetails, roleId);
         Response.ResponseBuilder r;
         if (pathInfo!= null && AppConstant.FILE.equals(pathInfo.getType())) {
             File file = new File(pathInfo.getPath());
@@ -87,7 +88,7 @@ public class RequestService {
         logger.info("Loading defaultMethod: {}, user: {}",
                 requestedPath, userService.getUserDataForLogging(request));
         LoginUserDetails userDetails = userService.getLoginUserDetails(request);
-        PathInfo pathInfo = fileServiceV2.getFileResponse(requestedPath, userDetails);
+        PathInfo pathInfo = fileServiceV2.getFileResponse(requestedPath, userDetails, null);
         Response.ResponseBuilder r;
         if (pathInfo!= null) {
             if (AppConstant.FILE.equals(pathInfo.getType())) {

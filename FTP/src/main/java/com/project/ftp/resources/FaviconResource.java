@@ -19,7 +19,7 @@ import java.net.URISyntaxException;
 public class FaviconResource {
     private String icoFilePath;
     public FaviconResource(final AppConfig appConfig){
-        icoFilePath = appConfig.getFtpConfiguration().getConfigDataFilePath();
+        icoFilePath = appConfig.getDirectoryService().getConfigPathDefault();
         if (icoFilePath != null) {
             icoFilePath += AppConstant.FAVICON_ICO_PATH;
         }

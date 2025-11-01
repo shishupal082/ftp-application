@@ -18,13 +18,13 @@ public class AddEvent {
         EventConfig eventConfig = appConfig.getFtpConfiguration().getEventConfig();
         return eventConfig == null || !eventConfig.isEnabled();
     }
-    public void addCommonEvent(String username, String eventNameStr, String status, String reason, String comment) {
+    public void addCommonEvent(String configFilePath, String username, String eventNameStr, String status, String reason, String comment) {
         if (this.isEventLoggingDisabled()) {
             return;
         }
-        eventInterface.addText(username, eventNameStr, status, reason, comment);
+        eventInterface.addText(configFilePath, username, eventNameStr, status, reason, comment);
     }
-    public void addFailureEvent(String username, EventName eventName,
+    public void addFailureEvent(String configFilePath, String username, EventName eventName,
                                 ErrorCodes errorCode, String comment) {
         String errorCodeString = null;
         if (errorCode != null) {
@@ -37,32 +37,32 @@ public class AddEvent {
         if (eventName != null) {
             eventNameStr = eventName.getName();
         }
-        this.addCommonEvent(username, eventNameStr, AppConstant.FAILURE, errorCodeString, comment);
+        this.addCommonEvent(configFilePath, username, eventNameStr, AppConstant.FAILURE, errorCodeString, comment);
     }
-    public void addFailureEventV2(EventName eventName, ErrorCodes errorCode, String comment) {
-        this.addFailureEvent(null, eventName, errorCode, comment);
+    public void addFailureEventV2(String configFilePath, EventName eventName, ErrorCodes errorCode, String comment) {
+        this.addFailureEvent(configFilePath,null, eventName, errorCode, comment);
     }
-    public void addSuccessEvent(String username, EventName eventName, String comment) {
+    public void addSuccessEvent(String configFilePath, String username, EventName eventName, String comment) {
         String eventNameStr = null;
         if (eventName != null) {
             eventNameStr = eventName.getName();
         }
-        this.addCommonEvent(username, eventNameStr, AppConstant.SUCCESS, null, comment);
+        this.addCommonEvent(configFilePath, username, eventNameStr, AppConstant.SUCCESS, null, comment);
     }
 
-    public void addSuccessEventV2(String username, EventName eventName) {
-        this.addSuccessEvent(username, eventName, null);
+    public void addSuccessEventV2(String configFilePath, String username, EventName eventName) {
+        this.addSuccessEvent(configFilePath, username, eventName, null);
     }
 
-    public void addSuccessEventV3(String username, EventName eventName, String reason, String comment) {
+    public void addSuccessEventV3(String configFilePath, String username, EventName eventName, String reason, String comment) {
         String eventNameStr = null;
         if (eventName != null) {
             eventNameStr = eventName.getName();
         }
-        this.addCommonEvent(username, eventNameStr, AppConstant.SUCCESS, reason, comment);
+        this.addCommonEvent(configFilePath, username, eventNameStr, AppConstant.SUCCESS, reason, comment);
     }
 
-    public void addEventTextV2(String username, EventName eventName, String status, String reason, String comment) {
+    public void addEventTextV2(String configFilePath, String username, EventName eventName, String status, String reason, String comment) {
         if (this.isEventLoggingDisabled()) {
             return;
         }
@@ -70,13 +70,13 @@ public class AddEvent {
         if (eventName != null) {
             eventNameStr = eventName.getName();
         }
-        eventInterface.addTextV2(username, eventNameStr, status, reason, comment);
+        eventInterface.addTextV2(configFilePath, username, eventNameStr, status, reason, comment);
     }
 
-    public void addCommonEventV2(String username, String eventNameStr, String status, String reason, String comment) {
+    public void addCommonEventV2(String configFilePath, String username, String eventNameStr, String status, String reason, String comment) {
         if (this.isEventLoggingDisabled()) {
             return;
         }
-        eventInterface.addTextV2(username, eventNameStr, status, reason, comment);
+        eventInterface.addTextV2(configFilePath, username, eventNameStr, status, reason, comment);
     }
 }

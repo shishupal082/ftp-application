@@ -2,6 +2,7 @@ package com.project.ftp.obj;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.project.ftp.config.AppConstant;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 
@@ -13,6 +14,9 @@ public class RequestLoginSocial {
     private String idToken;
     @JsonProperty("user_agent")
     private String user_agent;
+    @JsonProperty("role_id")
+    private String roleId;
+
 
     public String getType() {
         return type;
@@ -38,12 +42,21 @@ public class RequestLoginSocial {
         this.user_agent = user_agent;
     }
 
+    public String getRoleId() {
+        return roleId;
+    }
+
+    public void setRoleId(String roleId) {
+        this.roleId = roleId;
+    }
+
     @Override
     public String toString() {
         return "RequestLoginSocial{" +
                 "type='" + type + '\'' +
+                ", idToken='" + AppConstant.MaskDataString + '\'' +
                 ", user_agent='" + user_agent + '\'' +
-                ", idToken='" + "*****" + '\'' +
+                ", roleId='" + roleId + '\'' +
                 '}';
     }
 }

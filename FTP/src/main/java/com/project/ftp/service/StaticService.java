@@ -9,6 +9,7 @@ import com.project.ftp.config.UserMethod;
 import com.project.ftp.event.EventTracking;
 import com.project.ftp.exceptions.ErrorCodes;
 import com.project.ftp.obj.PathInfo;
+import com.project.ftp.obj.yamlObj.DirConfigParam;
 import com.project.ftp.parser.YamlFileParser;
 import com.project.ftp.pdf.TextToPdfService;
 import org.slf4j.Logger;
@@ -55,8 +56,6 @@ public class StaticService {
     }
     public static void initApplication(final AppConfig appConfig, String isStaticPath, String firstConfigPath) {
         FtpConfiguration ftpConfiguration = appConfig.getFtpConfiguration();
-        ConfigService configService = new ConfigService(appConfig);
-        configService.setPublicDir();
         String indexPageReRoute = ftpConfiguration.getIndexPageReRoute();
         if (indexPageReRoute == null) {
             indexPageReRoute = AppConstant.INDEX_PAGE_RE_ROUTE;
@@ -200,10 +199,20 @@ public class StaticService {
         return aesEncryption.encrypt(password);
     }
     public static ArrayList<String> getRolesConfigPath(final FtpConfiguration ftpConfiguration) {
-        String configDir = ftpConfiguration.getConfigDataFilePath();
         ArrayList<String> rolesConfigPath = new ArrayList<>();
+        DirConfigParam defaultDirConfigParam = null;
+        String configDir = null;
+        if (ftpConfiguration != null) {
+            HashMap<String, DirConfigParam> dirConfigParamHashMap = ftpConfiguration.getDirConfigParam();
+            if (dirConfigParamHashMap != null) {
+                defaultDirConfigParam = dirConfigParamHashMap.get(AppConstant.DEFAULT_ROLE_ID);
+                if (defaultDirConfigParam != null) {
+                    configDir = defaultDirConfigParam.getConfigDataFilePath();
+                }
+            }
+        }
         if (configDir == null) {
-            return rolesConfigPath;
+            return null;
         }
         if (ftpConfiguration.getRolesFileName() != null) {
             ArrayList<String> rolesFileName = ftpConfiguration.getRolesFileName();
@@ -456,5 +465,39 @@ public class StaticService {
     }
     public static boolean isDirectory(String dir) {
         return fileService.isDirectory(dir);
+    }
+    public static String getValidPublicDir(String systemDir, String orgPublicDir, String publicPostDir) {
+        systemDir = StaticService.replaceBackSlashToSlash(systemDir);
+        if (orgPublicDir == null) {
+            orgPublicDir = "";
+        }
+        if (systemDir == null) {
+            systemDir = "";
+        }
+        String[] publicDirArr = orgPublicDir.split("/");
+        String[] systemDirArr;
+        if (systemDir.contains("/")) {
+            systemDirArr = StaticService.splitStringOnLimit(systemDir, "/",-1);
+        } else {
+            // Fix for windows system
+            systemDirArr = systemDir.split("\\\\");
+        }
+        int j = systemDirArr.length-1;
+        for (int i=publicDirArr.length-1; i>=0; i--) {
+            if (j>=0 && publicDirArr[i].equals("..")) {
+                systemDirArr[j] = "/";
+                j--;
+            }
+        }
+        String setPublicDir = "";
+        for (int i=0; i<systemDirArr.length; i++) {
+            if (!systemDirArr[i].equals("/")) {
+                setPublicDir += systemDirArr[i] + "/";
+            }
+        }
+        if (publicPostDir != null) {
+            setPublicDir += publicPostDir;
+        }
+        return StaticService.getProperDirString(setPublicDir);
     }
 }
