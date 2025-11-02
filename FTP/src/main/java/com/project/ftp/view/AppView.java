@@ -29,6 +29,7 @@ public class AppView extends View {
     private final String loginWithGmailEnable;
     private final String googleLoginClientId;
     private final String allowedAuthPages;
+    private final String roleId;
     public AppView(HttpServletRequest request, String ftl, String pageName,
                    UserService userService, AppConfig appConfig) {
         super(ftl);
@@ -70,6 +71,7 @@ public class AppView extends View {
         this.isGuestEnable = Boolean.toString(isGuestEnableTemp);
         this.appVersion = AppConstant.AppVersion;
         this.loginUserDetailsV2Str = loginUserDetailsV2.toJsonString();
+        this.roleId = AppConstant.DEFAULT_ROLE_ID;
         logger.info("Loading AppView, page: {}, userDetails: {}", pageName, loginUserDetailsV2);
     }
 
@@ -111,5 +113,9 @@ public class AppView extends View {
 
     public String getAllowedAuthPages() {
         return allowedAuthPages;
+    }
+
+    public String getRoleId() {
+        return roleId;
     }
 }

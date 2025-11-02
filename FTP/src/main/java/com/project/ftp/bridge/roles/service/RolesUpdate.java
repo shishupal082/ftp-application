@@ -43,6 +43,6 @@ public class RolesUpdate {
             }
         }
         roles.setUserRolesMapping(userRolesMapping);
-        logger.info("userRolesMapping updated: {}", userRolesMapping);
+//        logger.info("userRolesMapping updated: {}", userRolesMapping);
     }
 }

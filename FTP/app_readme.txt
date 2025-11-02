@@ -1469,6 +1469,15 @@ java -jar meta-data/FTP-*-SNAPSHOT.jar <server/standalone> <isMySqlEnable> <isSt
 standalone
 - Directly run apis and generate result in the console
 
+8.0.2.018 @ 25.10.2025
+----------------------
+Created stable build for 8.0.2.017
+
+
+8.0.2.019 @ 01.11.2025
+----------------------
+Config parameter pattern change from individual to group for running multiple application on single server
+
 
 Future releases
 -------------------

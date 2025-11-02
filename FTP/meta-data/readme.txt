@@ -32,7 +32,12 @@ dirConfigParam:
     publicPostDir: String
 
 defaultRoleId: "defaultRole" // defined in AppConstant
-isRelativePath: used for calculation of (1) publicDir
+isRelativePath: used for
+(1) calculation of publicDir
+
+defaultRoleId: used for
+(1) standAloneConfigPath
+
 
 Sub file related for configDataFilePath
 -----------------------------------------

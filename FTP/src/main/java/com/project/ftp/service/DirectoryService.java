@@ -20,76 +20,99 @@ public class DirectoryService {
         this.ftpConfiguration = ftpConfiguration;
         this.userService = userService;
     }
-    public String getDirConfigParamFromUser(FtpConfigItemsV2 ftpConfigItemsV2, String roleId, LoginUserDetails loginUserDetails) {
+    private ArrayList<DirConfigParam> getDirConfigParam(LoginUserDetails loginUserDetails, String roleId) {
         if (ftpConfiguration == null || userService == null) {
             return null;
         }
         if (roleId == null || roleId.isEmpty()) {
             roleId = AppConstant.DEFAULT_ROLE_ID;
         }
-        HashMap<String, DirConfigParam> dirConfigParam = ftpConfiguration.getDirConfigParam();
-        if (dirConfigParam == null) {
-            logger.info("dirConfigParam is null in ftpConfiguration");
+        HashMap<String, DirConfigParam> dirConfigParamHashMap = ftpConfiguration.getDirConfigParam();
+        if (dirConfigParamHashMap == null) {
+            logger.info("getDirConfigParam: dirConfigParamHashMap is null in ftpConfiguration");
             return null;
         }
-        DirConfigParam dirConfigParam1 = null;
-        DirConfigParam dirConfigParam2 = dirConfigParam.get(AppConstant.DEFAULT_ROLE_ID);
+        DirConfigParam dirConfigParam = null;
+        DirConfigParam dirConfigParamDefault = dirConfigParamHashMap.get(AppConstant.DEFAULT_ROLE_ID);
         if (!AppConstant.DEFAULT_ROLE_ID.equals(roleId)) {
-            if (userService.isAuthorisedPermission(loginUserDetails, roleId)) {
-                dirConfigParam1 = dirConfigParam.get(roleId);
+            dirConfigParam = dirConfigParamHashMap.get(roleId);
+            if (dirConfigParam != null) {
+                String checkPermission = dirConfigParam.getCheckPermission();
+                if (AppConstant.TRUE.equals(checkPermission)) {
+                    if (loginUserDetails != null && loginUserDetails.getUsername() != null && !loginUserDetails.getUsername().isEmpty()) {
+                        if (!userService.isAuthorisedPermission(loginUserDetails, roleId)) {
+                            dirConfigParam = null;
+                        }
+                    }
+                }
             }
         }
-        if (dirConfigParam1 == null && dirConfigParam2 == null) {
-            logger.info("dirConfigParam is not found for roleId: {}, or {}", roleId, AppConstant.DEFAULT_ROLE_ID);
+        if (dirConfigParam == null && dirConfigParamDefault == null) {
+            logger.info("getDirConfigParam: dirConfigParam is not found for roleId: {}, or {}", roleId, AppConstant.DEFAULT_ROLE_ID);
             return null;
         }
-        if (dirConfigParam1 == null) {
-            dirConfigParam1 = dirConfigParam2;
+        if (dirConfigParam == null) {
+            dirConfigParam = dirConfigParamDefault;
         }
-        if (dirConfigParam2 == null) {
-            dirConfigParam2 = dirConfigParam1;
+        if (dirConfigParamDefault == null) {
+            dirConfigParamDefault = dirConfigParam;
+        }
+        ArrayList<DirConfigParam> result = new ArrayList<>();
+        result.add(dirConfigParam);
+        result.add(dirConfigParamDefault);
+        return result;
+    }
+    public String getDirConfigParamFromUser(FtpConfigItemsV2 ftpConfigItemsV2, String roleId, LoginUserDetails loginUserDetails) {
+        ArrayList<DirConfigParam> dirConfigParams = this.getDirConfigParam(loginUserDetails, roleId);
+        if (dirConfigParams == null || dirConfigParams.size() < 2) {
+            return null;
+        }
+        DirConfigParam dirConfigParam = dirConfigParams.get(0);
+        DirConfigParam dirConfigParamDefault = dirConfigParams.get(1);
+        if (dirConfigParam == null || dirConfigParamDefault == null) {
+            return null;
         }
         String result = null, r1 = null, r2 = null;
         switch (ftpConfigItemsV2) {
             case fileSaveDir:
-                r1 = dirConfigParam1.getFileSaveDir();
-                r2 = dirConfigParam2.getFileSaveDir();
+                r1 = dirConfigParam.getFileSaveDir();
+                r2 = dirConfigParamDefault.getFileSaveDir();
                 break;
             case staticDataFilename:
-                r1 = dirConfigParam1.getStaticDataFilename();
-                r2 = dirConfigParam2.getStaticDataFilename();
+                r1 = dirConfigParam.getStaticDataFilename();
+                r2 = dirConfigParamDefault.getStaticDataFilename();
                 break;
             case configDataFilePath:
-                r1 = dirConfigParam1.getConfigDataFilePath();
-                r2 = dirConfigParam2.getConfigDataFilePath();
+                r1 = dirConfigParam.getConfigDataFilePath();
+                r2 = dirConfigParamDefault.getConfigDataFilePath();
                 break;
             case fileMappingConfigFilePath:
-                r1 = dirConfigParam1.getFileMappingConfigFilePath();
-                r2 = dirConfigParam2.getFileMappingConfigFilePath();
+                r1 = dirConfigParam.getFileMappingConfigFilePath();
+                r2 = dirConfigParamDefault.getFileMappingConfigFilePath();
                 break;
             case splitTextFileConfigPath:
-                r1 = dirConfigParam1.getSplitTextFileConfigPath();
-                r2 = dirConfigParam2.getSplitTextFileConfigPath();
+                r1 = dirConfigParam.getSplitTextFileConfigPath();
+                r2 = dirConfigParamDefault.getSplitTextFileConfigPath();
                 break;
             case scanDirConfigFilePath:
-                r1 = dirConfigParam1.getScanDirConfigFilePath();
-                r2 = dirConfigParam2.getScanDirConfigFilePath();
+                r1 = dirConfigParam.getScanDirConfigFilePath();
+                r2 = dirConfigParamDefault.getScanDirConfigFilePath();
                 break;
             case isRelativePath:
-                r1 = dirConfigParam1.getIsRelativePath();
-                r2 = dirConfigParam2.getIsRelativePath();
+                r1 = dirConfigParam.getIsRelativePath();
+                r2 = dirConfigParamDefault.getIsRelativePath();
                 break;
             case assetsDir:
-                r1 = dirConfigParam1.getAssetsDir();
-                r2 = dirConfigParam2.getAssetsDir();
+                r1 = dirConfigParam.getAssetsDir();
+                r2 = dirConfigParamDefault.getAssetsDir();
                 break;
             case publicDir:
-                r1 = dirConfigParam1.getPublicDir();
-                r2 = dirConfigParam2.getPublicDir();
+                r1 = dirConfigParam.getPublicDir();
+                r2 = dirConfigParamDefault.getPublicDir();
                 break;
             case publicPostDir:
-                r1 = dirConfigParam1.getPublicPostDir();
-                r2 = dirConfigParam2.getPublicPostDir();
+                r1 = dirConfigParam.getPublicPostDir();
+                r2 = dirConfigParamDefault.getPublicPostDir();
                 break;
         }
         if (r1 == null || r1.isEmpty()) {
@@ -100,45 +123,24 @@ public class DirectoryService {
         return result;
     }
     public ArrayList<String> getDirConfigParamFromUserV2(FtpConfigItemsV2 ftpConfigItemsV2, String roleId, LoginUserDetails loginUserDetails) {
-        if (ftpConfiguration == null || userService == null) {
+        ArrayList<DirConfigParam> dirConfigParams = this.getDirConfigParam(loginUserDetails, roleId);
+        if (dirConfigParams == null || dirConfigParams.size() < 2) {
             return null;
         }
-        if (roleId == null || roleId.isEmpty()) {
-            roleId = AppConstant.DEFAULT_ROLE_ID;
-        }
-        HashMap<String, DirConfigParam> dirConfigParam = ftpConfiguration.getDirConfigParam();
-        if (dirConfigParam == null) {
-            logger.info("getDirConfigParamV2: dirConfigParam is null in ftpConfiguration");
+        DirConfigParam dirConfigParam = dirConfigParams.get(0);
+        DirConfigParam dirConfigParamDefault = dirConfigParams.get(1);
+        if (dirConfigParam == null || dirConfigParamDefault == null) {
             return null;
-        }
-        DirConfigParam dirConfigParam1 = null;
-        DirConfigParam dirConfigParam2 = dirConfigParam.get(AppConstant.DEFAULT_ROLE_ID);
-        if (!AppConstant.DEFAULT_ROLE_ID.equals(roleId)) {
-            if (loginUserDetails != null && loginUserDetails.getUsername() != null && !loginUserDetails.getUsername().isEmpty()) {
-                if (userService.isAuthorisedPermission(loginUserDetails, roleId)) {
-                    dirConfigParam1 = dirConfigParam.get(roleId);
-                }
-            }
-        }
-        if (dirConfigParam1 == null && dirConfigParam2 == null) {
-            logger.info("getDirConfigParamV2: dirConfigParam is not found for roleId: {}, or {}", roleId, AppConstant.DEFAULT_ROLE_ID);
-            return null;
-        }
-        if (dirConfigParam1 == null) {
-            dirConfigParam1 = dirConfigParam2;
-        }
-        if (dirConfigParam2 == null) {
-            dirConfigParam2 = dirConfigParam1;
         }
         ArrayList<String> result = null, r1 = null, r2 = null;
         switch (ftpConfigItemsV2) {
             case standAloneConfigPath:
-                r1 = dirConfigParam1.getStandAloneConfigPath();
-                r2 = dirConfigParam2.getStandAloneConfigPath();
+                r1 = dirConfigParam.getStandAloneConfigPath();
+                r2 = dirConfigParamDefault.getStandAloneConfigPath();
                 break;
             case tableDbConfigFilePath:
-                r1 = dirConfigParam1.getTableDbConfigFilePath();
-                r2 = dirConfigParam2.getTableDbConfigFilePath();
+                r1 = dirConfigParam.getTableDbConfigFilePath();
+                r2 = dirConfigParamDefault.getTableDbConfigFilePath();
                 break;
         }
         if (r1 == null || r1.isEmpty()) {

@@ -66,8 +66,9 @@ public class ApiResource {
     }
     @GET
     @Produces(MediaType.TEXT_HTML)
-    public Object defaultMethodApi(@Context HttpServletRequest request) throws AppException {
-        return requestService.handleDefaultUrl(request);
+    public Object defaultMethodApi(@Context HttpServletRequest request,
+                                   @QueryParam("role_id") String roleId) throws AppException {
+        return requestService.handleDefaultUrl(request, roleId);
     }
     @GET
     @Path("/get_static_data")
@@ -1542,8 +1543,9 @@ public class ApiResource {
     @Path("{default: .*}")
     @GET
     @Produces(MediaType.TEXT_HTML)
-    public Object defaultMethod(@Context HttpServletRequest request) {
-        return requestService.handleDefaultUrl(request);
+    public Object defaultMethod(@Context HttpServletRequest request,
+                                @QueryParam("role_id") String roleId) {
+        return requestService.handleDefaultUrl(request, roleId);
     }
     /**
      * Used while accessing from api and response is text_html
@@ -1551,17 +1553,19 @@ public class ApiResource {
     @Path("{default: .*}")
     @POST
     @Produces(MediaType.TEXT_HTML)
-    public Object defaultMethodPostV2(@Context HttpServletRequest request) {
+    public Object defaultMethodPostV2(@Context HttpServletRequest request,
+                                      @QueryParam("role_id") String roleId) {
         logger.info("defaultMethodPostV2 received with: Consume APPLICATION_JSON and Produce APPLICATION_JSON");
-        return requestService.handleDefaultUrl(request);
+        return requestService.handleDefaultUrl(request, roleId);
     }
     /**
      * Used while accessing from api and response is json
      */
     @Path("{default: .*}")
     @POST
-    public Object defaultMethodPostV3(@Context HttpServletRequest request) {
+    public Object defaultMethodPostV3(@Context HttpServletRequest request,
+                                      @QueryParam("role_id") String roleId) {
         logger.info("defaultMethodPostV3 received with: Consume APPLICATION_JSON and Produce APPLICATION_JSON");
-        return requestService.handleDefaultUrl(request);
+        return requestService.handleDefaultUrl(request, roleId);
     }
 }

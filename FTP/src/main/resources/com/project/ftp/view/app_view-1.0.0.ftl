@@ -41,6 +41,8 @@
            value="<#if ftlConfig.footerLinkJsonAfterLogin??>${ftlConfig.footerLinkJsonAfterLogin}<#else></#if>"/>
     <input type="hidden" style="display: none;" name="loginRedirectUrl" id="loginRedirectUrl"
            value="${loginRedirectUrl}"/>
+    <input type="hidden" style="display: none;" name="roleId" id="roleId"
+               value="${roleId}"/>
     <input type="hidden" style="display: none;" name="createPasswordOtpInstruction" id="createPasswordOtpInstruction"
            value="<#if ftlConfig.createPasswordOtpInstruction??>${ftlConfig.createPasswordOtpInstruction}<#else></#if>"/>
 </div>

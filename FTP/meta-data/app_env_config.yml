@@ -40,4 +40,18 @@ database:
   # the JDBC URL; the database is called DWGettingStarted
   url: jdbc:mysql://localhost:3306/ftpapp?autoReconnect=true&useSSL=false&allowPublicKeyRetrieval=true
 
+# Database settings.
+# oracleDatabaseConfigs:
+  # oracle:
+    # the name of the JDBC driver, mysql in our case
+    # driver: oracle.jdbc.driver.OracleDriver
+    # the username
+    # username: ORACLE
+    # the password
+    # password: ORACLE
+    # the JDBC URL; the database is called DWGettingStarted
+    # url: jdbc:oracle:thin:@<ip_address>:1521:xe
+    # connectionResetCount: 30
+
+
 singleThreadingEnable: false

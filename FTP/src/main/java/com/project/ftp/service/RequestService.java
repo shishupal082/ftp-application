@@ -36,6 +36,9 @@ public class RequestService {
         this.fileServiceV2 = fileServiceV2;
     }
     public static String getPathUrl(final HttpServletRequest request) {
+        if (request == null) {
+            return null;
+        }
         String path = request.getPathInfo();
         String[] pathArr = path.split("\\?");
         if (pathArr.length > 0) {
@@ -83,12 +86,12 @@ public class RequestService {
         }
         return new CommonView("page_not_found_404.ftl", appConfig, AppConstant.AppVersion);
     }
-    public Object handleDefaultUrl(HttpServletRequest request) {
+    public Object handleDefaultUrl(HttpServletRequest request, String roleId) {
         String requestedPath = RequestService.getPathUrl(request);
         logger.info("Loading defaultMethod: {}, user: {}",
                 requestedPath, userService.getUserDataForLogging(request));
         LoginUserDetails userDetails = userService.getLoginUserDetails(request);
-        PathInfo pathInfo = fileServiceV2.getFileResponse(requestedPath, userDetails, null);
+        PathInfo pathInfo = fileServiceV2.getFileResponse(requestedPath, userDetails, roleId);
         Response.ResponseBuilder r;
         if (pathInfo!= null) {
             if (AppConstant.FILE.equals(pathInfo.getType())) {

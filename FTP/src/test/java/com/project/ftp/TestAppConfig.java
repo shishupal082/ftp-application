@@ -4,9 +4,7 @@ import com.project.ftp.config.ApiIdentifier;
 import com.project.ftp.config.ApiRoleAccess;
 import com.project.ftp.config.AppConfig;
 import com.project.ftp.config.AppConstant;
-import com.project.ftp.obj.ApiResponse;
 import com.project.ftp.obj.yamlObj.DirConfigParam;
-import com.project.ftp.resources.ApiResource;
 import org.junit.Assert;
 import org.junit.Test;
 

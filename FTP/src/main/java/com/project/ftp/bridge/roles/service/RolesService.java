@@ -135,7 +135,7 @@ public class RolesService {
                 }
             }
         }
-        logger.info("tempCoRelatedUsers: {}", tempCoRelatedUsers);
+//        logger.info("tempCoRelatedUsers: {}", tempCoRelatedUsers);
         /*Mixing co-related user properly end */
         /*Mixing co-related user and group related users properly */
         String groupName1;
@@ -158,7 +158,7 @@ public class RolesService {
                 }
             }
         }
-        logger.info("tempCoRelatedUsers after group user merging: {}", tempCoRelatedUsers);
+//        logger.info("tempCoRelatedUsers after group user merging: {}", tempCoRelatedUsers);
         /*Mixing co-related user and group related users end */
         if (relatedUsers == null) {
             relatedUsers = new HashMap<>();
@@ -181,12 +181,12 @@ public class RolesService {
                         }
                     }
                 }
-                if (usernamesV2.size() > 0) {
+                if (!usernamesV2.isEmpty()) {
                     tempRelatedUsers.put(username, usernamesV2);
                 }
             }
         }
-        logger.info("tempRelatedUsers: {}", tempRelatedUsers);
+//        logger.info("tempRelatedUsers: {}", tempRelatedUsers);
         /* Combining tempRelatedUsers and tempCoRelatedUsers */
         for (Map.Entry<String, ArrayList<String>> el: tempRelatedUsers.entrySet()) {
             username = el.getKey();
@@ -229,7 +229,7 @@ public class RolesService {
             }
             tempRelatedUsers.put(username, usernamesV2);
         }
-        logger.info("relatedUsers after merging: {}", tempRelatedUsers);
+//        logger.info("relatedUsers after merging: {}", tempRelatedUsers);
         HashMap<String, ArrayList<String>> finalRelatedUsers = new HashMap<>();
         String username1;
         ArrayList<String> usernameList;
@@ -240,8 +240,8 @@ public class RolesService {
             finalRelatedUsers.put(username1, this.removeDuplicate(usernameList));
         }
         roles.setRelatedUsers(finalRelatedUsers);
-        logger.info("finalRelatedUsers after duplicate removal: {}", finalRelatedUsers);
-        logger.info("roles config data: {}", roles);
+//        logger.info("finalRelatedUsers after duplicate removal: {}", finalRelatedUsers);
+//        logger.info("roles config data: {}", roles);
         return roles;
     }
     public Roles getRolesConfig() {

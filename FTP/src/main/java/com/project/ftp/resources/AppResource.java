@@ -299,17 +299,19 @@ public class AppResource {
      */
     @Path("{default: .*}")
     @GET
-    public Object defaultMethod(@Context HttpServletRequest request) {
-        return requestService.handleDefaultUrl(request);
+    public Object defaultMethod(@Context HttpServletRequest request,
+                                @QueryParam("role_id") String roleId) {
+        return requestService.handleDefaultUrl(request, roleId);
     }
     /**
      * Used while accessing from api and response is text_html
      */
     @Path("{default: .*}")
     @POST
-    public Object defaultMethodPostV2(@Context HttpServletRequest request) {
+    public Object defaultMethodPostV2(@Context HttpServletRequest request,
+                                      @QueryParam("role_id") String roleId) {
         logger.info("defaultMethodPostV2: Post Request received with: Consume APPLICATION_JSON and Produce APPLICATION_JSON");
-        return requestService.handleDefaultUrl(request);
+        return requestService.handleDefaultUrl(request, roleId);
     }
     /**
      * Used while accessing from api and response is json
@@ -317,8 +319,9 @@ public class AppResource {
     @Path("{default: .*}")
     @POST
     @Produces(MediaType.APPLICATION_JSON)
-    public Object defaultMethodPostV3(@Context HttpServletRequest request) {
+    public Object defaultMethodPostV3(@Context HttpServletRequest request,
+                                      @QueryParam("role_id") String roleId) {
         logger.info("defaultMethodPostV3: Post Request received with: Consume APPLICATION_JSON and Produce APPLICATION_JSON");
-        return requestService.handleDefaultUrl(request);
+        return requestService.handleDefaultUrl(request, roleId);
     }
 }

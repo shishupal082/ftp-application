@@ -54,8 +54,8 @@ public class RolesFileParser {
             temp = roleAccess1.get(key);
             if (temp != null) {
                 logger.info("ERROR: '{}' roleAccessGroup, is found in multiple roles file", key);
-                logger.info("preFinalRoles: {}", preFinalRoles);
-                logger.info("tempRoles: {}", tempRoles);
+//                logger.info("preFinalRoles: {}", preFinalRoles);
+//                logger.info("tempRoles: {}", tempRoles);
                 preFinalRoles.setRoleAccess(null);
                 return;
             }
@@ -96,7 +96,7 @@ public class RolesFileParser {
             temp = relatedUsers1.get(key);
             if (temp != null) {
                 logger.info("ERROR: Username: {}, duplicate relatedUsers entry", key);
-                logger.info("relatedUsers1: {}, relatedUsers2: {}", relatedUsers1, relatedUsers2);
+//                logger.info("relatedUsers1: {}, relatedUsers2: {}", relatedUsers1, relatedUsers2);
                 preFinalRoles.setRelatedUsers(null);
                 return;
             }
@@ -159,7 +159,7 @@ public class RolesFileParser {
                 groupRelatedUsers1.put(key, value);
             } else {
                 value.addAll(temp);
-                logger.info("Merged groupRelatedUsers: {}, value: {}", key, value);
+//                logger.info("Merged groupRelatedUsers: {}, value: {}", key, value);
             }
             groupRelatedUsers1.put(key, value);
         }

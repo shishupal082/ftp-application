@@ -37,28 +37,48 @@ public class StandAlone {
             logger.info("handleApiUpdateMysql: Invalid config: {}", apiDetail);
             return;
         }
-        apiResource.updateMySqlTableDataFromCsv(null, params.get(0), null);
+        String requestId = params.get(0);
+        String roleId = null;
+        if (params.size() > 1) {
+            roleId = params.get(1);
+        }
+        apiResource.updateMySqlTableDataFromCsv(null, requestId, roleId);
     }
     private void handleApiUpdateExcelData(ApiDetail apiDetail, ArrayList<String> params) {
         if (params == null || params.isEmpty()) {
             logger.info("handleApiUpdateExcelData: Invalid config: {}", apiDetail);
             return;
         }
-        apiResource.updateMSExcelData(null, params.get(0), null);
+        String requestId = params.get(0);
+        String roleId = null;
+        if (params.size() > 1) {
+            roleId = params.get(1);
+        }
+        apiResource.updateMSExcelData(null, requestId, roleId);
     }
     private void handleApiUpdateExcelDataV2(ApiDetail apiDetail, ArrayList<String> params) {
         if (params == null || params.isEmpty()) {
             logger.info("handleApiUpdateExcelDataV2: Invalid config: {}", apiDetail);
             return;
         }
-        apiResource.updateMSExcelDataV2(null, params.get(0), null);
+        String requestId = params.get(0);
+        String roleId = null;
+        if (params.size() > 1) {
+            roleId = params.get(1);
+        }
+        apiResource.updateMSExcelDataV2(null, requestId, roleId);
     }
     private void handleApiSplitFile(ApiDetail apiDetail, ArrayList<String> params) {
         if (params == null || params.isEmpty()) {
             logger.info("handleApiSplitFile: Invalid config: {}", apiDetail);
             return;
         }
-        apiResource.splitFile(null, params.get(0), null);
+        String requestId = params.get(0);
+        String roleId = null;
+        if (params.size() > 1) {
+            roleId = params.get(1);
+        }
+        apiResource.splitFile(null, requestId, roleId);
     }
     private void askConfirmation(ApiDetail apiDetail) {
         if (apiDetail == null) {
@@ -112,7 +132,6 @@ public class StandAlone {
             logger.info("Press any key...");
             return;
         }
-        FtpConfiguration ftpConfiguration = appConfig.getFtpConfiguration();
         ArrayList<String> standAloneConfigPath = appConfig.getDirectoryService().getDirConfigParamFromRequestV2(null, FtpConfigItemsV2.standAloneConfigPath, null);
         StandAloneConfig standAloneConfig = standAloneService.getStandaloneConfig(standAloneConfigPath);
         if (standAloneConfig == null) {

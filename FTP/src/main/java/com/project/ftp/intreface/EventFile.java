@@ -3,15 +3,12 @@ package com.project.ftp.intreface;
 import com.project.ftp.common.DateUtilities;
 import com.project.ftp.config.AppConfig;
 import com.project.ftp.config.AppConstant;
-import com.project.ftp.config.FtpConfigItemsV2;
 import com.project.ftp.obj.yamlObj.EventConfig;
 import com.project.ftp.parser.TextFileParser;
 import com.project.ftp.service.FileService;
 import com.project.ftp.service.StaticService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.servlet.http.HttpServletRequest;
 
 public class EventFile implements EventInterface {
     private final static Logger logger = LoggerFactory.getLogger(EventFile.class);

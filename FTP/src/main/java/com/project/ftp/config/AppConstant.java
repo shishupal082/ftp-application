@@ -58,6 +58,7 @@ public class AppConstant {
     public static final String USER_DATA_FILENAME = "user_data.csv";
     public static final String EVENT_DATA_FILENAME = "event_data.csv";
     public static final String APP_VIEW_FTL_FILENAME = "app_view-1.0.0.ftl";
+    public static final String UI_VIEW_FTL_FILENAME = "ui_view.ftl";
     public static final String FILE_NOT_FOUND_MAPPING = "file_not_found_config.yml";
     public static final String ROLES = "roles.yml";
     public static final String DEFAULT = "default";

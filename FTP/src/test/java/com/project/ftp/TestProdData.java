@@ -1,18 +1,5 @@
 package com.project.ftp;
 
-import com.project.ftp.bridge.mysqlTable.TableService;
-import com.project.ftp.config.AppConfig;
-import com.project.ftp.obj.ApiResponse;
-import com.project.ftp.resources.ApiResource;
-import com.project.ftp.service.FileServiceV3;
-import com.project.ftp.service.StaticService;
-import org.junit.Assert;
-import org.junit.Test;
-
-import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
-import java.util.HashMap;
-
 public class TestProdData {
     private final TestMSExcelService testMSExcelService = new TestMSExcelService();
     /*

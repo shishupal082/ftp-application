@@ -26,6 +26,7 @@ ftlViewMapping:
     appControlApi: "/project-tracking/json/appControlData.json"
     projectHeading: "App Heading"
     forceLogin: true
+    roleId: "defaultRole"
     validAppControl:
       - appControlTeam10
     addBasePathLinkName:

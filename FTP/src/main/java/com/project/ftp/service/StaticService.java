@@ -466,7 +466,8 @@ public class StaticService {
     public static boolean isDirectory(String dir) {
         return fileService.isDirectory(dir);
     }
-    public static String getValidPublicDir(String systemDir, String orgPublicDir, String publicPostDir) {
+    public static String getValidPublicDir(String orgPublicDir, String publicPostDir) {
+        String systemDir = sysUtils.getProjectWorkingDir();
         systemDir = StaticService.replaceBackSlashToSlash(systemDir);
         if (orgPublicDir == null) {
             orgPublicDir = "";

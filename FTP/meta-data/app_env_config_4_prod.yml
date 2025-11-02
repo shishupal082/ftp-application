@@ -1,4 +1,0 @@
-fileMappingConfigFilePath: "F:/ftp-app/OneDrive/ftp/app-data/config-files-v2/env_config/file-mapping-config/config-file/file-mapping-config.yml"
-scanDirConfigFilePath: "F:/ftp-app/OneDrive/ftp/app-data/config-files-v2/env_config/scan-dir-config/scan-dir-config.yml"
-tableDbConfigFilePath:
-  - "F:/ftp-app/OneDrive/ftp/common-data/table-config/table-db-config/table-db-config-staff-rnc-division.yml"

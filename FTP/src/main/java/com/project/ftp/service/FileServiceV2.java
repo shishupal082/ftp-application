@@ -424,7 +424,7 @@ public class FileServiceV2 {
         return pathInfo;
     }
     public PathInfo getFileResponse(String filePath, LoginUserDetails userDetails, String roleId) {
-        if (filePath == null) {
+        if (filePath == null || filePath.isEmpty()) {
             return null;
         }
         PageConfig404 pageConfig404 = appConfig.getPageConfig404();

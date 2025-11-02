@@ -21,7 +21,7 @@ public class UiView extends View {
     private boolean forceLogin;
     private UiViewObject uiViewObject;
     public UiView(AppConfig appConfig, String ftlViewMappingId) {
-        super("ui_view.ftl");
+        super(AppConstant.UI_VIEW_FTL_FILENAME);
         ftlConfig = appConfig.getFtlConfig();
         this.appVersion = AppConstant.AppVersion;
         this.forceLogin = true;

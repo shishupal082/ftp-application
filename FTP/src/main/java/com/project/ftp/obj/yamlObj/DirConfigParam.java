@@ -16,6 +16,7 @@ public class DirConfigParam {
     private ArrayList<String> tableDbConfigFilePath;
     private String scanDirConfigFilePath;
     private String isRelativePath;
+    private String checkPermission;
     private String assetsDir;
     private String publicDir;
     private String publicPostDir;
@@ -92,6 +93,14 @@ public class DirConfigParam {
         this.isRelativePath = isRelativePath;
     }
 
+    public String getCheckPermission() {
+        return checkPermission;
+    }
+
+    public void setCheckPermission(String checkPermission) {
+        this.checkPermission = checkPermission;
+    }
+
     public String getAssetsDir() {
         return assetsDir;
     }
@@ -128,6 +137,7 @@ public class DirConfigParam {
                 ", tableDbConfigFilePath=" + tableDbConfigFilePath +
                 ", scanDirConfigFilePath='" + scanDirConfigFilePath + '\'' +
                 ", isRelativePath='" + isRelativePath + '\'' +
+                ", checkPermission='" + checkPermission + '\'' +
                 ", assetsDir='" + assetsDir + '\'' +
                 ", publicDir='" + publicDir + '\'' +
                 ", publicPostDir='" + publicPostDir + '\'' +

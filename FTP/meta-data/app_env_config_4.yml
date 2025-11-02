@@ -12,6 +12,31 @@ dirConfigParam:
       - "D:/workspace/ftp-application/FTP/meta-data/config-files/table-db-config/table-db-config-mysql.yml"
       - "D:/workspace/ftp-application/FTP/meta-data/config-files/table-db-config/table-db-config-oracle.yml"
     isRelativePath: "true"
+    checkPermission: "false"
     assetsDir: "D:/workspace/project/"
     publicDir: "../.."
     publicPostDir: "/project"
+  prodRole:
+    fileSaveDir: "D:/workspace/project/ftp-app/saved-files/"
+    configDataFilePath: "D:/workspace/ftp-application/FTP/meta-data/config-files/"
+    staticDataFilename: "app_static_data.json"
+    fileMappingConfigFilePath: "F:/ftp-app/OneDrive/ftp/app-data/config-files-v2/env_config/file-mapping-config/config-file/file-mapping-config.yml"
+    splitTextFileConfigPath: "D:/workspace/ftp-application/FTP/meta-data/config-files/file-mapping-config/split-file-config.yml"
+    standAloneConfigPath:
+      - "D:/workspace/ftp-application/FTP/meta-data/config-files/standalone/config_1.yml"
+    scanDirConfigFilePath: "F:/ftp-app/OneDrive/ftp/app-data/config-files-v2/env_config/scan-dir-config/scan-dir-config.yml"
+    tableDbConfigFilePath:
+      - "F:/ftp-app/OneDrive/ftp/common-data/table-config/table-db-config/table-db-config-staff-rnc-division.yml"
+    isRelativePath: "true"
+    checkPermission: "true"
+    assetsDir: "D:/workspace/project/"
+    publicDir: "../.."
+    publicPostDir: "/project"
+  prodRoleV2:
+    fileSaveDir: "F:/ftp-app/OneDrive/ftp/app-data-v2/saved-files/"
+    configDataFilePath: "F:/ftp-app/OneDrive/ftp/app-data-v2/config-files/"
+    isRelativePath: "false"
+    publicPostDir: "F:/ftp-app/OneDrive/ftp/app-data-v2/public"
+  testRoleV1:
+    isRelativePath: "false"
+    publicPostDir: "invalid-final-post-config"

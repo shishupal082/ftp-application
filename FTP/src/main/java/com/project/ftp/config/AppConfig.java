@@ -71,14 +71,12 @@ public class AppConfig {
     }
 
     public String getPublicDir(LoginUserDetails loginUserDetails, String roleId) {
-        SysUtils sysUtils = new SysUtils();
-        String systemDir = sysUtils.getProjectWorkingDir();
-        ArrayList<String> cmdArgument = this.getCmdArguments();
+        String isRelative = directoryService.getDirConfigParamFromUser(FtpConfigItemsV2.isRelativePath, roleId, loginUserDetails);
         String configPublicDir = directoryService.getDirConfigParamFromUser(FtpConfigItemsV2.publicDir, roleId, loginUserDetails);
         String configPublicPostDir = directoryService.getDirConfigParamFromUser(FtpConfigItemsV2.publicPostDir, roleId, loginUserDetails);
         String setPublicDir = configPublicPostDir;
-        if(!AppConstant.TRUE.equals(cmdArgument.get(AppConstant.CMD_LINE_ARG_MIN_SIZE-2))) {
-            setPublicDir = StaticService.getValidPublicDir(systemDir, configPublicDir, configPublicPostDir);
+        if(AppConstant.TRUE.equals(isRelative)) {
+            setPublicDir = StaticService.getValidPublicDir(configPublicDir, configPublicPostDir);
         }
         PathInfo publicDirPathInfo = StaticService.getPathInfo(setPublicDir);
         if (!AppConstant.FOLDER.equals(publicDirPathInfo.getType())) {
