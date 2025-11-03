@@ -32,12 +32,15 @@ public class UiView extends View {
             this.roleId = roleId;
         }
         PageConfig404 pageConfig404 = appConfig.getPageConfig404();
-        uiViewObject = new UiViewObject();
+        uiViewObject = null;
         if (pageConfig404 != null && ftlViewMappingId != null) {
             HashMap<String, UiViewObject> uiViewObjectHashMap = pageConfig404.getFtlViewMapping();
             if (uiViewObjectHashMap != null) {
                 uiViewObject = uiViewObjectHashMap.get(ftlViewMappingId);
             }
+        }
+        if (uiViewObject == null) {
+            uiViewObject = new UiViewObject();
         }
         if (uiViewObject.getForceLogin() != null) {
             forceLogin = uiViewObject.getForceLogin();
