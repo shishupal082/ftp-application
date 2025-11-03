@@ -46,7 +46,7 @@ var GLOBAL = {
     appControlDataPath: "<#if uiViewObject.appControlDataPath??>${uiViewObject.appControlDataPath}<#else></#if>",
     appControlApi: "<#if uiViewObject.appControlApi??>${uiViewObject.appControlApi}<#else></#if>",
     projectHeading: "<#if uiViewObject.projectHeading??>${uiViewObject.projectHeading}<#else></#if>",
-    roleId: "<#if uiViewObject.roleId??>${uiViewObject.roleId}<#else></#if>",
+    roleId: "${roleId}",
     forceLogin: ${forceLogin?c}
 };
 GLOBAL.appVersion = "${appVersion}";

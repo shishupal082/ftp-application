@@ -22,7 +22,6 @@ public class UiViewObject {
     private String appControlApi;
     private String projectHeading;
     private Boolean forceLogin;
-    private String roleId;
     private ArrayList<String> validAppControl;
     private HashMap<String, String> customPageData;
     public UiViewObject() {}
@@ -138,14 +137,6 @@ public class UiViewObject {
         this.forceLogin = forceLogin;
     }
 
-    public String getRoleId() {
-        return roleId;
-    }
-
-    public void setRoleId(String roleId) {
-        this.roleId = roleId;
-    }
-
     public ArrayList<String> getValidAppControl() {
         return validAppControl;
     }
@@ -179,7 +170,6 @@ public class UiViewObject {
                 ", appControlApi='" + appControlApi + '\'' +
                 ", projectHeading='" + projectHeading + '\'' +
                 ", forceLogin=" + forceLogin +
-                ", roleId='" + roleId + '\'' +
                 ", validAppControl=" + validAppControl +
                 ", customPageData=" + customPageData +
                 '}';

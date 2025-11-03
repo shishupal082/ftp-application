@@ -9,6 +9,8 @@ import com.project.ftp.obj.ApiResponse;
 import com.project.ftp.obj.LoginUserDetails;
 import com.project.ftp.obj.PathInfo;
 import com.project.ftp.obj.RequestTcp;
+import com.project.ftp.obj.yamlObj.Page404Entry;
+import com.project.ftp.obj.yamlObj.PageConfig404;
 import com.project.ftp.session.SessionService;
 import com.project.ftp.view.CommonView;
 import com.project.ftp.view.UiView;
@@ -73,7 +75,7 @@ public class RequestService {
                 InputStream inputStream = new FileInputStream(file);
                 r = Response.ok(inputStream);
                 if (pathInfo.getMediaType() == null) {
-                    logger.info("MediaType is not found (download now): {}", pathInfo);
+                    logger.info("getAssets: MediaType is not found (download now): {}", pathInfo);
                     String responseHeader = "attachment; filename=" + pathInfo.getFileName();
                     r.header(HttpHeaders.CONTENT_DISPOSITION, responseHeader);
                 } else {
@@ -81,16 +83,35 @@ public class RequestService {
                 }
                 return r.build();
             } catch (Exception e) {
-                logger.info("Error in loading file: {}", pathInfo);
+                logger.info("getAssets: Error in loading file: {}", pathInfo);
             }
         }
         return new CommonView("page_not_found_404.ftl", appConfig, AppConstant.AppVersion);
+    }
+    public String getUiViewRoleId(LoginUserDetails userDetails, String requestedPath) {
+        String finalRoleId = null;
+        PageConfig404 pageConfig404 = appConfig.getPageConfig404();
+        Page404Entry page404Entry = fileServiceV2.getPageNotFound404Mapping(pageConfig404, requestedPath, userDetails);
+        if (page404Entry != null) {
+            String rollAccess = page404Entry.getRoleAccess();
+            if (StaticService.isValidString(rollAccess)) {
+                if (!userService.isAuthorisedPermission(userDetails, rollAccess)) {
+                    logger.info("unAuthorised page404Entry: {}", page404Entry);
+                    page404Entry = fileServiceV2.getPageNotFound404Mapping(pageConfig404, AppConstant.UN_AUTHORISED, userDetails);
+                }
+            }
+        }
+        if (page404Entry != null) {
+            finalRoleId = page404Entry.getRoleId();
+        }
+        return finalRoleId;
     }
     public Object handleDefaultUrl(HttpServletRequest request, String roleId) {
         String requestedPath = RequestService.getPathUrl(request);
         logger.info("Loading defaultMethod: {}, user: {}",
                 requestedPath, userService.getUserDataForLogging(request));
         LoginUserDetails userDetails = userService.getLoginUserDetails(request);
+        String finalRoleId;
         PathInfo pathInfo = fileServiceV2.getFileResponse(requestedPath, userDetails, roleId);
         Response.ResponseBuilder r;
         if (pathInfo!= null) {
@@ -112,7 +133,8 @@ public class RequestService {
                 }
             } else if (AppConstant.FTL_VIEW_TYPE.equals(pathInfo.getType())) {
                 String ftlViewMappingId = pathInfo.getFileName();
-                return new UiView(appConfig, ftlViewMappingId);
+                finalRoleId = this.getUiViewRoleId(userDetails, requestedPath);
+                return new UiView(appConfig, ftlViewMappingId, finalRoleId);
             } else if (AppConstant.UNAUTHORISED_JSON_DATA.equals(pathInfo.getType())) {
                 return new ApiResponse(ErrorCodes.UNAUTHORIZED_USER).toJsonString();
             }

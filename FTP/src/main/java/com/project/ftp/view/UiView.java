@@ -17,14 +17,20 @@ import java.util.HashMap;
 public class UiView extends View {
     private final static Logger logger = LoggerFactory.getLogger(UiView.class);
     private final String appVersion;
+    private final String roleId;
     private final FtlConfig ftlConfig;
     private boolean forceLogin;
     private UiViewObject uiViewObject;
-    public UiView(AppConfig appConfig, String ftlViewMappingId) {
+    public UiView(AppConfig appConfig, String ftlViewMappingId, String roleId) {
         super(AppConstant.UI_VIEW_FTL_FILENAME);
         ftlConfig = appConfig.getFtlConfig();
         this.appVersion = AppConstant.AppVersion;
         this.forceLogin = true;
+        if (roleId == null) {
+            this.roleId = AppConstant.DEFAULT_ROLE_ID;
+        } else {
+            this.roleId = roleId;
+        }
         PageConfig404 pageConfig404 = appConfig.getPageConfig404();
         uiViewObject = new UiViewObject();
         if (pageConfig404 != null && ftlViewMappingId != null) {
@@ -41,6 +47,11 @@ public class UiView extends View {
     public String getAppVersion() {
         return appVersion;
     }
+
+    public String getRoleId() {
+        return roleId;
+    }
+
     public FtlConfig getFtlConfig() {
         return ftlConfig;
     }

@@ -353,8 +353,8 @@ public class FileServiceV2 {
         }
         return page404Entry;
     }
-    private Page404Entry getFileNotFoundMapping(PageConfig404 pageConfig404, String requestPath, LoginUserDetails userDetails, String roleId) {
-        String publicDir = appConfig.getPublicDir(userDetails, roleId);
+    public Page404Entry getPageNotFound404Mapping(PageConfig404 pageConfig404, String requestPath, LoginUserDetails userDetails) {
+        String publicDir;
         Page404Entry page404Entry;
         if (pageConfig404 != null) {
             HashMap<String, Page404Entry> pageMapping = pageConfig404.getPageMapping404();
@@ -364,6 +364,7 @@ public class FileServiceV2 {
                     if (AppConstant.FTL_VIEW_TYPE.equals(page404Entry.getViewType())) {
                         return page404Entry;
                     } else if (page404Entry.getFileName() != null) {
+                        publicDir = appConfig.getPublicDir(userDetails, page404Entry.getRoleId());
                         if (publicDir != null && fileService.isFile(publicDir + page404Entry.getFileName())) {
                             logger.info("page404Entry found for '{}', {}", requestPath, page404Entry);
                             return page404Entry;
@@ -395,7 +396,7 @@ public class FileServiceV2 {
         }
         if (pathInfo == null || !AppConstant.FILE.equals(pathInfo.getType())) {
             logger.info("pathInfo is not found for '{}': searching default404 page.", filePath);
-            page404Entry = this.getFileNotFoundMapping(pageConfig404, AppConstant.DEFAULT, userDetails, roleId);
+            page404Entry = this.getPageNotFound404Mapping(pageConfig404, AppConstant.DEFAULT, userDetails);
             if (page404Entry != null) {
                 if (AppConstant.FTL_VIEW_TYPE.equals(page404Entry.getViewType())) {
                     pathInfo = new PathInfo();
@@ -407,7 +408,7 @@ public class FileServiceV2 {
             }
             return pathInfo;
         } else if (!this.isFolderAuthorised(userDetails, pageConfig404, pathInfo.getParentFolder(), roleId)) {
-            page404Entry = this.getFileNotFoundMapping(pageConfig404, AppConstant.UN_AUTHORISED, userDetails, roleId);
+            page404Entry = this.getPageNotFound404Mapping(pageConfig404, AppConstant.UN_AUTHORISED, userDetails);
             if (page404Entry != null) {
                 if (AppConstant.FTL_VIEW_TYPE.equals(page404Entry.getViewType())) {
                     pathInfo = new PathInfo();
@@ -431,7 +432,7 @@ public class FileServiceV2 {
         Page404Entry page404Entry = null;
         boolean isFilePathAuthorised = true;
         if (pageConfig404 != null) {
-            page404Entry = this.getFileNotFoundMapping(pageConfig404, filePath, userDetails, roleId);
+            page404Entry = this.getPageNotFound404Mapping(pageConfig404, filePath, userDetails);
             if (page404Entry != null) {
                 String rollAccess = page404Entry.getRoleAccess();
                 if (StaticService.isValidString(rollAccess)) {
@@ -439,7 +440,7 @@ public class FileServiceV2 {
                         filePath = page404Entry.getFileName();
                     } else {
                         logger.info("unAuthorised page404Entry: {}", page404Entry);
-                        page404Entry = this.getFileNotFoundMapping(pageConfig404, AppConstant.UN_AUTHORISED, userDetails, roleId);
+                        page404Entry = this.getPageNotFound404Mapping(pageConfig404, AppConstant.UN_AUTHORISED, userDetails);
                         if (page404Entry != null) {
                             filePath = page404Entry.getFileName();
                         } else {
@@ -466,7 +467,7 @@ public class FileServiceV2 {
                 pathInfo.setType(AppConstant.FTL_VIEW_TYPE);
                 pathInfo.setFileName(page404Entry.getFileName());
             } else {
-                pathInfo = this.getFileFromPublicFolder(filePath, userDetails, pageConfig404, roleId);
+                pathInfo = this.getFileFromPublicFolder(filePath, userDetails, pageConfig404, page404Entry.getRoleId());
             }
         }
         logger.info("getFileResponse: final pathInfo: {}", pathInfo);

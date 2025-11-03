@@ -8,6 +8,7 @@ public class Page404Entry {
     private String roleAccess;
     private String fileName; // It can be publicFilePath or ftlViewMapping.id
     private String viewType; // ftl.view
+    private String roleId;
 
     public String getRoleAccess() {
         return roleAccess;
@@ -33,12 +34,21 @@ public class Page404Entry {
         this.viewType = viewType;
     }
 
+    public String getRoleId() {
+        return roleId;
+    }
+
+    public void setRoleId(String roleId) {
+        this.roleId = roleId;
+    }
+
     @Override
     public String toString() {
         return "Page404Entry{" +
                 "roleAccess='" + roleAccess + '\'' +
                 ", fileName='" + fileName + '\'' +
                 ", viewType='" + viewType + '\'' +
+                ", roleId='" + roleId + '\'' +
                 '}';
     }
 }
