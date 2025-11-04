@@ -86,7 +86,6 @@ public class UserService {
     }
     public void updateFtpConfiguration(HttpServletRequest request, String roleId) throws AppException {
         appConfig.updateFinalFtpConfiguration(appConfig.getFtpConfiguration(), appConfig.getFirstPageConfigItems(), true);
-        String configDataFilePath = appConfig.getDirectoryService().getConfigPathDefault();
         ArrayList<String> rolesConfigPath = StaticService.getRolesConfigPath(appConfig.getFtpConfiguration());
         boolean rolesUpdateStatus = appConfig.getAppToBridge().updateUserRoles(rolesConfigPath);
         appConfig.updatePageConfig404(request, roleId);
@@ -96,7 +95,6 @@ public class UserService {
             logger.info("Error in updating user roles.");
         }
     }
-
     public ApiResponse isValidPermission(LoginUserDetails loginUserDetails,
                                   RequestVerifyPermission verifyPermission) throws AppException  {
         if (verifyPermission == null) {

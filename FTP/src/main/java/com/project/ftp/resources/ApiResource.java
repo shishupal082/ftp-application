@@ -908,6 +908,50 @@ public class ApiResource {
         this.singleThreadingService.clearSingleThread(request, "api");
         return response;
     }
+    @GET
+    @Path("/update_config_v2")
+    @UnitOfWork
+    public ApiResponse updateConfigParameterV2(@Context HttpServletRequest request,
+                                             @QueryParam("role_id") String roleId) throws AppException {
+        this.singleThreadingService.checkSingleThreadStatus(request, "api");
+        logger.info("updateConfigV2 : In, user: {}",
+                userService.getUserDataForLogging(request));
+        ApiResponse response;
+        LoginUserDetails userDetails = userService.getLoginUserDetails(request);
+        userService.logoutUser(request);
+        RequestUserLogin requestUserLogin = new RequestUserLogin();
+        requestUserLogin.setUsername("Admin");
+        response = this.loginOtherUser(request, requestUserLogin);
+        if (response != null) {
+            if (!AppConstant.SUCCESS.equals(response.getStatus())) {
+                logger.info("updateConfigV2 : Out-1");
+                this.singleThreadingService.clearSingleThread(request, "api");
+                return response;
+            }
+        }
+        response = this.updateConfigParameter(request, roleId);
+        if (response != null) {
+            if (!AppConstant.SUCCESS.equals(response.getStatus())) {
+                logger.info("updateConfigV2 : Out-2");
+                this.singleThreadingService.clearSingleThread(request, "api");
+                return response;
+            }
+        }
+        userService.logoutUser(request);
+        requestUserLogin.setUsername(userDetails.getUsername());
+        response = this.loginOtherUser(request, requestUserLogin);
+        if (response != null) {
+            if (!AppConstant.SUCCESS.equals(response.getStatus())) {
+                logger.info("updateConfigV2 : Out-3");
+                this.singleThreadingService.clearSingleThread(request, "api");
+                return response;
+            }
+        }
+        response = new ApiResponse();
+        logger.info("updateConfigV2 : Out-4");
+        this.singleThreadingService.clearSingleThread(request, "api");
+        return response;
+    }
     @POST
     @Path("/aes_encrypt")
     @UnitOfWork

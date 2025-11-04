@@ -9,7 +9,6 @@ import com.project.ftp.FtpConfiguration;
 import com.project.ftp.bridge.mysqlTable.TableDb;
 import com.project.ftp.bridge.mysqlTable.TableMysqlDb;
 import com.project.ftp.bridge.mysqlTable.TableService;
-import com.project.ftp.common.SysUtils;
 import com.project.ftp.event.EventTracking;
 import com.project.ftp.exceptions.AppException;
 import com.project.ftp.exceptions.ErrorCodes;

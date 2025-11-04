@@ -137,7 +137,11 @@
   ],
   [
     "/api/update_config",
-    "Update roles, page404 and env_config parameter [GET]"
+    "Update all config parameter (roles, page404, env_config, ...) [GET]"
+  ],
+  [
+    "/api/update_config_v2",
+    "Update all config parameter v2 (roles, page404, env_config, ...) [GET]"
   ],
   [
     "/api/get_uploaded_csv_data",

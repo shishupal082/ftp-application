@@ -3,7 +3,6 @@ package com.project.ftp;
 import com.project.ftp.config.AppConfig;
 import com.project.ftp.obj.LoginUserDetails;
 import com.project.ftp.obj.PathInfo;
-import com.project.ftp.resources.ApiResource;
 import com.project.ftp.service.FileServiceV2;
 import org.junit.Assert;
 import org.junit.Test;
