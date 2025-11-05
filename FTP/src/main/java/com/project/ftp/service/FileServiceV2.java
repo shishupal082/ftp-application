@@ -306,7 +306,7 @@ public class FileServiceV2 {
     // By default folder is authorised
     private boolean isFolderAuthorised(LoginUserDetails userDetails,
                                        PageConfig404 pageConfig404, String fileParentFolder, String roleId) {
-        String publicDir = appConfig.getPublicDir(userDetails, roleId);
+        String publicDir = appConfig.getDirectoryService().getDirConfigParamFromUser(FtpConfigItemsV2.publicPostDir, roleId, userDetails);
         if (publicDir == null) {
             return  true;
         }
@@ -364,7 +364,7 @@ public class FileServiceV2 {
                     if (AppConstant.FTL_VIEW_TYPE.equals(page404Entry.getViewType())) {
                         return page404Entry;
                     } else if (page404Entry.getFileName() != null) {
-                        publicDir = appConfig.getPublicDir(userDetails, page404Entry.getRoleId());
+                        publicDir = appConfig.getDirectoryService().getDirConfigParamFromUser(FtpConfigItemsV2.publicPostDir, page404Entry.getRoleId(), userDetails);
                         if (publicDir != null && fileService.isFile(publicDir + page404Entry.getFileName())) {
                             logger.info("page404Entry found for '{}', {}", requestPath, page404Entry);
                             return page404Entry;
@@ -379,7 +379,7 @@ public class FileServiceV2 {
     }
     private PathInfo getFileFromPublicFolder(String filePath, LoginUserDetails userDetails,
                                              PageConfig404 pageConfig404, String roleId) {
-        String publicDir = appConfig.getPublicDir(userDetails, roleId);
+        String publicDir = appConfig.getDirectoryService().getDirConfigParamFromUser(FtpConfigItemsV2.publicPostDir, roleId, userDetails);
         if (publicDir == null) {
             return null;
         }

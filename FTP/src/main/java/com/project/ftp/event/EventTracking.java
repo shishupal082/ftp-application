@@ -59,11 +59,11 @@ public class EventTracking {
 
     public void trackSuccessEvent(HttpServletRequest request, EventName eventName, String roleId) {
         LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
-        String configPath = appConfig.getDirectoryService().getConfigPathFromRequest(request, roleId);
+        String configPath = appConfig.getDirectoryService().getConfigPathDefault();
         addEvent.addSuccessEventV2(configPath, loginUserDetails.getUsername(), eventName);
     }
     public void trackSuccessEventV1(LoginUserDetails loginUserDetails, String username, EventName eventName) {
-        String configPath = appConfig.getDirectoryService().getConfigPathFromUser(loginUserDetails, null);
+        String configPath = appConfig.getDirectoryService().getConfigPathDefault();
         addEvent.addSuccessEventV2(configPath, username, eventName);
     }
 
@@ -88,7 +88,7 @@ public class EventTracking {
         if (comment != null) {
             comment = errorCodes.getErrorString() + "," + comment;
         }
-        String configPath = appConfig.getDirectoryService().getConfigPathFromRequest(request, roleId);
+        String configPath = appConfig.getDirectoryService().getConfigPathDefault();
         addEvent.addFailureEvent(configPath, loginUserDetails.getUsername(), eventName, errorCodes, comment);
     }
     public void trackEventV2(String configFilePath, String username, String eventName, String status, String reason, String comment) {
@@ -359,7 +359,7 @@ public class EventTracking {
         sequence.add(errorCodeStr);
         sequence.add(sessionDataStr);
         commentData.put(sessionDataStr, sessionService.getCurrentSessionDataV2(request));
-        String configFilePath = appConfig.getDirectoryService().getConfigPathFromUser(loginUserDetails, null);
+        String configFilePath = appConfig.getDirectoryService().getConfigPathDefault();
         if (loginUserDetails.getLogin()) {
             comment = this.generateCommentString(commentData, sequence);
             addEvent.addSuccessEvent(configFilePath, loginUserDetails.getUsername(), EventName.LOGOUT, comment);
@@ -427,7 +427,7 @@ public class EventTracking {
                                          ErrorCodes errorCodes, String uiUsername, String roleId) {
         LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
         String comment = "filepath="+filepath + ",uiUsername="+uiUsername;
-        String configPath = appConfig.getDirectoryService().getConfigPathFromUser(loginUserDetails, roleId);
+        String configPath = appConfig.getDirectoryService().getConfigPathDefault();
         addEvent.addFailureEvent(configPath, loginUserDetails.getUsername(), EventName.DOWNLOAD_FILE, errorCodes, comment);
     }
 
@@ -488,16 +488,14 @@ public class EventTracking {
     public void trackUIEvent(HttpServletRequest request, RequestEventTracking eventTracking) {
         LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
         String eventNameStr = null, reason = null, comment = null, status = null;
-        String roleId = null;
         if (eventTracking != null) {
             eventNameStr = eventTracking.getEvent();
             status = eventTracking.getStatus();
             reason = eventTracking.getReason();
             comment = eventTracking.getComment();
-            roleId = eventTracking.getRole_id();
         }
         eventNameStr = StaticService.join("_", "ui", eventNameStr);
-        String configFilePath = appConfig.getDirectoryService().getConfigPathFromRequest(request, roleId);
+        String configFilePath = appConfig.getDirectoryService().getConfigPathDefault();
         addEvent.addCommonEvent(configFilePath, loginUserDetails.getUsername(), eventNameStr, status, reason, comment);
     }
 

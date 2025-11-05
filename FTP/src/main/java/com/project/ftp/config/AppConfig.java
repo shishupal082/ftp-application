@@ -9,6 +9,7 @@ import com.project.ftp.FtpConfiguration;
 import com.project.ftp.bridge.mysqlTable.TableDb;
 import com.project.ftp.bridge.mysqlTable.TableMysqlDb;
 import com.project.ftp.bridge.mysqlTable.TableService;
+import com.project.ftp.common.SysUtils;
 import com.project.ftp.event.EventTracking;
 import com.project.ftp.exceptions.AppException;
 import com.project.ftp.exceptions.ErrorCodes;
@@ -17,10 +18,7 @@ import com.project.ftp.mysql.DbDAO;
 import com.project.ftp.obj.AppConfigObj;
 import com.project.ftp.obj.LoginUserDetails;
 import com.project.ftp.obj.PathInfo;
-import com.project.ftp.obj.yamlObj.DatabaseParams;
-import com.project.ftp.obj.yamlObj.FtlConfig;
-import com.project.ftp.obj.yamlObj.OracleDatabaseConfig;
-import com.project.ftp.obj.yamlObj.PageConfig404;
+import com.project.ftp.obj.yamlObj.*;
 import com.project.ftp.parser.YamlFileParser;
 import com.project.ftp.service.*;
 import com.project.ftp.session.SessionData;
@@ -32,6 +30,7 @@ import org.slf4j.LoggerFactory;
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 public class AppConfig {
     private final static Logger logger = LoggerFactory.getLogger(AppConfig.class);
@@ -69,22 +68,41 @@ public class AppConfig {
         this.appToBridge = appToBridge;
     }
 
-    public String getPublicDir(LoginUserDetails loginUserDetails, String roleId) {
-        String isRelative = directoryService.getDirConfigParamFromUser(FtpConfigItemsV2.isRelativePath, roleId, loginUserDetails);
-        String configPublicDir = directoryService.getDirConfigParamFromUser(FtpConfigItemsV2.publicDir, roleId, loginUserDetails);
-        String configPublicPostDir = directoryService.getDirConfigParamFromUser(FtpConfigItemsV2.publicPostDir, roleId, loginUserDetails);
-        String setPublicDir = configPublicPostDir;
-        if(AppConstant.TRUE.equals(isRelative)) {
-            setPublicDir = StaticService.getValidPublicDir(configPublicDir, configPublicPostDir);
+    public void generatePublicDir() {
+        if (ftpConfiguration == null) {
+            logger.info("Error in generatePublicDir: ftpConfiguration is null.");
+            return;
         }
-        PathInfo publicDirPathInfo = StaticService.getPathInfo(setPublicDir);
-        if (!AppConstant.FOLDER.equals(publicDirPathInfo.getType())) {
-            logger.info("calculated publicDir is not a folder: {}", setPublicDir);
+        HashMap<String, DirConfigParam> dirConfigParamHashMap = ftpConfiguration.getDirConfigParam();
+        if (dirConfigParamHashMap == null) {
+            logger.info("Error in generatePublicDir: ftpConfiguration is null.");
+            return;
         }
-        if (AppConstant.FOLDER.equals(publicDirPathInfo.getType())) {
-            return setPublicDir;
+        String roleId, isRelative, publicDir, publicPostDir;
+        PathInfo publicDirPathInfo;
+        DirConfigParam dirConfigParam;
+        SysUtils sysUtils = new SysUtils();
+        String projWorkingDir = sysUtils.getProjectWorkingDir();
+        projWorkingDir = StaticService.replaceBackSlashToSlash(projWorkingDir);
+        for (Map.Entry<String, DirConfigParam> entry : dirConfigParamHashMap.entrySet()) {
+            roleId = entry.getKey();
+            dirConfigParam = entry.getValue();
+            if (roleId == null || roleId.isEmpty() || dirConfigParam == null) {
+                continue;
+            }
+            isRelative = dirConfigParam.getIsRelativePath();
+            publicDir = dirConfigParam.getPublicDir();
+            publicPostDir = dirConfigParam.getPublicPostDir();
+            if(AppConstant.TRUE.equals(isRelative)) {
+                publicPostDir = StaticService.getValidPublicDir(projWorkingDir, publicDir, publicPostDir);
+            }
+            publicDirPathInfo = StaticService.getPathInfo(publicPostDir);
+            if (publicDirPathInfo != null && AppConstant.FOLDER.equals(publicDirPathInfo.getType())) {
+                dirConfigParam.setPublicPostDir(publicPostDir);
+            } else {
+                logger.info("calculated publicDir is not a folder: {}", publicDirPathInfo);
+            }
         }
-        return null;
     }
 
     public HashMap<String, SessionData> getSessionData() {
@@ -253,9 +271,9 @@ public class AppConfig {
         this.setFtpConfiguration(ftpConfiguration);
         logger.info("FTP configuration generate complete: {}", ftpConfiguration);
     }
-    public void updatePageConfig404(HttpServletRequest request, String roleId) {
+    public void updatePageConfig404() {
         YamlFileParser yamlFileParser = new YamlFileParser();
-        String configDataFilePath = this.directoryService.getConfigPathFromRequest(request, roleId);
+        String configDataFilePath = this.directoryService.getConfigPathDefault();
         pageConfig404 = yamlFileParser.getPageConfig404(configDataFilePath, this);
         logger.info("PageConfig404 update complete: {}", pageConfig404);
     }
@@ -383,7 +401,6 @@ public class AppConfig {
         String configPath = args.get(AppConstant.CMD_LINE_ARG_MIN_SIZE-1);
         appConfig.setCmdArguments(args);
         appConfig.updateFinalFtpConfiguration(ftpConfiguration, firstPageConfigItems, false);
-        appConfig.setApiRoleMappingList(ApiRolesMapping.getFinalApiRoleMapping(ftpConfiguration.getApiAuthorisationConfig()));
 //        ShutdownTask shutdownTask = new ShutdownTask(appConfig);
 //        appConfig.setShutdownTask(shutdownTask);
 //        appConfig.setFtpConfiguration(ftpConfiguration);
@@ -458,9 +475,11 @@ public class AppConfig {
         appConfig.setAppToBridge(new AppToBridge(appConfig, ftpConfiguration, eventTracking));
         TableService tableService = new TableService(appConfig, appConfig.getFtpConfiguration(), appConfig.getSingleThreadingService(),
                 appConfig.getMsExcelService(), tableMysqlDb);
-
-        appConfig.updatePageConfig404(null, null);
         appConfig.setTableService(tableService);
+
+        appConfig.updatePageConfig404();
+        appConfig.generatePublicDir();
+        appConfig.setApiRoleMappingList(ApiRolesMapping.getFinalApiRoleMapping(ftpConfiguration.getApiAuthorisationConfig()));
         return appConfig;
     }
     public static AppConfig getAppConfigFromCmdArgs(ArrayList<String> cmdArgument, String source) {

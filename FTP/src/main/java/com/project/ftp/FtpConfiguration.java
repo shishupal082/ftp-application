@@ -23,6 +23,7 @@ import java.util.HashMap;
 
 public class FtpConfiguration extends Configuration {
     private HashMap<String, DirConfigParam> dirConfigParam;
+    private String commonConfigFilePath;
     private String indexPageReRoute;
     private String filenameFormat;
     private String instance;
@@ -71,6 +72,14 @@ public class FtpConfiguration extends Configuration {
 
     public void setDirConfigParam(HashMap<String, DirConfigParam> dirConfigParam) {
         this.dirConfigParam = dirConfigParam;
+    }
+
+    public String getCommonConfigFilePath() {
+        return commonConfigFilePath;
+    }
+
+    public void setCommonConfigFilePath(String commonConfigFilePath) {
+        this.commonConfigFilePath = commonConfigFilePath;
     }
 
     public String getIndexPageReRoute() {
@@ -383,6 +392,12 @@ public class FtpConfiguration extends Configuration {
                 this.dirConfigParam = dirConfigParam1;
             }
         }
+        if (!firstPageConfigItems.contains(FtpConfigItems.commonConfigFilePath)) {
+            String commonConfigFilePath = tempFtpConfiguration.getCommonConfigFilePath();
+            if (commonConfigFilePath != null) {
+                this.commonConfigFilePath = commonConfigFilePath;
+            }
+        }
         if (!firstPageConfigItems.contains(FtpConfigItems.indexPageReRoute)) {
             String indexPageReRoute = tempFtpConfiguration.getIndexPageReRoute();
             if (indexPageReRoute != null) {
@@ -599,6 +614,7 @@ public class FtpConfiguration extends Configuration {
     public String toString() {
         return "FtpConfiguration{" +
                 "dirConfigParam=" + dirConfigParam +
+                ", commonConfigFilePath='" + commonConfigFilePath + '\'' +
                 ", indexPageReRoute='" + indexPageReRoute + '\'' +
                 ", filenameFormat='" + filenameFormat + '\'' +
                 ", instance='" + instance + '\'' +

@@ -4,7 +4,10 @@ import com.project.ftp.config.ApiIdentifier;
 import com.project.ftp.config.ApiRoleAccess;
 import com.project.ftp.config.AppConfig;
 import com.project.ftp.config.AppConstant;
+import com.project.ftp.obj.UiViewObject;
 import com.project.ftp.obj.yamlObj.DirConfigParam;
+import com.project.ftp.obj.yamlObj.Page404Entry;
+import com.project.ftp.obj.yamlObj.PageConfig404;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -78,5 +81,14 @@ public class TestAppConfig {
         HashMap<String, DirConfigParam> dirConfigParamHashMap = ftpConfiguration.getDirConfigParam();
         DirConfigParam dirConfigParam = dirConfigParamHashMap.get(AppConstant.DEFAULT_ROLE_ID);
         Assert.assertEquals("app_static_data.json", dirConfigParam.getStaticDataFilename());
+    }
+    @Test
+    public void testApp404Config() {
+        AppConfig appConfig = this.getAppConfig(false);
+        PageConfig404 pageConfig404 = appConfig.getPageConfig404();
+        HashMap<String, Page404Entry> pageMapping404 = pageConfig404.getPageMapping404();
+        HashMap<String, UiViewObject> ftlViewMapping = pageConfig404.getFtlViewMapping();
+        Assert.assertNotNull(pageMapping404);
+        Assert.assertNotNull(ftlViewMapping);
     }
 }

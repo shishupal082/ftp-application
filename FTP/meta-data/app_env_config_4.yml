@@ -1,7 +1,7 @@
 dirConfigParam:
   defaultRole:
     fileSaveDir: "D:/workspace/project/ftp-app/saved-files/"
-    configDataFilePath: "D:/workspace/ftp-application/FTP/meta-data/config-files/"
+    configDataFilePath: "D:/workspace/ftp-application/FTP/meta-data/config-files-custom/"
     staticDataFilename: "app_static_data.json"
     fileMappingConfigFilePath: "D:/workspace/ftp-application/FTP/meta-data/config-files/file-mapping-config/file-mapping-config.yml"
     splitTextFileConfigPath: "D:/workspace/ftp-application/FTP/meta-data/config-files/file-mapping-config/split-file-config.yml"
@@ -18,8 +18,6 @@ dirConfigParam:
     publicPostDir: "/project"
   prodRole:
     fileSaveDir: "D:/workspace/project/ftp-app/saved-files/"
-    configDataFilePath: "D:/workspace/ftp-application/FTP/meta-data/config-files/"
-    staticDataFilename: "app_static_data.json"
     fileMappingConfigFilePath: "F:/ftp-app/OneDrive/ftp/app-data/config-files-v2/env_config/file-mapping-config/config-file/file-mapping-config.yml"
     splitTextFileConfigPath: "D:/workspace/ftp-application/FTP/meta-data/config-files/file-mapping-config/split-file-config.yml"
     standAloneConfigPath:

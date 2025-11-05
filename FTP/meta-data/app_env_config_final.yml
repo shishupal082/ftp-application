@@ -51,7 +51,7 @@ singleThreadingEnable: false
 dirConfigParam:
   defaultRole:
     fileSaveDir: "D:/workspace/project/ftp-app/saved-files/"
-    configDataFilePath: "D:/workspace/ftp-application/FTP/meta-data/config-files/"
+    configDataFilePath: "D:/workspace/ftp-application/FTP/meta-data/config-files-custom/"
     staticDataFilename: "app_static_data.json"
     fileMappingConfigFilePath: "D:/workspace/ftp-application/FTP/meta-data/config-files/file-mapping-config/file-mapping-config.yml"
     splitTextFileConfigPath: "D:/workspace/ftp-application/FTP/meta-data/config-files/file-mapping-config/split-file-config.yml"
@@ -66,6 +66,8 @@ dirConfigParam:
     publicDir: "../.."
     publicPostDir: "/project"
 
+
+commonConfigFilePath: "D:/workspace/ftp-application/FTP/meta-data/config-files/"
 
 #  forgotPasswordMessage: "Forgot password request submitted, Please check your email."
 forgotPasswordMessage: "Forgot password request submitted, Please create password."

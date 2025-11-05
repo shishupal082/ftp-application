@@ -72,7 +72,7 @@ public class DirectoryService {
         if (dirConfigParam == null || dirConfigParamDefault == null) {
             return null;
         }
-        String result = null, r1 = null, r2 = null;
+        String r1 = null, r2 = null;
         switch (ftpConfigItemsV2) {
             case fileSaveDir:
                 r1 = dirConfigParam.getFileSaveDir();
@@ -106,21 +106,15 @@ public class DirectoryService {
                 r1 = dirConfigParam.getAssetsDir();
                 r2 = dirConfigParamDefault.getAssetsDir();
                 break;
-            case publicDir:
-                r1 = dirConfigParam.getPublicDir();
-                r2 = dirConfigParamDefault.getPublicDir();
-                break;
             case publicPostDir:
                 r1 = dirConfigParam.getPublicPostDir();
                 r2 = dirConfigParamDefault.getPublicPostDir();
                 break;
         }
         if (r1 == null || r1.isEmpty()) {
-            result = r2;
-        } else {
-            result = r1;
+            return r2;
         }
-        return result;
+        return r1;
     }
     public ArrayList<String> getDirConfigParamFromUserV2(FtpConfigItemsV2 ftpConfigItemsV2, String roleId, LoginUserDetails loginUserDetails) {
         ArrayList<DirConfigParam> dirConfigParams = this.getDirConfigParam(loginUserDetails, roleId);
@@ -132,7 +126,7 @@ public class DirectoryService {
         if (dirConfigParam == null || dirConfigParamDefault == null) {
             return null;
         }
-        ArrayList<String> result = null, r1 = null, r2 = null;
+        ArrayList<String> r1 = null, r2 = null;
         switch (ftpConfigItemsV2) {
             case standAloneConfigPath:
                 r1 = dirConfigParam.getStandAloneConfigPath();
@@ -144,11 +138,9 @@ public class DirectoryService {
                 break;
         }
         if (r1 == null || r1.isEmpty()) {
-            result = r2;
-        } else {
-            result = r1;
+            return r2;
         }
-        return result;
+        return r1;
     }
 
     public String getDirConfigParamFromRequest(HttpServletRequest request, FtpConfigItemsV2 ftpConfigItemsV2, String roleId) {
@@ -159,13 +151,10 @@ public class DirectoryService {
         LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
         return this.getDirConfigParamFromUserV2(ftpConfigItemsV2, roleId, loginUserDetails);
     }
-    public String getConfigPathFromRequest(HttpServletRequest request, String roleId) {
-        return this.getDirConfigParamFromRequest(request, FtpConfigItemsV2.configDataFilePath, roleId);
-    }
-    public String getConfigPathFromUser(LoginUserDetails loginUserDetails, String roleId) {
-        return this.getDirConfigParamFromUser(FtpConfigItemsV2.configDataFilePath, roleId, loginUserDetails);
-    }
     public String getConfigPathDefault() {
-        return this.getDirConfigParamFromRequest(null, FtpConfigItemsV2.configDataFilePath, null);
+        if (ftpConfiguration != null) {
+            return ftpConfiguration.getCommonConfigFilePath();
+        }
+        return null;
     }
 }

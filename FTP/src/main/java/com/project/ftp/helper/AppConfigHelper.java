@@ -12,16 +12,6 @@ import java.util.ArrayList;
 
 public class AppConfigHelper {
     private final static Logger logger = LoggerFactory.getLogger(AppConfigHelper.class);
-    public static String getStaticDataFilename(final AppConfig appConfig, HttpServletRequest request, String roleId) {
-        String resultFilename = null;
-        boolean isValidFilename = false;
-        resultFilename = appConfig.getDirectoryService().getDirConfigParamFromRequest(request, FtpConfigItemsV2.staticDataFilename, roleId);
-        isValidFilename = StaticService.isValidString(resultFilename);
-        if (isValidFilename) {
-            return resultFilename;
-        }
-        return AppConstant.APP_STATIC_DATA_FILENAME;
-    }
     public static String getUserDataFilename(final AppConfig appConfig) {
         String resultFilename = null;
         boolean isValidFilename = false;

@@ -15,7 +15,7 @@
     <title><#if uiViewObject.pageTitle??>${uiViewObject.pageTitle}<#else></#if></title>
     <#if uiViewObject.cssFiles??>
     <#list uiViewObject.cssFiles as css_file>
-    <link rel="stylesheet" type="text/css" href="${css_file}?v=${appVersion}"/>
+    <link rel="stylesheet" type="text/css" href="${css_file}?v=${appVersion}&role_id=${roleId}"/>
     </#list>
     </#if>
     <#if ftlConfig.tempGaEnable??>
@@ -36,7 +36,7 @@
     <noscript>You need to enable JavaScript to run this app.</noscript>
     <div id="root"><center>Loading...</center></div>
 <#if uiViewObject.jQueryFilePath??>
-<script type="text/javascript" src="${uiViewObject.jQueryFilePath}?v=${appVersion}"></script>
+<script type="text/javascript" src="${uiViewObject.jQueryFilePath}?v=${appVersion}&role_id=${roleId}"></script>
 </#if>
 <script type="text/javascript">
 var GLOBAL = {
@@ -84,7 +84,7 @@ window.GLOBAL = GLOBAL;
 </script>
 <#if uiViewObject.jsFiles??>
 <#list uiViewObject.jsFiles as js_file>
-<script type="text/javascript" src="${js_file}?v=${appVersion}"></script>
+<script type="text/javascript" src="${js_file}?v=${appVersion}&role_id=${roleId}"></script>
 </#list>
 </#if>
 </body>

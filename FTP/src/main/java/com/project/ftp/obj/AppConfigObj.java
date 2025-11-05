@@ -55,6 +55,13 @@ public class AppConfigObj {
                     return ftpConfiguration.getDirConfigParam() != null;
                 }
                 break;
+            case commonConfigFilePath:
+                if (clear) {
+                    ftpConfiguration.setCommonConfigFilePath(null);
+                } else {
+                    return ftpConfiguration.getCommonConfigFilePath() != null;
+                }
+                break;
             case indexPageReRoute:
                 if (clear) {
                     ftpConfiguration.setIndexPageReRoute(null);

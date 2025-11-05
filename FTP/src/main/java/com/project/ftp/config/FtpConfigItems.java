@@ -5,6 +5,7 @@ import java.util.Arrays;
 
 public enum FtpConfigItems {
     dirConfigParam,
+    commonConfigFilePath,
     indexPageReRoute,
     filenameFormat,
     instance,

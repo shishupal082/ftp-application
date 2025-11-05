@@ -198,22 +198,19 @@ public class StaticService {
         AesEncryption aesEncryption = new AesEncryption(salt);
         return aesEncryption.encrypt(password);
     }
-    public static ArrayList<String> getRolesConfigPath(final FtpConfiguration ftpConfiguration) {
-        ArrayList<String> rolesConfigPath = new ArrayList<>();
-        DirConfigParam defaultDirConfigParam = null;
-        String configDir = null;
-        if (ftpConfiguration != null) {
-            HashMap<String, DirConfigParam> dirConfigParamHashMap = ftpConfiguration.getDirConfigParam();
-            if (dirConfigParamHashMap != null) {
-                defaultDirConfigParam = dirConfigParamHashMap.get(AppConstant.DEFAULT_ROLE_ID);
-                if (defaultDirConfigParam != null) {
-                    configDir = defaultDirConfigParam.getConfigDataFilePath();
-                }
-            }
+    public static ArrayList<String> getRolesConfigPath(final AppConfig appConfig) {
+        if (appConfig == null) {
+            return null;
         }
+        FtpConfiguration ftpConfiguration = appConfig.getFtpConfiguration();
+        if (ftpConfiguration == null) {
+            return null;
+        }
+        String configDir = appConfig.getDirectoryService().getConfigPathDefault();
         if (configDir == null) {
             return null;
         }
+        ArrayList<String> rolesConfigPath = new ArrayList<>();
         if (ftpConfiguration.getRolesFileName() != null) {
             ArrayList<String> rolesFileName = ftpConfiguration.getRolesFileName();
             if (!rolesFileName.isEmpty()) {
@@ -466,9 +463,7 @@ public class StaticService {
     public static boolean isDirectory(String dir) {
         return fileService.isDirectory(dir);
     }
-    public static String getValidPublicDir(String orgPublicDir, String publicPostDir) {
-        String systemDir = sysUtils.getProjectWorkingDir();
-        systemDir = StaticService.replaceBackSlashToSlash(systemDir);
+    public static String getValidPublicDir(String systemDir, String orgPublicDir, String publicPostDir) {
         if (orgPublicDir == null) {
             orgPublicDir = "";
         }

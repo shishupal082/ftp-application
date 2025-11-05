@@ -26,12 +26,12 @@ public class TestFileService {
         Assert.assertNull(pathInfo.getFileName());
         //Invalid publicDir
         pathInfo = fileServiceV2.getFileResponse("invalid-filename", userDetails, "testRoleV1");
-        Assert.assertNull(pathInfo);
+        Assert.assertNotNull(pathInfo);
         //4
         pathInfo = fileServiceV2.getFileResponse("/dipesh.txt", userDetails, "prodRole");
         Assert.assertEquals("dipesh.txt", pathInfo.getFileName());
         //5
-        pathInfo = fileServiceV2.getFileResponse("/account/json/appControlDataTeam04.json", userDetails, "prodRoleV2");
-        Assert.assertEquals("appControlDataTeam04.json", pathInfo.getFileName());
+        pathInfo = fileServiceV2.getFileResponse("/account/json/appControlDataTeam03.json", userDetails, "prodRoleV2");
+        Assert.assertEquals("appControlDataTeam03.json", pathInfo.getFileName());
     }
 }

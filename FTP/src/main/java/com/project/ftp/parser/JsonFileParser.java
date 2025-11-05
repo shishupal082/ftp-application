@@ -2,6 +2,7 @@ package com.project.ftp.parser;
 
 import com.project.ftp.config.AppConfig;
 import com.project.ftp.config.AppConstant;
+import com.project.ftp.config.FtpConfigItemsV2;
 import com.project.ftp.exceptions.AppException;
 import com.project.ftp.exceptions.ErrorCodes;
 import com.project.ftp.helper.AppConfigHelper;
@@ -22,8 +23,15 @@ public class JsonFileParser {
     }
     public Object getJsonObject(HttpServletRequest request, String roleId) throws AppException {
         Object object = null;
-        String filepath = appConfig.getDirectoryService().getConfigPathFromRequest(request, roleId);
-        filepath += AppConfigHelper.getStaticDataFilename(appConfig, request, roleId);
+        String configDataFilePath = appConfig.getDirectoryService().getDirConfigParamFromRequest(request, FtpConfigItemsV2.configDataFilePath, roleId);
+        if (configDataFilePath == null) {
+            return null;
+        }
+        String staticDataFileName = appConfig.getDirectoryService().getDirConfigParamFromRequest(request, FtpConfigItemsV2.staticDataFilename, roleId);
+        if (StaticService.isInValidString(staticDataFileName)) {
+            staticDataFileName = AppConstant.APP_STATIC_DATA_FILENAME;
+        }
+        String filepath = configDataFilePath + staticDataFileName;
         PathInfo pathInfo = StaticService.getPathInfo(filepath);
         if (!AppConstant.FILE.equals(pathInfo.getType())) {
             logger.info("Requested file is not found: {}", filepath);

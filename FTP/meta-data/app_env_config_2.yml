@@ -22,6 +22,9 @@ forgotPasswordMessage: "Forgot password request submitted, Please create passwor
 loadRoleStatusOnPageLoad: "FromRoleConfig" #"isAdminUser" #FromRoleConfig
 forgotPasswordEnable: true
 
+commonConfigFilePath: "D:/workspace/ftp-application/FTP/meta-data/config-files/"
+
+
 rolesFileName:
   - roles/roles.yml
   - roles/roles_2.yml

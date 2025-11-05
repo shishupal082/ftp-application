@@ -84,11 +84,12 @@ public class UserService {
     public boolean isLoginUserAdmin(LoginUserDetails loginUserDetails)  {
         return this.isAuthorised(loginUserDetails, ApiRoleAccess.IS_ADMIN_USER);
     }
-    public void updateFtpConfiguration(HttpServletRequest request, String roleId) throws AppException {
+    public void updateFtpConfiguration() throws AppException {
         appConfig.updateFinalFtpConfiguration(appConfig.getFtpConfiguration(), appConfig.getFirstPageConfigItems(), true);
-        ArrayList<String> rolesConfigPath = StaticService.getRolesConfigPath(appConfig.getFtpConfiguration());
+        ArrayList<String> rolesConfigPath = StaticService.getRolesConfigPath(appConfig);
         boolean rolesUpdateStatus = appConfig.getAppToBridge().updateUserRoles(rolesConfigPath);
-        appConfig.updatePageConfig404(request, roleId);
+        appConfig.updatePageConfig404();
+        appConfig.generatePublicDir();
         appConfig.setApiRoleMappingList(ApiRolesMapping.getFinalApiRoleMapping(
                 appConfig.getFtpConfiguration().getApiAuthorisationConfig()));
         if (!rolesUpdateStatus) {
@@ -151,7 +152,7 @@ public class UserService {
         return tempResult;
     }
     public ArrayList<RelatedUserData> getAllUser(LoginUserDetails loginUserDetails, HttpServletRequest request, String roleId) throws AppException {
-        String configDataFilePath = appConfig.getDirectoryService().getConfigPathFromRequest(request, roleId);
+        String configDataFilePath = appConfig.getDirectoryService().getConfigPathDefault();
         if (!this.isAuthorised(loginUserDetails, ApiRoleAccess.IS_DEV_USER)) {
             return this.getRelatedUsersData(loginUserDetails, configDataFilePath);
         }
@@ -199,7 +200,7 @@ public class UserService {
         if (this.isAuthorised(loginUserDetails, ApiRoleAccess.IS_RELATED_USER_RESPONSE_AS_ALL_USER)) {
             return this.getAllUser(loginUserDetails, request, roleId);
         } else {
-            String configDataFilePath = appConfig.getDirectoryService().getConfigPathFromRequest(request, roleId);
+            String configDataFilePath = appConfig.getDirectoryService().getConfigPathDefault();
             return this.getRelatedUsersData(loginUserDetails, configDataFilePath);
         }
     }
@@ -401,7 +402,7 @@ public class UserService {
     public LoginUserDetailsV2 getLoginUserDetailsV2Data(HttpServletRequest request, String source)  {
         LoginUserDetails loginUserDetails = this.getLoginUserDetails(request);
         LoginUserDetailsV2 loginUserDetailsV2 = new LoginUserDetailsV2(loginUserDetails);
-        String configDataFilePath = appConfig.getDirectoryService().getConfigPathFromRequest(request, AppConstant.DEFAULT_ROLE_ID);
+        String configDataFilePath = appConfig.getDirectoryService().getConfigPathDefault();
         if (loginUserDetailsV2.isLogin()) {
             loginUserDetailsV2.setDisplayName(this.getUserDisplayName(loginUserDetailsV2.getUsername(), configDataFilePath));
             this.setUserRoles(loginUserDetailsV2, source);
@@ -573,8 +574,7 @@ public class UserService {
     }
     public LoginUserDetails loginUser(HttpServletRequest request, RequestUserLogin userLogin) throws AppException {
         inputValidate.validateLoginRequest(userLogin);
-        String roleId = userLogin.getRoleId();
-        String configDataFilePath = appConfig.getDirectoryService().getConfigPathFromRequest(request, roleId);
+        String configDataFilePath = appConfig.getDirectoryService().getConfigPathDefault();
         MysqlUser user = this.isUserBlocked(userLogin.getUsername(), configDataFilePath);
         String encryptedPassword = StaticService.encryptPassword(user.getPasscode(), userLogin.getPassword());
         logger.info("loginUser encrypted password: {}", encryptedPassword);
@@ -605,7 +605,7 @@ public class UserService {
             logger.info("Social login error, Invalid tokenId.");
             throw new AppException(ErrorCodes.SOCIAL_LOGIN_INVALID_ID_TOKEN);
         }
-        String configDataFilePath = appConfig.getDirectoryService().getConfigPathFromRequest(request, loginSocial.getRoleId());
+        String configDataFilePath = appConfig.getDirectoryService().getConfigPathDefault();
         MysqlUser user = this.getUserByEmail(email, configDataFilePath);
         if (user == null) {
             ErrorCodes errorCodes = ErrorCodes.SOCIAL_LOGIN_EMAIL_NOT_FOUND;
@@ -624,7 +624,7 @@ public class UserService {
         if (userRegister != null) {
             roleId = userRegister.getRoleId();
         }
-        String configDataFilePath = appConfig.getDirectoryService().getConfigPathFromRequest(request, roleId);
+        String configDataFilePath = appConfig.getDirectoryService().getConfigPathDefault();
         MysqlUser user = this.isValidRegisterRequest(userRegister, configDataFilePath);
         boolean createUserStatus = this.register(user, configDataFilePath);
         if (!createUserStatus) {
@@ -648,8 +648,8 @@ public class UserService {
         String newPassword = changePassword.getNew_password();
         String confirmPassword = changePassword.getConfirm_password();
         LoginUserDetails loginUserDetails = this.getLoginUserDetails(request);
-        String configDataFilePath = appConfig.getDirectoryService().getConfigPathFromUser(loginUserDetails, changePassword.getRoleId());
-        MysqlUser user = this.isUserBlocked(loginUserDetails.getUsername(), configDataFilePath);
+        String commonConfigFilePath = appConfig.getDirectoryService().getConfigPathDefault();
+        MysqlUser user = this.isUserBlocked(loginUserDetails.getUsername(), commonConfigFilePath);
 
         String encryptedOldPassword = StaticService.encryptPassword(user.getPasscode(), oldPassword);
         String encryptedNewPassword = StaticService.encryptPassword(user.getPasscode(), newPassword);
@@ -669,7 +669,7 @@ public class UserService {
             throw new AppException(ErrorCodes.PASSWORD_CHANGE_COUNT_EXCEED);
         }
         user.setPassword(encryptedNewPassword);
-        boolean changePasswordStatus = this.changePassword(user, configDataFilePath);
+        boolean changePasswordStatus = this.changePassword(user, commonConfigFilePath);
         if (!changePasswordStatus) {
             logger.info("Error in updating password.");
             throw new AppException(ErrorCodes.RUNTIME_ERROR);
@@ -697,7 +697,7 @@ public class UserService {
         String email = forgotPassword.getEmail();
         inputValidate.checkMobile(mobile);
         inputValidate.checkEmail(email);
-        String configDataFilePath = appConfig.getDirectoryService().getConfigPathFromRequest(request, forgotPassword.getRoleId());
+        String configDataFilePath = appConfig.getDirectoryService().getConfigPathDefault();
         MysqlUser user = this.isUserBlocked(username, configDataFilePath);
         this.errorIfNotRegistered(user);
         if (!mobile.equals(user.getMobile())) {
@@ -727,7 +727,7 @@ public class UserService {
         String newPassword = createPassword.getNewPassword();
         String confirmPassword = createPassword.getConfirmPassword();
         inputValidate.checkNewPassword(newPassword);
-        String configDataFilePath = appConfig.getDirectoryService().getConfigPathFromRequest(request, createPassword.getRoleId());
+        String configDataFilePath = appConfig.getDirectoryService().getConfigPathDefault();
         MysqlUser user = this.isUserBlocked(username, configDataFilePath);
         this.errorIfNotRegistered(user);
         ArrayList<UserMethod> validMethods = new ArrayList<>();
@@ -773,7 +773,7 @@ public class UserService {
             logger.info("Username: {}, is not part of dependent users: {}", username, relatedUsers);
             throw new AppException(ErrorCodes.UNAUTHORIZED_USER);
         }
-        String configDataFilePath = appConfig.getDirectoryService().getConfigPathFromRequest(request, requestResetCount.getRoleId());
+        String configDataFilePath = appConfig.getDirectoryService().getConfigPathDefault();
         MysqlUser user = this.isUserBlocked(username, configDataFilePath);
         ArrayList<String> allowedMethods = new ArrayList<>();
         allowedMethods.add(UserMethod.REGISTER_ERROR.getUserMethod());

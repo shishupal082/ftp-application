@@ -896,7 +896,7 @@ public class ApiResource {
         ApiResponse response;
         try {
             authService.checkApiAuthorisation(request, ApiIdentifier.UPDATE_CONFIG);
-            userService.updateFtpConfiguration(request, roleId);
+            userService.updateFtpConfiguration();
             response = new ApiResponse();
             eventTracking.trackSuccessEvent(request, EventName.UPDATE_ROLES_CONFIG, roleId);
         } catch (AppException ae) {

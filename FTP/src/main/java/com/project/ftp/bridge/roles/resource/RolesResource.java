@@ -30,7 +30,7 @@ public class RolesResource {
     private RolesService getRolesService() {
         EmailConfig emailConfig = appConfig.getFtpConfiguration().getEmailConfig();
         BridgeConfig bridgeConfig = new BridgeConfig(emailConfig, appConfig.getFtpConfiguration().getCreatePasswordEmailConfig());
-        ArrayList<String> rolesConfigPath = StaticService.getRolesConfigPath(appConfig.getFtpConfiguration());
+        ArrayList<String> rolesConfigPath = StaticService.getRolesConfigPath(appConfig);
         return new RolesService(bridgeConfig, rolesConfigPath);
     }
     public boolean isRoleAuthorised(String apiName, String userName) {
