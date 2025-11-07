@@ -919,8 +919,9 @@ public class ApiResource {
         ApiResponse response;
         LoginUserDetails userDetails = userService.getLoginUserDetails(request);
         userService.logoutUser(request);
+        String adminUsername = userService.getTempConfigParameter(AppConstant.ADMIN_USERNAME);
         RequestUserLogin requestUserLogin = new RequestUserLogin();
-        requestUserLogin.setUsername("Admin");
+        requestUserLogin.setUsername(adminUsername);
         response = this.loginOtherUser(request, requestUserLogin);
         if (response != null) {
             if (!AppConstant.SUCCESS.equals(response.getStatus())) {

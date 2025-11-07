@@ -326,7 +326,7 @@ public class UserService {
         return loginUserName != null && !loginUserName.isEmpty();
     }
 
-    private String getTempConfigParameter(String param) {
+    public String getTempConfigParameter(String param) {
         if (StaticService.isInValidString(param)) {
             return null;
         }

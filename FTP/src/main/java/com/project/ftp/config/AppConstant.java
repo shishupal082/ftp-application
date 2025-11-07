@@ -53,6 +53,7 @@ public class AppConstant {
     public static final String FAVICON_ICO_PATH = "favicon.ico";
     public static final String INDEX_PAGE_RE_ROUTE = "/login";
     public static final String ASSETS_DIR = "/assets-dir/";
+    public static final String DEFAULT = "default";
     public static final String DEFAULT_ROLE_ID = "defaultRole";
     public static final String APP_STATIC_DATA_FILENAME = "app_static_data.json";
     public static final String USER_DATA_FILENAME = "user_data.csv";
@@ -61,12 +62,12 @@ public class AppConstant {
     public static final String UI_VIEW_FTL_FILENAME = "ui_view.ftl";
     public static final String FILE_NOT_FOUND_MAPPING = "file_not_found_config.yml";
     public static final String ROLES = "roles.yml";
-    public static final String DEFAULT = "default";
     public static final String TRASH = "trash";
     public static final String TEMP = "temp";
     public static final String NOW = "now";
     public static final String USERNAME = "username";
     public static final String ORG_USERNAME = "orgUsername";
+    public static final String ADMIN_USERNAME = "adminUsername";
     public static final String UN_AUTHORISED = "un_authorised";
     public static final String FromRoleConfig = "FromRoleConfig";
     public static final String FromEnvConfig = "FromEnvConfig";

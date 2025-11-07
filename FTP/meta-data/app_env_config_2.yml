@@ -260,3 +260,4 @@ apiAuthorisationConfig:
 tempConfig:
   orgUsername: Group1Login
   username: Admin
+  adminUsername: Admin

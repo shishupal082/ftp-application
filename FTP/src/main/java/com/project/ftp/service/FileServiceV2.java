@@ -403,6 +403,8 @@ public class FileServiceV2 {
                     pathInfo.setType(AppConstant.FTL_VIEW_TYPE);
                     pathInfo.setFileName(page404Entry.getFileName());
                 } else {
+                    publicDir = appConfig.getDirectoryService().getDirConfigParamFromUser(
+                            FtpConfigItemsV2.publicPostDir, page404Entry.getRoleId(), userDetails);
                     pathInfo = fileService.getPathInfo(publicDir + page404Entry.getFileName());
                 }
             }
@@ -415,6 +417,8 @@ public class FileServiceV2 {
                     pathInfo.setType(AppConstant.FTL_VIEW_TYPE);
                     pathInfo.setFileName(page404Entry.getFileName());
                 } else {
+                    publicDir = appConfig.getDirectoryService().getDirConfigParamFromUser(
+                            FtpConfigItemsV2.publicPostDir, page404Entry.getRoleId(), userDetails);
                     pathInfo = fileService.getPathInfo(publicDir + page404Entry.getFileName());
                 }
             } else {
