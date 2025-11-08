@@ -477,7 +477,6 @@ public class AppConfig {
         appConfig.setTableService(tableService);
         appConfig.updatePageConfig404();
         appConfig.generatePublicDir();
-        appConfig.getAppToBridge().setRoleMappingApp();
         appConfig.getAppToBridge().updateUserRoles();
         appConfig.setApiRoleMappingList(ApiRolesMapping.getFinalApiRoleMapping(ftpConfiguration.getApiAuthorisationConfig()));
         return appConfig;

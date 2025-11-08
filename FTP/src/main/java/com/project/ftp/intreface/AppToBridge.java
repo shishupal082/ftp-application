@@ -47,13 +47,28 @@ public class AppToBridge implements AppToBridgeInterface {
         this.rolesResource = new RolesResource(appConfig, eventTracking);
     }
     @Override
-    public void setRoleMappingApp() {
-        rolesResource.setRolesMappingApp();
+    public boolean updateUserRoles() {
+        return rolesResource.updateRoles();
     }
     @Override
-    public boolean updateUserRoles() {
-        ArrayList<String> rolesConfigPath = StaticService.getRolesConfigPath(appConfig);
-        return rolesResource.updateRoles(rolesConfigPath);
+    public boolean isAuthorisedApi(String apiName, String userName) {
+        return rolesResource.isRoleAuthorised(apiName, userName);
+    }
+    @Override
+    public ArrayList<String> getActiveRoleIdByUserName(String username) {
+        return rolesResource.getActiveRoleIdByUserName(username);
+    }
+    @Override
+    public ArrayList<String> getRelatedUsers(String username) {
+        return rolesResource.getRelatedUsers(username);
+    }
+    @Override
+    public ArrayList<String> getAllUsersName() {
+        return rolesResource.getAllUsersName();
+    }
+    @Override
+    public Object getRolesConfig() {
+        return rolesResource.getRolesConfig();
     }
     @Override
     public void sendCreatePasswordOtpEmail(MysqlUser user, String configDataFilePath) {
@@ -76,26 +91,6 @@ public class AppToBridge implements AppToBridgeInterface {
             request = new BridgeRequestSendCreatePasswordOtp(username, email, name, otp);
             bridgeResource.sendCreatePasswordOtpEmail(request, configDataFilePath);
         }
-    }
-    @Override
-    public boolean isAuthorisedApi(String apiName, String userName) {
-        return rolesResource.isRoleAuthorised(apiName, userName);
-    }
-    @Override
-    public ArrayList<String> getActiveRoleIdByUserName(String username) {
-        return rolesResource.getActiveRoleIdByUserName(username);
-    }
-    @Override
-    public ArrayList<String> getRelatedUsers(String username) {
-        return rolesResource.getRelatedUsers(username);
-    }
-    @Override
-    public ArrayList<String> getAllUsersName() {
-        return rolesResource.getAllUsersName();
-    }
-    @Override
-    public Object getRolesConfig() {
-        return rolesResource.getRolesConfig();
     }
     @Override
     public String getTcpResponse(String tcpId, String data) {
