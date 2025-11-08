@@ -86,8 +86,7 @@ public class UserService {
     }
     public void updateFtpConfiguration() throws AppException {
         appConfig.updateFinalFtpConfiguration(appConfig.getFtpConfiguration(), appConfig.getFirstPageConfigItems(), true);
-        ArrayList<String> rolesConfigPath = StaticService.getRolesConfigPath(appConfig);
-        boolean rolesUpdateStatus = appConfig.getAppToBridge().updateUserRoles(rolesConfigPath);
+        boolean rolesUpdateStatus = appConfig.getAppToBridge().updateUserRoles();
         appConfig.updatePageConfig404();
         appConfig.generatePublicDir();
         appConfig.setApiRoleMappingList(ApiRolesMapping.getFinalApiRoleMapping(

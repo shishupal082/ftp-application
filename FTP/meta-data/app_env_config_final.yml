@@ -287,4 +287,4 @@ apiAuthorisationConfig:
 tempConfig:
   orgUsername: Username
   username: Username
-  adminUsername: AdminUser
+  devUsername: AdminUser

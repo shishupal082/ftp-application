@@ -14,7 +14,8 @@ import java.util.HashMap;
 public interface AppToBridgeInterface {
     void sendCreatePasswordOtpEmail(MysqlUser user, String configDataFilePath);
     boolean isAuthorisedApi(String apiName, String userName);
-    boolean updateUserRoles(ArrayList<String> rolesConfigPath);
+    void setRoleMappingApp();
+    boolean updateUserRoles();
     ArrayList<String> getActiveRoleIdByUserName(String username);
     ArrayList<String> getRelatedUsers(String username);
     ArrayList<String> getAllUsersName();

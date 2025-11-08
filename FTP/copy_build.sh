@@ -24,7 +24,11 @@ copyFiles() {
 #    echo "Dir: ${savedFilesDir} created.";
 #  fi
 
-  rm -rf ${appVersionDir}"*"
+  rm -rf ${appVersionDir}"readme.pdf"
+  rm -rf ${appVersionDir}"user_guide.pdf"
+  rm -rf ${appVersionDir}"run.bat"
+  rm -rf ${appVersionDir}"meta-data/app_env_config_final.yml"
+  rm -rf ${appVersionDir}"meta-data/FTP-*.jar"
   cp readme.pdf ${appVersionDir}
   cp user_guide.pdf ${appVersionDir}
   cp run.bat ${appVersionDir}

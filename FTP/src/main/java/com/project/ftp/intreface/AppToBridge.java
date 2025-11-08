@@ -18,6 +18,7 @@ import com.project.ftp.exceptions.AppException;
 import com.project.ftp.exceptions.ErrorCodes;
 import com.project.ftp.mysql.MysqlUser;
 import com.project.ftp.obj.yamlObj.TableConfiguration;
+import com.project.ftp.service.StaticService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,7 +47,12 @@ public class AppToBridge implements AppToBridgeInterface {
         this.rolesResource = new RolesResource(appConfig, eventTracking);
     }
     @Override
-    public boolean updateUserRoles(ArrayList<String> rolesConfigPath) {
+    public void setRoleMappingApp() {
+        rolesResource.setRolesMappingApp();
+    }
+    @Override
+    public boolean updateUserRoles() {
+        ArrayList<String> rolesConfigPath = StaticService.getRolesConfigPath(appConfig);
         return rolesResource.updateRoles(rolesConfigPath);
     }
     @Override

@@ -5,7 +5,6 @@ import com.project.ftp.config.AppConstant;
 import com.project.ftp.config.FtpConfigItemsV2;
 import com.project.ftp.exceptions.AppException;
 import com.project.ftp.exceptions.ErrorCodes;
-import com.project.ftp.helper.AppConfigHelper;
 import com.project.ftp.obj.PathInfo;
 import com.project.ftp.service.StaticService;
 import org.json.simple.parser.JSONParser;

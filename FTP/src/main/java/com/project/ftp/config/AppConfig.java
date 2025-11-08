@@ -27,7 +27,6 @@ import io.dropwizard.hibernate.HibernateBundle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -476,9 +475,10 @@ public class AppConfig {
         TableService tableService = new TableService(appConfig, appConfig.getFtpConfiguration(), appConfig.getSingleThreadingService(),
                 appConfig.getMsExcelService(), tableMysqlDb);
         appConfig.setTableService(tableService);
-
         appConfig.updatePageConfig404();
         appConfig.generatePublicDir();
+        appConfig.getAppToBridge().setRoleMappingApp();
+        appConfig.getAppToBridge().updateUserRoles();
         appConfig.setApiRoleMappingList(ApiRolesMapping.getFinalApiRoleMapping(ftpConfiguration.getApiAuthorisationConfig()));
         return appConfig;
     }

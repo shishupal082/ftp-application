@@ -2,12 +2,10 @@ package com.project.ftp.helper;
 
 import com.project.ftp.config.AppConfig;
 import com.project.ftp.config.AppConstant;
-import com.project.ftp.config.FtpConfigItemsV2;
 import com.project.ftp.service.StaticService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 
 public class AppConfigHelper {

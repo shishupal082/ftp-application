@@ -9,7 +9,6 @@ import com.project.ftp.config.UserMethod;
 import com.project.ftp.event.EventTracking;
 import com.project.ftp.exceptions.ErrorCodes;
 import com.project.ftp.obj.PathInfo;
-import com.project.ftp.obj.yamlObj.DirConfigParam;
 import com.project.ftp.parser.YamlFileParser;
 import com.project.ftp.pdf.TextToPdfService;
 import org.slf4j.Logger;
@@ -206,22 +205,16 @@ public class StaticService {
         if (ftpConfiguration == null) {
             return null;
         }
-        String configDir = appConfig.getDirectoryService().getConfigPathDefault();
-        if (configDir == null) {
-            return null;
-        }
         ArrayList<String> rolesConfigPath = new ArrayList<>();
-        if (ftpConfiguration.getRolesFileName() != null) {
-            ArrayList<String> rolesFileName = ftpConfiguration.getRolesFileName();
-            if (!rolesFileName.isEmpty()) {
-                for (String filename: rolesFileName) {
-                    rolesConfigPath.add(configDir+filename);
-                }
+        ArrayList<String> rolesFileName = ftpConfiguration.getRolesFileName();
+        if (rolesFileName != null) {
+            if (rolesFileName.isEmpty()) {
+                rolesConfigPath.add(AppConstant.ROLES);
             } else {
-                rolesConfigPath.add(configDir+AppConstant.ROLES);
+                rolesConfigPath = rolesFileName;
             }
         } else {
-            rolesConfigPath.add(configDir+AppConstant.ROLES);
+            rolesConfigPath.add(AppConstant.ROLES);
         }
         return rolesConfigPath;
     }

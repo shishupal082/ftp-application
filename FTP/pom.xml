@@ -9,6 +9,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <roles_mapping.version>1.0.0-SNAPSHOT</roles_mapping.version>
         <dropwizard.version>2.0.0</dropwizard.version>
         <slf4jVersion>1.7.16</slf4jVersion>
         <itexpdfVersion>5.5.13</itexpdfVersion>
@@ -34,6 +35,11 @@
         <version>2.0.0</version>
     </parent>
     <dependencies>
+        <dependency>
+            <groupId>com.roles_mapping</groupId>
+            <artifactId>RolesMapping</artifactId>
+            <version>${roles_mapping.version}</version>
+        </dependency>
         <dependency>
             <groupId>io.dropwizard</groupId>
             <artifactId>dropwizard-core</artifactId>

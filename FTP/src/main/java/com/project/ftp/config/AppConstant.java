@@ -67,7 +67,7 @@ public class AppConstant {
     public static final String NOW = "now";
     public static final String USERNAME = "username";
     public static final String ORG_USERNAME = "orgUsername";
-    public static final String ADMIN_USERNAME = "adminUsername";
+    public static final String DEV_USERNAME = "devUsername";
     public static final String UN_AUTHORISED = "un_authorised";
     public static final String FromRoleConfig = "FromRoleConfig";
     public static final String FromEnvConfig = "FromEnvConfig";
