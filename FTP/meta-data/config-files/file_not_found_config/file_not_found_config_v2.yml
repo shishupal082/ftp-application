@@ -12,6 +12,7 @@ pageMapping404:
   /test-1:
     viewType: "ftl.view"
     fileName: "ftl-view-mapping-id-1"
+    roleId: "defaultRole"
 
 ftlViewMapping:
   ftl-view-mapping-id-invalid:
@@ -28,7 +29,6 @@ ftlViewMapping:
     appControlApi: "/project-tracking/json/appControlData.json"
     projectHeading: "App Heading"
     forceLogin: true
-    roleId: "defaultRole"
     validAppControl:
       - appControlTeam10
     addBasePathLinkName:
