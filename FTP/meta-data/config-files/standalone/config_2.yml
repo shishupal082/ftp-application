@@ -10,3 +10,4 @@ standAloneConfig:
       path: "split_file"
       params:
         - "split-csv-file"
+        - "defaultRole"

@@ -10,3 +10,4 @@ standAloneConfig:
       path: "update_mysql_table_data_from_csv"
       params:
         - "csv-mysql-update-smms_assets_list"
+        - "defaultRole"

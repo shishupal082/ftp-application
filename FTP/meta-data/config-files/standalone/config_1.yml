@@ -10,3 +10,4 @@ standAloneConfig:
       path: "update_excel_data_v2"
       params:
         - "csv-test-16"
+        - "defaultRole"
