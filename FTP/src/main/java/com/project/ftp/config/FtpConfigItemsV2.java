@@ -14,7 +14,6 @@ public enum FtpConfigItemsV2 {
     scanDirConfigFilePath,
     isRelativePath,
     assetsDir,
-    publicDir,
     publicPostDir;
     public static ArrayList<FtpConfigItemsV2> getAllFtpConfigItems() {
         return new ArrayList<>(Arrays.asList(FtpConfigItemsV2.values()));

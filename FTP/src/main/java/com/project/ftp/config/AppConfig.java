@@ -74,7 +74,7 @@ public class AppConfig {
         }
         HashMap<String, DirConfigParam> dirConfigParamHashMap = ftpConfiguration.getDirConfigParam();
         if (dirConfigParamHashMap == null) {
-            logger.info("Error in generatePublicDir: ftpConfiguration is null.");
+            logger.info("Error in generatePublicDir: dirConfigParamHashMap is null.");
             return;
         }
         String roleId, isRelative, publicDir, publicPostDir;
@@ -99,7 +99,7 @@ public class AppConfig {
             if (publicDirPathInfo != null && AppConstant.FOLDER.equals(publicDirPathInfo.getType())) {
                 dirConfigParam.setPublicPostDir(publicPostDir);
             } else {
-                logger.info("calculated publicDir is not a folder: {}", publicDirPathInfo);
+                logger.info("calculated publicPostDir is not a folder: {}, {}", publicDirPathInfo, dirConfigParam);
             }
         }
     }
