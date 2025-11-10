@@ -274,12 +274,12 @@ public class AppConfig {
         YamlFileParser yamlFileParser = new YamlFileParser();
         String configDataFilePath = this.directoryService.getConfigPathDefault();
         pageConfig404 = yamlFileParser.getPageConfig404(configDataFilePath, this);
-        logger.info("PageConfig404 update complete: {}", pageConfig404);
+        logger.info("PageConfig404 update complete.");
     }
     public AppConfigObj getAppConfigObj() {
         return new AppConfigObj(configDate, appVersion, cmdArguments,
                 logFilePath, requestCount, sessionData, ftpConfiguration, pageConfig404,
-                apiRoleMappingList, firstPageConfigItems);
+                apiRoleMappingList, firstPageConfigItems, this.getAppToBridge().getRolesConfig());
     }
 
     public EventTracking getEventTracking() {
@@ -406,7 +406,6 @@ public class AppConfig {
         // For log config setup
         StaticService.initApplication(appConfig, isStaticPath, configPath);
 
-        logger.info("appConfig: {}", appConfig);
         EventInterface eventInterface = null;
         UserInterface userInterface = null;
         FilepathInterface filepathInterface = null;
@@ -479,6 +478,7 @@ public class AppConfig {
         appConfig.generatePublicDir();
         appConfig.getAppToBridge().updateUserRoles();
         appConfig.setApiRoleMappingList(ApiRolesMapping.getFinalApiRoleMapping(ftpConfiguration.getApiAuthorisationConfig()));
+        logger.info("appConfig: {}", appConfig);
         return appConfig;
     }
     public static AppConfig getAppConfigFromCmdArgs(ArrayList<String> cmdArgument, String source) {

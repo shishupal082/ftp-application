@@ -108,8 +108,8 @@ public class RequestService {
     }
     public Object handleDefaultUrl(HttpServletRequest request, String roleId) {
         String requestedPath = RequestService.getPathUrl(request);
-        logger.info("Loading defaultMethod: {}, user: {}",
-                requestedPath, userService.getUserDataForLogging(request));
+        logger.info("Loading defaultMethod: {}, user: {}, role_id: {}",
+                requestedPath, userService.getUserDataForLogging(request), roleId);
         LoginUserDetails userDetails = userService.getLoginUserDetails(request);
         String finalRoleId;
         PathInfo pathInfo = fileServiceV2.getFileResponse(requestedPath, userDetails, roleId);

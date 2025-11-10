@@ -388,14 +388,16 @@ public class FileServiceV2 {
         }
         Page404Entry page404Entry;
         PathInfo pathInfo = null;
+        String requestedPath = null;
         if (StaticService.isValidString(filePath)) {
-            pathInfo = fileService.getPathInfo(publicDir + filePath);
+            requestedPath = publicDir + filePath;
+            pathInfo = fileService.getPathInfo(requestedPath);
             if (AppConstant.FOLDER.equals(pathInfo.getType())) {
                 pathInfo = fileService.searchIndexHtmlInFolder(pathInfo);
             }
         }
         if (pathInfo == null || !AppConstant.FILE.equals(pathInfo.getType())) {
-            logger.info("pathInfo is not found for '{}': searching default404 page.", filePath);
+            logger.info("pathInfo is not found for '{}': searching default404 page.", requestedPath);
             page404Entry = this.getPageNotFound404Mapping(pageConfig404, AppConstant.DEFAULT, userDetails);
             if (page404Entry != null) {
                 if (AppConstant.FTL_VIEW_TYPE.equals(page404Entry.getViewType())) {

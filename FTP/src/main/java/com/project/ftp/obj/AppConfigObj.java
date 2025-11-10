@@ -19,6 +19,7 @@ public class AppConfigObj {
     private final HashMap<String, SessionData> sessionData;
     private final FtpConfiguration ftpConfiguration;
     private final PageConfig404 pageConfig404;
+    private final Object roleConfig;
     private HashMap<String, ArrayList<ApiRoleMappingData>> apiRoleMappingList;
     private ArrayList<FtpConfigItems> firstPageConfigItems;
     public AppConfigObj(String configDate, String appVersion,
@@ -26,7 +27,7 @@ public class AppConfigObj {
                         HashMap<String, SessionData> sessionData,
                         FtpConfiguration ftpConfiguration, PageConfig404 pageConfig404,
                         HashMap<String, ArrayList<ApiRoleMappingData>> apiRoleMappingList,
-                        ArrayList<FtpConfigItems> firstPageConfigItems) {
+                        ArrayList<FtpConfigItems> firstPageConfigItems, Object rolesConfig) {
         this.configDate = configDate;
         this.appVersion = appVersion;
         this.cmdArguments = cmdArguments;
@@ -38,6 +39,7 @@ public class AppConfigObj {
         this.pageConfig404 = pageConfig404;
         this.apiRoleMappingList = apiRoleMappingList;
         this.firstPageConfigItems = firstPageConfigItems;
+        this.roleConfig = rolesConfig;
     }
     public static boolean checkOrClearFtpConfiguration(final FtpConfiguration ftpConfiguration,
                                                        final FtpConfigItems ftpConfigItems, boolean clear) {
@@ -379,6 +381,10 @@ public class AppConfigObj {
         this.firstPageConfigItems = firstPageConfigItems;
     }
 
+    public Object getRoleConfig() {
+        return roleConfig;
+    }
+
     @Override
     public String toString() {
         return "AppConfigObj{" +
@@ -393,6 +399,7 @@ public class AppConfigObj {
                 ", pageConfig404=" + pageConfig404 +
                 ", apiRoleMappingList=" + apiRoleMappingList +
                 ", firstPageConfigItems=" + firstPageConfigItems +
+                ", roleConfig=" + roleConfig +
                 '}';
     }
 }
