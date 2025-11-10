@@ -86,14 +86,11 @@ public class UserService {
     }
     public void updateFtpConfiguration() throws AppException {
         appConfig.updateFinalFtpConfiguration(appConfig.getFtpConfiguration(), appConfig.getFirstPageConfigItems(), true);
-        boolean rolesUpdateStatus = appConfig.getAppToBridge().updateUserRoles();
         appConfig.updatePageConfig404();
         appConfig.generatePublicDir();
-        appConfig.setApiRoleMappingList(ApiRolesMapping.getFinalApiRoleMapping(
-                appConfig.getFtpConfiguration().getApiAuthorisationConfig()));
-        if (!rolesUpdateStatus) {
-            logger.info("Error in updating user roles.");
-        }
+        appConfig.getAppToBridge().updateUserRoles();
+        appConfig.setApiRoleMappingList(ApiRolesMapping.getFinalApiRoleMapping(appConfig.getFtpConfiguration().getApiAuthorisationConfig()));
+        logger.info("appConfig: {}", appConfig);
     }
     public ApiResponse isValidPermission(LoginUserDetails loginUserDetails,
                                   RequestVerifyPermission verifyPermission) throws AppException  {

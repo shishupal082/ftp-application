@@ -205,18 +205,11 @@ public class StaticService {
         if (ftpConfiguration == null) {
             return null;
         }
-        ArrayList<String> rolesConfigPath = new ArrayList<>();
         ArrayList<String> rolesFileName = ftpConfiguration.getRolesFileName();
-        if (rolesFileName != null) {
-            if (rolesFileName.isEmpty()) {
-                rolesConfigPath.add(AppConstant.ROLES);
-            } else {
-                rolesConfigPath = rolesFileName;
-            }
-        } else {
-            rolesConfigPath.add(AppConstant.ROLES);
+        if (rolesFileName == null || rolesFileName.isEmpty()) {
+            return null;
         }
-        return rolesConfigPath;
+        return rolesFileName;
     }
     public static String decryptAesPassword(AppConfig appConfig, String encryptedPassword) {
         String salt = appConfig.getFtpConfiguration().getAesEncryptionPassword();

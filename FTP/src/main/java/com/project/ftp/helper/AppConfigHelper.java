@@ -22,9 +22,8 @@ public class AppConfigHelper {
     }
     public static ArrayList<String> getFileNotFoundMapping(final AppConfig appConfig) {
         ArrayList<String> result = appConfig.getFtpConfiguration().getFileNotFoundMapping();
-        if (result == null) {
-            result = new ArrayList<>();
-            result.add(AppConstant.FILE_NOT_FOUND_MAPPING);
+        if (result == null || result.isEmpty()) {
+            return null;
         }
         return result;
     }
