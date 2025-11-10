@@ -1,9 +1,9 @@
 package com.project.ftp;
 
 import com.project.ftp.bridge.config.StandAloneApiIdentifier;
+import com.project.ftp.bridge.obj.standalone.ApiDetail;
+import com.project.ftp.bridge.obj.standalone.StandAloneConfig;
 import com.project.ftp.bridge.service.StandAloneService;
-import com.project.ftp.bridge.standalone.obj.ApiDetail;
-import com.project.ftp.bridge.standalone.obj.StandAloneConfig;
 import com.project.ftp.config.AppConfig;
 import com.project.ftp.config.AppConstant;
 import com.project.ftp.config.FtpConfigItemsV2;

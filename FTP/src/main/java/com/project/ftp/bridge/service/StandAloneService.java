@@ -1,9 +1,9 @@
 package com.project.ftp.bridge.service;
 
-import com.project.ftp.bridge.standalone.obj.ApiDetail;
-import com.project.ftp.bridge.standalone.obj.Sequence;
-import com.project.ftp.bridge.standalone.obj.StandAloneConfig;
-import com.project.ftp.bridge.standalone.obj.StandAloneConfigObj;
+import com.project.ftp.bridge.obj.standalone.ApiDetail;
+import com.project.ftp.bridge.obj.standalone.Sequence;
+import com.project.ftp.bridge.obj.standalone.StandAloneConfig;
+import com.project.ftp.bridge.obj.standalone.StandAloneConfigObj;
 import com.project.ftp.parser.YamlFileParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

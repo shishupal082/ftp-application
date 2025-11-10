@@ -1,7 +1,5 @@
-package com.project.ftp.bridge.roles.resource;
+package com.project.ftp.bridge.resources;
 
-import com.project.ftp.bridge.BridgeToAppInterface;
-import com.project.ftp.bridge.BridgeTracking;
 import com.project.ftp.config.AppConfig;
 import com.project.ftp.event.EventTracking;
 import com.project.ftp.intreface.BridgeToApp;

@@ -1,5 +1,7 @@
-package com.project.ftp.bridge;
+package com.project.ftp.bridge.resources;
 
+import com.project.ftp.bridge.config.BridgeConstant;
+import com.project.ftp.bridge.config.BridgeErrorCode;
 import com.project.ftp.bridge.obj.BridgeRequestSendCreatePasswordOtp;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

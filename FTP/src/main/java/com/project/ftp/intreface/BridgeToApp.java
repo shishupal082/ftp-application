@@ -1,6 +1,6 @@
 package com.project.ftp.intreface;
 
-import com.project.ftp.bridge.BridgeToAppInterface;
+import com.project.ftp.bridge.resources.BridgeToAppInterface;
 import com.project.ftp.event.EventTracking;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

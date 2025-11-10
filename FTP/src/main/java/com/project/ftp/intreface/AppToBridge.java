@@ -1,13 +1,13 @@
 package com.project.ftp.intreface;
 
 import com.project.ftp.FtpConfiguration;
-import com.project.ftp.bridge.BridgeResource;
 import com.project.ftp.bridge.config.EmailConfig;
 import com.project.ftp.bridge.mysqlTable.SaveTableParameter;
 import com.project.ftp.bridge.obj.BridgeRequestSendCreatePasswordOtp;
 import com.project.ftp.bridge.obj.BridgeResponseSheetData;
 import com.project.ftp.bridge.obj.yamlObj.*;
-import com.project.ftp.bridge.roles.resource.RolesResource;
+import com.project.ftp.bridge.resources.BridgeResource;
+import com.project.ftp.bridge.resources.RolesResource;
 import com.project.ftp.bridge.service.MSExcelBridgeService;
 import com.project.ftp.bridge.service.SocialLoginService;
 import com.project.ftp.bridge.tcp.TcpClient;

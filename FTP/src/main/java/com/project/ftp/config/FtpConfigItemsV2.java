@@ -12,7 +12,6 @@ public enum FtpConfigItemsV2 {
     standAloneConfigPath,
     tableDbConfigFilePath,
     scanDirConfigFilePath,
-    isRelativePath,
     assetsDir,
     publicPostDir;
     public static ArrayList<FtpConfigItemsV2> getAllFtpConfigItems() {

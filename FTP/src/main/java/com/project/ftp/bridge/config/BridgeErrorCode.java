@@ -1,4 +1,4 @@
-package com.project.ftp.bridge;
+package com.project.ftp.bridge.config;
 
 /**
  * Created by shishupalkumar on 10/02/17.

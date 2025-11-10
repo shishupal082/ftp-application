@@ -1,7 +1,7 @@
 package com.project.ftp;
 
+import com.project.ftp.bridge.obj.standalone.StandAloneConfig;
 import com.project.ftp.bridge.service.StandAloneService;
-import com.project.ftp.bridge.standalone.obj.StandAloneConfig;
 import org.junit.Assert;
 import org.junit.Test;
 import org.slf4j.Logger;

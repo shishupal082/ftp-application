@@ -1,4 +1,4 @@
-package com.project.ftp.bridge.standalone.obj;
+package com.project.ftp.bridge.obj.standalone;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 

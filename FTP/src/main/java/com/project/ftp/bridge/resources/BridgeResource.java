@@ -1,7 +1,9 @@
-package com.project.ftp.bridge;
+package com.project.ftp.bridge.resources;
 
 import com.project.ftp.bridge.config.BridgeConfig;
+import com.project.ftp.bridge.config.BridgeException;
 import com.project.ftp.bridge.obj.BridgeRequestSendCreatePasswordOtp;
+import com.project.ftp.bridge.service.BridgeService;
 import com.project.ftp.config.AppConfig;
 import com.project.ftp.event.EventTracking;
 import com.project.ftp.intreface.BridgeToApp;

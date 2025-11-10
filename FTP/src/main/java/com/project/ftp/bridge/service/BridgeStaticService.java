@@ -1,4 +1,4 @@
-package com.project.ftp.bridge;
+package com.project.ftp.bridge.service;
 
 import com.project.ftp.service.StaticService;
 

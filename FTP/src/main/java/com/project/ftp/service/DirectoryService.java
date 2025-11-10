@@ -98,10 +98,6 @@ public class DirectoryService {
                 r1 = dirConfigParam.getScanDirConfigFilePath();
                 r2 = dirConfigParamDefault.getScanDirConfigFilePath();
                 break;
-            case isRelativePath:
-                r1 = dirConfigParam.getIsRelativePath();
-                r2 = dirConfigParamDefault.getIsRelativePath();
-                break;
             case assetsDir:
                 r1 = dirConfigParam.getAssetsDir();
                 r2 = dirConfigParamDefault.getAssetsDir();
