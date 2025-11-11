@@ -86,9 +86,8 @@ public class StaticService {
         }
         String configFilePath = firstConfigPath;
         if (!AppConstant.TRUE.equals(isStaticPath)) {
-            configFilePath = sysUtils.getProjectWorkingDir() + "/" + configFilePath;
+            configFilePath = StaticService.getProjectWorkingDir() + "/" + configFilePath;
         }
-        configFilePath = strUtils.replaceBackSlashToSlash(configFilePath);
         String logFilePath = ymlFileParser.getLogFilePath(configFilePath);
         appConfig.setLogFilePath(logFilePath);
         PathInfo pathInfo = fileService.getPathInfo(logFilePath);
@@ -303,9 +302,8 @@ public class StaticService {
         }
         String configFilePath = configPath;
         if (!AppConstant.TRUE.equals(isStaticPath)) {
-            configFilePath = sysUtils.getProjectWorkingDir() + "/" + configPath;
+            configFilePath = StaticService.getProjectWorkingDir() + "/" + configPath;
         }
-        configFilePath = strUtils.replaceBackSlashToSlash(configFilePath);
         String logFilePath = ymlFileParser.getLogFilePath(configFilePath) + "application.log";
         PathInfo pathInfo = fileService.getPathInfo(logFilePath);
         if (AppConstant.FILE.equals(pathInfo.getType())) {

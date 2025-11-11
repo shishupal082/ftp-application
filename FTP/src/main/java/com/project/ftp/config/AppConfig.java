@@ -9,7 +9,6 @@ import com.project.ftp.FtpConfiguration;
 import com.project.ftp.bridge.mysqlTable.TableDb;
 import com.project.ftp.bridge.mysqlTable.TableMysqlDb;
 import com.project.ftp.bridge.mysqlTable.TableService;
-import com.project.ftp.common.SysUtils;
 import com.project.ftp.event.EventTracking;
 import com.project.ftp.exceptions.AppException;
 import com.project.ftp.exceptions.ErrorCodes;
@@ -80,9 +79,7 @@ public class AppConfig {
         String roleId, isRelative, publicDir, publicPostDir;
         PathInfo publicDirPathInfo;
         DirConfigParam dirConfigParam;
-        SysUtils sysUtils = new SysUtils();
-        String projWorkingDir = sysUtils.getProjectWorkingDir();
-        projWorkingDir = StaticService.replaceBackSlashToSlash(projWorkingDir);
+        String projWorkingDir = StaticService.getProjectWorkingDir();
         for (Map.Entry<String, DirConfigParam> entry : dirConfigParamHashMap.entrySet()) {
             roleId = entry.getKey();
             dirConfigParam = entry.getValue();

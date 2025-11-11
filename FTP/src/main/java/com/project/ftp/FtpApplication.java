@@ -78,6 +78,7 @@ public class FtpApplication extends Application<FtpConfiguration> {
     public static void main(String[] args) throws Exception {
         // java -jar meta-data/FTP-*-SNAPSHOT.jar <server/standalone> <isMySqlEnable> <isStaticPath> <config file 1> <config file 2> ...
         arguments.addAll(Arrays.asList(args));
+        logger.info("main: command line argument: {}", arguments);
         if (arguments.size() >= AppConstant.CMD_LINE_ARG_MIN_SIZE) {
             if (AppConstant.SERVER.equals(arguments.get(AppConstant.CMD_APPLICATION_TYPE))) {
                 StaticService.renameOldLogFile(args[AppConstant.CMD_IS_STATIC_PATH], args[AppConstant.CMD_FIRST_CONFIG_PATH]);
@@ -88,7 +89,7 @@ public class FtpApplication extends Application<FtpConfiguration> {
             }
         } else {
             logger.info("main: minimum required command line argument is: {}, found: {}",
-                    AppConstant.CMD_LINE_ARG_MIN_SIZE, args);
+                    AppConstant.CMD_LINE_ARG_MIN_SIZE, arguments);
         }
     }
 }
