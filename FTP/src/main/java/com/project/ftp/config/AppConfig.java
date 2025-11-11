@@ -268,7 +268,7 @@ public class AppConfig {
         //First file path already processed through main function
         for (int i = AppConstant.CMD_LINE_ARG_MIN_SIZE; i< cmdArguments.size(); i++) {
             temp = yamlFileParser.getFtpConfigurationFromPath(
-                    cmdArguments.get(AppConstant.CMD_LINE_ARG_MIN_SIZE-2),
+                    cmdArguments.get(AppConstant.CMD_IS_STATIC_PATH),
                     cmdArguments.get(i));
             ftpConfiguration.updateFtpConfig(temp, firstPageConfigItems);
         }
@@ -401,8 +401,8 @@ public class AppConfig {
             logger.info("getAppConfig: minimum required command line argument is: {}", AppConstant.CMD_LINE_ARG_MIN_SIZE);
             return null;
         }
-        String isStaticPath = args.get(AppConstant.CMD_LINE_ARG_MIN_SIZE-2);
-        String configPath = args.get(AppConstant.CMD_LINE_ARG_MIN_SIZE-1);
+        String isStaticPath = args.get(AppConstant.CMD_IS_STATIC_PATH);
+        String configPath = args.get(AppConstant.CMD_FIRST_CONFIG_PATH);
         appConfig.setCmdArguments(args);
         appConfig.updateFinalFtpConfiguration(ftpConfiguration, firstPageConfigItems, false);
 //        ShutdownTask shutdownTask = new ShutdownTask(appConfig);
@@ -495,8 +495,8 @@ public class AppConfig {
             logger.info("getAppConfigFromCmdArgs: minimum required command line argument is: {}", AppConstant.CMD_LINE_ARG_MIN_SIZE);
             return null;
         }
-        String isStaticPath = cmdArgument.get(AppConstant.CMD_LINE_ARG_MIN_SIZE-2);
-        String firstConfigPath = cmdArgument.get(AppConstant.CMD_LINE_ARG_MIN_SIZE-1);
+        String isStaticPath = cmdArgument.get(AppConstant.CMD_IS_STATIC_PATH);
+        String firstConfigPath = cmdArgument.get(AppConstant.CMD_FIRST_CONFIG_PATH);
         FtpConfiguration ftpConfiguration = getFirstFtpConfiguration(isStaticPath, firstConfigPath);
         ArrayList<FtpConfigItems> firstPageFtpConfigItems = AppConfig.getFirstPageConfigItems(ftpConfiguration);
         return getAppConfig(null,ftpConfiguration,cmdArgument,firstPageFtpConfigItems,source);

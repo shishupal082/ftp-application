@@ -107,6 +107,10 @@ public class AppConstant {
      * 2 (CMD_LINE_ARG_MIN_SIZE-2): isStaticPath
      * 3 (CMD_LINE_ARG_MIN_SIZE-1): firstConfigPath
      */
+    public static final int CMD_APPLICATION_TYPE = 0;
+    public static final int CMD_IS_MYSQL_ENABLE = 1;
+    public static final int CMD_IS_STATIC_PATH = 2;
+    public static final int CMD_FIRST_CONFIG_PATH = 3;
     public static final int CMD_LINE_ARG_MIN_SIZE = 4;
 
     public static final int maxLengthLogDisplay = 512;

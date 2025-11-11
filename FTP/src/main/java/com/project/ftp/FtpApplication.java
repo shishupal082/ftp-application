@@ -79,9 +79,9 @@ public class FtpApplication extends Application<FtpConfiguration> {
         // java -jar meta-data/FTP-*-SNAPSHOT.jar <server/standalone> <isMySqlEnable> <isStaticPath> <config file 1> <config file 2> ...
         arguments.addAll(Arrays.asList(args));
         if (arguments.size() >= AppConstant.CMD_LINE_ARG_MIN_SIZE) {
-            if (AppConstant.SERVER.equals(arguments.get(0))) {
-                StaticService.renameOldLogFile(args[AppConstant.CMD_LINE_ARG_MIN_SIZE-2], args[AppConstant.CMD_LINE_ARG_MIN_SIZE-1]);
-                new FtpApplication().run(AppConstant.SERVER, args[AppConstant.CMD_LINE_ARG_MIN_SIZE-1]);
+            if (AppConstant.SERVER.equals(arguments.get(AppConstant.CMD_APPLICATION_TYPE))) {
+                StaticService.renameOldLogFile(args[AppConstant.CMD_IS_STATIC_PATH], args[AppConstant.CMD_FIRST_CONFIG_PATH]);
+                new FtpApplication().run(AppConstant.SERVER, args[AppConstant.CMD_FIRST_CONFIG_PATH]);
             } else {
                 StandAlone standAlone = new StandAlone(arguments);
                 standAlone.handleRequest();

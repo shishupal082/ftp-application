@@ -332,7 +332,7 @@ public class StaticService {
         if (commandLineArg.size() < AppConstant.CMD_LINE_ARG_MIN_SIZE) {
             return  false;
         }
-        return AppConstant.TRUE.equals(commandLineArg.get(AppConstant.CMD_LINE_ARG_MIN_SIZE-3));
+        return AppConstant.TRUE.equals(commandLineArg.get(AppConstant.CMD_IS_MYSQL_ENABLE));
     }
     public static String getProjectWorkingDir() {
         String projectWorkingDirectory = sysUtils.getProjectWorkingDir();
