@@ -38,6 +38,7 @@ roleAccessMapping:
   isUploadFileEnable: true
   isAddTextEnable: true
   isDeleteTextEnable: true
+  isMoveFileEnable: true
   isUsersControlEnable: UsersControlGroup
   isLoginOtherUserEnable: Group1_users
   isAdminTextDisplayEnable: admin

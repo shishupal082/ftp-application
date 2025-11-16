@@ -1474,9 +1474,14 @@ standalone
 Created stable build for 8.0.2.017
 
 
-8.0.2.019 @ 01.11.2025
-----------------------
+8.0.2.019-1/2 @ 01.11.2025
+--------------------------
 Config parameter pattern change from individual to group for running multiple application on single server
+
+8.0.2.019-2/2 @ 16.11.2025
+--------------------------
+New api added
+    - /api/move_file [POST]
 
 
 Future releases

@@ -192,6 +192,37 @@ public class ApiResource {
         return apiResponse;
     }
 
+    @POST
+    @Path("/move_file")
+    @UnitOfWork
+    public ApiResponse moveFile(@Context HttpServletRequest request,
+                                  RequestMoveFile moveFile,
+                                  @QueryParam("u") String uiUsername) throws AppException {
+        this.singleThreadingService.checkSingleThreadStatus(request, "api");
+        logger.info("moveFile In: {}, user: {}", moveFile, userService.getUserDataForLogging(request));
+        ApiResponse apiResponse;
+        String roleId = null;
+        String comment = null;
+        if (moveFile != null) {
+            roleId = moveFile.getRoleId();
+            comment = moveFile.getTrackingData();
+        }
+        try {
+            authService.checkApiAuthorisation(request, ApiIdentifier.MOVE_FILE);
+            LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
+            fileServiceV2.moveRequestFile(loginUserDetails, moveFile);
+            apiResponse = new ApiResponse();
+            eventTracking.trackSuccessEventV2(request, EventName.MOVE_FILE, comment);
+        } catch (AppException ae) {
+            logger.info("Error {}, in moving requested file.", ae.getErrorCode().getErrorCode());
+            apiResponse = new ApiResponse(ae.getErrorCode());
+            eventTracking.trackFailureEventV2(request, EventName.MOVE_FILE, ae.getErrorCode(), comment, roleId);
+        }
+        logger.info("moveFile out");
+        this.singleThreadingService.clearSingleThread(request, "api");
+        return apiResponse;
+    }
+
     @GET
     @Path("/get_files_info")
     @UnitOfWork
@@ -530,11 +561,11 @@ public class ApiResource {
             authService.checkApiAuthorisation(request, ApiIdentifier.DELETE_TEXT);
             LoginUserDetails loginUserDetails = userService.getLoginUserDetails(request);
             response = fileServiceV2.deleteText(loginUserDetails, deleteText);
-            eventTracking.trackSuccessEventV2(request, EventName.DELETE_FILE, comment);
+            eventTracking.trackSuccessEventV2(request, EventName.DELETE_TEXT, comment);
         } catch (AppException ae) {
             logger.info("Error in deleteText: {}", ae.getErrorCode().getErrorCode());
             response = new ApiResponse(ae.getErrorCode());
-            eventTracking.trackFailureEventV2(request, EventName.DELETE_FILE, ae.getErrorCode(), comment, roleId);
+            eventTracking.trackFailureEventV2(request, EventName.DELETE_TEXT, ae.getErrorCode(), comment, roleId);
         }
         logger.info("deleteText: Out {}", response);
         this.singleThreadingService.clearSingleThread(request, "api");

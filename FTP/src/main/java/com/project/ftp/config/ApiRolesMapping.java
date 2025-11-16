@@ -60,6 +60,10 @@ public class ApiRolesMapping {
         result.get(ApiIdentifier.DELETE_FILE.getApiName()).add(new ApiRoleMappingData(
                 ApiRoleAccess.IS_DELETE_FILE_ENABLE.getRoleAccessName(),AppConstant.roleAccessTypeDirect));
 
+        result.put(ApiIdentifier.MOVE_FILE.getApiName(), new ArrayList<>());
+        result.get(ApiIdentifier.MOVE_FILE.getApiName()).add(new ApiRoleMappingData(
+                ApiRoleAccess.IS_MOVE_FILE_ENABLE.getRoleAccessName(),AppConstant.roleAccessTypeDirect));
+
         result.put(ApiIdentifier.UPLOAD_FILE.getApiName(), new ArrayList<>());
         result.get(ApiIdentifier.UPLOAD_FILE.getApiName()).add(new ApiRoleMappingData(
                 ApiRoleAccess.IS_UPLOAD_FILE_ENABLE.getRoleAccessName(),AppConstant.roleAccessTypeDirect));

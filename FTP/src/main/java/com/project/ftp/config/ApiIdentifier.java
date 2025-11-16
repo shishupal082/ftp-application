@@ -8,6 +8,7 @@ public enum ApiIdentifier {
     GET_RELATED_USERS_V2("get_related_users_data_v2"),
     GET_LOGIN_USER_DETAILS("get_login_user_details"),
     DELETE_FILE("delete_file"),
+    MOVE_FILE("move_file"),
     GET_FILES_INFO("get_files_info"),
     GET_FILES_INFO_BY_FILENAME_PATTERN("get_files_info_by_filename_pattern"),
     GET_PATH_INFO("get_path_info"),

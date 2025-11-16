@@ -169,8 +169,8 @@ public class FileServiceV2 {
         return this.getFinalPathInfo(loginUserDetails, filterFileName, saveDir, tempFileName);
     }
 
-    private HashMap<String, String> parseRequestedFileStr(String filename, boolean containsDatabaseDir) {
-        return fileServiceV3.parseRequestedFileStr(filename, containsDatabaseDir);
+    private HashMap<String, String> parseRequestedFileStr(String filename) {
+        return fileServiceV3.parseRequestedFileStr(filename, false);
     }
     public PathInfo searchRequestedFileV2(LoginUserDetails loginUserDetails,
                                           String filename, String roleId) throws AppException {
@@ -179,7 +179,7 @@ public class FileServiceV2 {
             throw new AppException(ErrorCodes.INVALID_QUERY_PARAMS);
         }
         String filePath = appConfig.getFileSaveDirV2(loginUserDetails, roleId);
-        HashMap<String, String> parsedFileStr = this.parseRequestedFileStr(filename, false);
+        HashMap<String, String> parsedFileStr = this.parseRequestedFileStr(filename);
         String loginUserName = loginUserDetails.getUsername();
         PathInfo pathInfo;
         if (AppConstant.SUCCESS.equals(parsedFileStr.get(AppConstant.STATUS))) {
@@ -233,12 +233,24 @@ public class FileServiceV2 {
             throw new AppException(ErrorCodes.BAD_REQUEST_ERROR);
         }
         String deleteFileReq = deleteFile.getFilename();
-        HashMap<String, String> parsedFileStr = this.parseRequestedFileStr(deleteFileReq, false);
+        HashMap<String, String> parsedFileStr = this.parseRequestedFileStr(deleteFileReq);
         if (AppConstant.FAILURE.equals(parsedFileStr.get(AppConstant.STATUS))) {
             logger.info("deleteFile invalid request: {}", deleteFile);
             throw new AppException(ErrorCodes.BAD_REQUEST_ERROR);
         }
         return parsedFileStr;
+    }
+    private void verifyMoveRequestParameters(RequestMoveFile moveFile) throws AppException {
+        if (moveFile == null) {
+            logger.info("moveFile request is null.");
+            throw new AppException(ErrorCodes.BAD_REQUEST_ERROR);
+        }
+        String filepath = moveFile.getFilepath();
+        String moveDir = moveFile.getMoveDir();
+        if (filepath == null || filepath.isEmpty() || moveDir == null || moveDir.isEmpty()) {
+            logger.info("moveFile invalid request: {}", moveFile);
+            throw new AppException(ErrorCodes.BAD_REQUEST_ERROR);
+        }
     }
     private void deleteFile(String saveDir, String fileUsername,
                             String filename) throws AppException {
@@ -272,6 +284,24 @@ public class FileServiceV2 {
             throw new AppException(ErrorCodes.FILE_NOT_FOUND);
         }
     }
+    private void moveFile(String filepath, String moveDir) throws AppException {
+        PathInfo pathInfo = fileService.getPathInfo(filepath);
+        boolean fileMoveStatus;
+        if (AppConstant.FILE.equals(pathInfo.getType())) {
+            String currentFolder = pathInfo.getParentFolder();
+            fileMoveStatus = fileService.moveFile(currentFolder, moveDir,
+                    pathInfo.getFilenameWithoutExt(), pathInfo.getExtension());
+            if (!fileMoveStatus) {
+                logger.info("moveFile: Error in moving requested file: {}", pathInfo.getPath());
+                throw new AppException(ErrorCodes.RUNTIME_ERROR);
+            } else {
+                logger.info("moveFile: Requested file moved: {}", pathInfo.getPath());
+            }
+        } else {
+            logger.info("moveFile: Requested filepath: {}, does not exist.", pathInfo.getPath());
+            throw new AppException(ErrorCodes.FILE_NOT_FOUND);
+        }
+    }
     private boolean isFileDeleteAllowed(LoginUserDetails loginUserDetails,
                                         String fileUsername, String filename) throws AppException {
         if (fileUsername != null && fileUsername.equals(loginUserDetails.getUsername())) {
@@ -280,6 +310,16 @@ public class FileServiceV2 {
             logger.info("isFileDeleteAllowed: false, fileUsername and loginUsername not matching: {}, {}",
                     fileUsername, loginUserDetails);
             throw new AppException(ErrorCodes.FILE_DELETE_UNAUTHORISED);
+        }
+        return true;
+    }
+    private boolean isFileMoveAllowed(LoginUserDetails loginUserDetails,
+                                        String filepath, String moveDir) throws AppException {
+        if (filepath != null && moveDir != null) {
+            logger.info("isFileMoveAllowed: true, {}, {}", filepath, moveDir);
+        } else {
+            logger.info("isFileMoveAllowed: false, filepath and moveDir: {}, {}", filepath, moveDir);
+            throw new AppException(ErrorCodes.FILE_MOVE_UNAUTHORISED);
         }
         return true;
     }
@@ -301,6 +341,29 @@ public class FileServiceV2 {
                 parsedFileStr.get(AppConstant.FILE_USERNAME), parsedFileStr.get(AppConstant.FILE_NAME_STR));
         if (isFileDeleteAllowed) {
             this.deleteFile(saveDir, parsedFileStr.get(AppConstant.FILE_USERNAME), parsedFileStr.get(AppConstant.FILE_NAME_STR));
+        }
+    }
+    public void moveRequestFile(LoginUserDetails loginUserDetails,
+                                  RequestMoveFile moveFile) throws AppException {
+        // Throw error if invalid request
+        this.verifyMoveRequestParameters(moveFile);
+        String filepath = moveFile.getFilepath();
+        String moveDir = moveFile.getMoveDir();
+        // file not found
+        if (!fileService.isFile(filepath)) {
+            logger.info("requested move filepath not found: {}", filepath);
+            throw new AppException(ErrorCodes.FILE_NOT_FOUND);
+        }
+        // move folder not found
+        if (!fileService.isDirectory(moveDir)) {
+            logger.info("requested move dir not found: {}", moveDir);
+            throw new AppException(ErrorCodes.FOLDER_NOT_FOUND);
+        }
+        // file found
+        // Throw error if file delete not allowed
+        boolean isFileDeleteAllowed = this.isFileMoveAllowed(loginUserDetails, filepath, moveDir);
+        if (isFileDeleteAllowed) {
+            this.moveFile(filepath, moveDir);
         }
     }
     // By default folder is authorised
