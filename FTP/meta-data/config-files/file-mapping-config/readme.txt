@@ -97,6 +97,7 @@ startIndex = subString.length()-length-end;
 endIndex = subString.length()-end-1;
 
 subString = subString.substring(startIndex, endIndex+1)
+Extract string from startIndex to endIndex
 
 sequence of operation
 - range

@@ -449,7 +449,7 @@ public class ExcelToCsvDataConvertServiceV2 {
             endIndex = subString.length()-end-1;
         }
         if (startIndex >= 0 && endIndex >= 0) {
-            if (startIndex < endIndex && startIndex < subString.length() && endIndex < subString.length()) {
+            if (startIndex <= endIndex && startIndex < subString.length() && endIndex < subString.length()) {
                 subString = subString.substring(startIndex, endIndex+1).trim();
             } else {
                 subString = AppConstant.EmptyStr;
