@@ -69,5 +69,6 @@ scanDirConfig:
   - id: "test-data-md5-dir"
     device_name: "dev-laptop"
     enableMd5Hash: "true"
+    recursive: "false"
     pathIndex:
       - "D:/workspace/ftp-application/FTP/meta-data/test-data/md5-data/"

@@ -40,9 +40,9 @@ public class ScanDirService {
         this.yamlFileParser = new YamlFileParser();
         this.strUtils = new StrUtils();
     }
-    private void updateFolderSize(ScanResult scanResult) {
+    private int updateFolderSizeAndGetEntryCount(ScanResult scanResult, int entryCount) {
         if (scanResult == null) {
-            return;
+            return 0;
         }
         if (scanResult.getPathType() == PathType.FOLDER) {
             double folderSize = 0;
@@ -52,19 +52,22 @@ public class ScanDirService {
                     if (result == null) {
                         continue;
                     }
+                    entryCount++;
                     if (result.getPathType() == PathType.FOLDER) {
-                        this.updateFolderSize(result);
+                        entryCount = this.updateFolderSizeAndGetEntryCount(result, entryCount);
                     }
                     folderSize += result.getPathSize();
                 }
             }
             scanResult.setPathSize(folderSize);
         }
+        return entryCount;
     }
-    private void updateMd5Hash(ScanResult scanResult) {
+    private int updateMd5Hash(ScanResult scanResult, int entryCount, int i) {
         if (scanResult == null) {
-            return;
+            return i;
         }
+        i++;
         if (scanResult.getPathType() == PathType.FOLDER) {
             ArrayList<ScanResult> childScanResult = scanResult.getScanResults();
             if (childScanResult != null) {
@@ -72,12 +75,16 @@ public class ScanDirService {
                     if (result == null) {
                         continue;
                     }
-                    this.updateMd5Hash(result);
+                    i = this.updateMd5Hash(result, entryCount, i);
                 }
             }
         } else if (scanResult.getPathType() == PathType.FILE) {
             scanResult.setMd5Hash(Md5Calculator.getMd5Hash(scanResult.getPathName()));
+            if (i % AppConstant.LOG_THRESHOLD == 0) {
+                logger.info("Md5Hash calculating ...: {}/{}", i, entryCount);
+            }
         }
+        return i;
     }
     private void updatePathInfoDetails(ArrayList<FilepathDBParameters> pathInfoScanResults,
                                        ScanResult scanResult, String scanDirMappingId, final RequestScanDir requestScanDir) {
@@ -138,9 +145,12 @@ public class ScanDirService {
             return null;
         }
         String scanMappingDirId = scanDirMapping.getId();
-        this.updateFolderSize(scanResult);
+        int entryCount = this.updateFolderSizeAndGetEntryCount(scanResult, 1);
+        int md5HashCount;
+        logger.info("getPathInfoScanResult: completed for pathName: {}, entryCount: {}", pathName, entryCount);
         if (AppConstant.TRUE.equals(scanDirMapping.getEnableMd5Hash())) {
-            this.updateMd5Hash(scanResult);
+            md5HashCount = this.updateMd5Hash(scanResult, entryCount, 0);
+            logger.info("Md5Hash completed: {}/{}", md5HashCount, entryCount);
         }
         this.updatePathInfoDetails(pathInfoScanResults, scanResult, scanMappingDirId, requestScanDir);
         ArrayList<FilepathDBParameters> pathInfoScanFinalResults = new ArrayList<>();

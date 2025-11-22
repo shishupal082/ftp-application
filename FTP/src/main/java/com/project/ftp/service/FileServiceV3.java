@@ -405,12 +405,19 @@ public class FileServiceV3 {
         if (!fileService.isFile(filePath)) {
             fileExist = fileService.createNewFile(filePath);
         }
+        int i=0;
+        int totalCount;
         if (fileExist) {
             TextFileParser textFileParser = new TextFileParser(filePath);
             if (textData != null) {
+                totalCount = textData.size();
                 for (String s : textData) {
+                    i++;
                     if (s != null) {
                         textFileParser.addText(s, logFilename);
+                    }
+                    if (i % AppConstant.LOG_THRESHOLD == 0) {
+                        logger.info("Save completed: {}/{}", i, totalCount);
                     }
                 }
             }

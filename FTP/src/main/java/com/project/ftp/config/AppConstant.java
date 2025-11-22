@@ -13,6 +13,8 @@ public class AppConstant {
     public static final int MAX_ENTRY_ALLOWED_IN_USER_DATA_FILE = 8;
     public static final int MAX_SEND_EMAIL_LIMIT = 3;
     public static final int DEFAULT_RATE_LIMIT_THRESHOLD = 3;
+    public static final int LOG_THRESHOLD = 1000;
+
     public static final String STATUS = "STATUS";
     public static final String SUCCESS = "SUCCESS";
     public static final String FAILURE = "FAILURE";

@@ -556,7 +556,7 @@ public class TableService {
             this.singleThreadingService.setSingleThreadStatus(new SingleThreadStatus(startedTime,
                     singleThreadItem, singeThreadStatus));
         }
-        if (index % 1000 == 0) {
+        if (index % AppConstant.LOG_THRESHOLD == 0) {
             logger.info("{}/{}: update  summary: {},{},{},{},{},{}: Add, Update, Skip, " +
                         "AddError, UpdateError, SearchError",
                 index, size, addEntryCount, updateEntryCount, skipEntryCount,
