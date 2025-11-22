@@ -79,10 +79,11 @@ mappingData1:
 
 It is OR operations
 
-subStringConfig
+subStringConfig (minimum 2 parameter required, if more than 2 given it will consider start and length)
+
 Here, start is startIndex and end is endIndex
 
-start: start index of the string (starting from 0)
+start: start index of the string (>= 0)
 start = -1, then start index calculated from end and length
 startIndex = subString.length()-length-end;
 

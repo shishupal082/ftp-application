@@ -157,8 +157,8 @@ public class TestMSExcelService {
         result = msExcelService.getMSExcelSheetDataJson(null, requestId, null);
         Assert.assertEquals(15, result.size());
         Assert.assertEquals("test-00", result.get(0).get("col_8"));
-        Assert.assertEquals(5, result.get(0).size());
-        Assert.assertEquals(5, result.get(13).size());
+        Assert.assertEquals(4, result.get(0).size());
+        Assert.assertEquals(4, result.get(13).size());
     }
     @Test
     public void testTestMSExcelServiceV09() {
