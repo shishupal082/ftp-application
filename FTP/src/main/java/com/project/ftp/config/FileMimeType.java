@@ -6,6 +6,8 @@ import org.slf4j.LoggerFactory;
 public enum FileMimeType {
     pdf("application/pdf"),
     json("application/json"),
+    aae("application/octet-stream"),
+    webp("image/webp"),
     png("image/png"),
     jpg("image/jpg"),
     jpeg("image/jpeg"),
@@ -20,7 +22,12 @@ public enum FileMimeType {
     txt("text/plain"),
     bat("text/plain"),
     log("text/plain"),
-    sh("text/sh");
+    ini("text/plain"),
+    sh("text/plain"),
+    mov("video/quicktime"),
+    mp4("video/mp4"),
+    avi("video/x-msvideo"),
+    mp3("audio/mpeg");
 
     /*Not supported by browser
         - doc, docx, xls, xlsx, ppt, pptx
