@@ -1,6 +1,7 @@
 package com.project.ftp.service;
 
 import com.project.ftp.bridge.config.SocialLoginConfig;
+import com.project.ftp.common.StrUtils;
 import com.project.ftp.config.AppConfig;
 import com.project.ftp.config.AppConstant;
 import com.project.ftp.config.FtpConfigItemsV2;
@@ -29,6 +30,7 @@ public class FileServiceV2 {
     private final UserService userService;
     private final FileServiceV3 fileServiceV3;
     private final CsvDbTable csvDbTable;
+    private final StrUtils strUtils = new StrUtils();
     public FileServiceV2(final AppConfig appConfig, final UserService userService) {
         this.appConfig = appConfig;
         this.fileService = new FileService();
@@ -355,12 +357,23 @@ public class FileServiceV2 {
             throw new AppException(ErrorCodes.FILE_NOT_FOUND);
         }
         // move folder not found
-        if (!fileService.isDirectory(moveDir)) {
+        boolean isValidMoveDir = fileService.isDirectory(moveDir);
+        if (!isValidMoveDir) {
+            if (AppConstant.TRUE.equals(moveFile.getCreateMoveDir())) {
+                moveDir = StaticService.removeRelativePath(moveDir);
+                moveDir = fileService.createDir(strUtils.tokenizePathV2(moveDir));
+                isValidMoveDir = fileService.isDirectory(moveDir);
+                if (isValidMoveDir) {
+                    logger.info("requested move dir created: {}", moveDir);
+                }
+            }
+        }
+        if (!isValidMoveDir) {
             logger.info("requested move dir not found: {}", moveDir);
             throw new AppException(ErrorCodes.FOLDER_NOT_FOUND);
         }
         // file found
-        // Throw error if file delete not allowed
+        // Throw error if file move not allowed
         boolean isFileDeleteAllowed = this.isFileMoveAllowed(loginUserDetails, filepath, moveDir);
         if (isFileDeleteAllowed) {
             this.moveFile(filepath, moveDir);

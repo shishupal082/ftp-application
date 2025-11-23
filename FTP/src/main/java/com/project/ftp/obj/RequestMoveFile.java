@@ -2,7 +2,6 @@ package com.project.ftp.obj;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.project.ftp.service.StaticService;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 
@@ -11,6 +10,8 @@ public class RequestMoveFile {
     private String filepath;
     @JsonProperty("move_dir")
     private String moveDir;
+    @JsonProperty("create_move_dir")
+    private String createMoveDir;
     @JsonProperty("role_id")
     private String roleId;
 
@@ -30,6 +31,14 @@ public class RequestMoveFile {
         this.moveDir = moveDir;
     }
 
+    public String getCreateMoveDir() {
+        return createMoveDir;
+    }
+
+    public void setCreateMoveDir(String createMoveDir) {
+        this.createMoveDir = createMoveDir;
+    }
+
     public String getRoleId() {
         return roleId;
     }
@@ -47,6 +56,7 @@ public class RequestMoveFile {
         return "RequestMoveFile{" +
                 "filepath='" + filepath + '\'' +
                 ", moveDir='" + moveDir + '\'' +
+                ", createMoveDir='" + createMoveDir + '\'' +
                 ", roleId='" + roleId + '\'' +
                 '}';
     }

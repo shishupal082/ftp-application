@@ -46,7 +46,7 @@ public class FileServiceV3 {
             return null;
         }
         StringBuilder result = new StringBuilder();
-        filePath = strUtils.replaceDynamicPathDir(filePath, "");
+        filePath = StaticService.removeRelativePath(filePath);
         String[] filePathArr = strUtils.stringSplit(filePath, AppConstant.ASSETS_DIR, -1);
         if (filePathArr.length >= 2) {
             for(int i=1; i<filePathArr.length; i++) {

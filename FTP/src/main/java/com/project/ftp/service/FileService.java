@@ -65,21 +65,21 @@ public class FileService {
         }
         return fileCopyStatus;
     }
-    public boolean copyFile(String sourceFilepath, String destinationFilepath, boolean saveOldData) {
+    public void copyFile(String sourceFilepath, String destinationFilepath, boolean saveOldData) {
         // Here source and destination both does not contain / in the end
         if (sourceFilepath == null || destinationFilepath == null) {
             logger.info("Invalid request to copyFile: {}", sourceFilepath + "--" + destinationFilepath);
-            return false;
+            return;
         }
         if (!this.isFile(sourceFilepath)) {
             logger.info("sourceFilepath is not a file: {}", sourceFilepath);
-            return false;
+            return;
         }
         PathInfo pathInfo = this.getPathInfo(destinationFilepath);
         if (!AppConstant.FILE.equals(pathInfo.getType())) {
             boolean copyStatus = this.copyFileV2(sourceFilepath, destinationFilepath);
             logger.info("destinationFilepath: {}, fileCopyStatus: {}", destinationFilepath, copyStatus);
-            return copyStatus;
+            return;
         }
         if (saveOldData) {
             String parentFolder = pathInfo.getParentFolder();
@@ -88,15 +88,16 @@ public class FileService {
             String ext = pathInfo.getExtension();
             if (!this.isDirectory(parentFolder) || filenameWithExt == null || filenameWithExt.isEmpty()) {
                 logger.info("destinationFilepath is not valid: {}, {}", destinationFilepath, filenameWithExt);
-                return false;
+                return;
             }
             if (this.isFile(destinationFilepath)) {
                 String filename2 = filename + "-" + StaticService.getDateStrFromPattern(AppConstant.DateTimeFormat) + "." + ext;
                 logger.info("filename: {}, exist in the destination folder, copy it as: {}", destinationFilepath, filename2);
-                return this.copyFileV2(sourceFilepath,  parentFolder + "/" + filename2);
+                this.copyFileV2(sourceFilepath, parentFolder + "/" + filename2);
+                return;
             }
         }
-        return this.copyFileV2(sourceFilepath, destinationFilepath);
+        this.copyFileV2(sourceFilepath, destinationFilepath);
     }
     public boolean moveFile(String source, String destination, String filename, String ext) {
         // Here source and destination both does not contain / in the end
@@ -132,6 +133,13 @@ public class FileService {
         }
         return deleteStatus;
     }
+    /** Create directory used for
+     * (1) saveDir/temp/userName
+     * (2) saveDir/trash/userName
+     * (3) saveDir/userName/database
+     * (4) saveDir/userName
+     * (5) trashDir as per request in /api/move_file
+     * */
     public String createDir(ArrayList<String> dirs) {
         if (dirs == null || dirs.isEmpty()) {
             return null;

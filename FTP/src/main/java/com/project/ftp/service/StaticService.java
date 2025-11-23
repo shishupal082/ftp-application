@@ -161,13 +161,11 @@ public class StaticService {
         if (path == null) {
             return null;
         }
-        path = replaceBackSlashToSlash(path);
-        if (path.contains("/./")) {
-            return removeRelativePath(path.replaceAll("/./", "/"));
+        ArrayList<String> pathTokens = strUtils.tokenizePath(path, true, false, true, true);
+        if (pathTokens == null) {
+            return null;
         }
-        if (path.contains("/../")) {
-            return removeRelativePath(path.replaceAll("/../", "/"));
-        }
+        path = String.join("/", pathTokens);
         return path.replaceAll("/+", "/");
     }
     public static String replaceComma(String str) {
