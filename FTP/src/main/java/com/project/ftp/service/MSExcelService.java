@@ -174,7 +174,7 @@ public class MSExcelService {
         ArrayList<ExcelDataConfig> response = null;
         ExcelDataConfig result;
         MSExcelBridgeService msExcelBridgeService = new MSExcelBridgeService(request, eventTracking,
-                ftpConfiguration.getGoogleOAuthClientConfig(), null, null);
+                ftpConfiguration.getGoogleOAuthClientConfig(), null, null, null);
         if (combineRequestIds != null && combineRequestIds.containsKey(requestId)) {
             combinedIds = combineRequestIds.get(requestId);
             if (combinedIds != null) {
@@ -209,14 +209,13 @@ public class MSExcelService {
                                                              String requestId, String roleId) throws AppException {
         ArrayList<ExcelDataConfig> excelDataConfigs = this.getActualMSExcelSheetDataConfig(request, requestId, false, roleId);
         MSExcelBridgeService msExcelBridgeService = new MSExcelBridgeService(request, eventTracking,
-                ftpConfiguration.getGoogleOAuthClientConfig(), null, null);
+                ftpConfiguration.getGoogleOAuthClientConfig(), null, null, null);
         ArrayList<ArrayList<String>> response = null;
         ArrayList<ArrayList<String>> result;
-        BridgeResponseSheetData bridgeResponseSheetData;
         if (excelDataConfigs != null) {
             for(ExcelDataConfig excelDataConfigById: excelDataConfigs) {
                 if (excelDataConfigById != null) {
-                    result = msExcelBridgeService.applyCsvConfigOnData(-1,sheetData, null, null, excelDataConfigById, null);;
+                    result = msExcelBridgeService.applyCsvConfigOnData(sheetData, null, null, excelDataConfigById, null, -1);;
                     if (result == null) {
                         logger.info("Error in applyCsvConfigOnData for id: {}", excelDataConfigById.getId());
                     } else {
@@ -235,13 +234,13 @@ public class MSExcelService {
                                                                        String requestId, String roleId) throws AppException {
         ArrayList<ExcelDataConfig> excelDataConfigs = this.getActualMSExcelSheetDataConfig(request, requestId, false, roleId);
         MSExcelBridgeService msExcelBridgeService = new MSExcelBridgeService(request, eventTracking,
-                ftpConfiguration.getGoogleOAuthClientConfig(), null, null);
+                ftpConfiguration.getGoogleOAuthClientConfig(), null, null, null);
         ArrayList<HashMap<String, String>> response = null;
         ArrayList<ArrayList<String>> result;
         if (excelDataConfigs != null) {
             for(ExcelDataConfig excelDataConfigById: excelDataConfigs) {
                 if (excelDataConfigById != null) {
-                    result = msExcelBridgeService.applyCsvConfigOnData(-1,sheetData, null, null, excelDataConfigById, null);;
+                    result = msExcelBridgeService.applyCsvConfigOnData(sheetData, null, null, excelDataConfigById, null, -1);;
                     if (result == null) {
                         logger.info("Error in applyCsvConfigOnDataOutputJson for id: {}", excelDataConfigById.getId());
                     } else {
@@ -273,6 +272,17 @@ public class MSExcelService {
         }
         return sheetData;
     }
+    public ArrayList<ArrayList<String>> getMSExcelSheetDataArrayV2(HttpServletRequest request,
+                                                                    String requestId, String roleId) {
+        ArrayList<ArrayList<String>> data;
+        try {
+            data = this.getMSExcelSheetDataArray(request, requestId, roleId);
+        } catch (AppException ae) {
+            data = null;
+            logger.info("Error in reading excel data.");
+        }
+        return data;
+    }
     public ArrayList<HashMap<String, String>> getMSExcelSheetDataJson(HttpServletRequest request,
                                                                       String requestId, String roleId) throws AppException {
         ArrayList<ExcelDataConfig> excelDataConfigs = this.getActualMSExcelSheetDataConfig(request, requestId, true, null);
@@ -300,6 +310,7 @@ public class MSExcelService {
         }
         return strUtils.joinArrayList(result, AppConstant.NEW_LINE_STRING);
     }
+
     public ArrayList<HashMap<String, String>> applyCsvConfigOnTableData(HttpServletRequest request,
                                                                         String requestTableConfigId,
                                                                         String requestDefaultFilterMappingId,

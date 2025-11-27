@@ -17,10 +17,7 @@ import com.project.ftp.exceptions.ErrorCodes;
 import com.project.ftp.obj.yamlObj.TableConfiguration;
 import com.project.ftp.parser.MSExcelSheetParser;
 import com.project.ftp.parser.TextFileParser;
-import com.project.ftp.service.FileService;
-import com.project.ftp.service.MiscService;
-import com.project.ftp.service.ScanDirService;
-import com.project.ftp.service.StaticService;
+import com.project.ftp.service.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,37 +34,50 @@ public class MSExcelBridgeService {
     private final EventTracking eventTracking;
     private final TableService tableService;
     private final ScanDirService scanDirService;
+    private final NdTo1dService ndTo1dService;
     private final FileService fileService = new FileService();
     private final StrUtils strUtils = new StrUtils();
     private final MiscService miscService = new MiscService();
     public MSExcelBridgeService(HttpServletRequest request, EventTracking eventTracking,
                                 GoogleOAuthClientConfig googleOAuthClientConfig,
-                                TableService tableService, ScanDirService scanDirService){
+                                TableService tableService, ScanDirService scanDirService,
+                                NdTo1dService ndTo1dService){
         this.googleOAuthClientConfig = googleOAuthClientConfig;
         this.eventTracking = eventTracking;
         this.excelToCsvDataConvertService = new ExcelToCsvDataConvertServiceV2();
         this.tableService = tableService;
         this.scanDirService = scanDirService;
+        this.ndTo1dService = ndTo1dService;
         this.request = request;
     }
     private ArrayList<ArrayList<String>> readCsvData(String srcFilepath) {
         TextFileParser textFileParser = new TextFileParser((srcFilepath));
         return textFileParser.readCsvData();
     }
-    public ArrayList<ArrayList<String>> applyCsvConfigOnData(int lineIndex,ArrayList<ArrayList<String>> sheetData,
-                                                              String srcFilepath, String sheetName,
-                                                              ExcelDataConfig excelDataConfigById,
-                                                              ArrayList<String> uniqueStrings) throws AppException{
+    private ArrayList<ArrayList<String>> applyExcelToCsvOperation(ArrayList<ArrayList<String>> sheetData,
+                                                                  String srcFilePath, String sheetName,
+                                                                  ExcelDataConfig excelDataConfigById,
+                                                                  ArrayList<String> uniqueStrings, int externalIndex) {
         sheetData = excelToCsvDataConvertService.formatCellData(sheetData, excelDataConfigById);
         excelToCsvDataConvertService.applyReplaceCellString(sheetData, excelDataConfigById);
-        sheetData = excelToCsvDataConvertService.applySkipRowEntry(lineIndex, sheetData, excelDataConfigById);
+        sheetData = excelToCsvDataConvertService.applySkipRowEntry(-1,sheetData, excelDataConfigById);
         sheetData = excelToCsvDataConvertService.skipEmptyRows(sheetData, excelDataConfigById);
         excelToCsvDataConvertService.copyCellDataIndex(sheetData, excelDataConfigById);
-        sheetData = excelToCsvDataConvertService.applyCellMapping(sheetData, excelDataConfigById, srcFilepath, sheetName, lineIndex);
+        sheetData = excelToCsvDataConvertService.applyCellMapping(sheetData, excelDataConfigById, srcFilePath, sheetName, externalIndex);
         sheetData = excelToCsvDataConvertService.applyMergeColumnMapping(sheetData, excelDataConfigById);
         sheetData = excelToCsvDataConvertService.applyUniqueEntry(sheetData, excelDataConfigById, uniqueStrings);
         sheetData = excelToCsvDataConvertService.applySkipRowCriteria(sheetData, excelDataConfigById);
         sheetData = excelToCsvDataConvertService.applyRemoveColumnConfig(sheetData, excelDataConfigById);
+        sheetData = excelToCsvDataConvertService.applyHeadingField(sheetData, excelDataConfigById);
+        return sheetData;
+    }
+    public ArrayList<ArrayList<String>> applyCsvConfigOnData(ArrayList<ArrayList<String>> sheetData,
+                                                              String srcFilepath, String sheetName,
+                                                              ExcelDataConfig excelDataConfigById,
+                                                              ArrayList<String> uniqueStrings, int lineIndex) throws AppException{
+
+        sheetData = this.applyExcelToCsvOperation(sheetData, srcFilepath, sheetName,
+                excelDataConfigById, uniqueStrings, lineIndex);
         return sheetData;
     }
     public ArrayList<HashMap<String, String>> applyCsvConfigOnTableData(String requestTableConfigId,
@@ -87,7 +97,7 @@ public class MSExcelBridgeService {
             return null;
         }
         sheetData.add(rowData);
-        sheetData = this.applyCsvConfigOnData(lineIndex,sheetData,srcFilepath,sheetName,excelDataConfigById,uniqueStrings);
+        sheetData = this.applyExcelToCsvOperation(sheetData,srcFilepath,sheetName,excelDataConfigById,uniqueStrings, lineIndex);
         if (!sheetData.isEmpty()) {
             return sheetData.get(0);
         }
@@ -242,16 +252,8 @@ public class MSExcelBridgeService {
         }
         int externalIndex = -1;
         ArrayList<ArrayList<String>> sheetData = this.readCsvData(srcFilepath);
-        sheetData = excelToCsvDataConvertService.formatCellData(sheetData, excelDataConfigById);
-        excelToCsvDataConvertService.applyReplaceCellString(sheetData, excelDataConfigById);
-        sheetData = excelToCsvDataConvertService.applySkipRowEntry(-1,sheetData, excelDataConfigById);
-        sheetData = excelToCsvDataConvertService.skipEmptyRows(sheetData, excelDataConfigById);
-        excelToCsvDataConvertService.copyCellDataIndex(sheetData, excelDataConfigById);
-        sheetData = excelToCsvDataConvertService.applyCellMapping(sheetData, excelDataConfigById, srcFilepath, sheetName, externalIndex);
-        sheetData = excelToCsvDataConvertService.applyMergeColumnMapping(sheetData, excelDataConfigById);
-        sheetData = excelToCsvDataConvertService.applyUniqueEntry(sheetData, excelDataConfigById, uniqueStrings);
-        sheetData = excelToCsvDataConvertService.applySkipRowCriteria(sheetData, excelDataConfigById);
-        sheetData = excelToCsvDataConvertService.applyRemoveColumnConfig(sheetData, excelDataConfigById);
+        sheetData = this.applyExcelToCsvOperation(sheetData, srcFilepath, sheetName,
+                excelDataConfigById, uniqueStrings, externalIndex);
         return sheetData;
     }
     private ArrayList<ArrayList<String>> readExcelFilePath(String srcFilepath, String sheetName,
@@ -264,16 +266,8 @@ public class MSExcelBridgeService {
         MSExcelSheetParser msExcelSheetParser = new MSExcelSheetParser();
         ArrayList<ArrayList<String>> sheetData = msExcelSheetParser.readExcelSheetData(srcFilepath,
                 sheetName, excelDataConfigById);
-        sheetData = excelToCsvDataConvertService.formatCellData(sheetData, excelDataConfigById);
-        excelToCsvDataConvertService.applyReplaceCellString(sheetData, excelDataConfigById);
-        sheetData = excelToCsvDataConvertService.applySkipRowEntry(-1,sheetData, excelDataConfigById);
-        sheetData = excelToCsvDataConvertService.skipEmptyRows(sheetData, excelDataConfigById);
-        excelToCsvDataConvertService.copyCellDataIndex(sheetData, excelDataConfigById);
-        sheetData = excelToCsvDataConvertService.applyCellMapping(sheetData, excelDataConfigById, srcFilepath, sheetName, externalIndex);
-        sheetData = excelToCsvDataConvertService.applyMergeColumnMapping(sheetData, excelDataConfigById);
-        sheetData = excelToCsvDataConvertService.applyUniqueEntry(sheetData, excelDataConfigById, uniqueStrings);
-        sheetData = excelToCsvDataConvertService.applySkipRowCriteria(sheetData, excelDataConfigById);
-        sheetData = excelToCsvDataConvertService.applyRemoveColumnConfig(sheetData, excelDataConfigById);
+        sheetData = this.applyExcelToCsvOperation(sheetData, srcFilepath, sheetName,
+                excelDataConfigById, uniqueStrings, externalIndex);
         return sheetData;
     }
     private ArrayList<ArrayList<String>> readGoogleSheetData(String spreadSheetId, String sheetName,
@@ -283,16 +277,8 @@ public class MSExcelBridgeService {
         int externalIndex = -1;
         GoogleSheetsOAuthApi googleSheetsOAuthApi = new GoogleSheetsOAuthApi(eventTracking, googleOAuthClientConfig);
         ArrayList<ArrayList<String>> sheetData = googleSheetsOAuthApi.readSheetData(request, spreadSheetId, sheetName, roleId);
-        sheetData = excelToCsvDataConvertService.formatCellData(sheetData, excelDataConfigById);
-        excelToCsvDataConvertService.applyReplaceCellString(sheetData, excelDataConfigById);
-        sheetData = excelToCsvDataConvertService.applySkipRowEntry(-1,sheetData, excelDataConfigById);
-        sheetData = excelToCsvDataConvertService.skipEmptyRows(sheetData, excelDataConfigById);
-        excelToCsvDataConvertService.copyCellDataIndex(sheetData, excelDataConfigById);
-        sheetData = excelToCsvDataConvertService.applyCellMapping(sheetData, excelDataConfigById, spreadSheetId, sheetName, externalIndex);
-        sheetData = excelToCsvDataConvertService.applyMergeColumnMapping(sheetData, excelDataConfigById);
-        sheetData = excelToCsvDataConvertService.applyUniqueEntry(sheetData, excelDataConfigById, uniqueStrings);
-        sheetData = excelToCsvDataConvertService.applySkipRowCriteria(sheetData, excelDataConfigById);
-        sheetData = excelToCsvDataConvertService.applyRemoveColumnConfig(sheetData, excelDataConfigById);
+        sheetData = this.applyExcelToCsvOperation(sheetData, spreadSheetId, sheetName,
+                excelDataConfigById, uniqueStrings, externalIndex);
         return sheetData;
     }
     private ArrayList<ArrayList<String>> readMysqlData(String mysqlTableConfigId, String sheetName,
@@ -316,16 +302,8 @@ public class MSExcelBridgeService {
             defaultFilterMappingId = mysqlCsvDataConfig.getDefaultFilterMappingId();
         }
         ArrayList<ArrayList<String>> sheetData = tableService.getTableDataArray(request, mysqlTableConfigId, filterValues, defaultFilterMappingId, roleId);
-        sheetData = excelToCsvDataConvertService.formatCellData(sheetData, excelDataConfigById);
-        excelToCsvDataConvertService.applyReplaceCellString(sheetData, excelDataConfigById);
-        sheetData = excelToCsvDataConvertService.applySkipRowEntry(-1,sheetData, excelDataConfigById);
-        sheetData = excelToCsvDataConvertService.skipEmptyRows(sheetData, excelDataConfigById);
-        excelToCsvDataConvertService.copyCellDataIndex(sheetData, excelDataConfigById);
-        sheetData = excelToCsvDataConvertService.applyCellMapping(sheetData, excelDataConfigById, mysqlTableConfigId, sheetName, externalIndex);
-        sheetData = excelToCsvDataConvertService.applyMergeColumnMapping(sheetData, excelDataConfigById);
-        sheetData = excelToCsvDataConvertService.applyUniqueEntry(sheetData, excelDataConfigById, uniqueStrings);
-        sheetData = excelToCsvDataConvertService.applySkipRowCriteria(sheetData, excelDataConfigById);
-        sheetData = excelToCsvDataConvertService.applyRemoveColumnConfig(sheetData, excelDataConfigById);
+        sheetData = this.applyExcelToCsvOperation(sheetData, mysqlTableConfigId, sheetName,
+                excelDataConfigById, uniqueStrings, externalIndex);
         return sheetData;
     }
     private ArrayList<ArrayList<String>> readScanDir(String scanDirConfigId, String sheetName,
@@ -341,16 +319,26 @@ public class MSExcelBridgeService {
         }
         int externalIndex = -1;
         ArrayList<ArrayList<String>> sheetData = scanDirService.readScanDirectory(request, scanDirConfigId, null, null, null, null, roleId);
-        sheetData = excelToCsvDataConvertService.formatCellData(sheetData, excelDataConfigById);
-        excelToCsvDataConvertService.applyReplaceCellString(sheetData, excelDataConfigById);
-        sheetData = excelToCsvDataConvertService.applySkipRowEntry(-1,sheetData, excelDataConfigById);
-        sheetData = excelToCsvDataConvertService.skipEmptyRows(sheetData, excelDataConfigById);
-        excelToCsvDataConvertService.copyCellDataIndex(sheetData, excelDataConfigById);
-        sheetData = excelToCsvDataConvertService.applyCellMapping(sheetData, excelDataConfigById, scanDirConfigId, sheetName, externalIndex);
-        sheetData = excelToCsvDataConvertService.applyMergeColumnMapping(sheetData, excelDataConfigById);
-        sheetData = excelToCsvDataConvertService.applyUniqueEntry(sheetData, excelDataConfigById, uniqueStrings);
-        sheetData = excelToCsvDataConvertService.applySkipRowCriteria(sheetData, excelDataConfigById);
-        sheetData = excelToCsvDataConvertService.applyRemoveColumnConfig(sheetData, excelDataConfigById);
+        sheetData = this.applyExcelToCsvOperation(sheetData, scanDirConfigId, sheetName,
+                excelDataConfigById, uniqueStrings, externalIndex);
+        return sheetData;
+    }
+    //srcFilePath is same as ndTo1dRequestId
+    private ArrayList<ArrayList<String>> convertNdTo1dExcel(String ndTo1dRequestId, String sheetName,
+                                                     ExcelDataConfig excelDataConfigById,
+                                                     ArrayList<String> uniqueStrings, String roleId) throws AppException{
+        if (ndTo1dService == null) {
+            logger.info("convertNdTo1dExcel: scanDirService is not defined: {}, {}", ndTo1dRequestId, excelDataConfigById);
+            throw new AppException(ErrorCodes.CONFIG_ERROR);
+        }
+        if (excelDataConfigById == null) {
+            logger.info("convertNdTo1dExcel: excelDataConfigById is null for scanDirConfigId: {}", ndTo1dRequestId);
+            throw new AppException(ErrorCodes.CONFIG_ERROR);
+        }
+        int externalIndex = -1;
+        ArrayList<ArrayList<String>> sheetData = ndTo1dService.getNdTo1dData(request, ndTo1dRequestId, roleId);
+        sheetData = this.applyExcelToCsvOperation(sheetData, ndTo1dRequestId, sheetName,
+                excelDataConfigById, uniqueStrings, externalIndex);
         return sheetData;
     }
     public ExcelDataConfig getExcelDataConfigByIdV1(String requestId,
@@ -762,6 +750,8 @@ public class MSExcelBridgeService {
                     sheetData = this.readMysqlData(srcFilepath, sheetName, excelDataConfigById, uniqueStrings, roleId);
                 } else if (ExcelDataApiIdentifier.READ_SCAN_DIR.getApiName().equals(sourceApiName)) {
                     sheetData = this.readScanDir(srcFilepath, sheetName, excelDataConfigById, uniqueStrings, roleId);
+                } else if (ExcelDataApiIdentifier.CONVERT_ND_TO_1D.getApiName().equals(sourceApiName)) {
+                    sheetData = this.convertNdTo1dExcel(srcFilepath, sheetName, excelDataConfigById, uniqueStrings, roleId);
                 } else {
                     sheetData = null;
                 }

@@ -87,6 +87,20 @@ public class YamlFileParser {
         }
         return scanDirConfig;
     }
+    public NdTo1dConfigParam getNdTo1dConfigFromPath(String ndTo1dConfigPath) {
+        if (ndTo1dConfigPath == null || ndTo1dConfigPath.isEmpty()) {
+            logger.info("getNdTo1dConfigFromPath: path for reading ndTo1dConfig is invalid: {}", ndTo1dConfigPath);
+            return null;
+        }
+        NdTo1dConfigParam ndTo1dConfigParam = null;
+        ObjectMapper objectMapper = new ObjectMapper(new YAMLFactory());
+        try {
+            ndTo1dConfigParam = objectMapper.readValue(new File(ndTo1dConfigPath), NdTo1dConfigParam.class);
+        } catch (IOException ioe) {
+            logger.info("getNdTo1dConfigFromPath: IOE : for file : {}", ndTo1dConfigPath);
+        }
+        return ndTo1dConfigParam;
+    }
     public DatabaseConfig getDatabaseConfig(String isStaticPath, String configPath) {
         String projectWorkingDir = StaticService.getProjectWorkingDir();
         String pathname = configPath;

@@ -60,6 +60,7 @@ public class MSExcelSheetParser {
             file.close();
         } catch (Exception e) {
             logger.info("Error in reading excel filepath: {}, sheetName: {}, {}", srcFilepath, sheetName, excelDataConfigById);
+            logger.info("readExcelSheetData: {}", e.toString());
             isError = true;
         }
         try {
@@ -120,6 +121,7 @@ public class MSExcelSheetParser {
             logger.info("readExcelAndWriteData completed: {}", lineIndex);
         } catch (Exception e) {
             logger.info("readExcelSheetDataV2: Error in reading excel filepath: {}, sheetName: {}, {}", srcFilepath, sheetName, excelDataConfigById);
+            logger.info("readExcelSheetDataV2: {}", e.toString());
             isError = true;
         }
         try {

@@ -6,7 +6,8 @@ import java.util.HashMap;
 
 public enum ExcelDataApiIdentifier {
     GET_MYSQL_TABLE_DATA(ApiIdentifier.GET_MYSQL_TABLE_DATA.getApiName()),
-    READ_SCAN_DIR(ApiIdentifier.READ_SCAN_DIR.getApiName());
+    READ_SCAN_DIR(ApiIdentifier.READ_SCAN_DIR.getApiName()),
+    CONVERT_ND_TO_1D("convert_nd_to_1d");
     private final String apiName;
     ExcelDataApiIdentifier(String name) {
         this.apiName = name;

@@ -54,6 +54,7 @@ Sequence of operation
 - uniqueEntry
 - skipRowCriteria (Details below)
 - removeColumnConfig
+- headingField
 
 cellMapping:
   - defaultCellData: String|now

@@ -18,6 +18,7 @@ import com.project.ftp.exceptions.AppException;
 import com.project.ftp.exceptions.ErrorCodes;
 import com.project.ftp.mysql.MysqlUser;
 import com.project.ftp.obj.yamlObj.TableConfiguration;
+import com.project.ftp.service.NdTo1dService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -127,7 +128,7 @@ public class AppToBridge implements AppToBridgeInterface {
         ArrayList<FileConfigMapping> fileConfigMappingsCsv = fileMappingConfig.getCsvConfig();
 
         MSExcelBridgeService msExcelBridgeService = new MSExcelBridgeService(request, eventTracking,
-                null, null, null);
+                null, null, null, null);
         //ExcelDataConfig excelDataConfigById =  excelConfig.get(requestId)
         ExcelDataConfig excelDataConfigById = msExcelBridgeService.getExcelDataConfigByIdV1(requestId,
                 excelConfigHashMap);
@@ -168,8 +169,9 @@ public class AppToBridge implements AppToBridgeInterface {
             logger.info("excelDataConfig error: excelDataConfig is null.");
             throw new AppException(ErrorCodes.CONFIG_ERROR);
         }
+        NdTo1dService ndTo1dService = new NdTo1dService(appConfig);
         MSExcelBridgeService msExcelBridgeService = new MSExcelBridgeService(request, eventTracking,
-                ftpConfiguration.getGoogleOAuthClientConfig(), appConfig.getTableService(), appConfig.getScanDirService());
+                ftpConfiguration.getGoogleOAuthClientConfig(), appConfig.getTableService(), appConfig.getScanDirService(), ndTo1dService);
         ArrayList<BridgeResponseSheetData> result = msExcelBridgeService.readExcelSheetData(excelDataConfigById, roleId);
         if (result != null) {
             logger.info("excelSheetDataRead completed for excelDataConfigById.id: {}", excelDataConfigById.getId());
@@ -185,8 +187,10 @@ public class AppToBridge implements AppToBridgeInterface {
             logger.info("updateExcelData error: excelDataConfig is null.");
             throw new AppException(ErrorCodes.CONFIG_ERROR);
         }
+        NdTo1dService ndTo1dService = new NdTo1dService(appConfig);
         MSExcelBridgeService msExcelBridgeService = new MSExcelBridgeService(request, eventTracking,
-                ftpConfiguration.getGoogleOAuthClientConfig(), appConfig.getTableService(), appConfig.getScanDirService());
+                ftpConfiguration.getGoogleOAuthClientConfig(), appConfig.getTableService(),
+                appConfig.getScanDirService(), ndTo1dService);
         boolean result = msExcelBridgeService.readAndWriteExcelSheetData(excelDataConfigById, saveTableParameter);
         if (result) {
             logger.info("updateExcelData completed for excelDataConfigById.id: {}", excelDataConfigById.getId());
@@ -203,7 +207,7 @@ public class AppToBridge implements AppToBridgeInterface {
                                                                         ArrayList<HashMap<String, String>> tableData,
                                                                         TableConfiguration tableConfiguration) throws AppException {
         MSExcelBridgeService msExcelBridgeService = new MSExcelBridgeService(request, eventTracking,
-                null, null, null);
+                null, null, null, null);
         return msExcelBridgeService.applyCsvConfigOnTableData(requestTableConfigId, requestDefaultFilterMappingId,
                                     tableData, tableConfiguration);
     }

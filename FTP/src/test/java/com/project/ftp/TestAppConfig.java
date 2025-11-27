@@ -33,6 +33,10 @@ public class TestAppConfig {
         //isMysqlEnable = false
         return this.getAppConfig(false);
     }
+    public static AppConfig getAppConfigV2_1() {
+        TestAppConfig testAppConfig = new TestAppConfig();
+        return testAppConfig.getAppConfigV2();
+    }
     public AppConfig getAppConfigV3() {
         //isMysqlEnable = true
         return this.getAppConfig(true);

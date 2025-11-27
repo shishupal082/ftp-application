@@ -1,0 +1,14 @@
+
+SN,Item,Remarks,State,Wheat value,Rice value
+1,Consuption,In Cr,Bihar,20,20
+1,Consuption,In Cr,Jharkhand,18,20
+1,Consuption,In Cr,UP,30,20
+2,Production,In sqkm,Bihar,80,80
+2,Production,In sqkm,Jharkhand,75,80
+2,Production,In sqkm,UP,120,80
+3,Transport cost,Per 1000kg,Bihar,200,200
+3,Transport cost,Per 1000kg,Jharkhand,150,200
+3,Transport cost,Per 1000kg,UP,300,200
+4,Season,,Bihar,Winter,Rain
+4,Season,,Jharkhand,Winter,Rain
+4,Season,,UP,Winter,Rain

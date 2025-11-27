@@ -14,6 +14,7 @@ public class DirConfigParam {
     private String splitTextFileConfigPath;
     private ArrayList<String> standAloneConfigPath;
     private ArrayList<String> tableDbConfigFilePath;
+    private ArrayList<String> ndTo1dConfigFilePath;
     private String scanDirConfigFilePath;
     private String isRelativePath;
     private String checkPermission;
@@ -77,6 +78,14 @@ public class DirConfigParam {
         this.tableDbConfigFilePath = tableDbConfigFilePath;
     }
 
+    public ArrayList<String> getNdTo1dConfigFilePath() {
+        return ndTo1dConfigFilePath;
+    }
+
+    public void setNdTo1dConfigFilePath(ArrayList<String> ndTo1dConfigFilePath) {
+        this.ndTo1dConfigFilePath = ndTo1dConfigFilePath;
+    }
+
     public String getScanDirConfigFilePath() {
         return scanDirConfigFilePath;
     }
@@ -135,6 +144,7 @@ public class DirConfigParam {
                 ", splitTextFileConfigPath='" + splitTextFileConfigPath + '\'' +
                 ", standAloneConfigPath=" + standAloneConfigPath +
                 ", tableDbConfigFilePath=" + tableDbConfigFilePath +
+                ", ndTo1dConfigFilePath=" + ndTo1dConfigFilePath +
                 ", scanDirConfigFilePath='" + scanDirConfigFilePath + '\'' +
                 ", isRelativePath='" + isRelativePath + '\'' +
                 ", checkPermission='" + checkPermission + '\'' +

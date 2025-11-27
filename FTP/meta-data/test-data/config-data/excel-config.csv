@@ -7,3 +7,7 @@ csv-test-03,D:/workspace/ftp-application/FTP/meta-data/test-data/test-data/01-so
 csv-test-15-06,D:/workspace/ftp-application/FTP/meta-data/test-data/test-data/06-test-source-xlsx.xlsx,Sheet1
 csv-test-17,D:/workspace/ftp-application/FTP/meta-data/test-data/test-data/06-test-source-xlsx.xlsx,yml-data,D:/workspace/ftp-application/FTP/meta-data/test-data/test-data/06-test-17-yml-data.yml
 
+1dTo1dSource,D:/workspace/ftp-application/FTP/meta-data/test-data/nd-to-1d-data/nd-to-1d-data.xlsx,1d
+2dTo1dSource,D:/workspace/ftp-application/FTP/meta-data/test-data/nd-to-1d-data/nd-to-1d-data.xlsx,2d
+3dTo1dSource,D:/workspace/ftp-application/FTP/meta-data/test-data/nd-to-1d-data/nd-to-1d-data.xlsx,3d
+2d_1To1dSource,D:/workspace/ftp-application/FTP/meta-data/test-data/nd-to-1d-data/nd-to-1d-data.xlsx,2d_1

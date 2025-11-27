@@ -11,6 +11,7 @@ public enum FtpConfigItemsV2 {
     splitTextFileConfigPath,
     standAloneConfigPath,
     tableDbConfigFilePath,
+    ndTo1dConfigFilePath,
     scanDirConfigFilePath,
     assetsDir,
     publicPostDir;

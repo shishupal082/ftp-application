@@ -1,0 +1,11 @@
+
+SN,Item,Remarks,State,Value
+1,Population,In Cr,Bihar,20
+1,Population,In Cr,Jharkhand,18
+1,Population,In Cr,UP,30
+2,Area,In sqkm,Bihar,80
+2,Area,In sqkm,Jharkhand,75
+2,Area,In sqkm,UP,120
+3,Income per capita,In INR per day per person,Bihar,200
+3,Income per capita,In INR per day per person,Jharkhand,150
+3,Income per capita,In INR per day per person,UP,300

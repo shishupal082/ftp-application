@@ -1,0 +1,29 @@
+excelDataConfig:
+  1dTo1dFinal:
+    sourceApiName: "convert_nd_to_1d"
+    headingField:
+      - "SN"
+      - "Item"
+      - "Remarks"
+  2dTo1dFinal:
+    sourceApiName: "convert_nd_to_1d"
+    headingField:
+      - "SN"
+      - "Item"
+      - "Remarks"
+      - "State"
+      - "Value"
+  2d_1To1dFinal:
+    sourceApiName: "convert_nd_to_1d"
+    headingField:
+      - "Team"
+      - "Name"
+  3dTo1dFinal:
+    sourceApiName: "convert_nd_to_1d"
+    headingField:
+      - "SN"
+      - "Item"
+      - "Remarks"
+      - "State"
+      - "Wheat value"
+      - "Rice value"

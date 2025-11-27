@@ -18,6 +18,7 @@ public class ExcelDataConfig {
     private ArrayList<String> tableMappingIndex;
     private ArrayList<String> validFor;
     private ArrayList<String> allowedApi;
+    private ArrayList<String> headingField;
     private MysqlCsvDataConfig mysqlCsvDataConfig;
     private ArrayList<CellMapping> cellMapping;
     private ArrayList<ReplaceCellDataMapping> replaceCellString;
@@ -121,6 +122,14 @@ public class ExcelDataConfig {
 
     public void setAllowedApi(ArrayList<String> allowedApi) {
         this.allowedApi = allowedApi;
+    }
+
+    public ArrayList<String> getHeadingField() {
+        return headingField;
+    }
+
+    public void setHeadingField(ArrayList<String> headingField) {
+        this.headingField = headingField;
     }
 
     public MysqlCsvDataConfig getMysqlCsvDataConfig() {
@@ -249,6 +258,7 @@ public class ExcelDataConfig {
                 ", tableMappingIndex=" + tableMappingIndex +
                 ", validFor=" + validFor +
                 ", allowedApi=" + allowedApi +
+                ", headingField=" + headingField +
                 ", mysqlCsvDataConfig=" + mysqlCsvDataConfig +
                 ", cellMapping=" + cellMapping +
                 ", replaceCellString=" + replaceCellString +

@@ -132,6 +132,10 @@ public class DirectoryService {
                 r1 = dirConfigParam.getTableDbConfigFilePath();
                 r2 = dirConfigParamDefault.getTableDbConfigFilePath();
                 break;
+            case ndTo1dConfigFilePath:
+                r1 = dirConfigParam.getNdTo1dConfigFilePath();
+                r2 = dirConfigParamDefault.getNdTo1dConfigFilePath();
+                break;
         }
         if (r1 == null || r1.isEmpty()) {
             return r2;
