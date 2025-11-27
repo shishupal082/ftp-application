@@ -5,6 +5,35 @@ ndTo1dConfig:
     dataDimension: 1
     textColIndex: [0,1,2]
 
+  id_1d_1To1d:
+    sourceExcelId: "1dTo1dSource"
+    dataStartIndex: 0
+    dataDimension: 0
+    textColIndex: [0,1,2]
+
+  id_1d_2To1d:
+    sourceExcelId: "1dTo1dSource"
+    dataStartIndex: -1
+    dataDimension: 1
+    textColIndex: [0,1,2]
+
+  id_1d_3To1d:
+    sourceExcelId: ""
+    dataStartIndex: -1
+    dataDimension: 1
+    textColIndex: [0,1,2]
+
+  id_1d_4To1d:
+    sourceExcelId: "invalid"
+    dataStartIndex: -1
+    dataDimension: 1
+    textColIndex: [0,1,2]
+
+  id_1d_5To1d:
+    sourceExcelId: "1dTo1dSource"
+    dataStartIndex: 0
+    dataDimension: 1
+
   id_2dTo1d:
     sourceExcelId: "2dTo1dSource"
     dataStartIndex: 1

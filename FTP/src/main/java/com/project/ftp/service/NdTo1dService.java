@@ -152,6 +152,9 @@ public class NdTo1dService {
             return null;
         }
         Integer startIndex = ndTo1dConfig.getDataStartIndex();
+        if (startIndex == null || startIndex < 0) {
+            return null;
+        }
         ArrayList<String> rowData;
         ArrayList<ArrayList<String>> newRowData;
         int size = excelData.size();
@@ -163,10 +166,13 @@ public class NdTo1dService {
                 continue;
             }
             newRowData = this.convertNdTo1dRow(rowData, heading, ndTo1dConfig);
-            if (newRowData == null) {
+            if (newRowData == null || newRowData.isEmpty()) {
                 continue;
             }
             result.addAll(newRowData);
+        }
+        if (result.isEmpty()) {
+            return null;
         }
         return result;
     }

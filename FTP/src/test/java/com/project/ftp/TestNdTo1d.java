@@ -78,6 +78,46 @@ public class TestNdTo1d {
         Assert.assertEquals("Rain",excelData.get(11).get(5));
     }
     @Test
+    public void testNdTo1dV2() {
+        TestMSExcelService testMSExcelService = new TestMSExcelService();
+        HttpServletRequest request = testMSExcelService.getHttpServletRequest();
+        AppConfig appConfig = TestAppConfig.getAppConfigV2_1();
+        NdTo1dService ndTo1dService = new NdTo1dService(appConfig);
+        String requestId = "id_1d_1To1d";
+        String roleId = "defaultRole";
+        //Configuration error due to dimension < 1 (0)
+        try {
+            ndTo1dService.getNdTo1dData(request, requestId, roleId);
+            Assert.assertEquals(1, 0);
+        } catch (AppException ae) {
+            Assert.assertEquals(ErrorCodes.CONFIG_ERROR, ae.getErrorCode());
+        }
+        //Data null due to start index < 0 (-1)
+        requestId = "id_1d_2To1d";
+        ArrayList<ArrayList<String>> data = ndTo1dService.getNdTo1dData(request, requestId, roleId);
+        Assert.assertNull(data);
+        //Configuration error due to sourceExcelId is invalid
+        requestId = "id_1d_3To1d";
+        try {
+            ndTo1dService.getNdTo1dData(request, requestId, roleId);
+            Assert.assertEquals(1, 0);
+        } catch (AppException ae) {
+            Assert.assertEquals(ErrorCodes.CONFIG_ERROR, ae.getErrorCode());
+        }
+        //Data null to sourceExcelId is "invalid"
+        requestId = "id_1d_4To1d";
+        data = ndTo1dService.getNdTo1dData(request, requestId, roleId);
+        Assert.assertNull(data);
+        //Data null to textColIndex and dataColIndex is null
+        requestId = "id_1d_5To1d";
+        data = ndTo1dService.getNdTo1dData(request, requestId, roleId);
+        Assert.assertNull(data);
+        //Test pass
+        requestId = "id_1dTo1d";
+        data = ndTo1dService.getNdTo1dData(request, requestId, roleId);
+        Assert.assertEquals(4, data.size());
+    }
+    @Test
     public void testNdTo1dV1Update() {
         TestMSExcelService testMSExcelService = new TestMSExcelService();
         HttpServletRequest request = testMSExcelService.getHttpServletRequest();
