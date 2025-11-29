@@ -71,7 +71,7 @@ public class TestNdTo1d {
 
         requestId = "id_3dTo1d";
         excelData = ndTo1dService.getNdTo1dData(request, requestId, roleId);
-        Assert.assertEquals(12,excelData.size());
+        Assert.assertEquals(16,excelData.size());
         Assert.assertEquals(6,excelData.get(0).size());
         Assert.assertEquals("UP",excelData.get(11).get(3));
         Assert.assertEquals("Winter",excelData.get(11).get(4));
@@ -98,12 +98,8 @@ public class TestNdTo1d {
         Assert.assertNull(data);
         //Configuration error due to sourceExcelId is invalid
         requestId = "id_1d_3To1d";
-        try {
-            ndTo1dService.getNdTo1dData(request, requestId, roleId);
-            Assert.assertEquals(1, 0);
-        } catch (AppException ae) {
-            Assert.assertEquals(ErrorCodes.CONFIG_ERROR, ae.getErrorCode());
-        }
+        data = ndTo1dService.getNdTo1dData(request, requestId, roleId);
+        Assert.assertNull(data);
         //Data null to sourceExcelId is "invalid"
         requestId = "id_1d_4To1d";
         data = ndTo1dService.getNdTo1dData(request, requestId, roleId);

@@ -1,55 +1,74 @@
 ndTo1dConfig:
   id_1dTo1d:
-    sourceExcelId: "1dTo1dSource"
+    sourceExcelId: ["1dTo1dSource"]
     dataStartIndex: 0
     dataDimension: 1
     textColIndex: [0,1,2]
 
   id_1d_1To1d:
-    sourceExcelId: "1dTo1dSource"
+    sourceExcelId: ["1dTo1dSource"]
     dataStartIndex: 0
     dataDimension: 0
     textColIndex: [0,1,2]
 
   id_1d_2To1d:
-    sourceExcelId: "1dTo1dSource"
+    sourceExcelId: ["1dTo1dSource"]
     dataStartIndex: -1
     dataDimension: 1
     textColIndex: [0,1,2]
 
   id_1d_3To1d:
-    sourceExcelId: ""
+    sourceExcelId: [""]
     dataStartIndex: -1
     dataDimension: 1
     textColIndex: [0,1,2]
 
   id_1d_4To1d:
-    sourceExcelId: "invalid"
+    sourceExcelId: ["invalid"]
     dataStartIndex: -1
     dataDimension: 1
     textColIndex: [0,1,2]
 
   id_1d_5To1d:
-    sourceExcelId: "1dTo1dSource"
+    sourceExcelId: ["1dTo1dSource"]
     dataStartIndex: 0
     dataDimension: 1
 
   id_2dTo1d:
-    sourceExcelId: "2dTo1dSource"
+    sourceExcelId: ["2dTo1dSource"]
     dataStartIndex: 1
     dataDimension: 2
     textColIndex: [0,1,5]
     dataColIndex: [[2],[3],[4]]
 
   id_2d_1To1d:
-    sourceExcelId: "2d_1To1dSource"
+    sourceExcelId:
+      - "2d_1To1dSource"
     dataStartIndex: 1
     dataDimension: 2
     dataColIndex: [[0],[1],[2],[3]]
-
+    skipRowCriteria:
+      - dataColIndex: [0,1,2,3]
+        criteria:
+          - col_index: 0
+            is_empty: true
   id_3dTo1d:
-    sourceExcelId: "3dTo1dSource"
+    sourceExcelId:
+      - "3dTo1dSource"
     dataStartIndex: 2
     dataDimension: 3
     textColIndex: [0,1,8]
     dataColIndex: [[2,3],[4,5],[6,7]]
+    skipRowCriteria:
+      - dataColIndex: [0,1]
+        operation: "OR"
+        criteria:
+          - col_index: 1
+            is_empty: true
+      - dataColIndex: [2]
+        operation: "AND"
+        criteria:
+          - col_index: 0
+            is_empty: true
+          - col_index: 1
+            is_empty: true

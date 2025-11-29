@@ -7,17 +7,18 @@ import java.util.ArrayList;
 @JsonIgnoreProperties(ignoreUnknown = true)
 
 public class NdTo1dConfig {
-    private String sourceExcelId;
+    private ArrayList<String> sourceExcelId;
     private Integer dataStartIndex;
     private Integer dataDimension;
     private ArrayList<Integer> textColIndex;
     private ArrayList<ArrayList<Integer>> dataColIndex;
+    private ArrayList<NdTo1dSkipRowCriteria> skipRowCriteria;
 
-    public String getSourceExcelId() {
+    public ArrayList<String> getSourceExcelId() {
         return sourceExcelId;
     }
 
-    public void setSourceExcelId(String sourceExcelId) {
+    public void setSourceExcelId(ArrayList<String> sourceExcelId) {
         this.sourceExcelId = sourceExcelId;
     }
 
@@ -53,14 +54,23 @@ public class NdTo1dConfig {
         this.dataColIndex = dataColIndex;
     }
 
+    public ArrayList<NdTo1dSkipRowCriteria> getSkipRowCriteria() {
+        return skipRowCriteria;
+    }
+
+    public void setSkipRowCriteria(ArrayList<NdTo1dSkipRowCriteria> skipRowCriteria) {
+        this.skipRowCriteria = skipRowCriteria;
+    }
+
     @Override
     public String toString() {
         return "NdTo1dConfig{" +
-                "sourceExcelId='" + sourceExcelId + '\'' +
+                "sourceExcelId=" + sourceExcelId +
                 ", dataStartIndex=" + dataStartIndex +
                 ", dataDimension=" + dataDimension +
                 ", textColIndex=" + textColIndex +
                 ", dataColIndex=" + dataColIndex +
+                ", skipRowCriteria=" + skipRowCriteria +
                 '}';
     }
 }

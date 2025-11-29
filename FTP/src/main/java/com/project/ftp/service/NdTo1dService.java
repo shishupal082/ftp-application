@@ -1,11 +1,14 @@
 package com.project.ftp.service;
 
+import com.project.ftp.bridge.obj.yamlObj.SkipRowCriteria;
 import com.project.ftp.config.AppConfig;
+import com.project.ftp.config.AppConstant;
 import com.project.ftp.config.FtpConfigItemsV2;
 import com.project.ftp.exceptions.AppException;
 import com.project.ftp.exceptions.ErrorCodes;
 import com.project.ftp.obj.yamlObj.NdTo1dConfig;
 import com.project.ftp.obj.yamlObj.NdTo1dConfigParam;
+import com.project.ftp.obj.yamlObj.NdTo1dSkipRowCriteria;
 import com.project.ftp.parser.YamlFileParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -71,8 +74,88 @@ public class NdTo1dService {
         }
         return rowData.get(index);
     }
+    private boolean checkIndividualSkipRow(SkipRowCriteria skipRowCriteria,
+                                           ArrayList<String> rowAsPerDataColIndex) {
+        if (skipRowCriteria == null || rowAsPerDataColIndex == null || rowAsPerDataColIndex.isEmpty()) {
+            return false;
+        }
+        Integer colIndex = skipRowCriteria.getCol_index();
+        if (colIndex == null || colIndex < 0 || colIndex >= rowAsPerDataColIndex.size()) {
+            return false;
+        }
+        Boolean isEmpty = skipRowCriteria.getIs_empty();
+        if (isEmpty == null) {
+            return false;
+        }
+        String cellData = rowAsPerDataColIndex.get(colIndex);
+        if (cellData == null) {
+            cellData = AppConstant.EmptyStr;
+        }
+        if (isEmpty) {
+            return AppConstant.EmptyStr.equals(cellData);
+        }
+        return !AppConstant.EmptyStr.equals(cellData);
+    }
+    private boolean isSkipRowCriteriaTrue(ArrayList<NdTo1dSkipRowCriteria> skipRowCriteria,
+                                          ArrayList<String> rowAsPerDataColIndex, int dataColRowId) {
+        if (skipRowCriteria == null || skipRowCriteria.isEmpty()) {
+            return false;
+        }
+        if (rowAsPerDataColIndex == null) {
+            return false;
+        }
+        if (dataColRowId < 0) {
+            return false;
+        }
+        ArrayList<Integer> dataColIndex;
+        String operation;
+        ArrayList<SkipRowCriteria> skipRowCriteria2;
+        boolean status;
+        ArrayList<Boolean> allStatus;
+        for(NdTo1dSkipRowCriteria skipRowCriteria1: skipRowCriteria) {
+            if (skipRowCriteria1 == null) {
+                continue;
+            }
+            dataColIndex = skipRowCriteria1.getDataColIndex();
+            if (dataColIndex == null) {
+                continue;
+            }
+            if (!dataColIndex.contains(dataColRowId)) {
+                continue;
+            }
+            operation = skipRowCriteria1.getOperation();
+            skipRowCriteria2 = skipRowCriteria1.getCriteria();
+            if (skipRowCriteria2 == null) {
+                continue;
+            }
+            if (AppConstant.AND.equals(operation)) {
+                allStatus = new ArrayList<>();
+                for(SkipRowCriteria criteria: skipRowCriteria2) {
+                    status = this.checkIndividualSkipRow(criteria, rowAsPerDataColIndex);
+                    allStatus.add(status);
+                }
+                if (!allStatus.isEmpty()) {
+                    for (Boolean b: allStatus) {
+                        if (!b) {
+                            return false;
+                        }
+                    }
+                    return true;
+                }
+            } else {
+                for(SkipRowCriteria criteria: skipRowCriteria2) {
+                    status = this.checkIndividualSkipRow(criteria, rowAsPerDataColIndex);
+                    if (status) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
     private ArrayList<String> getEachRowData(ArrayList<String> rowData, ArrayList<Integer> textColIndex,
-                               ArrayList<Integer> dataColIndex, ArrayList<String> heading, Integer dimension) {
+                                             int dataColRowId, ArrayList<Integer> dataColIndex, ArrayList<String> heading,
+                                             Integer dimension, ArrayList<NdTo1dSkipRowCriteria> skipRowCriteria) {
         if (rowData == null) {
             return null;
         }
@@ -98,6 +181,7 @@ public class NdTo1dService {
         }
         Integer index2;
         boolean headingAdded = false;
+        ArrayList<String> rowAsPerDataColIndex = new ArrayList<>();
         for (int i=0; i<dimension-1; i++) {
             cellData = null;
             if (i < dataColIndex.size()) {
@@ -115,8 +199,12 @@ public class NdTo1dService {
             if (cellData == null) {
                 cellData = "";
             }
-            result.add(cellData);
+            rowAsPerDataColIndex.add(cellData);
         }
+        if (this.isSkipRowCriteriaTrue(skipRowCriteria, rowAsPerDataColIndex, dataColRowId)) {
+            return null;
+        }
+        result.addAll(rowAsPerDataColIndex);
         return result;
     }
     private ArrayList<ArrayList<String>> convertNdTo1dRow(ArrayList<String> rowData, ArrayList<String> heading,
@@ -129,16 +217,19 @@ public class NdTo1dService {
         ArrayList<Integer> textColIndex = ndTo1dConfig.getTextColIndex();
         ArrayList<ArrayList<Integer>> dataColIndex = ndTo1dConfig.getDataColIndex();
         Integer dimension = ndTo1dConfig.getDataDimension();
+        ArrayList<NdTo1dSkipRowCriteria> skipRowCriteria = ndTo1dConfig.getSkipRowCriteria();
+        int dataColRowId = 0;
         if (dataColIndex != null && !dataColIndex.isEmpty()) {
             for(ArrayList<Integer> dataCol: dataColIndex) {
-                eachRowData = this.getEachRowData(rowData, textColIndex, dataCol, heading, dimension);
+                eachRowData = this.getEachRowData(rowData, textColIndex, dataColRowId, dataCol, heading, dimension, skipRowCriteria);
+                dataColRowId++;
                 if (eachRowData == null || eachRowData.isEmpty()) {
                     continue;
                 }
                 result.add(eachRowData);
             }
         } else {
-            eachRowData = this.getEachRowData(rowData, textColIndex, null, heading, dimension);
+            eachRowData = this.getEachRowData(rowData, textColIndex, dataColRowId, null, heading, dimension, skipRowCriteria);
             if (eachRowData == null || eachRowData.isEmpty()) {
                 return result;
             }
@@ -187,7 +278,7 @@ public class NdTo1dService {
             logger.info("ndTo1dConfig is null for requestId: {}", requestId);
             throw new AppException(ErrorCodes.CONFIG_ERROR);
         }
-        String sourceExcelId = ndTo1dConfig.getSourceExcelId();
+        ArrayList<String> sourceExcelId = ndTo1dConfig.getSourceExcelId();
         if (sourceExcelId == null || sourceExcelId.isEmpty()) {
             logger.info("Invalid sourceExcelId: {}, requestId: {}, ndTo1dConfig: {}",
                     sourceExcelId, requestId, ndTo1dConfig);
@@ -200,10 +291,22 @@ public class NdTo1dService {
         }
         Integer dataStartIndex = ndTo1dConfig.getDataStartIndex();
         if (dataStartIndex == null) {
-            logger.info("Invalid dataStartIndex: {}, ndTo1dConfig: {}", dataStartIndex, ndTo1dConfig);
+            logger.info("Invalid dataStartIndex: null, ndTo1dConfig: {}", ndTo1dConfig);
             throw new AppException(ErrorCodes.CONFIG_ERROR);
         }
-        ArrayList<ArrayList<String>> data = msExcelService.getMSExcelSheetDataArrayV2(request, sourceExcelId, roleId);
-        return this.convertNdTo1dData(data, ndTo1dConfig);
+        ArrayList<ArrayList<String>> excelData, ndTo1dData;
+        ArrayList<ArrayList<String>> result = new ArrayList<>();
+        for(String excelId: sourceExcelId) {
+            excelData = msExcelService.getMSExcelSheetDataArrayV2(request, excelId, roleId);
+            ndTo1dData = this.convertNdTo1dData(excelData, ndTo1dConfig);
+            if (ndTo1dData == null || ndTo1dData.isEmpty()) {
+                continue;
+            }
+            result.addAll(ndTo1dData);
+        }
+        if (result.isEmpty()) {
+            return null;
+        }
+        return result;
     }
 }

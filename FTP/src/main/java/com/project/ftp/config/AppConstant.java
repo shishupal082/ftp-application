@@ -103,6 +103,8 @@ public class AppConstant {
     public static final String roleAccessTypeDirect = "direct";
     public static final String roleAccessTypeConfig = "config";
 
+    public static final String OR = "OR";
+    public static final String AND = "AND";
     /**
      * 0: server/standalone
      * 1 (CMD_LINE_ARG_MIN_SIZE-3): isMySqlEnable
