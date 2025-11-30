@@ -6,6 +6,7 @@ import com.project.ftp.config.AppConstant;
 import com.project.ftp.config.FtpConfigItemsV2;
 import com.project.ftp.exceptions.AppException;
 import com.project.ftp.exceptions.ErrorCodes;
+import com.project.ftp.intreface.RolesMappingInterface;
 import com.project.ftp.obj.yamlObj.NdTo1dConfig;
 import com.project.ftp.obj.yamlObj.NdTo1dConfigParam;
 import com.project.ftp.obj.yamlObj.NdTo1dSkipRowCriteria;
@@ -83,18 +84,12 @@ public class NdTo1dService {
         if (colIndex == null || colIndex < 0 || colIndex >= rowAsPerDataColIndex.size()) {
             return false;
         }
-        Boolean isEmpty = skipRowCriteria.getIs_empty();
-        if (isEmpty == null) {
+        String cellData = rowAsPerDataColIndex.get(colIndex);
+        Boolean status = RolesMappingInterface.isValidCondition(cellData, skipRowCriteria);
+        if (status == null) {
             return false;
         }
-        String cellData = rowAsPerDataColIndex.get(colIndex);
-        if (cellData == null) {
-            cellData = AppConstant.EmptyStr;
-        }
-        if (isEmpty) {
-            return AppConstant.EmptyStr.equals(cellData);
-        }
-        return !AppConstant.EmptyStr.equals(cellData);
+        return status;
     }
     private boolean isSkipRowCriteriaTrue(ArrayList<NdTo1dSkipRowCriteria> skipRowCriteria,
                                           ArrayList<String> rowAsPerDataColIndex, int dataColRowId) {

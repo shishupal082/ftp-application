@@ -9,7 +9,7 @@ import java.util.ArrayList;
 public class MergeColumnConfig {
     private Integer finalIndex;
     private ArrayList<Integer> sourceIndex;
-    private ArrayList<MergeConfigCondition> conditions;
+    private ArrayList<SkipRowCriteria> conditions;
     private String join;
 
     public Integer getFinalIndex() {
@@ -28,11 +28,11 @@ public class MergeColumnConfig {
         this.sourceIndex = sourceIndex;
     }
 
-    public ArrayList<MergeConfigCondition> getConditions() {
+    public ArrayList<SkipRowCriteria> getConditions() {
         return conditions;
     }
 
-    public void setConditions(ArrayList<MergeConfigCondition> conditions) {
+    public void setConditions(ArrayList<SkipRowCriteria> conditions) {
         this.conditions = conditions;
     }
 

@@ -25,12 +25,11 @@ public class RolesResource {
         BridgeToAppInterface bridgeToAppInterface = new BridgeToApp(eventTracking);
         return new BridgeTracking(bridgeToAppInterface);
     }
-    public boolean updateRoles() {
+    public void updateRoles() {
         String roleConfigDir = appConfig.getDirectoryService().getConfigPathDefault();
         ArrayList<String> rolesConfigPath = StaticService.getRolesConfigPath(appConfig);
-        boolean status = this.rolesMappingApp.updateRoleConfig(roleConfigDir, rolesConfigPath);
+        this.rolesMappingApp.updateRoleConfig(roleConfigDir, rolesConfigPath);
         this.trackRelatedUser();
-        return status;
     }
     public boolean isRoleAuthorised(String apiName, String userName) {
         return this.rolesMappingApp.isRoleAuthorised(apiName, userName);
@@ -53,6 +52,7 @@ public class RolesResource {
     public Object getRolesConfig() {
         return this.rolesMappingApp.getRolesConfig();
     }
+
     // /api/get/roles/allByRid
     public Object getAllRolesByRolesId() {
         return null;

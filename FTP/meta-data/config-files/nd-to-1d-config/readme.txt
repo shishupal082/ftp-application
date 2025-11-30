@@ -19,6 +19,9 @@ ndTo1dConfig:
             isEmpty: true
           - col_index: 1
             isEmpty: true
+            range: [ "TRUE","FALSE" ]
+            notInRange: [ "TRUE","FALSE" ]
+            regex: "^OK$"
 
 
 dataStartIndex: minimum value 1

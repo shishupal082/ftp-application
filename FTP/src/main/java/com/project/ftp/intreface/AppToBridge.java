@@ -47,8 +47,8 @@ public class AppToBridge implements AppToBridgeInterface {
         this.rolesResource = new RolesResource(appConfig, eventTracking);
     }
     @Override
-    public boolean updateUserRoles() {
-        return rolesResource.updateRoles();
+    public void updateUserRoles() {
+        rolesResource.updateRoles();
     }
     @Override
     public boolean isAuthorisedApi(String apiName, String userName) {

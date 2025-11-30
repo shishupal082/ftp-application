@@ -8,6 +8,7 @@ import com.project.ftp.config.FileMimeType;
 import com.project.ftp.config.UserMethod;
 import com.project.ftp.event.EventTracking;
 import com.project.ftp.exceptions.ErrorCodes;
+import com.project.ftp.intreface.RolesMappingInterface;
 import com.project.ftp.obj.PathInfo;
 import com.project.ftp.parser.YamlFileParser;
 import com.project.ftp.pdf.TextToPdfService;
@@ -17,8 +18,6 @@ import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class StaticService {
     private final static Logger logger = LoggerFactory.getLogger(StaticService.class);
@@ -128,18 +127,7 @@ public class StaticService {
         return str.split(regex, limit);
     }
     public static boolean isPatternMatching(String str, String pattern, boolean exactMatch) {
-        if (str == null || pattern == null) {
-            return false;
-        }
-        if (str.isEmpty() || pattern.trim().isEmpty()) {
-            return false;
-        }
-        if (exactMatch) {
-            pattern = "^" + pattern + "$";
-        }
-        Pattern regexPattern = Pattern.compile(pattern, Pattern.CASE_INSENSITIVE);
-        Matcher matcher = regexPattern.matcher(str);
-        return matcher.find();
+        return RolesMappingInterface.isPatternMatching(str, pattern, exactMatch);
     }
     public static String getProperDirString(String path) {
         if (path == null) {

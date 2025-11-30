@@ -4,6 +4,7 @@ import com.project.ftp.bridge.config.MappingDataType;
 import com.project.ftp.bridge.obj.yamlObj.*;
 import com.project.ftp.common.DateUtilities;
 import com.project.ftp.config.AppConstant;
+import com.project.ftp.intreface.RolesMappingInterface;
 import com.project.ftp.obj.PathInfo;
 import com.project.ftp.obj.yamlObj.TableConfiguration;
 import com.project.ftp.service.FileService;
@@ -218,13 +219,7 @@ public class ExcelToCsvDataConvertServiceV2 {
         if (skipRowCriteria == null) {
             return true;
         }
-        String regex;
-        ArrayList<String> range, notInRange;
-        Boolean isEmpty = skipRowCriteria.getIs_empty();
-        regex = skipRowCriteria.getRegex();
-        range = skipRowCriteria.getRange();
-        notInRange = skipRowCriteria.getNotInRange();
-        return this.isValidCondition(cellData, range, notInRange, isEmpty, regex);
+        return this.isValidCondition(cellData, skipRowCriteria);
     }
     public ArrayList<HashMap<String, String>> applySkipRowCriteriaV2(ArrayList<HashMap<String, String>> tableData,
                                                               TableConfiguration tableConfiguration) {
@@ -772,39 +767,22 @@ public class ExcelToCsvDataConvertServiceV2 {
             }
         }
     }
-    private boolean isValidCondition(String cellData, ArrayList<String> range, ArrayList<String> notInRange,
-                                     Boolean isEmpty, String regex) {
-        if (range != null && range.contains(cellData)) {
-            return true;
+    private boolean isValidCondition(String cellData, SkipRowCriteria skipRowCriteria) {
+        Boolean status = RolesMappingInterface.isValidCondition(cellData,skipRowCriteria);
+        if (status == null) {
+            return false;
         }
-        if (notInRange != null && !notInRange.contains(cellData)) {
-            return true;
-        }
-        if (regex != null && StaticService.isPatternMatching(cellData, regex, false)) {
-            return true;
-        }
-        if (isEmpty != null) {
-            if (isEmpty) {
-                return cellData.isEmpty();
-            } else {
-                return !cellData.isEmpty();
-            }
-        }
-        return false;
+        return status;
     }
     private boolean isValidMergeColumnConfigCondition(ArrayList<String> rowData,
-                                                      ArrayList<MergeConfigCondition> conditions) {
+                                                      ArrayList<SkipRowCriteria> conditions) {
         if (conditions == null) {
             return true;
         }
         Integer colIndex;
-        ArrayList<String> range;
-        ArrayList<String> notInRange;
-        Boolean isEmpty;
-        String regex;
         String cellData;
         boolean currentStatus;
-        for (MergeConfigCondition condition: conditions) {
+        for (SkipRowCriteria condition: conditions) {
             if (condition == null) {
                 continue;
             }
@@ -816,11 +794,7 @@ public class ExcelToCsvDataConvertServiceV2 {
                 continue;
             }
             cellData = rowData.get(colIndex);
-            range = condition.getRange();
-            notInRange = condition.getNotInRange();
-            regex = condition.getRegex();
-            isEmpty = condition.getIs_empty();
-            currentStatus = this.isValidCondition(cellData, range, notInRange, isEmpty, regex);
+            currentStatus = this.isValidCondition(cellData, condition);
             if (currentStatus) {
                 return true;
             }
@@ -838,7 +812,7 @@ public class ExcelToCsvDataConvertServiceV2 {
         String join = mergeColumnConfig.getJoin();
         ArrayList<String> tempFinalData;
         ArrayList<String> rowData, updatedRowData;
-        ArrayList<MergeConfigCondition> conditions = mergeColumnConfig.getConditions();
+        ArrayList<SkipRowCriteria> conditions = mergeColumnConfig.getConditions();
         if (join == null) {
             join = "";
         }

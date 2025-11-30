@@ -2,7 +2,6 @@ package com.project.ftp.obj.yamlObj;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
