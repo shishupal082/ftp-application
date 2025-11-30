@@ -22,12 +22,15 @@ public class NdTo1dService {
     private final static Logger logger = LoggerFactory.getLogger(NdTo1dService.class);
     private final AppConfig appConfig;
     private final MSExcelService msExcelService;
+    private final UserService userService;
     public NdTo1dService(final AppConfig appConfig) {
         this.appConfig = appConfig;
         if (appConfig != null) {
             this.msExcelService = appConfig.getMsExcelService();
+            this.userService = appConfig.getUserService();
         } else {
             this.msExcelService = null;
+            this.userService = null;
         }
     }
     private NdTo1dConfig getNdTo1dConfigV2(String requestId, ArrayList<String> ndTo1dConfigPath) throws AppException {
@@ -265,6 +268,11 @@ public class NdTo1dService {
 
     public ArrayList<ArrayList<String>> getNdTo1dData(HttpServletRequest request, String requestId, String roleId) throws AppException {
         NdTo1dConfig ndTo1dConfig = this.getNdTo1dConfigV1(request, requestId, roleId);
+        Object userDetail = null;
+        if (userService != null) {
+            userDetail = userService.getUserDataForLogging(request);
+        }
+        logger.info("getNdTo1dData in: user: {}, requestId: {}, roleId: {}", userDetail, requestId, roleId);
         if (msExcelService == null) {
             logger.info("msExcelService is null.");
             throw new AppException(ErrorCodes.CONFIG_ERROR);
