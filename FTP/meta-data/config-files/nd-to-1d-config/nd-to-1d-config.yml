@@ -40,6 +40,12 @@ ndTo1dConfig:
     dataDimension: 2
     textColIndex: [0,1,5]
     dataColIndex: [[2],[3],[4]]
+    headingField:
+      - "SN"
+      - "Item"
+      - "Remarks"
+      - "State"
+      - "Value"
 
   id_2d_1To1d:
     sourceExcelId:

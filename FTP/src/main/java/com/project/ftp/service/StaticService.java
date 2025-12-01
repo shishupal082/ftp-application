@@ -32,6 +32,19 @@ public class StaticService {
     public static String getDateStrFromPattern(String pattern) {
         return dateUtilities.getDateStrFromPattern(pattern, AppConstant.EmptyStr);
     }
+    public static ArrayList<ArrayList<String>> applyHeadingField(ArrayList<ArrayList<String>> sheetData,
+                                                            ArrayList<String> headingField) {
+        if (headingField == null || headingField.isEmpty()) {
+            return sheetData;
+        }
+        if (sheetData == null || sheetData.isEmpty()) {
+            return sheetData;
+        }
+        ArrayList<ArrayList<String>> result = new ArrayList<>();
+        result.add(headingField);
+        result.addAll(sheetData);
+        return result;
+    }
     public static String generateStringFromFormat(AppConfig appConfig, HashMap<String, String> values) {
         String format = AppConstant.FILENAME_FORMAT;
         String configFilenameFormat = appConfig.getFtpConfiguration().getFilenameFormat();

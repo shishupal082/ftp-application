@@ -1003,16 +1003,10 @@ public class ExcelToCsvDataConvertServiceV2 {
         return finalSheetData;
     }
     public ArrayList<ArrayList<String>> applyHeadingField(ArrayList<ArrayList<String>> sheetData, ExcelDataConfig excelDataConfigById) {
-        if (excelDataConfigById == null || sheetData == null || sheetData.isEmpty()) {
+        if (excelDataConfigById == null) {
             return sheetData;
         }
         ArrayList<String> headingField = excelDataConfigById.getHeadingField();
-        if (headingField == null || headingField.isEmpty()) {
-            return sheetData;
-        }
-        ArrayList<ArrayList<String>> result = new ArrayList<>();
-        result.add(headingField);
-        result.addAll(sheetData);
-        return result;
+        return StaticService.applyHeadingField(sheetData, headingField);
     }
 }

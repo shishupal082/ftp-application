@@ -12,6 +12,7 @@ public class NdTo1dConfig {
     private Integer dataDimension;
     private ArrayList<Integer> textColIndex;
     private ArrayList<ArrayList<Integer>> dataColIndex;
+    private ArrayList<String> headingField;
     private ArrayList<NdTo1dSkipRowCriteria> skipRowCriteria;
 
     public ArrayList<String> getSourceExcelId() {
@@ -54,6 +55,14 @@ public class NdTo1dConfig {
         this.dataColIndex = dataColIndex;
     }
 
+    public ArrayList<String> getHeadingField() {
+        return headingField;
+    }
+
+    public void setHeadingField(ArrayList<String> headingField) {
+        this.headingField = headingField;
+    }
+
     public ArrayList<NdTo1dSkipRowCriteria> getSkipRowCriteria() {
         return skipRowCriteria;
     }
@@ -70,6 +79,7 @@ public class NdTo1dConfig {
                 ", dataDimension=" + dataDimension +
                 ", textColIndex=" + textColIndex +
                 ", dataColIndex=" + dataColIndex +
+                ", headingField=" + headingField +
                 ", skipRowCriteria=" + skipRowCriteria +
                 '}';
     }

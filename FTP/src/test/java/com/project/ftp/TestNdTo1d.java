@@ -57,17 +57,17 @@ public class TestNdTo1d {
         String requestId = "id_2dTo1d";
         String roleId = "defaultRole";
         ArrayList<ArrayList<String>> excelData = ndTo1dService.getNdTo1dData(request, requestId, roleId);
-        Assert.assertEquals(9,excelData.size());
-        Assert.assertEquals(5,excelData.get(0).size());
-        Assert.assertEquals("Population",excelData.get(0).get(1));
-        Assert.assertEquals("Bihar",excelData.get(0).get(3));
-        Assert.assertEquals("20",excelData.get(0).get(4));
+        Assert.assertEquals(10,excelData.size());
+        Assert.assertEquals(5,excelData.get(1).size());
         Assert.assertEquals("Population",excelData.get(1).get(1));
-        Assert.assertEquals("Jharkhand",excelData.get(1).get(3));
-        Assert.assertEquals("18",excelData.get(1).get(4));
-        Assert.assertEquals("Area",excelData.get(3).get(1));
-        Assert.assertEquals("Bihar",excelData.get(3).get(3));
-        Assert.assertEquals("80",excelData.get(3).get(4));
+        Assert.assertEquals("Bihar",excelData.get(1).get(3));
+        Assert.assertEquals("20",excelData.get(1).get(4));
+        Assert.assertEquals("Population",excelData.get(2).get(1));
+        Assert.assertEquals("Jharkhand",excelData.get(2).get(3));
+        Assert.assertEquals("18",excelData.get(2).get(4));
+        Assert.assertEquals("Area",excelData.get(4).get(1));
+        Assert.assertEquals("Bihar",excelData.get(4).get(3));
+        Assert.assertEquals("80",excelData.get(4).get(4));
 
         requestId = "id_3dTo1d";
         excelData = ndTo1dService.getNdTo1dData(request, requestId, roleId);

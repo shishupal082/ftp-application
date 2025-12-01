@@ -266,6 +266,13 @@ public class NdTo1dService {
         return result;
     }
 
+    private ArrayList<ArrayList<String>> addHeadingField(ArrayList<ArrayList<String>> ndTo1dData,
+                                                           NdTo1dConfig ndTo1dConfig) {
+        if (ndTo1dConfig == null) {
+            return ndTo1dData;
+        }
+        return StaticService.applyHeadingField(ndTo1dData, ndTo1dConfig.getHeadingField());
+    }
     public ArrayList<ArrayList<String>> getNdTo1dData(HttpServletRequest request, String requestId, String roleId) throws AppException {
         NdTo1dConfig ndTo1dConfig = this.getNdTo1dConfigV1(request, requestId, roleId);
         Object userDetail = null;
@@ -310,6 +317,7 @@ public class NdTo1dService {
         if (result.isEmpty()) {
             return null;
         }
+        result = this.addHeadingField(result, ndTo1dConfig);
         return result;
     }
 }
