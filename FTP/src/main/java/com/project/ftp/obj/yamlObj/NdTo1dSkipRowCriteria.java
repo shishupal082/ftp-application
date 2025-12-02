@@ -8,15 +8,15 @@ import java.util.ArrayList;
 @JsonIgnoreProperties(ignoreUnknown = true)
 
 public class NdTo1dSkipRowCriteria {
-    private ArrayList<Integer> dataColIndex;
+    private ArrayList<ArrayList<Integer>> dataColIndex;
     private String operation;
     private ArrayList<SkipRowCriteria> criteria;
 
-    public ArrayList<Integer> getDataColIndex() {
+    public ArrayList<ArrayList<Integer>> getDataColIndex() {
         return dataColIndex;
     }
 
-    public void setDataColIndex(ArrayList<Integer> dataColIndex) {
+    public void setDataColIndex(ArrayList<ArrayList<Integer>> dataColIndex) {
         this.dataColIndex = dataColIndex;
     }
 

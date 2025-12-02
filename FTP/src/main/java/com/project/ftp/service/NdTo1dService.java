@@ -138,18 +138,41 @@ public class NdTo1dService {
         }
         return status;
     }
+    private boolean isLiesInRange(ArrayList<ArrayList<Integer>> dataColIndex, int dataCol_i) {
+        if (dataColIndex == null) {
+            return true;
+        }
+        Integer i, j;
+        for(ArrayList<Integer> dataCol: dataColIndex) {
+            if (dataCol == null || dataCol.size() < 2) {
+                continue;
+            }
+            i = dataCol.get(0);
+            j = dataCol.get(1);
+            if (i == null || i < 0) {
+                i = 0;
+            }
+            if (j == null || j < 0) {
+                j = dataCol_i;
+            }
+            if (dataCol_i >= i && dataCol_i <= j) {
+                return true;
+            }
+        }
+        return false;
+    }
     private boolean isSkipRowCriteriaTrue(ArrayList<NdTo1dSkipRowCriteria> skipRowCriteria,
-                                          ArrayList<String> rowAsPerDataColIndex, int dataColRowId) {
+                                          ArrayList<String> rowAsPerDataColIndex, int dataCol_i) {
         if (skipRowCriteria == null || skipRowCriteria.isEmpty()) {
             return false;
         }
         if (rowAsPerDataColIndex == null) {
             return false;
         }
-        if (dataColRowId < 0) {
+        if (dataCol_i < 0) {
             return false;
         }
-        ArrayList<Integer> dataColIndex;
+        ArrayList<ArrayList<Integer>> dataColIndex;
         String operation;
         ArrayList<SkipRowCriteria> skipRowCriteria2;
         boolean status;
@@ -159,10 +182,7 @@ public class NdTo1dService {
                 continue;
             }
             dataColIndex = skipRowCriteria1.getDataColIndex();
-            if (dataColIndex == null) {
-                continue;
-            }
-            if (!dataColIndex.contains(dataColRowId)) {
+            if (!this.isLiesInRange(dataColIndex, dataCol_i)) {
                 continue;
             }
             operation = skipRowCriteria1.getOperation();
