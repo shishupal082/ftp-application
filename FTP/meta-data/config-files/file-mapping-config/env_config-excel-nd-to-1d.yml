@@ -27,3 +27,5 @@ excelDataConfig:
       - "State"
       - "Wheat value"
       - "Rice value"
+  3d_1To1dFinal:
+    sourceApiName: "convert_nd_to_1d"

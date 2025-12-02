@@ -94,3 +94,23 @@ ndTo1dConfig:
             is_empty: true
           - col_index: 1
             is_empty: true
+
+  id_3d_1To1d:
+    sourceExcelId:
+      - "3d_1To1dSource"
+    dataDimension: 3
+    textColIndex: [0,1]
+    headingCellIndex:
+      - [[[0,2],[1,2]]]
+      - [[[0,2],[1,3]]]
+      - [[[0,4],[1,4]]]
+      - [[[0,4],[1,5]]]
+      - [[[0,6],[1,6]]]
+      - [[[0,6],[1,7]]]
+    dataColIndex: [[2],[3],[4],[5],[6],[7]]
+    headingField:
+      - "Location"
+      - "Row no"
+      - "Relay rack"
+      - "Relay rack column"
+      - "Relay name"

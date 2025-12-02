@@ -1,0 +1,14 @@
+
+Location,Row no,Relay rack,Relay rack column,Relay name
+WG,A,R1,1,DD(LAD) HHR
+WG,A,R1,2,DD (HTE) DR
+WG,A,R2,1,29 HR
+WG,A,R2,2,SH27 HR
+WG,A,R3,1,17 HR
+WG,A,R3,2,C17 HR
+WG,B,R1,1,2 HR
+WG,B,R1,2,2EUR
+WG,B,R2,1,23 HR
+WG,B,R2,2,13 DR
+WG,B,R3,1,SH19 HR
+WG,B,R3,2,C21 HR
