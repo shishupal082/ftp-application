@@ -118,13 +118,19 @@ public class TestNdTo1d {
         TestMSExcelService testMSExcelService = new TestMSExcelService();
         HttpServletRequest request = testMSExcelService.getHttpServletRequest();
         MSExcelService msExcelService = testMSExcelService.getMSExcelService();
+        String requestId = "1dTo1dFinal";
+        ApiResponse apiResponse = msExcelService.updateMSExcelSheetData(request, requestId, null);
+        Assert.assertEquals(AppConstant.SUCCESS, apiResponse.getStatus());
+    }
+    @Test
+    public void test2dTo1dV1Update() {
+        TestMSExcelService testMSExcelService = new TestMSExcelService();
+        HttpServletRequest request = testMSExcelService.getHttpServletRequest();
+        MSExcelService msExcelService = testMSExcelService.getMSExcelService();
         String requestId = "2dTo1dFinal";
         ApiResponse apiResponse = msExcelService.updateMSExcelSheetData(request, requestId, null);
         Assert.assertEquals(AppConstant.SUCCESS, apiResponse.getStatus());
         requestId = "2d_1To1dFinal";
-        apiResponse = msExcelService.updateMSExcelSheetData(request, requestId, null);
-        Assert.assertEquals(AppConstant.SUCCESS, apiResponse.getStatus());
-        requestId = "1dTo1dFinal";
         apiResponse = msExcelService.updateMSExcelSheetData(request, requestId, null);
         Assert.assertEquals(AppConstant.SUCCESS, apiResponse.getStatus());
     }

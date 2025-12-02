@@ -39,11 +39,7 @@ ndTo1dConfig:
     dataStartIndex: 1
     dataDimension: 2
     textColIndex: [0,1,5]
-    headingCellIndex:
-      - [[[0,2]]]
-      - [[[0,3]]]
-      - [[[0,4]]]
-    dataColIndex: [[2],[3],[4]]
+    dataColIndex: [[[2],[0,2]],[[3],[0,3]],[[4],[0,4]]]
     headingField:
       - "SN"
       - "Item"
@@ -56,12 +52,7 @@ ndTo1dConfig:
       - "2d_1To1dSource"
     dataStartIndex: 1
     dataDimension: 2
-    headingCellIndex:
-      - [[[0,0]]]
-      - [[[0,1]]]
-      - [[[0,2]]]
-      - [[[0,3]]]
-    dataColIndex: [[0],[1],[2],[3]]
+    dataColIndex: [[[0],[0,0]],[[1],[0,1]],[[2],[0,2]],[[3],[0,3]]]
     skipRowCriteria:
       - dataColIndex: [0,1,2,3]
         criteria:
@@ -73,14 +64,10 @@ ndTo1dConfig:
     dataStartIndex: 2
     dataDimension: 3
     textColIndex: [0,1,8]
-    headingCellIndex:
-      - [[[0,2]], [[0,2]]]
-      - [[[0,4]], [[0,4]]]
-      - [[[0,6]], [[0,6]]]
     dataColIndex:
-      - [2,3]
-      - [4,5]
-      - [6,7]
+      - [[2,3],[0,2]]
+      - [[4,5],[0,4]]
+      - [[6,7],[0,6]]
     skipRowCriteria:
       - dataColIndex: [0,1]
         operation: "OR"
@@ -100,14 +87,13 @@ ndTo1dConfig:
       - "3d_1To1dSource"
     dataDimension: 3
     textColIndex: [0,1]
-    headingCellIndex:
-      - [[[0,2],[1,2]]]
-      - [[[0,2],[1,3]]]
-      - [[[0,4],[1,4]]]
-      - [[[0,4],[1,5]]]
-      - [[[0,6],[1,6]]]
-      - [[[0,6],[1,7]]]
-    dataColIndex: [[2],[3],[4],[5],[6],[7]]
+    dataColIndex:
+      - [[2],[0,2],[1,2]]
+      - [[3],[0,2],[1,3]]
+      - [[4],[0,4],[1,4]]
+      - [[5],[0,4],[1,5]]
+      - [[6],[0,6],[1,6]]
+      - [[7],[0,6],[1,7]]
     headingField:
       - "Location"
       - "Row no"
