@@ -92,10 +92,10 @@ public class TestNdTo1d {
         } catch (AppException ae) {
             Assert.assertEquals(ErrorCodes.CONFIG_ERROR, ae.getErrorCode());
         }
-        //Data null due to start index < 0 (-1)
+        //Data not null startIndex < 0 (-1), startIndex will be replaced with dimension-1
         requestId = "id_1d_2To1d";
         ArrayList<ArrayList<String>> data = ndTo1dService.getNdTo1dData(request, requestId, roleId);
-        Assert.assertNull(data);
+        Assert.assertNotNull(data);
         //Configuration error due to sourceExcelId is invalid
         requestId = "id_1d_3To1d";
         data = ndTo1dService.getNdTo1dData(request, requestId, roleId);

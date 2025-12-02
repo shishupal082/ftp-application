@@ -39,6 +39,10 @@ ndTo1dConfig:
     dataStartIndex: 1
     dataDimension: 2
     textColIndex: [0,1,5]
+    headingCellIndex:
+      - [[[0,2]]]
+      - [[[0,3]]]
+      - [[[0,4]]]
     dataColIndex: [[2],[3],[4]]
     headingField:
       - "SN"
@@ -52,6 +56,11 @@ ndTo1dConfig:
       - "2d_1To1dSource"
     dataStartIndex: 1
     dataDimension: 2
+    headingCellIndex:
+      - [[[0,0]]]
+      - [[[0,1]]]
+      - [[[0,2]]]
+      - [[[0,3]]]
     dataColIndex: [[0],[1],[2],[3]]
     skipRowCriteria:
       - dataColIndex: [0,1,2,3]
@@ -64,7 +73,14 @@ ndTo1dConfig:
     dataStartIndex: 2
     dataDimension: 3
     textColIndex: [0,1,8]
-    dataColIndex: [[2,3],[4,5],[6,7]]
+    headingCellIndex:
+      - [[[0,2]], [[0,2]]]
+      - [[[0,4]], [[0,4]]]
+      - [[[0,6]], [[0,6]]]
+    dataColIndex:
+      - [2,3]
+      - [4,5]
+      - [6,7]
     skipRowCriteria:
       - dataColIndex: [0,1]
         operation: "OR"

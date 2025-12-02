@@ -11,6 +11,7 @@ public class NdTo1dConfig {
     private Integer dataStartIndex;
     private Integer dataDimension;
     private ArrayList<Integer> textColIndex;
+    private ArrayList<ArrayList<ArrayList<ArrayList<Integer>>>> headingCellIndex;
     private ArrayList<ArrayList<Integer>> dataColIndex;
     private ArrayList<String> headingField;
     private ArrayList<NdTo1dSkipRowCriteria> skipRowCriteria;
@@ -47,6 +48,14 @@ public class NdTo1dConfig {
         this.textColIndex = textColIndex;
     }
 
+    public ArrayList<ArrayList<ArrayList<ArrayList<Integer>>>> getHeadingCellIndex() {
+        return headingCellIndex;
+    }
+
+    public void setHeadingCellIndex(ArrayList<ArrayList<ArrayList<ArrayList<Integer>>>> headingCellIndex) {
+        this.headingCellIndex = headingCellIndex;
+    }
+
     public ArrayList<ArrayList<Integer>> getDataColIndex() {
         return dataColIndex;
     }
@@ -78,6 +87,7 @@ public class NdTo1dConfig {
                 ", dataStartIndex=" + dataStartIndex +
                 ", dataDimension=" + dataDimension +
                 ", textColIndex=" + textColIndex +
+                ", headingCellIndex=" + headingCellIndex +
                 ", dataColIndex=" + dataColIndex +
                 ", headingField=" + headingField +
                 ", skipRowCriteria=" + skipRowCriteria +

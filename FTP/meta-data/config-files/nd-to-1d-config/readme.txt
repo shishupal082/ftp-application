@@ -6,6 +6,10 @@ ndTo1dConfig:
     dataDimension: 2
     textColIndex: [0,1,5]
     dataColIndex: [[2],[3],[4]]
+    headingCellIndex:
+      - [[[0,2]], [[0,2]]]
+      - [[[0,4]], [[0,4]]]
+      - [[[0,6]], [[0,6]]]
     skipRowCriteria:
       - dataColIndex: [0,1]
         operation: "OR"
@@ -25,8 +29,8 @@ ndTo1dConfig:
 
 ApiName for nd1dData conversion: "convert_nd_to_1d"
 
-dataStartIndex: minimum value 1
-dataDimension: minimum value 1
+dataStartIndex(optional,default:dimension-1): minimum value 1
+dataDimension(required): minimum value 1
 skipRowCriteria.criteria default it is an OR operation (Other value is AND)
 
 End to end cycle:
