@@ -272,7 +272,7 @@ public class ExcelToCsvDataConvertServiceV2 {
             return sheetData;
         }
         int lastRowIndex = sheetData.size()-1;
-        ArrayList<Integer> skipRowsIndex = this.getSkipRowIndexes(lineIndex,excelDataConfigById, lastRowIndex);
+        ArrayList<Integer> skipRowsIndex = this.getSkipRowIndexes(lineIndex, excelDataConfigById, lastRowIndex);
         if (skipRowsIndex == null || skipRowsIndex.isEmpty()) {
             return sheetData;
         }
@@ -293,7 +293,7 @@ public class ExcelToCsvDataConvertServiceV2 {
         sheetData = sheetDataUpdated;
         return sheetData;
     }
-    private ArrayList<Integer> getSkipRowIndexes(int lineIndex,ExcelDataConfig excelDataConfigById, int lastRowIndex) {
+    private ArrayList<Integer> getSkipRowIndexes(int lineIndex, ExcelDataConfig excelDataConfigById, int lastRowIndex) {
         ArrayList<Integer> result = new ArrayList<>();
         if (excelDataConfigById == null || lastRowIndex < 0) {
             return null;

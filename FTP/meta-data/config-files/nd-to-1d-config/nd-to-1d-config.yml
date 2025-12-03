@@ -54,7 +54,8 @@ ndTo1dConfig:
     dataDimension: 2
     dataColIndex: [[[0],[0,0]],[[1],[0,1]],[[2],[0,2]],[[3],[0,3]]]
     skipRowCriteria:
-      - criteria:
+      - dataColIndex: [[0,-1]]
+        criteria:
           - col_index: 0
             is_empty: true
   id_3dTo1d:

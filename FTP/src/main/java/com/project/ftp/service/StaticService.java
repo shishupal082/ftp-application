@@ -45,6 +45,51 @@ public class StaticService {
         result.addAll(sheetData);
         return result;
     }
+    public static boolean isLiesInRange(ArrayList<ArrayList<Integer>> dataColIndex, int dataCol_i) {
+        if (dataColIndex == null) {
+            return false;
+        }
+        Integer i, j;
+        for(ArrayList<Integer> dataCol: dataColIndex) {
+            if (dataCol == null || dataCol.size() < 2) {
+                continue;
+            }
+            i = dataCol.get(0);
+            j = dataCol.get(1);
+            if (i == null || i < 0) {
+                i = 0;
+            }
+            if (j == null || j < 0) {
+                j = dataCol_i;
+            }
+            if (dataCol_i >= i && dataCol_i <= j) {
+                return true;
+            }
+        }
+        return false;
+    }
+    public static String getCellDataFromSheet(ArrayList<ArrayList<String>> sheetData, int row, int col) {
+        if (sheetData == null || sheetData.isEmpty()) {
+            return null;
+        }
+        if (row < 0) {
+            return null;
+        }
+        ArrayList<String> rowData = null;
+        if (row < sheetData.size()) {
+            rowData = sheetData.get(row);
+        }
+        return getCellDataFromRow(rowData, col);
+    }
+    public static String getCellDataFromRow(ArrayList<String> rowData, Integer index) {
+        if (rowData == null || rowData.isEmpty()) {
+            return null;
+        }
+        if (index == null || index < 0 || index >= rowData.size()) {
+            return null;
+        }
+        return rowData.get(index);
+    }
     public static String generateStringFromFormat(AppConfig appConfig, HashMap<String, String> values) {
         String format = AppConstant.FILENAME_FORMAT;
         String configFilenameFormat = appConfig.getFtpConfiguration().getFilenameFormat();

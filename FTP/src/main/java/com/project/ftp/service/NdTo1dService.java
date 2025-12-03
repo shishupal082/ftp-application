@@ -69,28 +69,6 @@ public class NdTo1dService {
         ArrayList<String> ndTo1dConfigPath = appConfig.getDirectoryService().getDirConfigParamFromRequestV2(request, FtpConfigItemsV2.ndTo1dConfigFilePath, roleId);
         return this.getNdTo1dConfigV2(requestId, ndTo1dConfigPath);
     }
-    private String getCellDataV2(ArrayList<ArrayList<String>> sheetData, int row, int col) {
-        if (sheetData == null || sheetData.isEmpty()) {
-            return null;
-        }
-        if (row < 0) {
-            return null;
-        }
-        ArrayList<String> rowData = null;
-        if (row < sheetData.size()) {
-            rowData = sheetData.get(row);
-        }
-        return this.getCellData(rowData, col);
-    }
-    private String getCellData(ArrayList<String> rowData, Integer index) {
-        if (rowData == null || rowData.isEmpty()) {
-            return null;
-        }
-        if (index == null || index < 0 || index >= rowData.size()) {
-            return null;
-        }
-        return rowData.get(index);
-    }
     private ArrayList<String> getHeadingData(ArrayList<ArrayList<String>> excelData,
                                              ArrayList<ArrayList<Integer>> dataColIndex) {
         if (dataColIndex == null || dataColIndex.size() < 2) {
@@ -113,7 +91,7 @@ public class NdTo1dService {
             if (i == null || j == null) {
                 cellData = null;
             } else {
-                cellData = this.getCellDataV2(excelData,i,j);
+                cellData = StaticService.getCellDataFromSheet(excelData,i,j);
             }
             if (cellData == null) {
                 cellData = AppConstant.EmptyStr;
@@ -138,29 +116,6 @@ public class NdTo1dService {
         }
         return status;
     }
-    private boolean isLiesInRange(ArrayList<ArrayList<Integer>> dataColIndex, int dataCol_i) {
-        if (dataColIndex == null) {
-            return true;
-        }
-        Integer i, j;
-        for(ArrayList<Integer> dataCol: dataColIndex) {
-            if (dataCol == null || dataCol.size() < 2) {
-                continue;
-            }
-            i = dataCol.get(0);
-            j = dataCol.get(1);
-            if (i == null || i < 0) {
-                i = 0;
-            }
-            if (j == null || j < 0) {
-                j = dataCol_i;
-            }
-            if (dataCol_i >= i && dataCol_i <= j) {
-                return true;
-            }
-        }
-        return false;
-    }
     private boolean isSkipRowCriteriaTrue(ArrayList<NdTo1dSkipRowCriteria> skipRowCriteria,
                                           ArrayList<String> rowAsPerDataColIndex, int dataCol_i) {
         if (skipRowCriteria == null || skipRowCriteria.isEmpty()) {
@@ -182,7 +137,10 @@ public class NdTo1dService {
                 continue;
             }
             dataColIndex = skipRowCriteria1.getDataColIndex();
-            if (!this.isLiesInRange(dataColIndex, dataCol_i)) {
+            if (dataColIndex == null) {
+                continue;
+            }
+            if (!StaticService.isLiesInRange(dataColIndex, dataCol_i)) {
                 continue;
             }
             operation = skipRowCriteria1.getOperation();
@@ -230,7 +188,7 @@ public class NdTo1dService {
                 if (index == null) {
                     continue;
                 }
-                cellData = this.getCellData(rowData, index);
+                cellData = StaticService.getCellDataFromRow(rowData, index);
                 if (cellData == null) {
                     cellData = "";
                 }
@@ -259,7 +217,7 @@ public class NdTo1dService {
                     }
                     headingAdded = true;
                 }
-                cellData = this.getCellData(rowData, index2);
+                cellData = StaticService.getCellDataFromRow(rowData, index2);
             }
             if (cellData == null) {
                 cellData = "";
