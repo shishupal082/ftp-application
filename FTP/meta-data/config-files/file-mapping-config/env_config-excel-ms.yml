@@ -144,6 +144,9 @@ excelDataConfig:
       - finalIndex: -4
         sourceIndex: [0,-1]
         join: "..."
+      - finalIndex: 5
+        sourceIndex: [4,-2]
+        join: "..."
   csv-test-05:
     appendCellDataIndex:
       - [0, -1]

@@ -58,6 +58,26 @@ ndTo1dConfig:
         criteria:
           - col_index: 0
             is_empty: true
+
+  id_2d_2To1d:
+    sourceExcelId:
+      - "2d_1To1dSource"
+    dataStartIndex: 1
+    dataDimension: 2
+    dataColIndex: [[[5],[0,5]]]
+
+  id_2d_3To1d:
+    sourceExcelId:
+      - "2d_1To1dSource"
+    dataStartIndex: 1
+    dataDimension: 2
+    dataColIndex: [[[5],[0,5]]]
+    skipRowCriteria:
+      - dataColIndex: [[0,0]]
+        criteria:
+          - col_index: 0
+            is_empty: true
+
   id_3dTo1d:
     sourceExcelId:
       - "3dTo1dSource"

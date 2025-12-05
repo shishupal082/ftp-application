@@ -174,7 +174,6 @@ public class NdTo1dService {
         return false;
     }
     private ArrayList<String> getRowDataAsPerDataColIndex(ArrayList<ArrayList<String>> excelData, ArrayList<String> rowData,
-                                                          ArrayList<Integer> textColIndex,
                                                           int dataCol_i, ArrayList<ArrayList<Integer>> dataColIndex,
                                                           Integer dimension,
                                                           ArrayList<NdTo1dSkipRowCriteria> skipRowCriteria) {
@@ -183,18 +182,6 @@ public class NdTo1dService {
         }
         ArrayList<String> result = new ArrayList<>();
         String cellData;
-        if (textColIndex != null && !textColIndex.isEmpty()) {
-            for(Integer index: textColIndex) {
-                if (index == null) {
-                    continue;
-                }
-                cellData = StaticService.getCellDataFromRow(rowData, index);
-                if (cellData == null) {
-                    cellData = "";
-                }
-                result.add(cellData);
-            }
-        }
         if (dataColIndex == null || dataColIndex.isEmpty()) {
             return result;
         }
@@ -238,30 +225,49 @@ public class NdTo1dService {
         if (ndTo1dConfig == null) {
             return null;
         }
-        ArrayList<ArrayList<String>> result = new ArrayList<>();
-        ArrayList<String> eachRowData;
+        ArrayList<String> rowDataAsPerTextColIndex = new ArrayList<>();
         ArrayList<Integer> textColIndex = ndTo1dConfig.getTextColIndex();
+        String cellData;
+        if (textColIndex != null && !textColIndex.isEmpty()) {
+            for(Integer index: textColIndex) {
+                if (index == null) {
+                    continue;
+                }
+                cellData = StaticService.getCellDataFromRow(rowData, index);
+                if (cellData == null) {
+                    cellData = "";
+                }
+                rowDataAsPerTextColIndex.add(cellData);
+            }
+        }
+        ArrayList<ArrayList<String>> result = new ArrayList<>();
+        ArrayList<ArrayList<String>> rowAsPerDataColIndex = new ArrayList<>();
+        ArrayList<String> eachRowData, fullRowData;
         ArrayList<ArrayList<ArrayList<Integer>>> dataColIndex = ndTo1dConfig.getDataColIndex();
         Integer dimension = ndTo1dConfig.getDataDimension();
         ArrayList<NdTo1dSkipRowCriteria> skipRowCriteria = ndTo1dConfig.getSkipRowCriteria();
         int dataCol_i = 0;
         if (dataColIndex != null && !dataColIndex.isEmpty()) {
             for(ArrayList<ArrayList<Integer>> dataCol: dataColIndex) {
-                eachRowData = this.getRowDataAsPerDataColIndex(excelData, rowData, textColIndex, dataCol_i, dataCol,
+                eachRowData = this.getRowDataAsPerDataColIndex(excelData, rowData, dataCol_i, dataCol,
                         dimension, skipRowCriteria);
                 dataCol_i++;
                 if (eachRowData == null || eachRowData.isEmpty()) {
                     continue;
                 }
-                result.add(eachRowData);
+                rowAsPerDataColIndex.add(eachRowData);
+            }
+            for (ArrayList<String> r: rowAsPerDataColIndex) {
+                fullRowData = new ArrayList<>(rowDataAsPerTextColIndex);
+                fullRowData.addAll(r);
+                if (!fullRowData.isEmpty()) {
+                    result.add(fullRowData);
+                }
             }
         } else {
-            eachRowData = this.getRowDataAsPerDataColIndex(excelData, rowData, textColIndex, dataCol_i, null,
-                    dimension, skipRowCriteria);
-            if (eachRowData == null || eachRowData.isEmpty()) {
-                return result;
+            if (!rowDataAsPerTextColIndex.isEmpty()) {
+                result.add(rowDataAsPerTextColIndex);
             }
-            result.add(eachRowData);
         }
         return result;
     }

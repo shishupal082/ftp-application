@@ -801,54 +801,6 @@ public class ExcelToCsvDataConvertServiceV2 {
         }
         return false;
     }
-    private void applyCellMerging(ArrayList<ArrayList<String>> sheetData,
-                                  ArrayList<ArrayList<String>> updatedSheetData,
-                                  MergeColumnConfig mergeColumnConfig) {
-        if (sheetData == null || mergeColumnConfig == null) {
-            return;
-        }
-        Integer finalIndex = mergeColumnConfig.getFinalIndex();
-        ArrayList<Integer> sourceIndex = mergeColumnConfig.getSourceIndex();
-        String join = mergeColumnConfig.getJoin();
-        ArrayList<String> tempFinalData;
-        ArrayList<String> rowData, updatedRowData;
-        ArrayList<SkipRowCriteria> conditions = mergeColumnConfig.getConditions();
-        if (join == null) {
-            join = "";
-        }
-        if (finalIndex == null || finalIndex < 0 || sourceIndex == null) {
-            return;
-        }
-        int j;
-        for(int i=0; i<sheetData.size(); i++) {
-            rowData = sheetData.get(i);
-            if (rowData == null) {
-                continue;
-            }
-            if (conditions != null) {
-                if (!this.isValidMergeColumnConfigCondition(rowData, conditions)) {
-                    continue;
-                }
-            }
-            tempFinalData = new ArrayList<>();
-            for (Integer index: sourceIndex) {
-                if (index != null && index >= 0 && index < rowData.size()) {
-                    tempFinalData.add(rowData.get(index));
-                }
-            }
-            if (i < updatedSheetData.size()) {
-                updatedRowData = updatedSheetData.get(i);
-                if (finalIndex >= updatedRowData.size()) {
-                    for(j=updatedRowData.size(); j<=finalIndex; j++) {
-                        updatedRowData.add(AppConstant.EmptyStr);
-                    }
-                }
-                updatedRowData.set(finalIndex, String.join(join, tempFinalData));
-            } else {
-                logger.info("sheetData and updatedSheetData mismatch in row.");
-            }
-        }
-    }
     public ArrayList<ArrayList<String>> applyMergeColumnMapping(ArrayList<ArrayList<String>> sheetData,
                                                                 ExcelDataConfig excelDataConfigById) {
         if (sheetData == null || excelDataConfigById == null) {
@@ -876,12 +828,12 @@ public class ExcelToCsvDataConvertServiceV2 {
                 continue;
             }
             for(Integer index: tempSourceIndex) {
-                if (index == null) {
+                if (index == null || index < -1) {
                     continue;
                 }
                 if (index >= 0) {
                     sourceIndex.add(index);
-                } else if (index == -1) {
+                } else {
                     if (!sourceIndex.isEmpty()) {
                         tempIndex = sourceIndex.get(sourceIndex.size()-1);
                         for (int j=tempIndex+1; j < maxColCount; j++) {
@@ -893,19 +845,55 @@ public class ExcelToCsvDataConvertServiceV2 {
             }
             mergeColumnConfig.setSourceIndex(sourceIndex);
         }
-        ArrayList<String> updatedRowData;
-        ArrayList<ArrayList<String>> updatedSheetData = new ArrayList<>();
-        for(ArrayList<String> rowData: sheetData) {
-            updatedRowData = new ArrayList<>(rowData);
-            updatedSheetData.add(updatedRowData);
-        }
         for (MergeColumnConfig mergeColumnConfig: mergeColumnConfigs) {
             if (mergeColumnConfig == null) {
                 continue;
             }
-            this.applyCellMerging(sheetData, updatedSheetData, mergeColumnConfig);
+            this.applyCellMerging(sheetData, mergeColumnConfig);
         }
-        return updatedSheetData;
+        return sheetData;
+    }
+    private void applyCellMerging(ArrayList<ArrayList<String>> sheetData,
+                                  MergeColumnConfig mergeColumnConfig) {
+        if (sheetData == null || mergeColumnConfig == null) {
+            return;
+        }
+        Integer finalIndex = mergeColumnConfig.getFinalIndex();
+        ArrayList<Integer> sourceIndex = mergeColumnConfig.getSourceIndex();
+        String join = mergeColumnConfig.getJoin();
+        ArrayList<String> tempFinalData;
+        ArrayList<String> rowData;
+        ArrayList<SkipRowCriteria> conditions = mergeColumnConfig.getConditions();
+        if (join == null) {
+            join = "";
+        }
+        if (finalIndex == null || finalIndex < 0 || sourceIndex == null) {
+            return;
+        }
+        int j;
+        for(int i=0; i<sheetData.size(); i++) {
+            rowData = sheetData.get(i);
+            if (rowData == null) {
+                continue;
+            }
+            if (conditions != null) {
+                if (!this.isValidMergeColumnConfigCondition(rowData, conditions)) {
+                    continue;
+                }
+            }
+            tempFinalData = new ArrayList<>();
+            for (Integer index: sourceIndex) {
+                if (index != null && index >= 0 && index < rowData.size()) {
+                    tempFinalData.add(rowData.get(index));
+                }
+            }
+            if (finalIndex >= rowData.size()) {
+                for(j=rowData.size(); j<=finalIndex; j++) {
+                    rowData.add(AppConstant.EmptyStr);
+                }
+            }
+            rowData.set(finalIndex, String.join(join, tempFinalData));
+        }
     }
     public ArrayList<ArrayList<String>> applyRemoveColumnConfig(ArrayList<ArrayList<String>> sheetData,
                                                                 ExcelDataConfig excelDataConfigById) {

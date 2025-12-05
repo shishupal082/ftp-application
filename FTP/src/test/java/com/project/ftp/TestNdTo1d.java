@@ -112,6 +112,13 @@ public class TestNdTo1d {
         requestId = "id_1dTo1d";
         data = ndTo1dService.getNdTo1dData(request, requestId, roleId);
         Assert.assertEquals(4, data.size());
+        //Test pass
+        requestId = "id_2d_2To1d";
+        data = ndTo1dService.getNdTo1dData(request, requestId, roleId);
+        Assert.assertEquals(5, data.size());
+        requestId = "id_2d_3To1d";
+        data = ndTo1dService.getNdTo1dData(request, requestId, roleId);
+        Assert.assertNull(data);
     }
     @Test
     public void testNdTo1dV1Update() {
