@@ -810,41 +810,6 @@ public class ExcelToCsvDataConvertServiceV2 {
         if (mergeColumnConfigs == null) {
             return  sheetData;
         }
-        int maxColCount = 0;
-        for(ArrayList<String> rowData: sheetData) {
-            if (rowData.size() > maxColCount) {
-                maxColCount = rowData.size();
-            }
-        }
-        Integer tempIndex;
-        ArrayList<Integer> sourceIndex, tempSourceIndex;
-        for (MergeColumnConfig mergeColumnConfig: mergeColumnConfigs) {
-            if (mergeColumnConfig == null) {
-                continue;
-            }
-            tempSourceIndex = mergeColumnConfig.getSourceIndex();
-            sourceIndex = new ArrayList<>();
-            if (tempSourceIndex == null) {
-                continue;
-            }
-            for(Integer index: tempSourceIndex) {
-                if (index == null || index < -1) {
-                    continue;
-                }
-                if (index >= 0) {
-                    sourceIndex.add(index);
-                } else {
-                    if (!sourceIndex.isEmpty()) {
-                        tempIndex = sourceIndex.get(sourceIndex.size()-1);
-                        for (int j=tempIndex+1; j < maxColCount; j++) {
-                            sourceIndex.add(j);
-                        }
-                    }
-                    break;
-                }
-            }
-            mergeColumnConfig.setSourceIndex(sourceIndex);
-        }
         for (MergeColumnConfig mergeColumnConfig: mergeColumnConfigs) {
             if (mergeColumnConfig == null) {
                 continue;
@@ -862,7 +827,6 @@ public class ExcelToCsvDataConvertServiceV2 {
         ArrayList<Integer> sourceIndex = mergeColumnConfig.getSourceIndex();
         String join = mergeColumnConfig.getJoin();
         ArrayList<String> tempFinalData;
-        ArrayList<String> rowData;
         ArrayList<SkipRowCriteria> conditions = mergeColumnConfig.getConditions();
         if (join == null) {
             join = "";
@@ -871,8 +835,8 @@ public class ExcelToCsvDataConvertServiceV2 {
             return;
         }
         int j;
-        for(int i=0; i<sheetData.size(); i++) {
-            rowData = sheetData.get(i);
+        Integer prevIndex = null;
+        for (ArrayList<String> rowData : sheetData) {
             if (rowData == null) {
                 continue;
             }
@@ -882,13 +846,28 @@ public class ExcelToCsvDataConvertServiceV2 {
                 }
             }
             tempFinalData = new ArrayList<>();
-            for (Integer index: sourceIndex) {
-                if (index != null && index >= 0 && index < rowData.size()) {
+            for (Integer index : sourceIndex) {
+                if (index == null) {
+                    continue;
+                }
+                if (index < 0 && prevIndex == null) {
+                    continue;
+                }
+                if (index == -1) {
+                    for (j = prevIndex+1; j < rowData.size(); j++) {
+                        tempFinalData.add(rowData.get(j));
+                    }
+                    break;
+                } else if (index < -1) {
+                    break;
+                }
+                prevIndex = index;
+                if (index < rowData.size()) {
                     tempFinalData.add(rowData.get(index));
                 }
             }
             if (finalIndex >= rowData.size()) {
-                for(j=rowData.size(); j<=finalIndex; j++) {
+                for (j = rowData.size(); j <= finalIndex; j++) {
                     rowData.add(AppConstant.EmptyStr);
                 }
             }

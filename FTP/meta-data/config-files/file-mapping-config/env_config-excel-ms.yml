@@ -124,29 +124,31 @@ excelDataConfig:
       - 1
   csv-test-04:
     mergeColumnConfig:
-      - finalIndex: 1
+      - finalIndex: 4
         sourceIndex: [1,2,3]
-        join: ".."
-      - finalIndex: 0
-        sourceIndex: [0,1,2,3]
-        join: ","
-      - finalIndex: 2
+        join: "M1"
+      - finalIndex: 5
         sourceIndex: [1,2,3]
-        join: ".."
-      - finalIndex: 3
+        join: "M2"
+      - finalIndex: 6
         sourceIndex: [3,-1]
       - finalIndex: -1
         sourceIndex: [0,-1]
         join: "..."
-      - finalIndex: 4
-        sourceIndex: [0,-1]
-        join: "..."
+        info: "skipped due to final index < 0"
       - finalIndex: -4
         sourceIndex: [0,-1]
         join: "..."
-      - finalIndex: 5
-        sourceIndex: [4,-2]
+        info: "skipped due to final index < 0"
+      - finalIndex: 7
+        sourceIndex: [4,-2, 3]
         join: "..."
+        info: "Only index 4 will be considered as -2 is less than -1"
+        info2: "Result will be same as 4"
+      - finalIndex: 8
+        sourceIndex: [-1,5,-1]
+        join: "..."
+        info: "It will start from 5 as first index is less than 0"
   csv-test-05:
     appendCellDataIndex:
       - [0, -1]
@@ -178,6 +180,7 @@ excelDataConfig:
       - finalIndex: 5
         sourceIndex: [ 1,-1 ]
         join: ".."
+        info: "data for 0 to 3 from csv and 4 to 8 empty string then data for 9 as calculated above"
     removeColumnConfig: [2,3,4,6,7,8]
   csv-test-08:
     appendCellDataIndex:
