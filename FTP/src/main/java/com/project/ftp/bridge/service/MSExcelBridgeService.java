@@ -67,6 +67,7 @@ public class MSExcelBridgeService {
         sheetData = excelToCsvDataConvertService.applyMergeColumnMapping(sheetData, excelDataConfigById);
         sheetData = excelToCsvDataConvertService.applyUniqueEntry(sheetData, excelDataConfigById, uniqueStrings);
         sheetData = excelToCsvDataConvertService.applySkipRowCriteria(sheetData, excelDataConfigById);
+        sheetData = excelToCsvDataConvertService.applySortingConfig(sheetData, excelDataConfigById);
         sheetData = excelToCsvDataConvertService.applyRemoveColumnConfig(sheetData, excelDataConfigById);
         sheetData = excelToCsvDataConvertService.applyHeadingField(sheetData, excelDataConfigById);
         return sheetData;

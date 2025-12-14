@@ -302,4 +302,18 @@ public class TestMSExcelService {
         apiResponse =  apiResource.updateMSExcelDataV2(request, requestId, null);
         Assert.assertEquals(AppConstant.SUCCESS, apiResponse.getStatus());
     }
+    @Test
+    public void testMSExcelSorting() {
+        HttpServletRequest request = this.getHttpServletRequest();
+        String requestId;
+        ApiResponse apiResponse;
+        ApiResource apiResource = this.getApiResource();
+        requestId = "csv-test-04";
+        apiResponse =  apiResource.getMSExcelDataArray(request, requestId, null);
+        Assert.assertEquals(AppConstant.SUCCESS, apiResponse.getStatus());
+        ArrayList<ArrayList<String>> result = (ArrayList<ArrayList<String>>) apiResponse.getData();
+        Assert.assertEquals(2, result.size());
+        Assert.assertEquals("r0c2", result.get(0).get(2));
+        Assert.assertEquals("r1c2", result.get(1).get(2));
+    }
 }

@@ -874,6 +874,32 @@ public class ExcelToCsvDataConvertServiceV2 {
             rowData.set(finalIndex, String.join(join, tempFinalData));
         }
     }
+    public ArrayList<ArrayList<String>> applySortingConfig(ArrayList<ArrayList<String>> sheetData,
+                                                                ExcelDataConfig excelDataConfigById) {
+        if (excelDataConfigById == null) {
+            return sheetData;
+        }
+        ArrayList<ExcelDataSortingConfig> sortingConfig = excelDataConfigById.getSortingConfig();
+        if (sortingConfig == null) {
+            return sheetData;
+        }
+        if (sheetData == null || sheetData.isEmpty()) {
+            return sheetData;
+        }
+        Integer index;
+        String order, dataType, defaultData;
+        for(ExcelDataSortingConfig sortingConfig1: sortingConfig) {
+            if (sortingConfig1 == null) {
+                continue;
+            }
+            index = sortingConfig1.getIndex();
+            order = sortingConfig1.getOrder();
+            dataType = sortingConfig1.getDataType();
+            defaultData = sortingConfig1.getDefaultData();
+            sheetData = RolesMappingInterface.sortExcelData(sheetData, index, order, dataType, defaultData);
+        }
+        return sheetData;
+    }
     public ArrayList<ArrayList<String>> applyRemoveColumnConfig(ArrayList<ArrayList<String>> sheetData,
                                                                 ExcelDataConfig excelDataConfigById) {
         if (sheetData == null || excelDataConfigById == null) {

@@ -25,4 +25,8 @@ public class RolesMappingInterface {
     public static boolean isPatternMatching(String str, String pattern, boolean exactMatch) {
         return rolesMappingApp.isPatternMatching(str, pattern, exactMatch);
     }
+    public static ArrayList<ArrayList<String>> sortExcelData(ArrayList<ArrayList<String>> excelData, Integer index,
+                                                             String order, String dataType, String defaultData) {
+        return rolesMappingApp.sortExcelData(excelData, index, order, dataType, defaultData);
+    }
 }

@@ -53,6 +53,7 @@ Sequence of operation
 - mergeColumnConfig (Details below)
 - uniqueEntry
 - skipRowCriteria (Details below)
+- sortingConfig (Detail below)
 - removeColumnConfig
 - headingField
 
@@ -169,3 +170,9 @@ then it will be executed only when condition is true
 skipRowCriteria
   - It is AND operation
   - It is shifted before removeColumnConfig and after cellMapping, so that complex filter operation can be achieved
+
+sortingConfig:
+  - index: Integer
+    order: "ASC / DESC"
+    dataType: "STRING / INT"
+    defaultData: String
