@@ -172,7 +172,10 @@ skipRowCriteria
   - It is shifted before removeColumnConfig and after cellMapping, so that complex filter operation can be achieved
 
 sortingConfig:
-  - index: Integer
-    order: "ASC / DESC"
-    dataType: "STRING / INT"
-    defaultData: String
+  skipRowIndex: [-1]
+  sortingDetails:
+    - index: Integer
+      order: "ASC / DESC"
+      dataType: "STRING / INT"
+      defaultData: String
+skipRowIndex: It can be ArrayList<Integer> value shall be >= 0, otherwise it will skip

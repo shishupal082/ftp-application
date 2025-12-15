@@ -26,7 +26,7 @@ public class RolesMappingInterface {
         return rolesMappingApp.isPatternMatching(str, pattern, exactMatch);
     }
     public static ArrayList<ArrayList<String>> sortExcelData(ArrayList<ArrayList<String>> excelData, Integer index,
-                                                             String order, String dataType, String defaultData) {
-        return rolesMappingApp.sortExcelData(excelData, index, order, dataType, defaultData);
+                                                             ArrayList<Integer> skipRowIndex, String order, String dataType, String defaultData) {
+        return rolesMappingApp.sortExcelData(excelData, index, skipRowIndex, order, dataType, defaultData);
     }
 }

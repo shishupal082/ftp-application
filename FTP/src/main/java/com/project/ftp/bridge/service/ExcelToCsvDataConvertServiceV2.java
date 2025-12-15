@@ -879,16 +879,18 @@ public class ExcelToCsvDataConvertServiceV2 {
         if (excelDataConfigById == null) {
             return sheetData;
         }
-        ArrayList<ExcelDataSortingConfig> sortingConfig = excelDataConfigById.getSortingConfig();
-        if (sortingConfig == null) {
+        ExcelDataSortingConfig2 sortingConfig2 = excelDataConfigById.getSortingConfig();
+        if (sortingConfig2 == null) {
             return sheetData;
         }
         if (sheetData == null || sheetData.isEmpty()) {
             return sheetData;
         }
+        ArrayList<ExcelDataSortingConfig> sortingDetails = sortingConfig2.getSortingDetails();
         Integer index;
         String order, dataType, defaultData;
-        for(ExcelDataSortingConfig sortingConfig1: sortingConfig) {
+        ArrayList<Integer> skipRowIndex = sortingConfig2.getSkipRowIndex();
+        for(ExcelDataSortingConfig sortingConfig1: sortingDetails) {
             if (sortingConfig1 == null) {
                 continue;
             }
@@ -896,7 +898,7 @@ public class ExcelToCsvDataConvertServiceV2 {
             order = sortingConfig1.getOrder();
             dataType = sortingConfig1.getDataType();
             defaultData = sortingConfig1.getDefaultData();
-            sheetData = RolesMappingInterface.sortExcelData(sheetData, index, order, dataType, defaultData);
+            sheetData = RolesMappingInterface.sortExcelData(sheetData, index, skipRowIndex, order, dataType, defaultData);
         }
         return sheetData;
     }

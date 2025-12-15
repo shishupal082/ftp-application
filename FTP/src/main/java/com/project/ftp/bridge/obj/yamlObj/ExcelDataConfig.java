@@ -27,7 +27,7 @@ public class ExcelDataConfig {
     private ArrayList<ArrayList<Integer>> skipRowIndex;
     private ArrayList<ArrayList<Integer>> appendCellDataIndex;
     private ArrayList<MergeColumnConfig> mergeColumnConfig;
-    private ArrayList<ExcelDataSortingConfig> sortingConfig;
+    private ExcelDataSortingConfig2 sortingConfig;
     private ArrayList<Integer> removeColumnConfig;
     private ArrayList<Integer> uniqueEntry;
     //Locally generated
@@ -197,11 +197,11 @@ public class ExcelDataConfig {
         this.mergeColumnConfig = mergeColumnConfig;
     }
 
-    public ArrayList<ExcelDataSortingConfig> getSortingConfig() {
+    public ExcelDataSortingConfig2 getSortingConfig() {
         return sortingConfig;
     }
 
-    public void setSortingConfig(ArrayList<ExcelDataSortingConfig> sortingConfig) {
+    public void setSortingConfig(ExcelDataSortingConfig2 sortingConfig) {
         this.sortingConfig = sortingConfig;
     }
 

@@ -124,11 +124,13 @@ excelDataConfig:
       - 1
   csv-test-04:
     sortingConfig:
-      - index: 2
-        order: "ASC"
-        dataType: "STRING"
-        info: "index: Integer, order: ASC/DESC, dataType: STRING/INT, defaultData: String like 0/-1,..."
-        defaultData: ""
+      skipRowIndex: [-1]
+      sortingDetails:
+        - index: 2
+          order: "ASC"
+          dataType: "STRING"
+          info: "index: Integer, order: ASC/DESC, dataType: STRING/INT, defaultData: String like 0/-1,..."
+          defaultData: ""
     mergeColumnConfig:
       - finalIndex: 4
         sourceIndex: [1,2,3]
