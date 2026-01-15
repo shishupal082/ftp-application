@@ -21,7 +21,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-@version(app_version="8.0.2.019")
+@version("8.0.2.019")
 public class FtpConfiguration extends Configuration {
     private HashMap<String, DirConfigParam> dirConfigParam;
     private String commonConfigFilePath;
