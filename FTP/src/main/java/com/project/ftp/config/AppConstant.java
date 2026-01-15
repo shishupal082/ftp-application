@@ -1,5 +1,7 @@
 package com.project.ftp.config;
 
+import com.project.ftp.bridge.resources.RolesResource;
+
 public class AppConstant {
     private static char CR = (char) 0x0D;
     private static char LF = (char) 0x0A;
@@ -37,7 +39,7 @@ public class AppConstant {
     public static final String ALLOWED_HEADERS= "Access-Control-Allow-Headers";
     public static final String FILE = "FILE";
     public static final String FOLDER = "FOLDER";
-    public static final String AppVersion = "8.0.2.019";
+    public static final String AppVersion = RolesResource.getAppVersion();
     public static final String DATE_FORMAT = "yyyy-MM-dd";
     public static final String TIME_FORMAT = "HHmmss";
     public static final String TIME_FORMAT2 = "HH:mm:ss";

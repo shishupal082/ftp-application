@@ -13,6 +13,7 @@ import com.project.ftp.obj.yamlObj.DirConfigParam;
 import com.project.ftp.obj.yamlObj.EventConfig;
 import com.project.ftp.obj.yamlObj.FtlConfig;
 import com.project.ftp.obj.yamlObj.OracleDatabaseConfig;
+import com.roles_mapping.annotation.version;
 import io.dropwizard.Configuration;
 import io.dropwizard.db.DataSourceFactory;
 
@@ -20,7 +21,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-
+@version(app_version="8.0.2.019")
 public class FtpConfiguration extends Configuration {
     private HashMap<String, DirConfigParam> dirConfigParam;
     private String commonConfigFilePath;

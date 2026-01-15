@@ -1,5 +1,6 @@
 package com.project.ftp.bridge.resources;
 
+import com.project.ftp.FtpConfiguration;
 import com.project.ftp.config.AppConfig;
 import com.project.ftp.event.EventTracking;
 import com.project.ftp.intreface.BridgeToApp;
@@ -15,11 +16,10 @@ public class RolesResource {
     private final static Logger logger = LoggerFactory.getLogger(RolesResource.class);
     private final AppConfig appConfig;
     private final EventTracking eventTracking;
-    private final RolesMappingApp rolesMappingApp;
+    private final static RolesMappingApp rolesMappingApp = new RolesMappingApp();
     public RolesResource(final AppConfig appConfig, final EventTracking eventTracking) {
         this.appConfig = appConfig;
         this.eventTracking = eventTracking;
-        this.rolesMappingApp = new RolesMappingApp();
     }
     private BridgeTracking getBridgeTracking() {
         BridgeToAppInterface bridgeToAppInterface = new BridgeToApp(eventTracking);
@@ -28,31 +28,33 @@ public class RolesResource {
     public void updateRoles() {
         String roleConfigDir = appConfig.getDirectoryService().getConfigPathDefault();
         ArrayList<String> rolesConfigPath = StaticService.getRolesConfigPath(appConfig);
-        this.rolesMappingApp.updateRoleConfig(roleConfigDir, rolesConfigPath);
+        rolesMappingApp.updateRoleConfig(roleConfigDir, rolesConfigPath);
         this.trackRelatedUser();
     }
     public boolean isRoleAuthorised(String apiName, String userName) {
-        return this.rolesMappingApp.isRoleAuthorised(apiName, userName);
+        return rolesMappingApp.isRoleAuthorised(apiName, userName);
     }
     public ArrayList<String> getActiveRoleIdByUserName(String username) {
-        return this.rolesMappingApp.getActiveRoleIdByUserName(username);
+        return rolesMappingApp.getActiveRoleIdByUserName(username);
     }
 
     public ArrayList<String> getRelatedUsers(String username) {
-        return this.rolesMappingApp.getRelatedUsers(username);
+        return rolesMappingApp.getRelatedUsers(username);
     }
     public ArrayList<String> getAllUsersName() {
-        return this.rolesMappingApp.getAllUsersName();
+        return rolesMappingApp.getAllUsersName();
     }
 
     public void trackRelatedUser() {
-        HashMap<String, ArrayList<String>> allRelatedUsers = this.rolesMappingApp.getAllRelatedUsers();
+        HashMap<String, ArrayList<String>> allRelatedUsers = rolesMappingApp.getAllRelatedUsers();
         this.getBridgeTracking().trackAllRelatedUsers(allRelatedUsers);
     }
     public Object getRolesConfig() {
-        return this.rolesMappingApp.getRolesConfig();
+        return rolesMappingApp.getRolesConfig();
     }
-
+    public static String getAppVersion() {
+        return rolesMappingApp.getAppVersion(FtpConfiguration.class);
+    }
     // /api/get/roles/allByRid
     public Object getAllRolesByRolesId() {
         return null;
