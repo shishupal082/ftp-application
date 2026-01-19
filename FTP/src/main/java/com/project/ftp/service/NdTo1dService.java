@@ -184,8 +184,6 @@ public class NdTo1dService {
         if (dataColIndex == null || dataColIndex.isEmpty()) {
             return result;
         }
-
-        Integer index2;
         boolean headingAdded = false;
         ArrayList<String> rowAsPerDataColIndex = new ArrayList<>();
         ArrayList<String> headingData = null;
@@ -193,17 +191,12 @@ public class NdTo1dService {
         if (dataColIndex2 == null) {
             return result;
         }
-        int dataLength = dataColIndex2.size();
-        for (int dataCol_j=0; dataCol_j<dataLength; dataCol_j++) {
-            cellData = null;
-            if (dataCol_j < dataColIndex2.size()) {
-                index2 = dataColIndex2.get(dataCol_j);
-                if (!headingAdded) {
-                    headingData = this.getHeadingData(excelData, dataColIndex);
-                    headingAdded = true;
-                }
-                cellData = StaticService.getCellDataFromRow(rowData, index2);
+        for (Integer index2 : dataColIndex2) {
+            if (!headingAdded) {
+                headingData = this.getHeadingData(excelData, dataColIndex);
+                headingAdded = true;
             }
+            cellData = StaticService.getCellDataFromRow(rowData, index2);
             if (cellData == null) {
                 cellData = "";
             }
