@@ -9,7 +9,6 @@ import java.util.ArrayList;
 public class NdTo1dConfig {
     private ArrayList<String> sourceExcelId;
     private Integer dataStartIndex;
-    private Integer dataDimension;
     private ArrayList<Integer> textColIndex;
     private ArrayList<ArrayList<ArrayList<Integer>>> dataColIndex;
     private ArrayList<String> headingField;
@@ -29,14 +28,6 @@ public class NdTo1dConfig {
 
     public void setDataStartIndex(Integer dataStartIndex) {
         this.dataStartIndex = dataStartIndex;
-    }
-
-    public Integer getDataDimension() {
-        return dataDimension;
-    }
-
-    public void setDataDimension(Integer dataDimension) {
-        this.dataDimension = dataDimension;
     }
 
     public ArrayList<Integer> getTextColIndex() {
@@ -76,7 +67,6 @@ public class NdTo1dConfig {
         return "NdTo1dConfig{" +
                 "sourceExcelId=" + sourceExcelId +
                 ", dataStartIndex=" + dataStartIndex +
-                ", dataDimension=" + dataDimension +
                 ", textColIndex=" + textColIndex +
                 ", dataColIndex=" + dataColIndex +
                 ", headingField=" + headingField +

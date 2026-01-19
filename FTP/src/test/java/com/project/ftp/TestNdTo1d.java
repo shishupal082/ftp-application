@@ -46,7 +46,7 @@ public class TestNdTo1d {
         Assert.assertNull(ndTo1dConfig);
         requestId = "id_2dTo1d";
         ndTo1dConfig = ndTo1dService.getNdTo1dConfigV1(null, requestId, roleId);
-        Assert.assertEquals(2, Integer.parseInt(ndTo1dConfig.getDataDimension().toString()));
+        Assert.assertEquals(1, Integer.parseInt(ndTo1dConfig.getDataStartIndex().toString()));
     }
     @Test
     public void testNdTo1dV1() {
@@ -83,17 +83,9 @@ public class TestNdTo1d {
         HttpServletRequest request = testMSExcelService.getHttpServletRequest();
         AppConfig appConfig = TestAppConfig.getAppConfigV2_1();
         NdTo1dService ndTo1dService = new NdTo1dService(appConfig);
-        String requestId = "id_1d_1To1d";
+        String requestId = "id_1d_2To1d";
         String roleId = "defaultRole";
-        //Configuration error due to dimension < 1 (0)
-        try {
-            ndTo1dService.getNdTo1dData(request, requestId, roleId);
-            Assert.assertEquals(1, 0);
-        } catch (AppException ae) {
-            Assert.assertEquals(ErrorCodes.CONFIG_ERROR, ae.getErrorCode());
-        }
         //Data not null startIndex < 0 (-1), startIndex will be replaced with dimension-1
-        requestId = "id_1d_2To1d";
         ArrayList<ArrayList<String>> data = ndTo1dService.getNdTo1dData(request, requestId, roleId);
         Assert.assertNotNull(data);
         //Configuration error due to sourceExcelId is invalid
@@ -150,6 +142,9 @@ public class TestNdTo1d {
         ApiResponse apiResponse = msExcelService.updateMSExcelSheetData(request, requestId, null);
         Assert.assertEquals(AppConstant.SUCCESS, apiResponse.getStatus());
         requestId = "3d_1To1dFinal";
+        apiResponse = msExcelService.updateMSExcelSheetData(request, requestId, null);
+        Assert.assertEquals(AppConstant.SUCCESS, apiResponse.getStatus());
+        requestId = "3d_2To1dFinal";
         apiResponse = msExcelService.updateMSExcelSheetData(request, requestId, null);
         Assert.assertEquals(AppConstant.SUCCESS, apiResponse.getStatus());
     }

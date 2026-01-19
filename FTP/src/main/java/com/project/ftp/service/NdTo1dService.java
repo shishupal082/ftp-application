@@ -175,7 +175,6 @@ public class NdTo1dService {
     }
     private ArrayList<String> getRowDataAsPerDataColIndex(ArrayList<ArrayList<String>> excelData, ArrayList<String> rowData,
                                                           int dataCol_i, ArrayList<ArrayList<Integer>> dataColIndex,
-                                                          Integer dimension,
                                                           ArrayList<NdTo1dSkipRowCriteria> skipRowCriteria) {
         if (rowData == null) {
             return null;
@@ -185,16 +184,17 @@ public class NdTo1dService {
         if (dataColIndex == null || dataColIndex.isEmpty()) {
             return result;
         }
-        //For 1 dimension data, heading and data as per dataColIndex not required
-        if (dimension == null || dimension < 2) {
-            return result;
-        }
+
         Integer index2;
         boolean headingAdded = false;
         ArrayList<String> rowAsPerDataColIndex = new ArrayList<>();
         ArrayList<String> headingData = null;
         ArrayList<Integer> dataColIndex2 = dataColIndex.get(0);
-        for (int dataCol_j=0; dataCol_j<dimension-1; dataCol_j++) {
+        if (dataColIndex2 == null) {
+            return result;
+        }
+        int dataLength = dataColIndex2.size();
+        for (int dataCol_j=0; dataCol_j<dataLength; dataCol_j++) {
             cellData = null;
             if (dataCol_j < dataColIndex2.size()) {
                 index2 = dataColIndex2.get(dataCol_j);
@@ -244,13 +244,11 @@ public class NdTo1dService {
         ArrayList<ArrayList<String>> rowAsPerDataColIndex = new ArrayList<>();
         ArrayList<String> eachRowData, fullRowData;
         ArrayList<ArrayList<ArrayList<Integer>>> dataColIndex = ndTo1dConfig.getDataColIndex();
-        Integer dimension = ndTo1dConfig.getDataDimension();
         ArrayList<NdTo1dSkipRowCriteria> skipRowCriteria = ndTo1dConfig.getSkipRowCriteria();
         int dataCol_i = 0;
         if (dataColIndex != null && !dataColIndex.isEmpty()) {
             for(ArrayList<ArrayList<Integer>> dataCol: dataColIndex) {
-                eachRowData = this.getRowDataAsPerDataColIndex(excelData, rowData, dataCol_i, dataCol,
-                        dimension, skipRowCriteria);
+                eachRowData = this.getRowDataAsPerDataColIndex(excelData, rowData, dataCol_i, dataCol, skipRowCriteria);
                 dataCol_i++;
                 if (eachRowData == null || eachRowData.isEmpty()) {
                     continue;
@@ -276,13 +274,9 @@ public class NdTo1dService {
         if (ndTo1dConfig == null || excelData == null || excelData.size() <= 1) {
             return null;
         }
-        Integer dataDimension  = ndTo1dConfig.getDataDimension();
-        if (dataDimension == null || dataDimension < 1) {
-            return null;
-        }
         Integer startIndex = ndTo1dConfig.getDataStartIndex();
         if (startIndex == null || startIndex < 0) {
-            startIndex = dataDimension-1;
+            startIndex = 1;//Assuming 1st row as heading
         }
         ArrayList<String> rowData;
         ArrayList<ArrayList<String>> newRowData;
@@ -331,11 +325,6 @@ public class NdTo1dService {
         if (sourceExcelId == null || sourceExcelId.isEmpty()) {
             logger.info("Invalid sourceExcelId: {}, requestId: {}, ndTo1dConfig: {}",
                     sourceExcelId, requestId, ndTo1dConfig);
-            throw new AppException(ErrorCodes.CONFIG_ERROR);
-        }
-        Integer dataDimension = ndTo1dConfig.getDataDimension();
-        if (dataDimension == null || dataDimension < 1) {
-            logger.info("Invalid dataDimension: {}, ndTo1dConfig: {}", dataDimension, ndTo1dConfig);
             throw new AppException(ErrorCodes.CONFIG_ERROR);
         }
         ArrayList<ArrayList<String>> excelData, ndTo1dData;

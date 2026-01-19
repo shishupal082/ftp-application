@@ -2,42 +2,35 @@ ndTo1dConfig:
   id_1dTo1d:
     sourceExcelId: ["1dTo1dSource"]
     dataStartIndex: 0
-    dataDimension: 1
     textColIndex: [0,1,2]
 
   id_1d_1To1d:
     sourceExcelId: ["1dTo1dSource"]
     dataStartIndex: 0
-    dataDimension: 0
     textColIndex: [0,1,2]
 
   id_1d_2To1d:
     sourceExcelId: ["1dTo1dSource"]
     dataStartIndex: -1
-    dataDimension: 1
     textColIndex: [0,1,2]
 
   id_1d_3To1d:
     sourceExcelId: [""]
     dataStartIndex: -1
-    dataDimension: 1
     textColIndex: [0,1,2]
 
   id_1d_4To1d:
     sourceExcelId: ["invalid"]
     dataStartIndex: -1
-    dataDimension: 1
     textColIndex: [0,1,2]
 
   id_1d_5To1d:
     sourceExcelId: ["1dTo1dSource"]
     dataStartIndex: 0
-    dataDimension: 1
 
   id_2dTo1d:
     sourceExcelId: ["2dTo1dSource"]
     dataStartIndex: 1
-    dataDimension: 2
     textColIndex: [0,1,5]
     dataColIndex: [[[2],[0,2]],[[3],[0,3]],[[4],[0,4]]]
     headingField:
@@ -51,7 +44,6 @@ ndTo1dConfig:
     sourceExcelId:
       - "2d_1To1dSource"
     dataStartIndex: 1
-    dataDimension: 2
     dataColIndex: [[[0],[0,0]],[[1],[0,1]],[[2],[0,2]],[[3],[0,3]]]
     skipRowCriteria:
       - dataColIndex: [[0,-1]]
@@ -63,14 +55,11 @@ ndTo1dConfig:
     sourceExcelId:
       - "2d_1To1dSource"
     dataStartIndex: 1
-    dataDimension: 2
     dataColIndex: [[[5],[0,5]]]
 
   id_2d_3To1d:
     sourceExcelId:
       - "2d_1To1dSource"
-    dataStartIndex: 1
-    dataDimension: 2
     dataColIndex: [[[5],[0,5]]]
     skipRowCriteria:
       - dataColIndex: [[0,0]]
@@ -82,7 +71,6 @@ ndTo1dConfig:
     sourceExcelId:
       - "3dTo1dSource"
     dataStartIndex: 2
-    dataDimension: 3
     textColIndex: [0,1,8]
     dataColIndex:
       - [[2,3],[0,2]]
@@ -105,7 +93,7 @@ ndTo1dConfig:
   id_3d_1To1d:
     sourceExcelId:
       - "3d_1To1dSource"
-    dataDimension: 3
+    dataStartIndex: 2
     textColIndex: [0,1]
     dataColIndex:
       - [[2],[0,2],[1,2]]
@@ -120,3 +108,11 @@ ndTo1dConfig:
       - "Relay rack"
       - "Relay rack column"
       - "Relay name"
+  id_3d_2To1d:
+    sourceExcelId:
+      - "3d_2To1dSource"
+    dataStartIndex: 3
+    textColIndex: [0]
+    dataColIndex:
+      - [[1,2,3,3,3],[0,1]]
+      - [[4,5,6,6,6],[0,4]]

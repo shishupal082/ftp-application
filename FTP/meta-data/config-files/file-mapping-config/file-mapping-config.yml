@@ -31,6 +31,7 @@ csvConfig:
       - 2d_1To1dFinal
       - 3dTo1dFinal
       - 3d_1To1dFinal
+      - 3d_2To1dFinal
     requiredColIndex: [0,1,2,3]
     fileConfig: [ "D:/workspace/ftp-application/FTP/meta-data/test-data/config-data/csv-config.csv", "CSV reading data config path" ]
   - fileDataSource: "google"
@@ -74,5 +75,6 @@ csvConfig:
       - 2d_1To1dSource
       - 3dTo1dSource
       - 3d_1To1dSource
+      - 3d_2To1dSource
     requiredColIndex: [0,1,2,3]
     fileConfig: ["D:/workspace/ftp-application/FTP/meta-data/test-data/config-data/excel-config.csv", "Excel reading data config path"]

@@ -29,3 +29,5 @@ excelDataConfig:
       - "Rice value"
   3d_1To1dFinal:
     sourceApiName: "convert_nd_to_1d"
+  3d_2To1dFinal:
+    sourceApiName: "convert_nd_to_1d"
