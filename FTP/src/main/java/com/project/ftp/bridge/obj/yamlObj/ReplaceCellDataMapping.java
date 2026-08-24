@@ -2,18 +2,20 @@ package com.project.ftp.bridge.obj.yamlObj;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+import java.util.ArrayList;
+
 @JsonIgnoreProperties(ignoreUnknown = true)
 
 public class ReplaceCellDataMapping {
-    private Integer index;
+    private ArrayList<ArrayList<Integer>> index;
     private String find;
     private String replace;
 
-    public Integer getIndex() {
+    public ArrayList<ArrayList<Integer>> getIndex() {
         return index;
     }
 
-    public void setIndex(Integer index) {
+    public void setIndex(ArrayList<ArrayList<Integer>> index) {
         this.index = index;
     }
 

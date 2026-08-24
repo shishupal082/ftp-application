@@ -298,13 +298,16 @@ excelDataConfig:
             subStringConfig: [22, -1, 0]
   csv-test-09:
     replaceCellString:
-      - index: 0
+      - index:
+          - [0,0]
         find: "es"
         replace: "ES"
-      - index: 1
+      - index:
+          - [1,1]
         find: "\\.\\.\\."
         replace: "oo"
-      - index: 3
+      - index:
+          - [3,3]
         find: "&"
         replace: "%26"
     cellMapping:

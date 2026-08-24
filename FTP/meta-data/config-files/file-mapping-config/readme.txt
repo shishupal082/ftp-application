@@ -34,30 +34,32 @@ It will convert:
 
 Sequence of operation
 *********************
-- validFor: ["gs-csv-test-12-direct"]
-- allowedApi: ["update_excel_data_v2","update_excel_data","get_excel_data"]
-- sourceApiName: String // get_mysql_table_data, read_scan_dir
-- dateFormat, timeFormat and dateTimeFormat [Only used for excel sheet reading not for google sheet]
-- commaReplacer: String
-- formatCellData
+(1) validFor: ["gs-csv-test-12-direct"]
+(2) allowedApi: ["update_excel_data_v2","update_excel_data","get_excel_data"]
+(3) sourceApiName: String // get_mysql_table_data, read_scan_dir
+(4) dateFormat, timeFormat and dateTimeFormat [Only used for excel sheet reading not for google sheet]
+(5) commaReplacer: String
+(6) formatCellData
     it will change \n to ; and , to ... (or given via config: commaReplacer)
-- replaceCellString
+(7) replaceCellString
     - It is used before other cell operation, so that if after cell replace empty row is there that can be removed
-- skipRowIndex
+(8) skipRowIndex
     - First skip row index is required to be executed
       otherwise row index will be changed (After skipEmptyRows operation)
     - It is OR operation
-- skipEmptyRows
-- copyCellDataIndex
-- cellMapping & appendCellDataIndex
-- mergeColumnConfig (Details below)
-- uniqueEntry
-- skipRowCriteria (Details below)
-- sortingConfig (Detail below)
-- removeColumnConfig
-- headingField
+    - It can be ArrayList<Integer> value shall be >= 0, otherwise it will skip
+(9) skipEmptyRows
+(10) copyCellDataIndex
+(11) cellMapping & appendCellDataIndex (Details below)
+(12) mergeColumnConfig (Details below)
+(13) uniqueEntry
+(14) skipRowCriteria (Details below)
+(15) sortingConfig (Detail below)
+(16) removeColumnConfig
+(17) headingField
 
-cellMapping:
+
+(11 next 12) cellMapping:
   - defaultCellData: String|now
     dateRegex: String
     col_index: Integer (Row index, -3 to ...)
@@ -162,20 +164,25 @@ cellData2 = subString of cellData2
     if regex == null and range == null
     cellData = cellData2
 
-mergeColumnConfig: ArrayList<MergeColumnConfig>
+(12 next 14) mergeColumnConfig: ArrayList<MergeColumnConfig>
 If condition is provided in the MergeColumnConfig
 then it will be executed only when condition is true
 
 
-skipRowCriteria
+(14 next 15) skipRowCriteria
   - It is AND operation
   - It is shifted before removeColumnConfig and after cellMapping, so that complex filter operation can be achieved
+  - col_index parameter shall be passed by considering the sequence of operation (as cellMapping will change col_index)
 
-sortingConfig:
+(15 last) sortingConfig:
   skipRowIndex: [-1]
   sortingDetails:
     - index: Integer
       order: "ASC / DESC"
       dataType: "STRING / INT"
       defaultData: String
-skipRowIndex: It can be ArrayList<Integer> value shall be >= 0, otherwise it will skip
+
+API for update excel sheet
+-----------------------------------
+/api/update_excel_data?requestId=<id>&role_id=defaultRole
+

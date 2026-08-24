@@ -742,27 +742,49 @@ public class ExcelToCsvDataConvertServiceV2 {
         if (replaceCellDataMappings == null) {
             return;
         }
-        Integer index;
+        ArrayList<ArrayList<Integer>> indexRange;
+        Integer startIndex, endIndex;
         String find, replace;
         String finalCellData;
+        int i;
         for(ReplaceCellDataMapping replaceCellDataMapping: replaceCellDataMappings) {
             if (replaceCellDataMapping == null) {
                 continue;
             }
-            index = replaceCellDataMapping.getIndex();
+            indexRange = replaceCellDataMapping.getIndex();
             find = replaceCellDataMapping.getFind();
             replace = replaceCellDataMapping.getReplace();
-            if (index == null || find == null || replace == null) {
+            if (indexRange == null || find == null || replace == null) {
                 continue;
             }
             for(ArrayList<String> rowData: sheetData) {
                 if (rowData == null) {
                     continue;
                 }
-                if (index < rowData.size()) {
-                    finalCellData = StaticService.replaceString(rowData.get(index), find, replace);
-                    finalCellData = this.applyBasicFormatOnCellData(finalCellData, true, null);
-                    rowData.set(index, finalCellData);
+                for(ArrayList<Integer> indexRange1: indexRange) {
+                    if (indexRange1 == null || indexRange1.size() < 2) {
+                        continue;
+                    }
+                    startIndex = indexRange1.get(0);
+                    endIndex = indexRange1.get(1);
+                    if (startIndex == null || endIndex == null) {
+                        continue;
+                    }
+                    if (startIndex < 0) {
+                        continue;
+                    }
+                    if (endIndex == -1) {
+                        endIndex = rowData.size()-1;
+                    } else if(endIndex < -1) {
+                        continue;
+                    }
+                    for(i= startIndex; i<=endIndex; i++) {
+                        if (i < rowData.size()) {
+                            finalCellData = StaticService.replaceString(rowData.get(i), find, replace);
+                            finalCellData = this.applyBasicFormatOnCellData(finalCellData, true, null);
+                            rowData.set(i, finalCellData);
+                        }
+                    }
                 }
             }
         }
