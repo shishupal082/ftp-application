@@ -48,6 +48,7 @@ Sequence of operation
       otherwise row index will be changed (After skipEmptyRows operation)
     - It is OR operation
     - It can be ArrayList<Integer> value shall be >= 0, otherwise it will skip
+    - This parameter is carefully used when it is used with update_excel_data_v2 api
 (9) skipEmptyRows
 (10) copyCellDataIndex
 (11) cellMapping & appendCellDataIndex (Details below)

@@ -266,18 +266,18 @@ public class ExcelToCsvDataConvertServiceV2 {
 //        logger.info("tableData size after skipRowCriteria: {}", result.size());
         return result;
     }
-    public ArrayList<ArrayList<String>> applySkipRowEntry(int lineIndex,ArrayList<ArrayList<String>> sheetData,
+    public ArrayList<ArrayList<String>> applySkipRowEntry(int externalIndex,ArrayList<ArrayList<String>> sheetData,
                                                       ExcelDataConfig excelDataConfigById) {
         if (excelDataConfigById == null || sheetData == null || sheetData.isEmpty()) {
             return sheetData;
         }
         int lastRowIndex = sheetData.size()-1;
-        ArrayList<Integer> skipRowsIndex = this.getSkipRowIndexes(lineIndex, excelDataConfigById, lastRowIndex);
+        ArrayList<Integer> skipRowsIndex = this.getSkipRowIndexes(externalIndex, excelDataConfigById, lastRowIndex);
         if (skipRowsIndex == null || skipRowsIndex.isEmpty()) {
             return sheetData;
         }
-        if (lineIndex >= 0) {
-            if (skipRowsIndex.contains(lineIndex)) {
+        if (externalIndex >= 0) {
+            if (skipRowsIndex.contains(externalIndex)) {
                 return null;
             } else {
                 return sheetData;
@@ -293,7 +293,7 @@ public class ExcelToCsvDataConvertServiceV2 {
         sheetData = sheetDataUpdated;
         return sheetData;
     }
-    private ArrayList<Integer> getSkipRowIndexes(int lineIndex, ExcelDataConfig excelDataConfigById, int lastRowIndex) {
+    private ArrayList<Integer> getSkipRowIndexes(int externalIndex, ExcelDataConfig excelDataConfigById, int lastRowIndex) {
         ArrayList<Integer> result = new ArrayList<>();
         if (excelDataConfigById == null || lastRowIndex < 0) {
             return null;
@@ -312,10 +312,10 @@ public class ExcelToCsvDataConvertServiceV2 {
                     return null;
                 } else if (lastIndex == -1) {
                     // All rows after firstIndex are not required
-                    if (lineIndex >= 0) {
-                        if (firstIndex <= lineIndex) {
-                            if (!result.contains(lineIndex)) {
-                                result.add(lineIndex);
+                    if (externalIndex >= 0) {
+                        if (firstIndex <= externalIndex) {
+                            if (!result.contains(externalIndex)) {
+                                result.add(externalIndex);
                             }
                         }
                     }
@@ -327,10 +327,10 @@ public class ExcelToCsvDataConvertServiceV2 {
                         }
                     }
                 } else if (firstIndex <= lastIndex) {
-                    if (lineIndex >= 0) {
-                        if (firstIndex <= lineIndex && lastIndex >= lineIndex) {
-                            if (!result.contains(lineIndex)) {
-                                result.add(lineIndex);
+                    if (externalIndex >= 0) {
+                        if (firstIndex <= externalIndex && lastIndex >= externalIndex) {
+                            if (!result.contains(externalIndex)) {
+                                result.add(externalIndex);
                             }
                         }
                     }

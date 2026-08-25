@@ -83,7 +83,7 @@ public class TextFileParser {
                             sourceFilePath,sheetName,excelDataConfigById,uniqueStrings,saveTableParameter);
                     isNewFile2 = false;
                 }
-                if (lineIndex % AppConstant.LOG_THRESHOLD == 0) {
+                if (lineIndex > 0 && lineIndex % AppConstant.LOG_THRESHOLD == 0) {
                     logger.info("readAndWriteCsvData in progress: {}", lineIndex);
                 }
             }

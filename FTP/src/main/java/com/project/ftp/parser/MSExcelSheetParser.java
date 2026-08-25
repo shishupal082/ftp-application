@@ -90,6 +90,7 @@ public class MSExcelSheetParser {
         String cellData;
         FileInputStream file =null;
         boolean isError = false;
+        boolean writerStatus = false;
         File file1 = new File(srcFilepath);
         int lineIndex = -1;
         if (!file1.isFile()) {
@@ -110,17 +111,18 @@ public class MSExcelSheetParser {
                     cellData = this.parseCellData(cell, excelDataConfigById);
                     miscService.insertDataInRow(rowData, cell.getColumnIndex(), cellData);
                 }
-                msExcelBridgeService.writerService(lineIndex,writerType,writer,rowData,isNewFile2,
+                writerStatus = msExcelBridgeService.writerService(lineIndex,writerType,writer,rowData,isNewFile2,
                         srcFilepath,sheetName,excelDataConfigById,uniqueStrings,saveTableParameter);
                 isNewFile2 = false;
-                if (lineIndex % AppConstant.LOG_THRESHOLD == 0) {
+                if (lineIndex > 0 && lineIndex % AppConstant.LOG_THRESHOLD == 0) {
                     logger.info("readExcelAndWriteData in progress: {}", lineIndex);
                 }
             }
             file.close();
             logger.info("readExcelAndWriteData completed: {}", lineIndex);
         } catch (Exception e) {
-            logger.info("readExcelSheetDataV2: Error in reading excel filepath: {}, sheetName: {}, {}", srcFilepath, sheetName, excelDataConfigById);
+            logger.info("readExcelSheetDataV2: Error in reading excel filepath: {}, sheetName: {}, {}, writerStatus={}",
+                    srcFilepath, sheetName, excelDataConfigById, writerStatus);
             logger.info("readExcelSheetDataV2: {}", e.toString());
             isError = true;
         }

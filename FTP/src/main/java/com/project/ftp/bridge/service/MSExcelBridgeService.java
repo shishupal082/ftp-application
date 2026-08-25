@@ -60,7 +60,7 @@ public class MSExcelBridgeService {
                                                                   ArrayList<String> uniqueStrings, int externalIndex) {
         sheetData = excelToCsvDataConvertService.formatCellData(sheetData, excelDataConfigById);
         excelToCsvDataConvertService.applyReplaceCellString(sheetData, excelDataConfigById);
-        sheetData = excelToCsvDataConvertService.applySkipRowEntry(-1,sheetData, excelDataConfigById);
+        sheetData = excelToCsvDataConvertService.applySkipRowEntry(externalIndex, sheetData, excelDataConfigById);
         sheetData = excelToCsvDataConvertService.skipEmptyRows(sheetData, excelDataConfigById);
         excelToCsvDataConvertService.copyCellDataIndex(sheetData, excelDataConfigById);
         sheetData = excelToCsvDataConvertService.applyCellMapping(sheetData, excelDataConfigById, srcFilePath, sheetName, externalIndex);
