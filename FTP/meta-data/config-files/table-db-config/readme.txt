@@ -1,5 +1,6 @@
-25.08.2024
-----------------
+;This file is in ini format
+;https://www.convertsimple.com/convert-ini-to-json/
+[25-08-2024]
 Minimum table requirement:
     - Deleted column (tinyint) must be there
 
@@ -13,6 +14,27 @@ D: Delete row in a table
 - Read all table data implementation completed
 
 TableConfiguration:
+
+(1) tableDbConfig: List of TableConfiguration with following parameter from (2) to (19)
+
+(2) tableConfigId: String
+(3) dbIdentifier: String (Used for finding oracle databaseConfig)
+(4) dbType: String
+- oracle // For oracle database (Default mysql)
+(5) tableName: String
+(6) tableNames: [t1, t2]
+(7) selectColumnName: ArrayList<String>
+    - col1
+    - col2
+Used for get result
+Distinct key word can also be used if required
+
+(8) columnName: ArrayList<String>
+    - col1
+    - col2
+Used for get result
+It is used when update with compareBeforeUpdateColumn
+
 
 (1) Where clause parameter:
 (1.1) filterParameter:
@@ -44,18 +66,6 @@ Used for big data summary
 
 (4) orderBy: "id desc"
 (5) limit: "limit 100"
-
-(6) columnName: ArrayList<String>
-    - col1
-    - col2
-Used for get result
-It is used when update with compareBeforeUpdateColumn
-
-(7) selectColumnName: ArrayList<String>
-    - col1
-    - col2
-Used for get result
-Distinct key word can also be used if required
 
 (8) updateIfFound: Boolean (Default true)
 
@@ -92,22 +102,17 @@ used for get db data
     excludeColumnName: ArrayList<String>
 excludeColumnName shall be subset of compareBeforeUpdateColumn
 
-(16) dbType: String
-- oracle // For oracle database
 
 (17) joinParam: String
 - LEFT JOIN SMMS_ASSET_COUNT ON SMMS_ASSETS.LOCATION=SMMS_ASSET_COUNT.LOCATION and SMMS_ASSETS.ASSET_TYPE=SMMS_ASSET_COUNT.ASSET_TYPE and SMMS_ASSETS.DELETED=SMMS_ASSET_COUNT.DELETED
 It will be used for reading table data by combining two table
 
-(18) dbIdentifier: String (Used for finding oracle databaseConfig
 
-(19) Apply extra condition on each row of successful data reading from table
+(19) cellMapping: Apply extra condition on each row of successful data reading from table
 
-Sequence of operation
-*********************
-
-skipRowCriteria
-cellMapping
+[Sequence of operation for TableConfiguration]
+seq[] = skipRowCriteria
+seq[] = cellMapping
 
 cellMapping
 -------------
@@ -139,10 +144,15 @@ if col_index (in cellMapping or mappingData) == -8
 
 Internal functionality will be same as file-mapping-config
 
+[Difference between tableCellMapping and fileCellMapping]
+--------------------------------------------------------
+(1) tableCellMapping does not have
+- appendCellDataIndex
+- validFor
 
 update
 -------------------------------------
-updateIfFound: Boolean (default true)
+updateIfFound= Boolean (default true)
 updateColumnName: ArrayList<String>
 compareBeforeUpdateColumn: ArrayList<String>
 uniquePattern: ArrayList<String>

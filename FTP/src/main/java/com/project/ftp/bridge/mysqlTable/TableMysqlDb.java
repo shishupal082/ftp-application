@@ -53,6 +53,7 @@ public class TableMysqlDb implements TableDb {
                 if (oracleDatabaseConfig == null) {
                     logger.info("getDBConnection: oracleDatabaseConfig is null for dbIdentifier: {}, {}",
                             oracleDbIdentifier, this.oracleDatabaseConfigs);
+                    return null;
                 }
                 logger.info("getDBConnection: new connection created: {},{}", oracleDatabaseConfig, tableConfiguration);
                 oracleCon = new MysqlConnection(oracleDatabaseConfig);

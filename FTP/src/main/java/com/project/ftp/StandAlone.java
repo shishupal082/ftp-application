@@ -18,13 +18,15 @@ import java.util.Scanner;
 public class StandAlone {
     final static Logger logger = LoggerFactory.getLogger(StandAlone.class);
     private final ArrayList<String> cmdArguments;
+    private final String cmdApplicationType;
     private final StandAloneService standAloneService;
     private final AppConfig appConfig;
     private ApiResource apiResource;
-    public StandAlone(ArrayList<String> cmdArgument) {
+    public StandAlone(ArrayList<String> cmdArgument, String cmdApplication_type) {
         cmdArguments = cmdArgument;
+        cmdApplicationType = cmdApplication_type;
         standAloneService = new StandAloneService();
-        appConfig = AppConfig.getAppConfigFromCmdArgs(cmdArgument,AppConstant.SOURCE_STANDALONE);
+        appConfig = AppConfig.getAppConfigFromCmdArgs(cmdArgument, AppConstant.SOURCE_STANDALONE);
         try {
             apiResource = new ApiResource(appConfig);
         } catch (AppException e) {
@@ -136,20 +138,30 @@ public class StandAlone {
         StandAloneConfig standAloneConfig = standAloneService.getStandaloneConfig(standAloneConfigPath);
         if (standAloneConfig == null) {
             logger.info("standAloneConfig is null, Press any key to exit...");
-            waitForInput();
+            if (!AppConstant.SOURCE_TEST.equals(cmdApplicationType)) {
+                waitForInput();
+            }
             return;
         }
         ArrayList<ApiDetail> currentApiList = standAloneService.getApiList(standAloneConfig);
         if (currentApiList == null) {
             logger.info("apiList is null, Press any key to exit...");
-            waitForInput();
+            if (!AppConstant.SOURCE_TEST.equals(cmdApplicationType)) {
+                waitForInput();
+            }
             return;
         }
+        int totalApiCount = currentApiList.size();
+        int i=0;
         for (ApiDetail currentApi: currentApiList) {
+            i = i+1;
+            logger.info("StandAlone executing api: {}/{}", i, totalApiCount);
             this.handleApiSequentially(currentApi);
         }
         logger.info("Press any key to exit...");
-        waitForInput();
+        if (!AppConstant.SOURCE_TEST.equals(cmdApplicationType)) {
+            waitForInput();
+        }
     }
 
     private void waitForInput() {

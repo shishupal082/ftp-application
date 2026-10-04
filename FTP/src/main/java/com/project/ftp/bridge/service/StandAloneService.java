@@ -99,6 +99,7 @@ public class StandAloneService {
             }
             tempApiDetail = apiList.get(id);
             if (tempApiDetail == null) {
+                logger.info("apiDetails not found for id: {}", id);
                 continue;
             }
             if (confirmationRequired != null) {

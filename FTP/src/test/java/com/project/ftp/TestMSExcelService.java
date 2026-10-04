@@ -18,6 +18,7 @@ import org.junit.Test;
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class TestMSExcelService {
     final static boolean isCompilerTest = true;
@@ -44,6 +45,18 @@ public class TestMSExcelService {
         arguments.add("F:/ftp-app/OneDrive/ftp/app-data/config-files-v2/env_config/env_config-8.0.0.6_base.yml");
         arguments.add("F:/ftp-app/OneDrive/ftp/app-data/config-files-v2/env_config/env_config-user_GroupLogin1.yml");
         return AppConfig.getAppConfigFromCmdArgs(arguments, AppConstant.SOURCE_TEST);
+    }
+    public String[] getAppStandAloneConfig(boolean isMysqlEnable) {
+        List<String> arguments = new ArrayList<>();
+        arguments.add(AppConstant.SOURCE_TEST);
+        if (isMysqlEnable) {
+            arguments.add(AppConstant.TRUE);
+        } else {
+            arguments.add("false");
+        }
+        arguments.add("true"); // All config path are static directory
+        arguments.add("D:/workspace/app-data/running-apps-standalone/ftp-app-oracle-dl/config-files/env_config/env_config-1.0.0_base.yml");
+        return arguments.toArray(String[]::new);
     }
     public ApiResource getApiResource() {
         AppConfig appConfig = this.getAppConfig(false);

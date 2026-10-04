@@ -14,6 +14,7 @@ public class TableConfiguration {
     private String dbIdentifier;
     private String tableConfigId;
     private String tableName;
+    private ArrayList<String> tableNames;
     private String orderBy;
     private String limit;
     private String excelConfigId;
@@ -37,7 +38,38 @@ public class TableConfiguration {
     private ArrayList<CellMapping> cellMapping;
 
     public TableConfiguration() {}
-
+    public void cloneTableConfiguration(TableConfiguration destination, TableConfiguration source) {
+        if (source == null) {
+            return;
+        }
+        if (destination == null) {
+            return;
+        }
+        destination.setDbType(source.dbType);
+        destination.setDbIdentifier(source.dbIdentifier);
+        destination.setTableConfigId(source.tableConfigId);
+        destination.setTableName(source.tableName);
+        destination.setTableNames(source.tableNames);
+        destination.setOrderBy(source.orderBy);
+        destination.setLimit(source.limit);
+        destination.setDefaultDeletedValue(source.defaultDeletedValue);
+        destination.setIncludeDeleted(source.includeDeleted);
+        destination.setUpdateIfFound(source.updateIfFound);
+        destination.setAllowEmptyFilter(source.allowEmptyFilter);
+        destination.setMaintainHistory(source.maintainHistory);
+        destination.setDefaultFilterMapping(source.defaultFilterMapping);
+        destination.setGroupBy(source.groupBy);
+        destination.setUniquePattern(source.uniquePattern);
+        destination.setLikeParameter(source.likeParameter);
+        destination.setFilterParameter(source.filterParameter);
+        destination.setFixedFilterParameter(source.fixedFilterParameter);
+        destination.setColumnName(source.columnName);
+        destination.setUpdateColumnName(source.updateColumnName);
+        destination.setCompareBeforeUpdateColumn(source.compareBeforeUpdateColumn);
+        destination.setSelectColumnName(source.selectColumnName);
+        destination.setSkipRowCriteria(source.skipRowCriteria);
+        destination.setCellMapping(source.cellMapping);
+    }
     public String getDbType() {
         return dbType;
     }
@@ -68,6 +100,14 @@ public class TableConfiguration {
 
     public void setTableName(String tableName) {
         this.tableName = tableName;
+    }
+
+    public ArrayList<String> getTableNames() {
+        return tableNames;
+    }
+
+    public void setTableNames(ArrayList<String> tableNames) {
+        this.tableNames = tableNames;
     }
 
     public String getOrderBy() {
@@ -245,6 +285,7 @@ public class TableConfiguration {
                 ", dbIdentifier='" + dbIdentifier + '\'' +
                 ", tableConfigId='" + tableConfigId + '\'' +
                 ", tableName='" + tableName + '\'' +
+                ", tableNames=" + tableNames +
                 ", orderBy='" + orderBy + '\'' +
                 ", limit='" + limit + '\'' +
                 ", excelConfigId='" + excelConfigId + '\'' +

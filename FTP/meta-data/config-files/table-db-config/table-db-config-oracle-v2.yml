@@ -1,0 +1,20 @@
+tableDbConfig:
+  - tableConfigId: "get-digital-bits-bodg-hte-jaa"
+    tableName: "DSIGNAL69"
+    dbType: "oracle"
+    dbIdentifier: "oracleBodgHteJaa"
+    includeDeleted: false
+    selectColumnName:
+      - "SIGNO as sig_no"
+      - "CONECTNO as connection_no"
+      - "SIGNAME as relay_name"
+      - "SIGTYPENO as sig_type_no"
+      - "SIGCNTCT as sig_count_ct"
+      - "SIGDESCR as sig_descr"
+    columnName:
+      - "sig_no"
+      - "connection_no"
+      - "relay_name"
+      - "sig_type_no"
+      - "sig_count_ct"
+      - "sig_descr"

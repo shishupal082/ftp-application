@@ -56,8 +56,8 @@ public class TableService {
         }
         return true;
     }
-    private TableConfiguration getTableConfiguration(String tableConfigId,
-                                                     HttpServletRequest request, String roleId) throws AppException {
+    private ArrayList<TableConfiguration> getTableConfiguration(String tableConfigId,
+                                                                HttpServletRequest request, String roleId) throws AppException {
         if (ftpConfiguration == null) {
             logger.info("ftpConfiguration is null");
             throw new AppException(ErrorCodes.CONFIG_ERROR);
@@ -68,6 +68,7 @@ public class TableService {
         ArrayList<TableConfiguration> tableConfigurations;
         String tempTableConfigId;
         TableConfiguration resultTableConfiguration = null;
+        ArrayList<TableConfiguration> tableConfigurationList = null;
         if (tableDbConfigs == null) {
             logger.info("ftpConfiguration.tableDbConfigFilePath is null");
             throw new AppException(ErrorCodes.CONFIG_ERROR);
@@ -100,8 +101,24 @@ public class TableService {
         }
         if (resultTableConfiguration == null) {
             logger.info("getTableConfiguration: tableConfigId: {}, not found", tableConfigId);
+        } else {
+            tableConfigurationList = new ArrayList<>();
+            ArrayList<String> tableNames = resultTableConfiguration.getTableNames();
+            TableConfiguration tempTableConfiguration;
+            if (tableNames != null && !tableNames.isEmpty()) {
+                for (String str: tableNames) {
+                    if (str != null && !str.isEmpty()) {
+                        tempTableConfiguration = new TableConfiguration();
+                        tempTableConfiguration.cloneTableConfiguration(tempTableConfiguration, resultTableConfiguration);
+                        tempTableConfiguration.setTableName(str);
+                        tableConfigurationList.add(tempTableConfiguration);
+                    }
+                }
+            } else {
+                tableConfigurationList.add(resultTableConfiguration);
+            }
         }
-        return resultTableConfiguration;
+        return tableConfigurationList;
     }
     private String findColumnName(int index, ArrayList<String> filterParameter) {
         if (filterParameter == null || index < 0) {
@@ -197,41 +214,52 @@ public class TableService {
                                                            ArrayList<String> filterRequest,
                                                            String defaultFilterMappingId,
                                                            String roleId) throws AppException {
-        TableConfiguration tableConfiguration = this.getTableConfiguration(tableConfigId, request, roleId);
-        if (tableConfiguration == null) {
+        ArrayList<TableConfiguration> tableConfigurationList = this.getTableConfiguration(tableConfigId, request, roleId);
+        if (tableConfigurationList == null) {
             logger.info("getTableData: tableConfiguration is null for tableConfigId: {}", tableConfigId);
             throw new AppException(ErrorCodes.BAD_REQUEST_ERROR);
         }
-        HashMap<String, ArrayList<String>> requestFilterParameter = this.getRequestFilterParameter(tableConfiguration, filterRequest, defaultFilterMappingId);
-        return tableMysqlDb.getByMultipleParameter(request, tableConfigId, defaultFilterMappingId, tableConfiguration, requestFilterParameter, true);
+        ArrayList<HashMap<String, String>> finalResult = new ArrayList<>();
+        ArrayList<HashMap<String, String>> result;
+        for (TableConfiguration tableConfiguration: tableConfigurationList) {
+            HashMap<String, ArrayList<String>> requestFilterParameter = this.getRequestFilterParameter(tableConfiguration, filterRequest, defaultFilterMappingId);
+            result = tableMysqlDb.getByMultipleParameter(request, tableConfigId, defaultFilterMappingId, tableConfiguration, requestFilterParameter, true);
+            if (result != null && !result.isEmpty()) {
+                finalResult.addAll(result);
+            }
+        }
+        return finalResult;
     }
     public ArrayList<ArrayList<String>> getTableDataArray(HttpServletRequest request,
                                                            String tableConfigId,
                                                            ArrayList<String> filterRequest,
                                                           String defaultFilterMappingId,
                                                           String roleId) throws AppException {
-        TableConfiguration tableConfiguration = this.getTableConfiguration(tableConfigId, request, roleId);
-        if (tableConfiguration == null) {
+        ArrayList<TableConfiguration> tableConfigurationList = this.getTableConfiguration(tableConfigId, request, roleId);
+        ArrayList<ArrayList<String>> result = new ArrayList<>();
+
+        if (tableConfigurationList == null) {
             logger.info("getTableDataArray: tableConfiguration is null for tableConfigId: {}", tableConfigId);
             throw new AppException(ErrorCodes.BAD_REQUEST_ERROR);
         }
-        HashMap<String, ArrayList<String>> requestFilterParameter = this.getRequestFilterParameter(tableConfiguration,
-                filterRequest, defaultFilterMappingId);
-        ArrayList<HashMap<String, String>> tableData = tableMysqlDb.getByMultipleParameter(request, tableConfigId,
-                defaultFilterMappingId, tableConfiguration, requestFilterParameter, true);
-        ArrayList<String> columnNames = tableConfiguration.getColumnName();
-        ArrayList<ArrayList<String>> result = new ArrayList<>();
-        ArrayList<String> arrayRowData;
-        if (tableData != null) {
-            for (HashMap<String, String> rowData: tableData) {
-                if (rowData == null || rowData.isEmpty()) {
-                    continue;
+
+        for (TableConfiguration tableConfiguration: tableConfigurationList) {
+            HashMap<String, ArrayList<String>> requestFilterParameter = this.getRequestFilterParameter(tableConfiguration, filterRequest, defaultFilterMappingId);
+            ArrayList<HashMap<String, String>> tableData = tableMysqlDb.getByMultipleParameter(request, tableConfigId,
+                    defaultFilterMappingId, tableConfiguration, requestFilterParameter, true);
+            ArrayList<String> columnNames = tableConfiguration.getColumnName();
+            ArrayList<String> arrayRowData;
+            if (tableData != null) {
+                for (HashMap<String, String> rowData: tableData) {
+                    if (rowData == null || rowData.isEmpty()) {
+                        continue;
+                    }
+                    arrayRowData = new ArrayList<>();
+                    for(String name: columnNames) {
+                        arrayRowData.add(rowData.get(name));
+                    }
+                    result.add(arrayRowData);
                 }
-                arrayRowData = new ArrayList<>();
-                for(String name: columnNames) {
-                    arrayRowData.add(rowData.get(name));
-                }
-                result.add(arrayRowData);
             }
         }
         return result;
@@ -569,23 +597,26 @@ public class TableService {
         if (this.singleThreadingService != null) {
             this.singleThreadingService.setSingleThreadStatus(null);
         }
-        TableConfiguration tableConfiguration = this.getTableConfiguration(tableConfigId, request, roleId);
-        if (tableConfiguration == null) {
+        ArrayList<TableConfiguration> tableConfigurationList = this.getTableConfiguration(tableConfigId, request, roleId);
+        if (tableConfigurationList == null) {
             logger.info("updateTableDataFromCsv: tableConfiguration is null for tableConfigId: {}", tableConfigId);
             throw new AppException(ErrorCodes.BAD_REQUEST_ERROR);
         }
-        SaveTableParameter saveTableParameter = new SaveTableParameter(tableConfiguration);
-        String excelConfigId = tableConfiguration.getExcelConfigId();
-        saveTableParameter.setUpdateIfFound(this.isUpdateIfFoundEnabled(tableConfiguration));
-        MaintainHistory maintainHistory = tableConfiguration.getMaintainHistory();
-        if (maintainHistory != null) {
-            saveTableParameter.setMaintainHistory(maintainHistory.isRequired());
-            saveTableParameter.setMaintainHistoryExcludedColumn(maintainHistory.getExcludeColumnName());
+        for(TableConfiguration tableConfiguration: tableConfigurationList) {
+            SaveTableParameter saveTableParameter = new SaveTableParameter(tableConfiguration);
+            String excelConfigId = tableConfiguration.getExcelConfigId();
+            saveTableParameter.setUpdateIfFound(this.isUpdateIfFoundEnabled(tableConfiguration));
+            MaintainHistory maintainHistory = tableConfiguration.getMaintainHistory();
+            if (maintainHistory != null) {
+                saveTableParameter.setMaintainHistory(maintainHistory.isRequired());
+                saveTableParameter.setMaintainHistoryExcludedColumn(maintainHistory.getExcludeColumnName());
+            }
+            DateUtilities dateUtilities = new DateUtilities();
+            String startedTime = dateUtilities.getDateStrFromPattern(AppConstant.DateTimeFormat6, "");
+            saveTableParameter.setStartedTime(startedTime);
+            msExcelService.updateMSExcelSheetDataV2(request, excelConfigId, saveTableParameter, roleId);
+            logger.info("Update summary: {}", saveTableParameter.getFinalUpdateSummary());
         }
-        DateUtilities dateUtilities = new DateUtilities();
-        String startedTime = dateUtilities.getDateStrFromPattern(AppConstant.DateTimeFormat6, "");
-        saveTableParameter.setStartedTime(startedTime);
-        msExcelService.updateMSExcelSheetDataV2(request, excelConfigId, saveTableParameter, roleId);
-        logger.info("Final update summary: {}", saveTableParameter.getFinalUpdateSummary());
+        logger.info("updateTableDataFromCsv process end.");
     }
 }
