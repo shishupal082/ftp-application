@@ -138,17 +138,13 @@ public class StandAlone {
         StandAloneConfig standAloneConfig = standAloneService.getStandaloneConfig(standAloneConfigPath);
         if (standAloneConfig == null) {
             logger.info("standAloneConfig is null, Press any key to exit...");
-            if (!AppConstant.SOURCE_TEST.equals(cmdApplicationType)) {
-                waitForInput();
-            }
+            waitForInput();
             return;
         }
         ArrayList<ApiDetail> currentApiList = standAloneService.getApiList(standAloneConfig);
         if (currentApiList == null) {
             logger.info("apiList is null, Press any key to exit...");
-            if (!AppConstant.SOURCE_TEST.equals(cmdApplicationType)) {
-                waitForInput();
-            }
+            waitForInput();
             return;
         }
         int totalApiCount = currentApiList.size();
@@ -159,14 +155,14 @@ public class StandAlone {
             this.handleApiSequentially(currentApi);
         }
         logger.info("Press any key to exit...");
-        if (!AppConstant.SOURCE_TEST.equals(cmdApplicationType)) {
-            waitForInput();
-        }
+        waitForInput();
     }
 
     private void waitForInput() {
-        Scanner scanner = new Scanner(System.in);
-        String str = scanner.nextLine();
-        logger.info("{}",str);
+        if (!AppConstant.SOURCE_TEST.equals(cmdApplicationType)) {
+            Scanner scanner = new Scanner(System.in);
+            String str = scanner.nextLine();
+            logger.info("{}",str);
+        }
     }
 }

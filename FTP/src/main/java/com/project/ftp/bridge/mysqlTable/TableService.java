@@ -1,6 +1,8 @@
 package com.project.ftp.bridge.mysqlTable;
 
 import com.project.ftp.FtpConfiguration;
+import com.project.ftp.bridge.obj.yamlObj.CellMapping;
+import com.project.ftp.bridge.obj.yamlObj.CellMappingData;
 import com.project.ftp.common.DateUtilities;
 import com.project.ftp.config.AppConfig;
 import com.project.ftp.config.AppConstant;
@@ -242,12 +244,31 @@ public class TableService {
             logger.info("getTableDataArray: tableConfiguration is null for tableConfigId: {}", tableConfigId);
             throw new AppException(ErrorCodes.BAD_REQUEST_ERROR);
         }
-
+        String newColumnName;
         for (TableConfiguration tableConfiguration: tableConfigurationList) {
             HashMap<String, ArrayList<String>> requestFilterParameter = this.getRequestFilterParameter(tableConfiguration, filterRequest, defaultFilterMappingId);
             ArrayList<HashMap<String, String>> tableData = tableMysqlDb.getByMultipleParameter(request, tableConfigId,
                     defaultFilterMappingId, tableConfiguration, requestFilterParameter, true);
             ArrayList<String> columnNames = tableConfiguration.getColumnName();
+            ArrayList<CellMapping> cellMappings = tableConfiguration.getCellMapping();
+            if (columnNames == null || columnNames.isEmpty()) {
+                columnNames = new ArrayList<>();
+            } else {
+                columnNames = new ArrayList<>(columnNames);
+            }
+            if (cellMappings != null && !cellMappings.isEmpty()) {
+                for(CellMapping cellMapping: cellMappings) {
+                    if (cellMapping == null) {
+                        continue;
+                    }
+                    newColumnName = cellMapping.getNewColumnName();
+                    if (newColumnName != null && !newColumnName.isEmpty()) {
+                        if (!columnNames.contains(newColumnName)) {
+                            columnNames.add(0,newColumnName);
+                        }
+                    }
+                }
+            }
             ArrayList<String> arrayRowData;
             if (tableData != null) {
                 for (HashMap<String, String> rowData: tableData) {

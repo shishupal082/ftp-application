@@ -149,6 +149,8 @@ Internal functionality will be same as file-mapping-config
 (1) tableCellMapping does not have
 - appendCellDataIndex
 - validFor
+- cellMapping is having additional field called newColumnName
+    - During hashmap to array conversion, this cellMapping data (in reverse order) added in the beginning of each row data
 
 update
 -------------------------------------
