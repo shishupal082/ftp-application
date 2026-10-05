@@ -110,23 +110,39 @@ sequence of operation
 - is_empty
 - regex
 
+Pre-defined parameter:
+(1) excelConfigId
+(2) Source (csv_file_path, excel_file_path, mysqlTableConfigId, scanDirConfigId, googleSheetId)
+(3) sheetName
+(4) Destination
+
+
+if col_index in cellMapping == -1
+    - cellData = defaultCellData
+
 if col_index in mappingData == -1
-    continue;
+    - cellData2 = cellData (Because, defaultCellData for mappingData is cellData calculated above)
 
 if col_index (in cellMapping or mappingData) == -2
-    - then it will treated as: sheetNameMapping
-    - cellData = sheetName and cellData2 = sheetName
+    - cellData and cellData2 = sheetName [3]
 
 if col_index (in cellMapping or mappingData) == -3
-    - then it will treated as: filenameMapping
-    - cellData = filenameWithoutExt and cellData2 = filenameWithoutExt
+    - cellData and cellData2 = filenameWithoutExt
+    - If source is invalid filepath then cellData and cellData2 = defaultCellData
 
 if col_index (in cellMapping or mappingData) == -4
-    - then it will treated as: srcFilePath (csv and excel) or googleSheetId or mysqlConfigId
-    - -4 and -3 are related
+    - cellData and cellData2 = Source (as it is) [2]
 
 if col_index (in cellMapping or mappingData) == -5
     - It will be replaced with sheetDataIndex or lineIndex (starting from 0)
+
+if col_index (in cellMapping or mappingData) == -6
+    - cellData and cellData2 = excelConfigId [1]
+
+if col_index (in cellMapping or mappingData) == -7
+    - cellData and cellData2 = Destination [4]
+    - Will be implemented in the future.
+
 
 case-I
 

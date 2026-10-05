@@ -466,7 +466,7 @@ public class ExcelToCsvDataConvertServiceV2 {
     // For excel, csv and api
     private String getFormatedCellData(String sheetName, String srcFilepath, ArrayList<String> rowData,
                                        String defaultCellData, Integer colIndex, String dateRegex,
-                                       int sheetDataIndex, int externalIndex) {
+                                       int sheetDataIndex, int externalIndex, String excelConfigId, String destination) {
         DateUtilities dateUtilities = new DateUtilities();
         if (AppConstant.NOW.equals(defaultCellData) && dateRegex != null) {
             defaultCellData = dateUtilities.getDateStrFromPattern(dateRegex, defaultCellData);
@@ -492,7 +492,10 @@ public class ExcelToCsvDataConvertServiceV2 {
             } else {
                 cellData = Integer.toString(sheetDataIndex);
             }
-
+        } else if (colIndex == -6) {
+            cellData = excelConfigId;
+        } else if (colIndex == -7) {
+            cellData = destination;
         }
         if (cellData == null) {
             cellData = "";
@@ -621,6 +624,9 @@ public class ExcelToCsvDataConvertServiceV2 {
         }
         ArrayList<CellMapping> cellMappings = excelDataConfigById.getCellMapping();
         ArrayList<ArrayList<Integer>> appendCellDataIndex = excelDataConfigById.getAppendCellDataIndex();
+        String excelConfigId = excelDataConfigById.getId();
+        String destination = "Will be implemented in the future.";
+
         ArrayList<ArrayList<String>> result = new ArrayList<>();
         CellMapping cellMapping;
         ArrayList<CellMappingData> cellsMappingData;
@@ -643,13 +649,15 @@ public class ExcelToCsvDataConvertServiceV2 {
                         cellsMappingData = cellMapping.getMappingData();
                         rewrite = cellMapping.getRewrite();
                         cellData = this.getFormatedCellData(sheetName, srcFilepath, rowData,
-                                defaultCellData, colIndex, dateRegex, sheetDataIndex, externalIndex);
+                                defaultCellData, colIndex, dateRegex, sheetDataIndex, externalIndex,
+                                excelConfigId, destination);
                         if (cellsMappingData != null) {
                             for (CellMappingData cellMappingData : cellsMappingData) {
                                 if (cellMappingData != null) {
                                     colIndex2 = cellMappingData.getCol_index();
                                     cellData2 = this.getFormatedCellData(sheetName, srcFilepath,
-                                            rowData, cellData, colIndex2, null, sheetDataIndex, externalIndex);
+                                            rowData, cellData, colIndex2, null, sheetDataIndex, externalIndex,
+                                            excelConfigId, destination);
                                     mappingDataType = this.getMappingDataType(cellData2, cellMappingData);
                                     if (mappingDataType != null) {
                                         cellData = this.getFinalUpdatedCellData(cellData, cellData2, cellMappingData, mappingDataType);
