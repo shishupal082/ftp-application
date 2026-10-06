@@ -84,7 +84,7 @@ mappingData1:
 
 It is OR operations
 
-subStringConfig (minimum 2 parameter required, if more than 2 given it will consider start and length)
+subStringConfig (minimum 3 parameter required)
 
 Here, start is startIndex and end is endIndex
 

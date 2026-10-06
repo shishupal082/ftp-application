@@ -519,7 +519,7 @@ public class ExcelToCsvDataConvertServiceV2 {
         if (colIndex == null) {
             return cellData;
         } else if (colIndex >= 0) {
-            cellData = this.getCellData(colIndex, tableConfiguration.getColumnName(), rowData);
+            cellData = this.getCellData(colIndex, tableConfiguration.getModifiedColumnName(), rowData);
         } else if (colIndex == -1) {
             cellData = defaultCellData;
         } else if (colIndex == -2) {

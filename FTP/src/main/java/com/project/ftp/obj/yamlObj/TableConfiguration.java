@@ -70,6 +70,29 @@ public class TableConfiguration {
         destination.setSkipRowCriteria(source.skipRowCriteria);
         destination.setCellMapping(source.cellMapping);
     }
+    public ArrayList<String> getModifiedColumnName() {
+        ArrayList<String> result;
+        String newColumnName;
+        if (columnName == null || columnName.isEmpty()) {
+            result = new ArrayList<>();
+        } else {
+            result = new ArrayList<>(columnName);
+        }
+        if (cellMapping != null && !cellMapping.isEmpty()) {
+            for(CellMapping cellMapping: cellMapping) {
+                if (cellMapping == null) {
+                    continue;
+                }
+                newColumnName = cellMapping.getNewColumnName();
+                if (newColumnName != null && !newColumnName.isEmpty()) {
+                    if (!result.contains(newColumnName)) {
+                        result.add(0,newColumnName);
+                    }
+                }
+            }
+        }
+        return result;
+    }
     public String getDbType() {
         return dbType;
     }
