@@ -5,6 +5,7 @@ import com.project.ftp.bridge.obj.BridgeResponseSheetData;
 import com.project.ftp.bridge.obj.yamlObj.ExcelDataConfig;
 import com.project.ftp.bridge.obj.yamlObj.FileMappingConfig;
 import com.project.ftp.mysql.MysqlUser;
+import com.project.ftp.obj.yamlObj.OracleDatabaseConfig;
 import com.project.ftp.obj.yamlObj.TableConfiguration;
 
 import javax.servlet.http.HttpServletRequest;
@@ -27,7 +28,8 @@ public interface AppToBridgeInterface {
                                                                  String requestTableConfigId,
                                                                  String requestDefaultFilterMappingId,
                                                                  ArrayList<HashMap<String, String>> tableData,
-                                                                 TableConfiguration tableConfiguration);
+                                                                 TableConfiguration tableConfiguration,
+                                                                 OracleDatabaseConfig databaseConfig);
     ExcelDataConfig getExcelDataConfig(HttpServletRequest request, String requestId, FileMappingConfig fileMappingConfig,
                        HashMap<String, ExcelDataConfig> excelDataConfigHashMap);
     String verifyGoogleIdToken(String googleIdToken);

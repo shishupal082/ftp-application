@@ -6,6 +6,7 @@ import com.project.ftp.common.DateUtilities;
 import com.project.ftp.config.AppConstant;
 import com.project.ftp.intreface.RolesMappingInterface;
 import com.project.ftp.obj.PathInfo;
+import com.project.ftp.obj.yamlObj.OracleDatabaseConfig;
 import com.project.ftp.obj.yamlObj.TableConfiguration;
 import com.project.ftp.service.FileService;
 import com.project.ftp.service.StaticService;
@@ -505,7 +506,8 @@ public class ExcelToCsvDataConvertServiceV2 {
     // For tableData
     private String getFormatedCellDataV2(String requestTableConfigId, String requestDefaultFilterMappingId,
                                          TableConfiguration tableConfiguration, HashMap<String, String> rowData,
-                                       String defaultCellData, Integer colIndex, String dateRegex) {
+                                         String defaultCellData, Integer colIndex, String dateRegex,
+                                         OracleDatabaseConfig databaseConfig) {
         if (tableConfiguration == null) {
             return null;
         }
@@ -534,6 +536,30 @@ public class ExcelToCsvDataConvertServiceV2 {
             cellData = tableConfiguration.getDbIdentifier();
         } else if (colIndex == -8) {
             cellData = tableConfiguration.getExcelConfigId();
+        } else if (colIndex == -51) {
+            if (databaseConfig != null) {
+                cellData = databaseConfig.getUsername();
+            } else {
+                cellData = null;
+            }
+        } else if (colIndex == -52) {
+            if (databaseConfig != null) {
+                cellData = databaseConfig.getUrl();
+            } else {
+                cellData = null;
+            }
+        } else if (colIndex == -53) {
+            if (databaseConfig != null) {
+                cellData = databaseConfig.getPassword();
+            } else {
+                cellData = null;
+            }
+        } else if (colIndex == -54) {
+            if (databaseConfig != null) {
+                cellData = databaseConfig.getDriver();
+            } else {
+                cellData = null;
+            }
         }
         return cellData;
     }
@@ -567,6 +593,7 @@ public class ExcelToCsvDataConvertServiceV2 {
         }
         return null;
     }
+    //It is same for excelData and tableData
     private String getFinalUpdatedCellData(String cellData, String cellData2,
                                            CellMappingData cellMappingData, MappingDataType mappingDataType) {
         DateUtilities dateUtilities = new DateUtilities();
@@ -689,7 +716,8 @@ public class ExcelToCsvDataConvertServiceV2 {
     public ArrayList<HashMap<String, String>> applyCellMappingV2(String requestTableConfigId,
                                                                  String requestDefaultFilterMappingId,
                                                                  ArrayList<HashMap<String, String>> tableData,
-                                                                 TableConfiguration tableConfiguration) {
+                                                                 TableConfiguration tableConfiguration,
+                                                                 OracleDatabaseConfig databaseConfig) {
         if (tableData == null || tableConfiguration == null) {
             return tableData;
         }
@@ -719,14 +747,14 @@ public class ExcelToCsvDataConvertServiceV2 {
                         dateRegex = cellMapping.getDateRegex();
                         cellsMappingData = cellMapping.getMappingData();
                         cellData = this.getFormatedCellDataV2(requestTableConfigId, requestDefaultFilterMappingId,
-                                tableConfiguration, rowData, defaultCellData, colIndex, dateRegex);
+                                tableConfiguration, rowData, defaultCellData, colIndex, dateRegex, databaseConfig);
                         if (cellsMappingData != null) {
                             for (CellMappingData cellMappingData : cellsMappingData) {
                                 if (cellMappingData != null) {
                                     colIndex2 = cellMappingData.getCol_index();
                                     cellData2 = this.getFormatedCellDataV2(requestTableConfigId,
                                             requestDefaultFilterMappingId, tableConfiguration, rowData, cellData,
-                                            colIndex2, null);
+                                            colIndex2, null, databaseConfig);
                                     mappingDataType = this.getMappingDataType(cellData2, cellMappingData);
                                     if (mappingDataType != null) {
                                         cellData = this.getFinalUpdatedCellData(cellData, cellData2, cellMappingData, mappingDataType);

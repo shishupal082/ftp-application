@@ -1,6 +1,7 @@
 package com.project.ftp.bridge.mysqlTable;
 
 import com.project.ftp.config.AppConfig;
+import com.project.ftp.config.AppConstant;
 import com.project.ftp.jdbc.JdbcQueryStatus;
 import com.project.ftp.jdbc.MysqlConnection;
 import com.project.ftp.obj.yamlObj.OracleDatabaseConfig;
@@ -20,14 +21,17 @@ public class TableMysqlDb implements TableDb {
     private final static Logger logger = LoggerFactory.getLogger(TableMysqlDb.class);
     private final AppConfig appConfig;
     private final MysqlConnection mysqlConnection;
+    private final OracleDatabaseConfig mySqlDatabaseConfig;
     private final HashMap<String, OracleDatabaseConfig> oracleDatabaseConfigs;
     private final HashMap<String, MysqlConnection> oracleConnections;
     private int closeCount = 0;
     public TableMysqlDb(AppConfig appConfig, DataSourceFactory dataSourceFactory,
                         HashMap<String, OracleDatabaseConfig> oracleDatabaseConfigs) {
         this.appConfig = appConfig;
-        this.mysqlConnection = new MysqlConnection(dataSourceFactory.getDriverClass(), dataSourceFactory.getUrl(),
+        mySqlDatabaseConfig = new OracleDatabaseConfig(dataSourceFactory.getDriverClass(), dataSourceFactory.getUrl(),
                 dataSourceFactory.getUser(), dataSourceFactory.getPassword());
+        this.mysqlConnection = new MysqlConnection(mySqlDatabaseConfig);
+
         if (oracleDatabaseConfigs == null) {
             oracleDatabaseConfigs = new HashMap<>();
         }
@@ -37,7 +41,7 @@ public class TableMysqlDb implements TableDb {
     private String getOracleDbIdentifier(TableConfiguration tableConfiguration) {
         String oracleDbIdentifier = tableConfiguration.getDbIdentifier();
         if (oracleDbIdentifier == null || oracleDbIdentifier.isEmpty()) {
-            oracleDbIdentifier = "oracle";
+            oracleDbIdentifier = AppConstant.DbTypeOracle;
         }
         return oracleDbIdentifier;
     }
@@ -45,7 +49,7 @@ public class TableMysqlDb implements TableDb {
         String oracleDbIdentifier;
         MysqlConnection oracleCon = null;
         OracleDatabaseConfig oracleDatabaseConfig;
-        if ("oracle".equals(tableConfiguration.getDbType())) {
+        if (AppConstant.DbTypeOracle.equals(tableConfiguration.getDbType())) {
             oracleDbIdentifier = this.getOracleDbIdentifier(tableConfiguration);
             oracleCon = this.oracleConnections.get(oracleDbIdentifier);
             if (oracleCon == null) {
@@ -63,10 +67,26 @@ public class TableMysqlDb implements TableDb {
         }
         return mysqlConnection;
     }
+    private OracleDatabaseConfig getDatabaseConfig(TableConfiguration tableConfiguration) {
+        if (tableConfiguration == null) {
+            return null;
+        }
+        OracleDatabaseConfig databaseConfig = mySqlDatabaseConfig;
+        String oracleDbIdentifier;
+        if (AppConstant.DbTypeOracle.equals(tableConfiguration.getDbType())) {
+            oracleDbIdentifier = this.getOracleDbIdentifier(tableConfiguration);
+            if (!oracleDbIdentifier.isEmpty()) {
+                databaseConfig = this.oracleDatabaseConfigs.get(oracleDbIdentifier);
+            } else {
+                databaseConfig = null;
+            }
+        }
+        return databaseConfig;
+    }
     public void closeIfOracle(TableConfiguration tableConfiguration) {
         String oracleDbIdentifier;
         int connectionResetCount = 30;
-        if ("oracle".equals(tableConfiguration.getDbType())) {
+        if (AppConstant.DbTypeOracle.equals(tableConfiguration.getDbType())) {
             oracleDbIdentifier = this.getOracleDbIdentifier(tableConfiguration);
             OracleDatabaseConfig oracleDatabaseConfig = this.oracleDatabaseConfigs.get(oracleDbIdentifier);
             if (oracleDatabaseConfig != null) {
@@ -305,10 +325,11 @@ public class TableMysqlDb implements TableDb {
             logger.info("getByMultipleParameter: Query: {}, param: {}", query, finalQueryParam);
         }
         MysqlConnection dbConnection = this.getDBConnection(tableConfiguration);
+        OracleDatabaseConfig databaseConfig = this.getDatabaseConfig(tableConfiguration);
         ResultSet rs = dbConnection.query(query, finalQueryParam);
         ArrayList<HashMap<String, String>> sqlTableResult = this.generateTableData(tableConfiguration, rs);
         return appConfig.getMsExcelService().applyCsvConfigOnTableData(request, requestTableConfigId,
-                requestDefaultFilterMappingId, sqlTableResult, tableConfiguration);
+                requestDefaultFilterMappingId, sqlTableResult, tableConfiguration, databaseConfig);
     }
     public ArrayList<HashMap<String, String>> getAll(TableConfiguration tableConfiguration) {
 //        return this.getByMultipleParameter(tableConfiguration, null, true);

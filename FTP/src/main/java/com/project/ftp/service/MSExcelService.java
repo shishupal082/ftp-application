@@ -15,6 +15,7 @@ import com.project.ftp.event.EventTracking;
 import com.project.ftp.exceptions.AppException;
 import com.project.ftp.exceptions.ErrorCodes;
 import com.project.ftp.obj.ApiResponse;
+import com.project.ftp.obj.yamlObj.OracleDatabaseConfig;
 import com.project.ftp.obj.yamlObj.TableConfiguration;
 import com.project.ftp.parser.YamlFileParser;
 import org.slf4j.Logger;
@@ -315,9 +316,10 @@ public class MSExcelService {
                                                                         String requestTableConfigId,
                                                                         String requestDefaultFilterMappingId,
                                                                         ArrayList<HashMap<String, String>> tableData,
-                                                                        TableConfiguration tableConfiguration) throws AppException {
+                                                                        TableConfiguration tableConfiguration,
+                                                                        OracleDatabaseConfig databaseConfig) throws AppException {
         return appConfig.getAppToBridge().applyCsvConfigOnTableData(request, requestTableConfigId,
-                requestDefaultFilterMappingId, tableData, tableConfiguration);
+                requestDefaultFilterMappingId, tableData, tableConfiguration, databaseConfig);
     }
     public ApiResponse updateMSExcelSheetData(HttpServletRequest request, String requestId, String roleId) throws AppException {
         ArrayList<ExcelDataConfig> excelDataConfigs = this.getActualMSExcelSheetDataConfig(request, requestId, true, roleId);

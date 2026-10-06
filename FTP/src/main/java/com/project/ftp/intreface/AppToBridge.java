@@ -17,6 +17,7 @@ import com.project.ftp.event.EventTracking;
 import com.project.ftp.exceptions.AppException;
 import com.project.ftp.exceptions.ErrorCodes;
 import com.project.ftp.mysql.MysqlUser;
+import com.project.ftp.obj.yamlObj.OracleDatabaseConfig;
 import com.project.ftp.obj.yamlObj.TableConfiguration;
 import com.project.ftp.service.NdTo1dService;
 import org.slf4j.Logger;
@@ -205,11 +206,12 @@ public class AppToBridge implements AppToBridgeInterface {
                                                                         String requestTableConfigId,
                                                                         String requestDefaultFilterMappingId,
                                                                         ArrayList<HashMap<String, String>> tableData,
-                                                                        TableConfiguration tableConfiguration) throws AppException {
+                                                                        TableConfiguration tableConfiguration,
+                                                                        OracleDatabaseConfig databaseConfig) throws AppException {
         MSExcelBridgeService msExcelBridgeService = new MSExcelBridgeService(request, eventTracking,
                 null, null, null, null);
         return msExcelBridgeService.applyCsvConfigOnTableData(requestTableConfigId, requestDefaultFilterMappingId,
-                                    tableData, tableConfiguration);
+                                    tableData, tableConfiguration, databaseConfig);
     }
     @Override
     public String verifyGoogleIdToken(String googleIdToken) {

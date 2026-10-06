@@ -14,6 +14,7 @@ import com.project.ftp.config.AppConstant;
 import com.project.ftp.event.EventTracking;
 import com.project.ftp.exceptions.AppException;
 import com.project.ftp.exceptions.ErrorCodes;
+import com.project.ftp.obj.yamlObj.OracleDatabaseConfig;
 import com.project.ftp.obj.yamlObj.TableConfiguration;
 import com.project.ftp.parser.MSExcelSheetParser;
 import com.project.ftp.parser.TextFileParser;
@@ -84,10 +85,11 @@ public class MSExcelBridgeService {
     public ArrayList<HashMap<String, String>> applyCsvConfigOnTableData(String requestTableConfigId,
                                                                         String requestDefaultFilterMappingId,
                                                                         ArrayList<HashMap<String, String>> tableData,
-                                                            TableConfiguration tableConfiguration) throws AppException{
+                                                            TableConfiguration tableConfiguration,
+                                                                        OracleDatabaseConfig databaseConfig) throws AppException{
         tableData = excelToCsvDataConvertService.applySkipRowCriteriaV2(tableData, tableConfiguration);
         tableData = excelToCsvDataConvertService.applyCellMappingV2(requestTableConfigId, requestDefaultFilterMappingId,
-                                    tableData, tableConfiguration);
+                                    tableData, tableConfiguration, databaseConfig);
         return tableData;
     }
     public ArrayList<String> applyCsvConfigOnRowData(int lineIndex,ArrayList<String> rowData, String srcFilepath, String sheetName,

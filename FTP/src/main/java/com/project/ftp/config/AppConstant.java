@@ -130,6 +130,9 @@ public class AppConstant {
     public static final String ValueSameAsColIndexData = "ValueSameAsColIndexData";
     public static final String ValueSameAsColIndexData2 = "ValueSameAsColIndexData2";
     public static final String NEW_LINE_STRING = "" + CR + LF;
+
+    public static final String DbTypeOracle = "oracle";
+    public static final String DbTypeMysql = "mysql";
 }
 
 /*

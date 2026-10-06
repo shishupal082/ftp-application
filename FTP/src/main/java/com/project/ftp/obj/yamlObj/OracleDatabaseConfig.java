@@ -10,7 +10,13 @@ public class OracleDatabaseConfig {
     private String username;
     private String password;
     private int connectionResetCount;
-
+    public OracleDatabaseConfig() {}
+    public OracleDatabaseConfig(String driver, String url, String username, String password) {
+        this.driver = driver;
+        this.url = url;
+        this.username = username;
+        this.password = password;
+    }
     public String getDriver() {
         return driver;
     }

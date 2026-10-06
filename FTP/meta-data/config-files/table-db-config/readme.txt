@@ -118,6 +118,9 @@ cellMapping
 -------------
 It will add additional column with key as newColumnName: "string"
 
+if col_index in cellMapping >= 0
+    cellData = rowData[tableColumnName[col_index]]
+
 if col_index in cellMapping == -1
     defaultCellData
 
@@ -141,6 +144,19 @@ if col_index (in cellMapping or mappingData) == -7
 
 if col_index (in cellMapping or mappingData) == -8
     excelConfigId
+
+if col_index (in cellMapping or mappingData) == -51
+    databaseConfig.username
+
+if col_index (in cellMapping or mappingData) == -52
+    databaseConfig.url
+
+if col_index (in cellMapping or mappingData) == -53
+    databaseConfig.password
+
+if col_index (in cellMapping or mappingData) == -54
+    databaseConfig.driver
+
 
 Internal functionality will be same as file-mapping-config
 
