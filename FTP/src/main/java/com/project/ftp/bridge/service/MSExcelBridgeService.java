@@ -5,10 +5,7 @@ import com.project.ftp.bridge.config.GoogleOAuthClientConfig;
 import com.project.ftp.bridge.mysqlTable.SaveTableParameter;
 import com.project.ftp.bridge.mysqlTable.TableService;
 import com.project.ftp.bridge.obj.BridgeResponseSheetData;
-import com.project.ftp.bridge.obj.yamlObj.ExcelDataConfig;
-import com.project.ftp.bridge.obj.yamlObj.ExcelFileConfig;
-import com.project.ftp.bridge.obj.yamlObj.FileConfigMapping;
-import com.project.ftp.bridge.obj.yamlObj.MysqlCsvDataConfig;
+import com.project.ftp.bridge.obj.yamlObj.*;
 import com.project.ftp.common.StrUtils;
 import com.project.ftp.config.AppConstant;
 import com.project.ftp.event.EventTracking;
@@ -607,10 +604,24 @@ public class MSExcelBridgeService {
         }
         ArrayList<ArrayList<String>> csvData = this.readCsvData(srcFilepath);
         csvData = excelToCsvDataConvertService.removeFirstEmptyRow(csvData);
+        excelToCsvDataConvertService.applyReplaceCellStringV2(csvData, this.getReplaceCellDataMappingV2());
         excelDataConfigById = this.updateExcelDataConfigById(excelDataConfigById, requestId, fileConfigMapping, csvData);
         logger.info("excelDataConfigById generated from csv for requestId: {}, {}", requestId, excelDataConfigById);
         return excelDataConfigById;
     }
+
+    private ReplaceCellDataMapping getReplaceCellDataMappingV2() {
+        ReplaceCellDataMapping replaceCellDataMapping2 = new ReplaceCellDataMapping();
+        ArrayList<ArrayList<Integer>> indexRange = new ArrayList<>();
+        ArrayList<Integer> index = new ArrayList<>();
+        index.add(0);
+        index.add(-1);
+        indexRange.add(index);
+        replaceCellDataMapping2.setTrimBoth(true);
+        replaceCellDataMapping2.setIndex(indexRange);
+        return replaceCellDataMapping2;
+    }
+
     public boolean readAndWriteExcelSheetData(ExcelDataConfig excelDataConfigById,
                                               SaveTableParameter saveTableParameter) throws AppException {
         if (excelDataConfigById == null) {

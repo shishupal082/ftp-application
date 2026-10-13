@@ -767,14 +767,12 @@ public class ExcelToCsvDataConvertServiceV2 {
         }
         return tableData;
     }
-    public void applyReplaceCellString(ArrayList<ArrayList<String>> sheetData, ExcelDataConfig excelDataConfigById) {
-        if (sheetData == null || excelDataConfigById == null) {
+    public void applyReplaceCellStringV2(ArrayList<ArrayList<String>> sheetData,
+                                         ReplaceCellDataMapping replaceCellDataMapping) {
+        if (sheetData == null || replaceCellDataMapping == null) {
             return;
         }
-        ArrayList<ReplaceCellDataMapping> replaceCellDataMappings = excelDataConfigById.getReplaceCellString();
-        if (replaceCellDataMappings == null) {
-            return;
-        }
+
         String currentCellData;
         ArrayList<ArrayList<Integer>> indexRange;
         Integer finalIndex;
@@ -783,103 +781,110 @@ public class ExcelToCsvDataConvertServiceV2 {
         String finalCellData;
         Boolean upper, lower, trimBoth, trimLeft, trimRight;
         int i, j;
+        indexRange = replaceCellDataMapping.getIndex();
+        finalIndex = replaceCellDataMapping.getFinalIndex();
+        find = replaceCellDataMapping.getFind();
+        upper = replaceCellDataMapping.getUpper();
+        lower = replaceCellDataMapping.getLower();
+        trimBoth = replaceCellDataMapping.getTrimBoth();
+        trimLeft = replaceCellDataMapping.getTrimLeft();
+        trimRight = replaceCellDataMapping.getTrimRight();
+        if (upper == null) {
+            upper = false;
+        }
+        if (lower == null) {
+            lower = false;
+        }
+        if (trimBoth == null) {
+            trimBoth = false;
+        }
+        if (trimLeft == null) {
+            trimLeft = false;
+        }
+        if (trimRight == null) {
+            trimRight = false;
+        }
+        replace = replaceCellDataMapping.getReplace();
+        for(ArrayList<String> rowData: sheetData) {
+            if (rowData == null) {
+                continue;
+            }
+            for(ArrayList<Integer> indexRange1: indexRange) {
+                if (indexRange1 == null || indexRange1.size() < 2) {
+                    continue;
+                }
+                startIndex = indexRange1.get(0);
+                endIndex = indexRange1.get(1);
+                if (startIndex == null || endIndex == null) {
+                    continue;
+                }
+                if (startIndex < 0) {
+                    continue;
+                }
+                if (endIndex == -1) {
+                    endIndex = rowData.size()-1;
+                } else if(endIndex < -1) {
+                    continue;
+                }
+                if (!upper && !lower && !trimBoth && !trimLeft && !trimRight) {
+                    if (find == null || replace == null) {
+                        continue;
+                    }
+                }
+
+                for(i= startIndex; i<=endIndex; i++) {
+                    if (i < rowData.size()) {
+                        currentCellData = rowData.get(i);
+                        if (currentCellData == null) {
+                            currentCellData = AppConstant.EmptyStr;
+                        }
+                        if (upper) {
+                            currentCellData = currentCellData.toUpperCase();
+                        }
+                        if (lower) {
+                            currentCellData = currentCellData.toLowerCase();
+                        }
+                        if (trimBoth) {
+                            currentCellData = currentCellData.trim();
+                        }
+                        if (trimLeft) {
+                            currentCellData = currentCellData.stripLeading();
+                        }
+                        if (trimRight) {
+                            currentCellData = currentCellData.stripTrailing();
+                        }
+                        if (find == null || replace == null) {
+                            finalCellData = currentCellData;
+                        } else {
+                            finalCellData = StaticService.replaceString(currentCellData, find, replace);
+                            finalCellData = this.applyBasicFormatOnCellData(finalCellData, null);
+                        }
+                        if (finalIndex == null || finalIndex < 0) {
+                            rowData.set(i, finalCellData);
+                        } else {
+                            for (j = rowData.size(); j <= finalIndex; j++) {
+                                rowData.add(AppConstant.EmptyStr);
+                            }
+                            rowData.set(finalIndex, finalCellData);
+                        }
+                    }
+                }
+            }
+        }
+    }
+    public void applyReplaceCellString(ArrayList<ArrayList<String>> sheetData, ExcelDataConfig excelDataConfigById) {
+        if (sheetData == null || excelDataConfigById == null) {
+            return;
+        }
+        ArrayList<ReplaceCellDataMapping> replaceCellDataMappings = excelDataConfigById.getReplaceCellString();
+        if (replaceCellDataMappings == null) {
+            return;
+        }
         for(ReplaceCellDataMapping replaceCellDataMapping: replaceCellDataMappings) {
             if (replaceCellDataMapping == null) {
                 continue;
             }
-            indexRange = replaceCellDataMapping.getIndex();
-            finalIndex = replaceCellDataMapping.getFinalIndex();
-            find = replaceCellDataMapping.getFind();
-            upper = replaceCellDataMapping.getUpper();
-            lower = replaceCellDataMapping.getLower();
-            trimBoth = replaceCellDataMapping.getTrimBoth();
-            trimLeft = replaceCellDataMapping.getTrimLeft();
-            trimRight = replaceCellDataMapping.getTrimRight();
-            if (upper == null) {
-                upper = false;
-            }
-            if (lower == null) {
-                lower = false;
-            }
-            if (trimBoth == null) {
-                trimBoth = false;
-            }
-            if (trimLeft == null) {
-                trimLeft = false;
-            }
-            if (trimRight == null) {
-                trimRight = false;
-            }
-            replace = replaceCellDataMapping.getReplace();
-            if (indexRange == null) {
-                continue;
-            }
-            for(ArrayList<String> rowData: sheetData) {
-                if (rowData == null) {
-                    continue;
-                }
-                for(ArrayList<Integer> indexRange1: indexRange) {
-                    if (indexRange1 == null || indexRange1.size() < 2) {
-                        continue;
-                    }
-                    startIndex = indexRange1.get(0);
-                    endIndex = indexRange1.get(1);
-                    if (startIndex == null || endIndex == null) {
-                        continue;
-                    }
-                    if (startIndex < 0) {
-                        continue;
-                    }
-                    if (endIndex == -1) {
-                        endIndex = rowData.size()-1;
-                    } else if(endIndex < -1) {
-                        continue;
-                    }
-                    if (!upper && !lower && !trimBoth && !trimLeft && !trimRight) {
-                        if (find == null || replace == null) {
-                            continue;
-                        }
-                    }
-
-                    for(i= startIndex; i<=endIndex; i++) {
-                        if (i < rowData.size()) {
-                            currentCellData = rowData.get(i);
-                            if (currentCellData == null) {
-                                currentCellData = AppConstant.EmptyStr;
-                            }
-                            if (upper) {
-                                currentCellData = currentCellData.toUpperCase();
-                            }
-                            if (lower) {
-                                currentCellData = currentCellData.toLowerCase();
-                            }
-                            if (trimBoth) {
-                                currentCellData = currentCellData.trim();
-                            }
-                            if (trimLeft) {
-                                currentCellData = currentCellData.stripLeading();
-                            }
-                            if (trimRight) {
-                                currentCellData = currentCellData.stripTrailing();
-                            }
-                            if (find == null || replace == null) {
-                                finalCellData = currentCellData;
-                            } else {
-                                finalCellData = StaticService.replaceString(currentCellData, find, replace);
-                                finalCellData = this.applyBasicFormatOnCellData(finalCellData, null);
-                            }
-                            if (finalIndex == null || finalIndex < 0) {
-                                rowData.set(i, finalCellData);
-                            } else {
-                                for (j = rowData.size(); j <= finalIndex; j++) {
-                                    rowData.add(AppConstant.EmptyStr);
-                                }
-                                rowData.set(finalIndex, finalCellData);
-                            }
-                        }
-                    }
-                }
-            }
+            this.applyReplaceCellStringV2(sheetData,replaceCellDataMapping);
         }
     }
     private boolean isValidCondition(String cellData, SkipRowCriteria skipRowCriteria) {
