@@ -40,10 +40,11 @@ Sequence of operation
 (4) dateFormat, timeFormat and dateTimeFormat [Only used for excel sheet reading not for google sheet]
 (5) commaReplacer: String
 (6) formatCellData
-    it will change \n to ; and , to ... (or given via config: commaReplacer)
+    - removeFirstEmptyRow
+    - it will change \n to ; and , to ... (or given via config: commaReplacer)
 (7) replaceCellString
     - It is used before other cell operation, so that if after cell replace empty row is there that can be removed
-    - Operation sequence: (1) toUpperCase (2) toLowerCase (3) find and replace
+    - Operation sequence: (1) toUpperCase (2) toLowerCase (4) trimBoth (5) trimLeft (6) trimRight (7) find and replace
     - If finalIndex is not found, then it will replace same index data
 (8) skipRowIndex
     - First skip row index is required to be executed

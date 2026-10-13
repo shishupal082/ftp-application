@@ -11,6 +11,9 @@ public class ReplaceCellDataMapping {
     private Integer finalIndex;
     private Boolean upper;
     private Boolean lower;
+    private Boolean trimBoth;
+    private Boolean trimLeft;
+    private Boolean trimRight;
     private String find;
     private String replace;
 
@@ -46,6 +49,30 @@ public class ReplaceCellDataMapping {
         this.lower = lower;
     }
 
+    public Boolean getTrimBoth() {
+        return trimBoth;
+    }
+
+    public void setTrimBoth(Boolean trimBoth) {
+        this.trimBoth = trimBoth;
+    }
+
+    public Boolean getTrimLeft() {
+        return trimLeft;
+    }
+
+    public void setTrimLeft(Boolean trimLeft) {
+        this.trimLeft = trimLeft;
+    }
+
+    public Boolean getTrimRight() {
+        return trimRight;
+    }
+
+    public void setTrimRight(Boolean trimRight) {
+        this.trimRight = trimRight;
+    }
+
     public String getFind() {
         return find;
     }
@@ -66,9 +93,12 @@ public class ReplaceCellDataMapping {
     public String toString() {
         return "ReplaceCellDataMapping{" +
                 "index=" + index +
-                ", destination=" + finalIndex +
+                ", finalIndex=" + finalIndex +
                 ", upper=" + upper +
                 ", lower=" + lower +
+                ", trimBoth=" + trimBoth +
+                ", trimLeft=" + trimLeft +
+                ", trimRight=" + trimRight +
                 ", find='" + find + '\'' +
                 ", replace='" + replace + '\'' +
                 '}';

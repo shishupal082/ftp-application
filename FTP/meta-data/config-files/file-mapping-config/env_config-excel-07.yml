@@ -110,3 +110,9 @@ excelDataConfig:
           - [24,24]
         find: "\""
         replace: ""
+      - index:
+          - [7,7]
+        trimBoth: true
+      - index:
+          - [15,18]
+        trimBoth: true

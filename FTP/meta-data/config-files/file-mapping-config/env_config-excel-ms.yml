@@ -338,6 +338,18 @@ excelDataConfig:
           - [3,3]
         find: "&"
         replace: "%26"
+      - index:
+          - [2,2]
+        finalIndex: 16
+        trimRight: true
+      - index:
+          - [2,2]
+        finalIndex: 17
+        trimLeft: true
+      - index:
+          - [2,2]
+        finalIndex: 18
+        trimBoth: true
     cellMapping:
       - defaultCellData: ""
         col_index: 1
