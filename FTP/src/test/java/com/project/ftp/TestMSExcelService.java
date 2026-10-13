@@ -32,6 +32,26 @@ public class TestMSExcelService {
         TestAppConfig testAppConfig = new TestAppConfig();
         return testAppConfig.getAppConfig(isMysqlEnable);
     }
+    private ArrayList<String> generateArguments(boolean isMysqlEnable, ArrayList<String> arguments) {
+        if (arguments == null) {
+            arguments = new ArrayList<>();
+        }
+        // Is static path, // All config path are static directory
+        arguments.add(0,AppConstant.TRUE);
+        if (isMysqlEnable) {
+            arguments.add(0,AppConstant.TRUE);
+        } else {
+            arguments.add(0,AppConstant.FALSE);
+        }
+        arguments.add(0,AppConstant.SOURCE_TEST);
+        return arguments;
+    }
+    public AppConfig getAppConfigProd(boolean isMysqlEnable, ArrayList<String> arguments) {
+        return AppConfig.getAppConfigFromCmdArgs(this.generateArguments(isMysqlEnable, arguments), AppConstant.SOURCE_TEST);
+    }
+    public String[] getAppStandAloneConfig(boolean isMysqlEnable, ArrayList<String> arguments) {
+        return this.generateArguments(isMysqlEnable, arguments).toArray(String[]::new);
+    }
     public AppConfig getAppConfigProd8082(boolean isMysqlEnable) {
         ArrayList<String> arguments = new ArrayList<>();
         arguments.add(AppConstant.SERVER);
@@ -45,18 +65,6 @@ public class TestMSExcelService {
         arguments.add("F:/ftp-app/OneDrive/ftp/app-data/config-files-v2/env_config/env_config-8.0.0.6_base.yml");
         arguments.add("F:/ftp-app/OneDrive/ftp/app-data/config-files-v2/env_config/env_config-user_GroupLogin1.yml");
         return AppConfig.getAppConfigFromCmdArgs(arguments, AppConstant.SOURCE_TEST);
-    }
-    public String[] getAppStandAloneConfig(boolean isMysqlEnable) {
-        List<String> arguments = new ArrayList<>();
-        arguments.add(AppConstant.SOURCE_TEST);
-        if (isMysqlEnable) {
-            arguments.add(AppConstant.TRUE);
-        } else {
-            arguments.add("false");
-        }
-        arguments.add("true"); // All config path are static directory
-        arguments.add("D:/workspace/app-data/running-apps-standalone/ftp-app-oracle-dl/config-files/env_config/env_config-1.0.0_base.yml");
-        return arguments.toArray(String[]::new);
     }
     public ApiResource getApiResource() {
         AppConfig appConfig = this.getAppConfig(false);

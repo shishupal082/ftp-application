@@ -303,6 +303,34 @@ excelDataConfig:
         find: "es"
         replace: "ES"
       - index:
+          - [0,0]
+        finalIndex: 10
+        upper: true
+      - index:
+          - [0,0]
+        finalIndex: 11
+        lower: true
+      - index:
+          - [10,10]
+        finalIndex: 12
+        lower: true
+      - index:
+          - [0,0]
+        finalIndex: 13
+        find: "tESt"
+        replace: "best"
+      - index:
+          - [0,0]
+        finalIndex: 14
+        find: "(?i)test"
+        replace: "best2"
+      - index:
+          - [0,0]
+        finalIndex: 15
+        info: "This case is not matched"
+        find: "test"
+        replace: "best3"
+      - index:
           - [1,1]
         find: "\\.\\.\\."
         replace: "oo"

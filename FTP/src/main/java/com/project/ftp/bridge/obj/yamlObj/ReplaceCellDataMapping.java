@@ -8,6 +8,9 @@ import java.util.ArrayList;
 
 public class ReplaceCellDataMapping {
     private ArrayList<ArrayList<Integer>> index;
+    private Integer finalIndex;
+    private Boolean upper;
+    private Boolean lower;
     private String find;
     private String replace;
 
@@ -17,6 +20,30 @@ public class ReplaceCellDataMapping {
 
     public void setIndex(ArrayList<ArrayList<Integer>> index) {
         this.index = index;
+    }
+
+    public Integer getFinalIndex() {
+        return finalIndex;
+    }
+
+    public void setFinalIndex(Integer finalIndex) {
+        this.finalIndex = finalIndex;
+    }
+
+    public Boolean getUpper() {
+        return upper;
+    }
+
+    public void setUpper(Boolean upper) {
+        this.upper = upper;
+    }
+
+    public Boolean getLower() {
+        return lower;
+    }
+
+    public void setLower(Boolean lower) {
+        this.lower = lower;
     }
 
     public String getFind() {
@@ -39,6 +66,9 @@ public class ReplaceCellDataMapping {
     public String toString() {
         return "ReplaceCellDataMapping{" +
                 "index=" + index +
+                ", destination=" + finalIndex +
+                ", upper=" + upper +
+                ", lower=" + lower +
                 ", find='" + find + '\'' +
                 ", replace='" + replace + '\'' +
                 '}';

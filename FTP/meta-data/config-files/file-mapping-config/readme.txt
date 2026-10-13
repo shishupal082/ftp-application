@@ -43,6 +43,8 @@ Sequence of operation
     it will change \n to ; and , to ... (or given via config: commaReplacer)
 (7) replaceCellString
     - It is used before other cell operation, so that if after cell replace empty row is there that can be removed
+    - Operation sequence: (1) toUpperCase (2) toLowerCase (3) find and replace
+    - If finalIndex is not found, then it will replace same index data
 (8) skipRowIndex
     - First skip row index is required to be executed
       otherwise row index will be changed (After skipEmptyRows operation)

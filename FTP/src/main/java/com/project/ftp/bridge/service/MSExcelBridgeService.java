@@ -757,6 +757,7 @@ public class MSExcelBridgeService {
                     sheetData = this.convertNdTo1dExcel(srcFilepath, sheetName, excelDataConfigById, uniqueStrings, roleId);
                 } else {
                     sheetData = null;
+                    logger.info("SheetData set to null as requested api not defined: {}", sourceApiName);
                 }
                 bridgeResponseSheetsData.add(new BridgeResponseSheetData(copyOldData,
                         destination, copyDestination, sheetData));

@@ -494,12 +494,13 @@ public class AppConfig {
         }
         String isStaticPath = cmdArgument.get(AppConstant.CMD_IS_STATIC_PATH);
         String firstConfigPath = cmdArgument.get(AppConstant.CMD_FIRST_CONFIG_PATH);
-        FtpConfiguration ftpConfiguration = getFirstFtpConfiguration(isStaticPath, firstConfigPath);
+        FtpConfiguration ftpConfiguration = getFirstFtpConfiguration(isStaticPath, firstConfigPath, source);
         ArrayList<FtpConfigItems> firstPageFtpConfigItems = AppConfig.getFirstPageConfigItems(ftpConfiguration);
         return getAppConfig(null,ftpConfiguration,cmdArgument,firstPageFtpConfigItems,source);
     }
 
-    private static FtpConfiguration getFirstFtpConfiguration(String isStaticPath, String firstConfigPath) {
+    private static FtpConfiguration getFirstFtpConfiguration(String isStaticPath,
+                                                             String firstConfigPath, String source) {
         YamlFileParser yamlFileParser = new YamlFileParser();
         FtpConfiguration ftpConfiguration = yamlFileParser.getFtpConfigurationFromPath(isStaticPath, firstConfigPath);
         if (ftpConfiguration != null) {
@@ -512,6 +513,8 @@ public class AppConfig {
                 dataSourceFactory.setUrl(mysqlDatabaseConfigs.getUrl());
                 ftpConfiguration.setDataSourceFactory(dataSourceFactory);
             }
+        } else if (!AppConstant.SOURCE_RUNTIME.equals(source)) {
+            ftpConfiguration = new FtpConfiguration();
         }
         return ftpConfiguration;
     }
