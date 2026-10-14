@@ -318,7 +318,7 @@ excelDataConfig:
           - [0,0]
         finalIndex: 13
         find: "tESt"
-        replace: "best"
+        replace: "be,st"
       - index:
           - [0,0]
         finalIndex: 14

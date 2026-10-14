@@ -857,7 +857,6 @@ public class ExcelToCsvDataConvertServiceV2 {
                             finalCellData = currentCellData;
                         } else {
                             finalCellData = StaticService.replaceString(currentCellData, find, replace);
-                            finalCellData = this.applyBasicFormatOnCellData(finalCellData, null);
                         }
                         if (finalIndex == null || finalIndex < 0) {
                             rowData.set(i, finalCellData);
@@ -884,7 +883,7 @@ public class ExcelToCsvDataConvertServiceV2 {
             if (replaceCellDataMapping == null) {
                 continue;
             }
-            this.applyReplaceCellStringV2(sheetData,replaceCellDataMapping);
+            this.applyReplaceCellStringV2(sheetData, replaceCellDataMapping);
         }
     }
     private boolean isValidCondition(String cellData, SkipRowCriteria skipRowCriteria) {
