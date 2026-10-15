@@ -113,6 +113,8 @@ public class AppConstant {
      * 2 (CMD_LINE_ARG_MIN_SIZE-2): isStaticPath
      * 3 (CMD_LINE_ARG_MIN_SIZE-1): firstConfigPath
      */
+    public static final int MINUS_ONE = -1;
+    public static final int ZERO = 0;
     public static final int CMD_APPLICATION_TYPE = 0;
     public static final int CMD_IS_MYSQL_ENABLE = 1;
     public static final int CMD_IS_STATIC_PATH = 2;

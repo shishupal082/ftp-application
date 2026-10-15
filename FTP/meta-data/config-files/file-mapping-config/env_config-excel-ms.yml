@@ -297,6 +297,7 @@ excelDataConfig:
             info: "Extract only variable text after length of 22 char"
             subStringConfig: [22, -1, 0]
   csv-test-09:
+    removeColumnConfig: [0]
     replaceCellString:
       - index:
           - [0,0]
@@ -350,23 +351,28 @@ excelDataConfig:
           - [2,2]
         finalIndex: 18
         trimBoth: true
+      - index:
+          - [13,13]
+        finalIndex: -1
+        upper: true
     cellMapping:
       - defaultCellData: ""
-        col_index: 1
+        col_index: 2
         rewrite: true
         mappingData:
-          - col_index: 1
+          - col_index: 2
             value: "yyyy-MM-dd"
             dateRegex: "dd.MM.yyyy"
             regex: "^[0-9]{2}.[0-9]{2}.[0-9]{4}$"
-          - col_index: 1
+          - col_index: 2
             value: "yyyy-MM-dd"
             dateRegex: "yyyy.MM.dd"
             regex: "^[0-9]{4}.[0-9]{2}.[0-9]{2}$"
-          - col_index: 1
+          - col_index: 2
             value: "yyyy-MM-dd HH:mm"
             dateRegex: "dd-MM-yyyy'T'HH:mm"
             regex: "^[0-9]{2}-[0-9]{2}-[0-9]{4}[T][0-9]{2}[:][0-9]{2}$"
+
   csv-test-10:
     uniqueEntry: [0,2]
   csv-test-10-2:

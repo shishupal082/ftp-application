@@ -774,21 +774,17 @@ public class ExcelToCsvDataConvertServiceV2 {
         }
 
         String currentCellData;
-        ArrayList<ArrayList<Integer>> indexRange;
-        Integer finalIndex;
         Integer startIndex, endIndex;
-        String find, replace;
         String finalCellData;
-        Boolean upper, lower, trimBoth, trimLeft, trimRight;
-        int i, j;
-        indexRange = replaceCellDataMapping.getIndex();
-        finalIndex = replaceCellDataMapping.getFinalIndex();
-        find = replaceCellDataMapping.getFind();
-        upper = replaceCellDataMapping.getUpper();
-        lower = replaceCellDataMapping.getLower();
-        trimBoth = replaceCellDataMapping.getTrimBoth();
-        trimLeft = replaceCellDataMapping.getTrimLeft();
-        trimRight = replaceCellDataMapping.getTrimRight();
+        ArrayList<ArrayList<Integer>> indexRange = replaceCellDataMapping.getIndex();
+        Integer finalIndex = replaceCellDataMapping.getFinalIndex();
+        String find = replaceCellDataMapping.getFind();
+        String replace = replaceCellDataMapping.getReplace();
+        Boolean upper = replaceCellDataMapping.getUpper();
+        Boolean lower = replaceCellDataMapping.getLower();
+        Boolean trimBoth = replaceCellDataMapping.getTrimBoth();
+        Boolean trimLeft = replaceCellDataMapping.getTrimLeft();
+        Boolean trimRight = replaceCellDataMapping.getTrimRight();
         if (upper == null) {
             upper = false;
         }
@@ -804,8 +800,10 @@ public class ExcelToCsvDataConvertServiceV2 {
         if (trimRight == null) {
             trimRight = false;
         }
-        replace = replaceCellDataMapping.getReplace();
-        for(ArrayList<String> rowData: sheetData) {
+        int i, j, k;
+        ArrayList<String> newRowData, rowData;
+        for(i=0; i<sheetData.size(); i++) {
+            rowData = sheetData.get(i);
             if (rowData == null) {
                 continue;
             }
@@ -818,12 +816,12 @@ public class ExcelToCsvDataConvertServiceV2 {
                 if (startIndex == null || endIndex == null) {
                     continue;
                 }
-                if (startIndex < 0) {
+                if (startIndex < AppConstant.ZERO) {
                     continue;
                 }
-                if (endIndex == -1) {
+                if (endIndex == AppConstant.MINUS_ONE) {
                     endIndex = rowData.size()-1;
-                } else if(endIndex < -1) {
+                } else if(endIndex < AppConstant.MINUS_ONE) {
                     continue;
                 }
                 if (!upper && !lower && !trimBoth && !trimLeft && !trimRight) {
@@ -831,10 +829,9 @@ public class ExcelToCsvDataConvertServiceV2 {
                         continue;
                     }
                 }
-
-                for(i= startIndex; i<=endIndex; i++) {
-                    if (i < rowData.size()) {
-                        currentCellData = rowData.get(i);
+                for(j= startIndex; j<=endIndex; j++) {
+                    if (j < rowData.size()) {
+                        currentCellData = rowData.get(j);
                         if (currentCellData == null) {
                             currentCellData = AppConstant.EmptyStr;
                         }
@@ -858,10 +855,15 @@ public class ExcelToCsvDataConvertServiceV2 {
                         } else {
                             finalCellData = StaticService.replaceString(currentCellData, find, replace);
                         }
-                        if (finalIndex == null || finalIndex < 0) {
-                            rowData.set(i, finalCellData);
+                        if (finalIndex == null || finalIndex < AppConstant.MINUS_ONE) {
+                            rowData.set(j, finalCellData);
+                        } else if (finalIndex == AppConstant.MINUS_ONE) {
+                            newRowData = new ArrayList<>();
+                            newRowData.add(finalCellData);
+                            newRowData.addAll(rowData);
+                            sheetData.set(i, newRowData);
                         } else {
-                            for (j = rowData.size(); j <= finalIndex; j++) {
+                            for (k = rowData.size(); k <= finalIndex; k++) {
                                 rowData.add(AppConstant.EmptyStr);
                             }
                             rowData.set(finalIndex, finalCellData);
@@ -1032,27 +1034,17 @@ public class ExcelToCsvDataConvertServiceV2 {
         }
         int i;
         ArrayList<Integer> finalRemoveIndex = new ArrayList<>();
-        int maxColCount = 0, previousIndex = -1;
+        int maxColCount = 0;
         for(ArrayList<String> rowData: sheetData) {
             if (rowData.size() > maxColCount) {
                 maxColCount = rowData.size();
             }
         }
         for(Integer index: removeColumnConfig) {
-            if (index >= 0) {
-                previousIndex = index;
+            if (index != null && index >= AppConstant.ZERO) {
                 if (!finalRemoveIndex.contains(index)) {
                     finalRemoveIndex.add(index);
                 }
-                continue;
-            }
-            if (index == -1) {
-                for(i=previousIndex+1; i<maxColCount; i++) {
-                    if (!finalRemoveIndex.contains(i)) {
-                        finalRemoveIndex.add(i);
-                    }
-                }
-                break;
             }
         }
         ArrayList<ArrayList<String>> finalSheetData = new ArrayList<>();

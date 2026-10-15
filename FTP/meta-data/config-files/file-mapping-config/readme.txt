@@ -46,6 +46,7 @@ Sequence of operation
     - It is used before other cell operation, so that if after cell replace empty row is there that can be removed
     - Operation sequence: (1) toUpperCase (2) toLowerCase (4) trimBoth (5) trimLeft (6) trimRight (7) find and replace
     - If finalIndex is not found, then it will replace same index data
+    - Details below
 (8) skipRowIndex
     - First skip row index is required to be executed
       otherwise row index will be changed (After skipEmptyRows operation)
@@ -201,6 +202,18 @@ then it will be executed only when condition is true
       order: "ASC / DESC"
       dataType: "STRING / INT"
       defaultData: String
+
+(7) replaceCellString:
+indexRange[[null, null]]
+
+if startIndex == null || endIndex == null: skip operation
+if startIndex < 0: skip operation
+if endIndex < -1: skip operation
+if endIndex == -1: endIndex = rowData.size()-1
+if finalIndex = -1:
+it will add finalCellData in rowData at (0) and shift all existing from 1 onward
+
+
 
 API for update excel sheet
 -----------------------------------
