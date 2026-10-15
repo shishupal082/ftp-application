@@ -354,6 +354,7 @@ excelDataConfig:
       - index:
           - [13,13]
         finalIndex: -1
+        copy: false
         upper: true
     cellMapping:
       - defaultCellData: ""

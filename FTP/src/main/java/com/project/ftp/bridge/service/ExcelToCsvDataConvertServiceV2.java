@@ -785,6 +785,7 @@ public class ExcelToCsvDataConvertServiceV2 {
         Boolean trimBoth = replaceCellDataMapping.getTrimBoth();
         Boolean trimLeft = replaceCellDataMapping.getTrimLeft();
         Boolean trimRight = replaceCellDataMapping.getTrimRight();
+        Boolean copy = replaceCellDataMapping.getCopy();
         if (upper == null) {
             upper = false;
         }
@@ -800,10 +801,11 @@ public class ExcelToCsvDataConvertServiceV2 {
         if (trimRight == null) {
             trimRight = false;
         }
-        int i, j, k;
-        ArrayList<String> newRowData, rowData;
-        for(i=0; i<sheetData.size(); i++) {
-            rowData = sheetData.get(i);
+        if (copy == null) {
+            copy = false;
+        }
+        int j, k;
+        for(ArrayList<String> rowData: sheetData) {
             if (rowData == null) {
                 continue;
             }
@@ -826,7 +828,9 @@ public class ExcelToCsvDataConvertServiceV2 {
                 }
                 if (!upper && !lower && !trimBoth && !trimLeft && !trimRight) {
                     if (find == null || replace == null) {
-                        continue;
+                        if (!copy) {
+                            continue;
+                        }
                     }
                 }
                 for(j= startIndex; j<=endIndex; j++) {
@@ -858,10 +862,7 @@ public class ExcelToCsvDataConvertServiceV2 {
                         if (finalIndex == null || finalIndex < AppConstant.MINUS_ONE) {
                             rowData.set(j, finalCellData);
                         } else if (finalIndex == AppConstant.MINUS_ONE) {
-                            newRowData = new ArrayList<>();
-                            newRowData.add(finalCellData);
-                            newRowData.addAll(rowData);
-                            sheetData.set(i, newRowData);
+                            rowData.add(AppConstant.ZERO, finalCellData);
                         } else {
                             for (k = rowData.size(); k <= finalIndex; k++) {
                                 rowData.add(AppConstant.EmptyStr);

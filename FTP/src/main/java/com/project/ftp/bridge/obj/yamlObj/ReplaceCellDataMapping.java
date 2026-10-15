@@ -14,6 +14,7 @@ public class ReplaceCellDataMapping {
     private Boolean trimBoth;
     private Boolean trimLeft;
     private Boolean trimRight;
+    private Boolean copy;
     private String find;
     private String replace;
 
@@ -73,6 +74,14 @@ public class ReplaceCellDataMapping {
         this.trimRight = trimRight;
     }
 
+    public Boolean getCopy() {
+        return copy;
+    }
+
+    public void setCopy(Boolean copy) {
+        this.copy = copy;
+    }
+
     public String getFind() {
         return find;
     }
@@ -99,6 +108,7 @@ public class ReplaceCellDataMapping {
                 ", trimBoth=" + trimBoth +
                 ", trimLeft=" + trimLeft +
                 ", trimRight=" + trimRight +
+                ", copy=" + copy +
                 ", find='" + find + '\'' +
                 ", replace='" + replace + '\'' +
                 '}';
