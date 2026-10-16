@@ -150,13 +150,13 @@ excelDataConfig:
         info: "skipped due to final index < 0"
       - finalIndex: 7
         sourceIndex: [4,-2, 3]
-        join: "..."
+        join: "M7"
         info: "Only index 4 will be considered as -2 is less than -1"
         info2: "Result will be same as 4"
       - finalIndex: 8
         sourceIndex: [-1,5,-1]
         join: "..."
-        info: "It will start from 5 as first index is less than 0"
+        info: "It will merge from 0 to end"
   csv-test-05:
     appendCellDataIndex:
       - [0, -1]

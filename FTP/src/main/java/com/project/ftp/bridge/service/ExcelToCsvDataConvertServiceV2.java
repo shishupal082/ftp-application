@@ -951,13 +951,13 @@ public class ExcelToCsvDataConvertServiceV2 {
         ArrayList<String> tempFinalData;
         ArrayList<SkipRowCriteria> conditions = mergeColumnConfig.getConditions();
         if (join == null) {
-            join = "";
+            join = AppConstant.EmptyStr;
         }
         if (finalIndex == null || finalIndex < 0 || sourceIndex == null) {
             return;
         }
         int j;
-        Integer prevIndex = null;
+        int prevIndex = -1;
         for (ArrayList<String> rowData : sheetData) {
             if (rowData == null) {
                 continue;
@@ -969,23 +969,20 @@ public class ExcelToCsvDataConvertServiceV2 {
             }
             tempFinalData = new ArrayList<>();
             for (Integer index : sourceIndex) {
-                if (index == null) {
+                if (index == null || index < AppConstant.MINUS_ONE) {
                     continue;
                 }
-                if (index < 0 && prevIndex == null) {
-                    continue;
-                }
-                if (index == -1) {
+                if (index >= AppConstant.ZERO) {
+                    prevIndex = index;
+                    if (index < rowData.size()) {
+                        tempFinalData.add(rowData.get(index));
+                    }
+                } else {
+                    //i.e. index = -1
                     for (j = prevIndex+1; j < rowData.size(); j++) {
                         tempFinalData.add(rowData.get(j));
                     }
                     break;
-                } else if (index < -1) {
-                    break;
-                }
-                prevIndex = index;
-                if (index < rowData.size()) {
-                    tempFinalData.add(rowData.get(index));
                 }
             }
             if (finalIndex >= rowData.size()) {
@@ -1035,17 +1032,29 @@ public class ExcelToCsvDataConvertServiceV2 {
         }
         int i;
         ArrayList<Integer> finalRemoveIndex = new ArrayList<>();
-        int maxColCount = 0;
+        int maxColCount = 0, previousIndex = -1;
         for(ArrayList<String> rowData: sheetData) {
             if (rowData.size() > maxColCount) {
                 maxColCount = rowData.size();
             }
         }
         for(Integer index: removeColumnConfig) {
-            if (index != null && index >= AppConstant.ZERO) {
+            if (index == null || index < AppConstant.MINUS_ONE) {
+                continue;
+            }
+            if (index >= AppConstant.ZERO) {
+                previousIndex = index;
                 if (!finalRemoveIndex.contains(index)) {
                     finalRemoveIndex.add(index);
                 }
+            } else {
+                //i.e. index = -1
+                for(i=previousIndex+1; i<maxColCount; i++) {
+                    if (!finalRemoveIndex.contains(i)) {
+                        finalRemoveIndex.add(i);
+                    }
+                }
+                break;
             }
         }
         ArrayList<ArrayList<String>> finalSheetData = new ArrayList<>();
