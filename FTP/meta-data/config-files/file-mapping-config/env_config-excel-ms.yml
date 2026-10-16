@@ -151,12 +151,12 @@ excelDataConfig:
       - finalIndex: 7
         sourceIndex: [4,-2, 3]
         join: "M7"
-        info: "Only index 4 will be considered as -2 is less than -1"
+        info: "It will merge 4 and 3"
         info2: "Result will be same as 4"
       - finalIndex: 8
         sourceIndex: [-1,5,-1]
         join: "..."
-        info: "It will merge from 0 to end"
+        info: "It will merge from 0 to end, after first index -1, loop will break"
   csv-test-05:
     appendCellDataIndex:
       - [0, -1]
