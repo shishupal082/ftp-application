@@ -249,6 +249,7 @@ public class TableService {
                     defaultFilterMappingId, tableConfiguration, requestFilterParameter, true);
             ArrayList<String> columnNames = tableConfiguration.getModifiedColumnName();
             ArrayList<String> arrayRowData;
+            String cellData;
             if (tableData != null) {
                 for (HashMap<String, String> rowData: tableData) {
                     if (rowData == null || rowData.isEmpty()) {
@@ -256,7 +257,11 @@ public class TableService {
                     }
                     arrayRowData = new ArrayList<>();
                     for(String name: columnNames) {
-                        arrayRowData.add(rowData.get(name));
+                        cellData = rowData.get(name);
+                        if (cellData == null) {
+                            cellData = AppConstant.EmptyStr;
+                        }
+                        arrayRowData.add(cellData);
                     }
                     result.add(arrayRowData);
                 }

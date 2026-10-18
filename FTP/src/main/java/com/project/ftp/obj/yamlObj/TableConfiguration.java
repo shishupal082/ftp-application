@@ -78,12 +78,15 @@ public class TableConfiguration {
         } else {
             result = new ArrayList<>(columnName);
         }
+        int i;
+        CellMapping cellMappingTemp;
         if (cellMapping != null && !cellMapping.isEmpty()) {
-            for(CellMapping cellMapping: cellMapping) {
-                if (cellMapping == null) {
+            for (i=cellMapping.size()-1; i>=0; i--) {
+                cellMappingTemp = cellMapping.get(i);
+                if (cellMappingTemp == null) {
                     continue;
                 }
-                newColumnName = cellMapping.getNewColumnName();
+                newColumnName = cellMappingTemp.getNewColumnName();
                 if (newColumnName != null && !newColumnName.isEmpty()) {
                     if (!result.contains(newColumnName)) {
                         result.add(0,newColumnName);

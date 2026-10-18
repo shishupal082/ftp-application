@@ -110,16 +110,31 @@ It will be used for reading table data by combining two table
 
 (19) cellMapping: Apply extra condition on each row of successful data reading from table
 
+(20) modifiedColumnName:
+It is locally generated for
+(i) CellMapping.col_index conversion from int to columnName
+(ii) Conversion from tableData<HashMap<String,String>> to sheetData<ArrayList<ArrayList<String>>>
+modifiedColumnName = [cellMapping<ArrayList.newColumnName>, columnName<ArrayList> defined in taleConfiguration]
+If cellMapping<ArrayList.newColumnName> is empty or null or part of columnName then
+- It will be skipped or not added in modifiedColumnName
+
 [Sequence of operation for TableConfiguration]
 seq[] = skipRowCriteria
 seq[] = cellMapping
+
+
+
+skipRowCriteria
+-----------------
+col_index is defined w.r.t. columnName<ArrayList>
 
 cellMapping
 -------------
 It will add additional column with key as newColumnName: "string"
 
 if col_index in cellMapping >= 0
-    cellData = rowData[tableColumnName[col_index]]
+    cellData = rowData[modifiedColumnName[col_index]]
+    i.e. col_index is defined w.r.t. modifiedColumnName<ArrayList>
 
 if col_index in cellMapping == -1
     defaultCellData

@@ -1,8 +1,7 @@
 tableDbConfig:
-  - tableConfigId: "get-digital-bits-bodg-hte-jaa"
-    tableName: "DSIGNAL69"
+  - tableConfigId: "get-digital-bits-brka-cni-ssi"
     dbType: "oracle"
-    dbIdentifier: "oracleBodgHteJaa"
+    dbIdentifier: "oracleBrkaCni"
     includeDeleted: false
     selectColumnName:
       - "SIGNO as sig_no"
@@ -18,3 +17,39 @@ tableDbConfig:
       - "sig_type_no"
       - "sig_count_ct"
       - "sig_descr"
+    cellMapping:
+      - newColumnName: "is_spare"
+        col_index: -1
+        defaultCellData: "is_spare:false"
+      - newColumnName: "current_time"
+        defaultCellData: "now"
+        col_index: -1
+        info: "file date time"
+        dateRegex: "yyyy-MM-dd HH:mm"
+      - newColumnName: "DL_unit-DL_index"
+        defaultCellData: "DL_unit-DL_index"
+        col_index: -1
+        info: "Table id"
+      - newColumnName: "DL_unit-DL_index-Bit_index"
+        defaultCellData: "DL_unit-DL_index-Bit_index"
+        col_index: -1
+        info: "Bit id"
+      - newColumnName: "table_name"
+        col_index: -5
+        mappingData:
+          - col_index: -5
+            subStringConfig: [7,3,-1]
+      - newColumnName: "db_username"
+        col_index: -51
+      - newColumnName: "serialised_bit_name"
+        col_index: 9
+        defaultCellData: ""
+    tableName: "DSIGNAL94"
+    tableNames:
+      - "DSIGNAL142"
+      - "DSIGNAL144"
+      - "DSIGNAL146"
+      - "DSIGNAL147"
+      - "DSIGNAL148"
+      - "DSIGNAL149"
+      - "DSIGNAL150"
