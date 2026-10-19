@@ -70,6 +70,7 @@ public class ExcelToCsvDataConvertServiceV2 {
         cellData = cellData.replaceAll("\r\n", AppConstant.colonDelimiter);
         cellData = cellData.replaceAll("\n", AppConstant.colonDelimiter);
         cellData = cellData.replaceAll("\r", AppConstant.EmptyStr);
+        cellData = cellData.replaceAll("\t", AppConstant.EmptyParagraph);
         cellData = cellData.replaceAll(AppConstant.commaDelimiter, commaReplacer);
         return cellData;
     }
