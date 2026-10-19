@@ -1,5 +1,9 @@
 package com.project.ftp.common;
 
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import com.project.ftp.config.AppConstant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,6 +18,15 @@ public class StrUtils {
             return "";
         }
         return str.trim();
+    }
+    public boolean isMatching(String text, String regex) {
+        if (text == null || regex == null) {
+            return false;
+        }
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(text);
+        //For exact matching use matcher.matches() equivalent to ^yourRegex$
+        return matcher.find();
     }
     public String replaceLast(String find, String replace, String string) {
         int lastIndex = string.lastIndexOf(find);

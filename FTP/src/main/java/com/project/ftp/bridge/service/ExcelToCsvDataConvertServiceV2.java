@@ -1,6 +1,7 @@
 package com.project.ftp.bridge.service;
 
 import com.project.ftp.bridge.config.MappingDataType;
+import com.project.ftp.bridge.mysqlTable.TableVariableParam;
 import com.project.ftp.bridge.obj.yamlObj.*;
 import com.project.ftp.common.DateUtilities;
 import com.project.ftp.config.AppConstant;
@@ -525,7 +526,7 @@ public class ExcelToCsvDataConvertServiceV2 {
             cellData = requestDefaultFilterMappingId;
         } else if (colIndex == -4) {
             cellData = tableConfiguration.getTableConfigId();
-        } else if (colIndex == -5) {
+        } else if (colIndex == TableVariableParam.TABLE_NAME.getValue()) {
             cellData = tableConfiguration.getTableName();
         } else if (colIndex == -6) {
             cellData = tableConfiguration.getDbType();
@@ -693,7 +694,7 @@ public class ExcelToCsvDataConvertServiceV2 {
                         if (rewrite != null && rewrite && colIndex != null && colIndex >= 0) {
                             if (colIndex >= rowData.size() && cellData != null && !cellData.isEmpty()) {
                                 for (int i=rowData.size(); i<=colIndex; i++) {
-                                    rowData.add("");
+                                    rowData.add(AppConstant.EmptyStr);
                                 }
                             }
                             if (colIndex < rowData.size()) {

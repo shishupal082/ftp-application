@@ -1,5 +1,6 @@
 package com.project.ftp.bridge.mysqlTable;
 
+import com.project.ftp.common.StrUtils;
 import com.project.ftp.config.AppConfig;
 import com.project.ftp.config.AppConstant;
 import com.project.ftp.jdbc.JdbcQueryStatus;
@@ -201,6 +202,27 @@ public class TableMysqlDb implements TableDb {
         }
         return "0";
     }
+    private String replaceVariableParam(String input, TableConfiguration tableConfiguration) {
+        if (input == null || input.isEmpty() || tableConfiguration == null) {
+            return input;
+        }
+        String tableNameVar = "\\$\\$" + TableVariableParam.TABLE_NAME.getValue() + "\\$\\$";
+        StrUtils strUtils = new StrUtils();
+        if (strUtils.isMatching(input, tableNameVar)) {
+            return strUtils.replaceString(input, tableNameVar, tableConfiguration.getTableName());
+        }
+        return input;
+    }
+    private ArrayList<String> replaceVariableParamV2(ArrayList<String> input, TableConfiguration tableConfiguration) {
+        ArrayList<String> output = new ArrayList<>();
+        if (input == null || input.isEmpty()) {
+            return input;
+        }
+        for(String str: input) {
+            output.add(this.replaceVariableParam(str, tableConfiguration));
+        }
+        return output;
+    }
     public ArrayList<HashMap<String, String>> getByMultipleParameter(
                         HttpServletRequest request,
                         String requestTableConfigId,
@@ -213,7 +235,7 @@ public class TableMysqlDb implements TableDb {
             return null;
         }
         String tableName = tableConfiguration.getTableName();
-        if (tableConfiguration.getTableName() == null || tableConfiguration.getTableName().isEmpty()) {
+        if (tableName == null || tableName.isEmpty()) {
             logger.info("getByMultipleParameter: invalid tableName: null");
             return null;
         }
@@ -278,6 +300,7 @@ public class TableMysqlDb implements TableDb {
         if (requiredSelectColumn == null || requiredSelectColumn.isEmpty()) {
             selectColumnNames = "*";
         } else {
+            requiredSelectColumn = this.replaceVariableParamV2(requiredSelectColumn, tableConfiguration);
             selectColumnNames = String.join(",", requiredSelectColumn);
         }
         String joinQuery = "";
@@ -285,6 +308,7 @@ public class TableMysqlDb implements TableDb {
         String orderByQuery = "";
         String limitQuery = "";
         String joinParam = tableConfiguration.getJoinParam();
+        joinParam = this.replaceVariableParam(joinParam, tableConfiguration);
         ArrayList<String> groupByParam = tableConfiguration.getGroupBy();
         String limitParam = tableConfiguration.getLimit();
         String orderByParam = tableConfiguration.getOrderBy();

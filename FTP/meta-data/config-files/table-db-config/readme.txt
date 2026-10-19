@@ -122,6 +122,10 @@ If cellMapping<ArrayList.newColumnName> is empty or null or part of columnName t
 seq[] = skipRowCriteria
 seq[] = cellMapping
 
+Variable tableName (-5) parameter feature added for
+Parameter shall be written as $$-5$$
+(1) selectColumnName
+(2) joinParam
 
 
 skipRowCriteria
