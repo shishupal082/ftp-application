@@ -52,11 +52,13 @@ public class TableConfiguration {
         destination.setTableNames(source.tableNames);
         destination.setOrderBy(source.orderBy);
         destination.setLimit(source.limit);
+        destination.setExcelConfigId(source.excelConfigId);
         destination.setDefaultDeletedValue(source.defaultDeletedValue);
         destination.setIncludeDeleted(source.includeDeleted);
         destination.setUpdateIfFound(source.updateIfFound);
         destination.setAllowEmptyFilter(source.allowEmptyFilter);
         destination.setMaintainHistory(source.maintainHistory);
+        destination.setJoinParam(source.joinParam);
         destination.setDefaultFilterMapping(source.defaultFilterMapping);
         destination.setGroupBy(source.groupBy);
         destination.setUniquePattern(source.uniquePattern);
