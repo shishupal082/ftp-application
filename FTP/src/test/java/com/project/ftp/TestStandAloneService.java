@@ -21,7 +21,8 @@ public class TestStandAloneService {
     public void TestStandAloneOracleV2() throws Exception {
         TestMSExcelService testMSExcelService = new TestMSExcelService();
         ArrayList<String> arguments = new ArrayList<>();
-        arguments.add("F:/ftp-app/OneDrive/ftp/app-data/config-files-v2/standalone/dl-rhsetup/config-files/env_config/env_config-1.0.0_base.yml");
+        arguments.add("F:/ftp-app/OneDrive/ftp/app-data/config-files-v2/standalone/dl-rhsetup/config-files/env_config-1.0.0_base.yml");
+        arguments.add("F:/ftp-app/OneDrive/ftp/app-data/config-files-v2/standalone/dl-rhsetup/config-files/env_config/env_config-directory.yml");
         String[] args = testMSExcelService.getAppStandAloneConfig(false, arguments);
 //        FtpApplication.main(args);
     }
